@@ -1,53 +1,62 @@
-# BUSHO: Bottom-Up Smart Health Operations
+# BUSHO: Bottom-Up Smart Health Orchestrator
 
-**BUSHO** is a dependency-free prototype for first-mile, bottom-up smart health operations. It demonstrates a seamless workflow where raw frontline field notes are parsed via mock extraction, verified by human operators, cross-referenced with inventory attention triggers, and converted into administrator-approved replenishment drafts.
+BUSHO is a dependency-free browser prototype for first-mile health reporting and medicine-stock coordination. It demonstrates how frontline field notes can be structured through **mock extraction**, reviewed by a human operator, compared with synthetic inventory signals, and used to prepare administrator-reviewed replenishment drafts.
 
-Built specifically for healthcare workers and logistics administrators, BUSHO ensures data integrity by keeping the original field note visible alongside the structured data throughout the entire lifecycle.
+> **Prototype limitation:** This is a demo, not a production healthcare system. It uses synthetic sample data, client-side logic, and browser `localStorage`. It does not implement production AI inference, voice transcription, authentication, a shared backend/database, live government inventory integration, or real ordering. Do not enter real patient-identifiable or sensitive health information.
 
----
+## Workflow states
 
-## 🚦 System Architecture & States
+- **Reported Health Trend:** A raw field signal that needs review.
+- **Worker-Verified Operational Record:** Structured information confirmed by a human operator.
+- **Administrative Replenishment Action:** A draft that remains in the demo workflow; it does not place a real order.
 
-The core methodology of BUSHO separates data into three distinct operational states to ensure clear ownership and data confidence:
+The original report remains visible alongside proposed structured data to support human review.
 
-*   **Reported Health Trend:** A raw field signal flagged for human review.
-*   **Worker-Verified Operational Record:** A structured dataset checked and confirmed by a human operator.
-*   **Administrative Replenishment Action:** A logistics draft that remains pending until explicit administrator approval.
-
----
-
-## 🛠️ Project Structure
-
-The codebase is lightweight, modular, and intentionally free of external runtime dependencies.
+## Project structure
 
 | File | Purpose |
-| :--- | :--- |
-| `index.html` | Core application shell containing both Worker and Administrator console views. |
-| `styles-v2.css` | Production-ready BUSHO visual design system and responsive mobile/desktop layouts. |
-| `app-v2.js` | Main application engine handling mock extraction, validation, inventory logic, and `localStorage` persistence. |
-| `server.mjs` | Ultra-lightweight, dependency-free Node.js HTTP server. |
-| `terms.html` | Pre-pilot legal framework and Terms of Service draft. |
-| `privacy.html` | Pre-pilot Data Privacy policies and compliance draft. |
+| --- | --- |
+| `index.html` | Application shell and Worker/Administrator views |
+| `styles-v2.css` | Responsive styles and visual system |
+| `app-v2.js` | Mock extraction, validation, sample inventory logic, workflow transitions, and browser-local persistence |
+| `server.mjs` | Dependency-free Node.js static HTTP server |
+| `ARCHITECTURE.md` | Current architecture, data flow, boundaries, and proposed production evolution |
+| `TESTING.md` | Manual demo smoke-test checklist |
+| `LICENSE` | MIT License |
+| `terms.html`, `privacy.html` | Pre-pilot draft documents; not a substitute for legal or privacy review |
 
-> 📌 **Note:** Legacy v1 files are retained in the repository strictly for archival reference. The active application exclusively uses the `v2` assets.
+Legacy v1 files are retained for archival reference; the active application uses the v2 assets.
 
----
-### Prerequisites
-*   **Node.js** v18.0.0 or newer
-*   A modern web browser (Chrome, Firefox, Edge, Safari)
+## Prerequisites
 
-### Installation & Execution
-1. Clone or download this repository to your local machine.
-2. Open your terminal or PowerShell in the project directory.
-3. Start the built-in HTTP server:
-   ```powershell
+- Node.js 18 or newer
+- A modern browser
+
+## Run locally
+
+1. Clone or download this repository.
+2. Open a terminal in the repository folder.
+3. Run:
+
+   ```sh
    node server.mjs
    ```
-4. Open your browser and navigate to the local address provided in your terminal output (typically `http://localhost:3000`).
 
----
+4. Open **http://127.0.0.1:4173** in your browser.
 
-## 🧭 Guided Demo Journey
+Stop the server with `Ctrl+C`.
 
-Follow this recommended walk-through to experience the end-to-end capabilities of the prototype:
+## Guided demo
 
+1. Start in the Worker view and use the sample routine report.
+2. Run the extraction action to see a structured draft from mock extraction.
+3. Review the fields and confirm the record.
+4. Switch to the Administrator view to inspect the synthetic inventory signal.
+5. Review the replenishment draft workflow; no real order is placed.
+6. Use **Reset demo data** to return to the initial synthetic state.
+
+See [TESTING.md](TESTING.md) for manual smoke checks and [ARCHITECTURE.md](ARCHITECTURE.md) for the system boundaries.
+
+## Safety and future work
+
+Any real-world pilot would require validation with health workers and administrators, secure authentication and access controls, a protected backend, audit logging, privacy/security review, validated extraction with human approval, and formally approved integration with relevant inventory systems. The prototype has not been field-validated and makes no measured impact claims.
