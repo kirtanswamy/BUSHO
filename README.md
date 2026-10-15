@@ -4,6 +4,16 @@ BUSHO is a dependency-free browser prototype for first-mile health reporting and
 
 > **Prototype limitation:** This is a demo, not a production healthcare system. It uses synthetic sample data, client-side logic, and browser `localStorage`. It does not implement production AI inference, voice transcription, authentication, a shared backend/database, live government inventory integration, or real ordering. Do not enter real patient-identifiable or sensitive health information.
 
+## Demo at a glance
+
+![BUSHO prototype workflow](assets/busho-workflow.svg)
+
+*Prototype flow: field report → mock extraction → human review → synthetic inventory signal → administrator-reviewed draft. This diagram describes the demo workflow, not a live healthcare integration.*
+
+- **Live demo:** https://project1busho.vercel.app/
+- **Automated extraction tests:** [TESTS_AUTOMATED.md](TESTS_AUTOMATED.md) · [test file](tests/extraction.test.cjs)
+- **Demo walkthrough:** [DEMO_SCENARIOS.md](DEMO_SCENARIOS.md)
+
 ## Workflow states
 
 - **Reported Health Trend:** A raw field signal that needs review.
