@@ -55,7 +55,7 @@ test('ambiguous report is flagged for human review rather than confirmed', () =>
 test('empty report is rejected without creating a draft', () => {
   const { state, calls } = runExtraction('   ');
   assert.equal(state.extracted, false);
-  assert.deepEqual(state.draft, []);
+  assert.equal(state.draft.length, 0);
   assert.equal(calls.saved || 0, 0);
   assert.ok(calls.toasts.some(x => /Enter a field report/.test(x)));
   assert.equal(calls.focused, true);
