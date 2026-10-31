@@ -10,7 +10,7 @@ export function createPool(config) {
     max: config.databasePoolMax,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
-    ssl: config.databaseSsl ? { rejectUnauthorized: false } : undefined
+    ssl: config.databaseSsl ? true : undefined
   });
 }
 
