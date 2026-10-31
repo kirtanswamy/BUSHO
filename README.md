@@ -14,6 +14,10 @@ BUSHO is a dependency-free browser prototype for first-mile health reporting and
 - **Automated extraction tests:** [TESTS_AUTOMATED.md](TESTS_AUTOMATED.md) · [test file](tests/extraction.test.cjs)
 - **Demo walkthrough:** [DEMO_SCENARIOS.md](DEMO_SCENARIOS.md)
 
+## Backend implementation (in progress)
+
+The WhatsApp backend is being developed separately from the static demo so the existing prototype remains available. The initial API foundation, PostgreSQL schema, and deployment notes are on the [`feature/whatsapp-backend-foundation`](https://github.com/kirtanswamy/BUSHO/tree/feature/whatsapp-backend-foundation) branch. See [backend setup](docs/BACKEND_FOUNDATION.md) and [implementation phases](docs/WHATSAPP_IMPLEMENTATION_PHASES.md). The API currently exposes health/readiness endpoints only; WhatsApp, AI, authentication, and dashboard integration are future phases.
+
 ## Workflow states
 
 - **Reported Health Trend:** A raw field signal that needs review.
