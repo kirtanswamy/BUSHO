@@ -17,6 +17,14 @@ const base = `http://127.0.0.1:${port}`;
 const bannedStrings = ['Code for Communities', 'lorem ipsum', 'TODO:'];
 // Paths that must never be served by the local demo server.
 const mustBeHidden = ['/.git/config', '/server.mjs', '/package.json', '/tests/extraction.test.cjs', '/README.md'];
+const hiddenPaths = ['/.hidden', '/.git', '/.env', '/tests'];
+const disallowedExtensions = ['/index.txt', '/server.mjs.txt', '/data.json'];
+const traversalPaths = [
+  '/%2e%2e/%2e%2e/etc/passwd',
+  '/%2e%2e/server.mjs',
+  '/%5c..%5cserver.mjs',
+  '/..%5cserver.mjs'
+];
 
 let failures = 0;
 const ok = msg => console.log(`  PASS  ${msg}`);
@@ -34,6 +42,29 @@ function rawGet(path) {
     req.setTimeout(4000, () => req.destroy(new Error('timeout')));
     req.end();
   });
+}
+
+function waitForExit(child, timeout = 1500) {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve(true);
+  return new Promise(resolve => {
+    let settled = false;
+    const finish = value => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(value);
+    };
+    const timer = setTimeout(() => finish(false), timeout);
+    child.once('exit', () => finish(true));
+  });
+}
+
+async function stopServer(child) {
+  if (!child || child.exitCode !== null || child.signalCode !== null) return;
+  child.kill();
+  if (await waitForExit(child)) return;
+  child.kill('SIGKILL');
+  await waitForExit(child, 1000);
 }
 
 async function waitForServer() {
@@ -98,8 +129,21 @@ try {
     const r = await rawGet(p);
     check(r.status === 404, `${p} -> ${r.status}`);
   }
-  const trav = await rawGet('/%2e%2e/%2e%2e/etc/passwd');
-  check(trav.status === 404, `path traversal blocked -> ${trav.status}`);
+  console.log('\n[server hardening]');
+  for (const p of hiddenPaths) {
+    const r = await rawGet(p);
+    check(r.status === 404, `${p} hidden -> ${r.status}`);
+  }
+  for (const p of disallowedExtensions) {
+    const r = await rawGet(p);
+    check(r.status === 404, `${p} disallowed extension -> ${r.status}`);
+  }
+  const malformed = await rawGet('/%E0%A4%A');
+  check(malformed.status === 404, `malformed percent-encoding -> ${malformed.status}`);
+  for (const p of traversalPaths) {
+    const r = await rawGet(p);
+    check(r.status === 404, `${p} traversal blocked -> ${r.status}`);
+  }
 
   const i18n = join(root, 'scripts', 'check-i18n.mjs');
   if (existsSync(i18n)) {
@@ -110,7 +154,7 @@ try {
 } catch (e) {
   if (e.message !== 'server') bad(`unexpected error: ${e.message}`);
 } finally {
-  if (server) server.kill();
+  await stopServer(server);
 }
 
 console.log(failures ? `\n${failures} check(s) failed.` : '\nAll smoke checks passed.');

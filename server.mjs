@@ -1,8 +1,9 @@
 import http from 'node:http';
-import { extname, normalize } from 'node:path';
+import { extname, resolve, sep } from 'node:path';
 import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 
-const root = new URL('./', import.meta.url);
+const publicRoot = resolve(fileURLToPath(new URL('./', import.meta.url)));
 const port = Number(process.env.PORT) || 4173;
 
 // Only public demo assets are served. Server code, tests, docs, package files
@@ -24,15 +25,18 @@ const mime = {
 const server = http.createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(new URL(req.url, 'http://127.0.0.1').pathname);
-    const requested = normalize(pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, ''));
-    const unsafe = requested.split(/[\\/]/).some(part => part === '..' || part.startsWith('.'));
-    const type = mime[extname(requested).toLowerCase()];
-    if (unsafe || !type) {
+    const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
+    const requestedPath = resolve(publicRoot, relativePath);
+    const insidePublicRoot = requestedPath === publicRoot || requestedPath.startsWith(`${publicRoot}${sep}`);
+    const pathParts = relativePath.split(/[\\/]/);
+    const hasHiddenPart = pathParts.some(part => part === '..' || part.startsWith('.'));
+    const type = mime[extname(requestedPath).toLowerCase()];
+    if (!insidePublicRoot || hasHiddenPart || relativePath.includes('\\') || !type) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Not found');
       return;
     }
-    const data = await readFile(new URL(requested, root));
+    const data = await readFile(requestedPath);
     res.writeHead(200, { 'Content-Type': type, 'X-Content-Type-Options': 'nosniff' });
     res.end(data);
   } catch {
