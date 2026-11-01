@@ -39,10 +39,10 @@ a { color: inherit; text-decoration: inherit; }
 .skip-link:focus { top: 12px; }
 
 /* Typography scale */
-h1, h2, h3, h4 { margin: 0; letter-spacing: -0.04em; line-height: 1.15; font-weight: 650; color: var(--ink); }
-h1 { font-size: clamp(36px, 4.5vw, 60px); }
+h1, h2, h3, h4 { margin: 0; letter-spacing: -0.02em; line-height: 1.35; font-weight: 650; color: var(--ink); }
+h1 { font-size: clamp(32px, 3.5vw, 48px); }
 h2 { font-size: clamp(26px, 3vw, 36px); }
-h3 { font-size: 18px; letter-spacing: -0.025em; }
+h3 { font-size: 18px; }
 p { margin: 0; }
 
 /* Utility */
@@ -73,7 +73,7 @@ p { margin: 0; }
 /* Hero */
 .hero-section { padding: 72px 6vw 80px; border-bottom: 1px solid var(--line); }
 .hero-container { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-.hero-content h1 { margin: 0 0 18px; color: var(--ink); letter-spacing: -0.05em; }
+.hero-content h1 { margin: 0 0 18px; color: var(--ink); }
 .hero-content .eyebrow { color: var(--muted); font-size: 14px; line-height: 1.55; max-width: 540px; margin-bottom: 8px; }
 .hero-actions { display: flex; gap: 10px; margin-top: 28px; }
 
@@ -131,6 +131,7 @@ p { margin: 0; }
 
 .workspace-head { max-width: 1080px; margin: 0 auto 24px; display: flex; align-items: flex-end; justify-content: space-between; }
 .section-kicker, .card-overline { color: var(--teal-dark); font: 600 10px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.eyebrow, .section-kicker, .card-overline, .step-by, .progress-step, .metric-label, .metric-trend, .priority-label, .state-label, .state-pill { line-height: 1.5; }
 
 /* Role tabs */
 .role-switch { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
@@ -340,6 +341,11 @@ html[lang="hi"], html[lang="mr"] { font-family: var(--font-hindi); letter-spacin
 html[lang="ta"] { font-family: var(--font-tamil); letter-spacing: 0; text-transform: none; line-height: 1.65; }
 html[lang="te"] { font-family: var(--font-telugu); letter-spacing: 0; text-transform: none; line-height: 1.65; }
 html[lang="bn"] { font-family: var(--font-bengali); letter-spacing: 0; text-transform: none; line-height: 1.65; }
+html[lang="hi"] h1, html[lang="hi"] h2, html[lang="hi"] h3,
+html[lang="mr"] h1, html[lang="mr"] h2, html[lang="mr"] h3,
+html[lang="ta"] h1, html[lang="ta"] h2, html[lang="ta"] h3,
+html[lang="te"] h1, html[lang="te"] h2, html[lang="te"] h3,
+html[lang="bn"] h1, html[lang="bn"] h2, html[lang="bn"] h3 { letter-spacing: 0; line-height: 1.35; }
 
 /* Print */
 @media print {
