@@ -10,7 +10,8 @@ BUSHO is a dependency-free browser prototype for first-mile health reporting and
 
 *Prototype flow: field report → mock extraction → human review → synthetic inventory signal → administrator-reviewed draft. This diagram describes the demo workflow, not a live healthcare integration.*
 
-- **Live demo:** https://project1busho.vercel.app/
+- **Custom domain:** https://busho.de5.net
+- **Vercel deployment:** https://project1busho.vercel.app/
 - **Automated extraction tests:** [TESTS_AUTOMATED.md](TESTS_AUTOMATED.md) · [test file](tests/extraction.test.cjs)
 - **Demo walkthrough:** [DEMO_SCENARIOS.md](DEMO_SCENARIOS.md)
 
