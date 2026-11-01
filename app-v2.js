@@ -162,7 +162,7 @@ let currentSessionId = 0;
 function startVoice() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    showToast(t('voice.unsupported') || 'Speech recognition not supported in this browser');
+    showToast(t('voice.unsupported'));
     return;
   }
   if (isRecording || isStopping) { try { recognition.stop(); } catch (e) {} return; }
@@ -179,16 +179,16 @@ function startVoice() {
   btn.classList.add('recording');
   btn.setAttribute('aria-label', t('voice.listening'));
   recordingSeconds = 0;
-  if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s';
-  showToast(t('voice.listening') || 'Listening...');
+  if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 });
+  showToast(t('voice.listening'));
   recognition.onstart = () => {
     if (sessionId !== currentSessionId) return;
     isRecording = true; recordingSeconds = 0;
     const btn = document.querySelector('.voice-button');
     btn.classList.add('recording');
     btn.setAttribute('aria-label', t('voice.listening'));
-    if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s';
-    recordingTimer = setInterval(() => { recordingSeconds += 1; if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = recordingSeconds + 's'; }, 1000);
+    if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 });
+    recordingTimer = setInterval(() => { recordingSeconds += 1; if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: recordingSeconds }); }, 1000);
   };
   recognition.onresult = (event) => {
     if (sessionId !== currentSessionId) return;
@@ -200,7 +200,7 @@ function startVoice() {
       const currentText = reportInput.value.trim();
       const newText = (currentText ? currentText + ' ' : '') + finalTranscript.trim().replace(/\s+/g, ' ');
       updateReportInput(newText);
-      showToast(t('voice.transcribed') || 'Transcript added');
+      showToast(t('voice.transcribed'));
     }
   };
   recognition.onerror = (event) => {
@@ -211,11 +211,11 @@ function startVoice() {
     isRecording = false;
     recordingSeconds = 0;
     const btn = document.querySelector('.voice-button');
-    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo') || 'Voice input demo'); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s'; }
-    if (event.error === 'no-speech') showToast(t('voice.noSpeech') || 'No speech detected');
-    else if (event.error === 'audio-capture') showToast(t('voice.audioCapture') || 'Microphone error');
-    else if (event.error === 'not-allowed') showToast(t('voice.notAllowed') || 'Microphone permission denied');
-    else showToast(t('voice.error') || 'Recognition error: ' + event.error);
+    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo')); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 }); }
+    if (event.error === 'no-speech') showToast(t('voice.noSpeech'));
+    else if (event.error === 'audio-capture') showToast(t('voice.audioCapture'));
+    else if (event.error === 'not-allowed') showToast(t('voice.notAllowed'));
+    else showToast(t('voice.error'));
   };
   recognition.onend = () => {
     if (sessionId !== currentSessionId) return;
@@ -225,15 +225,15 @@ function startVoice() {
     isStopping = false;
     recordingSeconds = 0;
     const btn = document.querySelector('.voice-button');
-    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo') || 'Voice input demo'); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s'; }
+    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo')); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 }); }
     recognition = null;
   };
   try { recognition.start(); } catch (e) {
     if (recognition && currentSessionId === sessionId) { recognition = null; }
     clearInterval(recordingTimer); recordingTimer = null; isRecording = false; isStopping = false; recordingSeconds = 0;
     const btn = document.querySelector('.voice-button');
-    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo') || 'Voice input demo'); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s'; }
-    showToast(t('voice.startFailed') || 'Failed to start recognition');
+    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo')); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 }); }
+    showToast(t('voice.startFailed'));
   }
 }
 
@@ -250,7 +250,7 @@ function stopVoice() {
         isStopping = false;
         recordingSeconds = 0;
         const btn = document.querySelector('.voice-button');
-        if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo') || 'Voice input demo'); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s'; }
+        if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo')); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 }); }
         if (recognition === capturedRecognition) { recognition = null; }
       }
     }

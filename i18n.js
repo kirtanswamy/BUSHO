@@ -75,6 +75,17 @@
       'worker.toast.edit': 'Review the extracted fields, then confirm the corrected draft',
       'worker.toast.validate': 'Some extracted fields still need clarification',
       'worker.toast.voice': 'Voice transcription is not implemented. Use text input or a sample report',
+      'voice.demo': 'Voice input (demo)',
+      'voice.listening': 'Listening...',
+      'voice.transcribed': 'Transcript added',
+      'voice.stop': 'Stop recording',
+      'voice.unsupported': 'Speech recognition not supported in this browser. Please type your report.',
+      'voice.notAllowed': 'Microphone access denied. Please allow microphone access or type your report.',
+      'voice.audioCapture': 'Microphone error. Please check your microphone and try again.',
+      'voice.noSpeech': 'No speech detected. Please try again or type your report.',
+      'voice.error': 'Recognition error.',
+      'voice.startFailed': 'Could not start voice recognition.',
+
 
       // Draft field labels
       'draft.symptoms': 'Reported symptoms',
@@ -202,6 +213,36 @@
       'draft.almostFinished': 'Almost finished',
       'supervisor.sourceVerified': 'verified worker report',
       'supervisor.sourceSynthetic': 'synthetic inventory snapshot',
+      'ui.skipLink': 'Skip to main content',
+      'ui.mainNavigation': 'Main navigation',
+      'ui.languageSelection': 'Language selection',
+      'ui.selectLanguage': 'Select language',
+      'ui.trustIndicators': 'Trust indicators',
+      'ui.switchView': 'Switch view',
+      'ui.progress': 'Progress: Step 1 of 3',
+      'ui.verification': 'Verification',
+      'ui.priorityAlert': 'Priority alert',
+      'ui.keyMetrics': 'Key metrics',
+      'ui.medicineStock': 'Medicine stock',
+      'ui.closeInventory': 'Close inventory',
+      'ui.chartAlt': 'Fever mentions trend over 7 days. Day 1: 31%, Day 2: 38%, Day 3: 27%, Day 4: 48%, Day 5: 45%, Day 6: 64%, Day 7 (Today): 84%',
+      'ui.chartLegend': 'Chart legend',
+      'ui.facility': 'Rampur HWC',
+      'ui.location': 'Rampur block / Synthetic demo data',
+      'ui.inventoryRecent': 'Rampur HWC / reported 2m ago',
+      'ui.inventoryYesterday': 'Rampur HWC / local demo state, yesterday',
+      'mock.fieldNote': 'Today we saw 12 patients with fever and 8 with diarrhea. We have only 20 ORS packets left, and our iron tablets are almost finished.',
+      'mock.time': '10:42 AM',
+      'mock.symptomsLabel': 'Symptoms',
+      'mock.symptomsValue': 'Fever: 12; Diarrhea: 8',
+      'mock.orsLabel': 'ORS',
+      'mock.orsValue': '20 packets',
+      'mock.ironLabel': 'Iron',
+      'mock.ironValue': 'Almost finished',
+      'mock.verified': 'Verified',
+      'chart.legendReported': 'Reported trend',
+      'chart.legendToday': 'Today',
+      'voice.seconds': '{seconds}s',
     },
     hi: {
 
@@ -333,6 +374,43 @@
     bn: { 'worker.subtitle': 'স্বাভাবিকভাবে লিখুন। নিশ্চিত করার আগে BUSHO কী বুঝেছে দেখুন।', 'worker.step1': 'ধাপ ১/৩: রিপোর্ট', 'worker.step2': 'ধাপ ২/৩: পরীক্ষা', 'worker.step3': 'ধাপ ৩/৩: নিশ্চিত', 'worker.sendUpdate': 'ফিল্ড আপডেট পাঠান', 'worker.placeholder': 'আজ যা দেখেছেন লিখুন: লক্ষণ, সংখ্যা, মজুত...', 'worker.extractBtn': 'খসড়া তৈরি করুন', 'worker.draftAwaiting': 'খসড়ার অপেক্ষা', 'worker.draftNeedsVerify': 'যাচাই দরকার', 'worker.draftVerified': 'কর্মী যাচাই করেছেন', 'worker.provisionalTitle': 'খসড়াটি অস্থায়ী', 'worker.provisionalDesc': 'নিশ্চিত করার আগে প্রতিটি অংশ দেখুন।', 'worker.confirmBtn': 'রিপোর্ট নিশ্চিত করুন', 'worker.editBtn': 'অংশ সম্পাদনা করুন', 'worker.toast.empty': 'খসড়া তৈরির আগে রিপোর্ট লিখুন', 'worker.toast.extract': 'খসড়া তৈরি হয়েছে। নিশ্চিত করার আগে দেখুন', 'worker.toast.extractAmbiguous': 'খসড়া তৈরি হয়েছে। চিহ্নিত অংশ স্পষ্ট করুন', 'worker.toast.confirm': 'নিশ্চিত রিপোর্ট এই ব্রাউজারে রাখা হয়েছে', 'worker.toast.voice': 'ভয়েস ইনপুট নেই। টেক্সট বা উদাহরণ ব্যবহার করুন', 'worker.toast.routine': 'সাধারণ উদাহরণ লোড হয়েছে', 'worker.toast.ambiguous': 'অস্পষ্ট উদাহরণ লোড হয়েছে', 'worker.toast.validate': 'কিছু অংশ এখনও স্পষ্ট করা দরকার', 'worker.draft': 'খসড়া', 'worker.emptyTitle': 'যাচাই খসড়া দেখতে রিপোর্ট তৈরি করুন', 'worker.emptyDesc': 'নিশ্চিত না হওয়া পর্যন্ত অংশগুলি অস্থায়ী', 'draft.symptomsValue': 'জ্বর: {fever}; ডায়রিয়া: {diarrhea}', 'draft.symptomsUnclear': 'লক্ষণ আছে; সংখ্যা স্পষ্ট নয়', 'draft.quantityUnclear': 'পরিমাণ বলা হয়নি', 'draft.almostFinished': 'প্রায় শেষ', 'draft.source': 'রিপোর্ট থেকে নেওয়া', 'draft.needsClarify': 'নিশ্চিত করার আগে স্পষ্ট করুন', 'draft.quantityNeeded': 'পরিমাণ দরকার', 'draft.safeByDesign': 'নিরাপত্তার জন্য', 'draft.clinicalValue': 'শুধু রিপোর্ট করা প্রবণতা; রোগ নির্ণয় নয়', 'supervisor.sourceVerified': 'যাচাই করা কর্মীর রিপোর্ট', 'supervisor.sourceSynthetic': 'কৃত্রিম মজুতের ছবি' },
     mr: { 'worker.subtitle': 'सहजपणे लिहा. पुष्टी करण्यापूर्वी BUSHO ने काय समजले ते पाहा.', 'worker.step1': 'पायरी १/३: अहवाल', 'worker.step2': 'पायरी २/३: तपासणी', 'worker.step3': 'पायरी ३/३: पुष्टी', 'worker.sendUpdate': 'क्षेत्र अहवाल पाठवा', 'worker.placeholder': 'आज काय पाहिले ते लिहा: लक्षणे, संख्या, साठा...', 'worker.extractBtn': 'मसुदा तयार करा', 'worker.draftAwaiting': 'मसुद्याची प्रतीक्षा', 'worker.draftNeedsVerify': 'तपासणी आवश्यक', 'worker.draftVerified': 'कर्मचाऱ्याने तपासले', 'worker.provisionalTitle': 'मसुदा तात्पुरता आहे', 'worker.provisionalDesc': 'पुष्टीपूर्वी प्रत्येक भाग तपासा.', 'worker.confirmBtn': 'अहवालाची पुष्टी करा', 'worker.editBtn': 'भाग बदला', 'worker.toast.empty': 'मसुदा तयार करण्यापूर्वी अहवाल लिहा', 'worker.toast.extract': 'मसुदा तयार झाला. पुष्टीपूर्वी तपासा', 'worker.toast.extractAmbiguous': 'मसुदा तयार झाला. चिन्हांकित भाग स्पष्ट करा', 'worker.toast.confirm': 'पुष्टी केलेला अहवाल या ब्राउझरमध्ये जतन झाला', 'worker.toast.voice': 'आवाज इनपुट उपलब्ध नाही. मजकूर किंवा उदाहरण वापरा', 'worker.toast.routine': 'सामान्य उदाहरण लोड झाले', 'worker.toast.ambiguous': 'अस्पष्ट उदाहरण लोड झाले', 'worker.toast.validate': 'काही भाग अजून स्पष्ट करणे आवश्यक आहे', 'worker.draft': 'मसुदा', 'worker.emptyTitle': 'तपासणीचा मसुदा पाहण्यासाठी अहवाल तयार करा', 'worker.emptyDesc': 'पुष्टी होईपर्यंत भाग तात्पुरते राहतील', 'draft.symptomsValue': 'ताप: {fever}; अतिसार: {diarrhea}', 'draft.symptomsUnclear': 'लक्षणे सांगितली; संख्या स्पष्ट नाही', 'draft.quantityUnclear': 'प्रमाण सांगितले नाही', 'draft.almostFinished': 'जवळजवळ संपले', 'draft.source': 'अहवालातून घेतले', 'draft.needsClarify': 'पुष्टीपूर्वी स्पष्ट करा', 'draft.quantityNeeded': 'प्रमाण आवश्यक', 'draft.safeByDesign': 'सुरक्षिततेसाठी', 'draft.clinicalValue': 'फक्त नोंदवलेला कल; निदान नाही', 'supervisor.sourceVerified': 'तपासलेला कर्मचाऱ्याचा अहवाल', 'supervisor.sourceSynthetic': 'कृत्रिम साठा नोंद' }
   };
+  const uiTranslations = {
+    hi: {
+      'ui.skipLink': 'मुख्य सामग्री पर जाएँ', 'ui.mainNavigation': 'मुख्य नेविगेशन', 'ui.languageSelection': 'भाषा चुनें', 'ui.selectLanguage': 'भाषा चुनें', 'ui.trustIndicators': 'भरोसे के संकेत', 'ui.switchView': 'दृश्य बदलें', 'ui.progress': 'प्रगति: चरण 1/3', 'ui.verification': 'जाँच', 'ui.priorityAlert': 'ज़रूरी चेतावनी', 'ui.keyMetrics': 'मुख्य आँकड़े', 'ui.medicineStock': 'दवाओं का स्टॉक', 'ui.closeInventory': 'स्टॉक बंद करें', 'ui.chartAlt': '7 दिनों में बुखार के उल्लेख। दिन 1: 31%, दिन 2: 38%, दिन 3: 27%, दिन 4: 48%, दिन 5: 45%, दिन 6: 64%, दिन 7 (आज): 84%', 'ui.chartLegend': 'चार्ट संकेत', 'ui.facility': 'रामपुर HWC', 'ui.location': 'रामपुर ब्लॉक / कृत्रिम डेमो डेटा', 'ui.inventoryRecent': 'रामपुर HWC / 2 मिनट पहले रिपोर्ट', 'ui.inventoryYesterday': 'रामपुर HWC / कल की स्थानीय डेमो स्थिति', 'mock.fieldNote': 'आज हमने 12 बुखार और 8 दस्त के मरीज देखे। ORS के केवल 20 पैकेट बचे हैं और आयरन की गोलियाँ लगभग खत्म हैं।', 'mock.time': '10:42 AM', 'mock.symptomsLabel': 'लक्षण', 'mock.symptomsValue': 'बुखार: 12; दस्त: 8', 'mock.orsLabel': 'ORS', 'mock.orsValue': '20 पैकेट', 'mock.ironLabel': 'आयरन', 'mock.ironValue': 'लगभग खत्म', 'mock.verified': 'सत्यापित', 'chart.legendReported': 'बताया गया रुझान', 'chart.legendToday': 'आज', 'voice.seconds': '{seconds} सेकंड'
+    },
+    mr: {
+      'ui.skipLink': 'मुख्य मजकुराकडे जा', 'ui.mainNavigation': 'मुख्य नेव्हिगेशन', 'ui.languageSelection': 'भाषा निवडा', 'ui.selectLanguage': 'भाषा निवडा', 'ui.trustIndicators': 'विश्वासाचे संकेत', 'ui.switchView': 'दृश्य बदला', 'ui.progress': 'प्रगती: पायरी 1/3', 'ui.verification': 'तपासणी', 'ui.priorityAlert': 'तातडीची सूचना', 'ui.keyMetrics': 'मुख्य आकडे', 'ui.medicineStock': 'औषधांचा साठा', 'ui.closeInventory': 'साठा बंद करा', 'ui.chartAlt': '7 दिवसांतील तापाच्या उल्लेखांचा कल। दिवस 1: 31%, दिवस 2: 38%, दिवस 3: 27%, दिवस 4: 48%, दिवस 5: 45%, दिवस 6: 64%, दिवस 7 (आज): 84%', 'ui.chartLegend': 'आलेखाची माहिती', 'ui.facility': 'रामपूर HWC', 'ui.location': 'रामपूर ब्लॉक / कृत्रिम डेमो डेटा', 'ui.inventoryRecent': 'रामपूर HWC / 2 मिनिटांपूर्वीचा अहवाल', 'ui.inventoryYesterday': 'रामपूर HWC / कालची स्थानिक डेमो स्थिती', 'mock.fieldNote': 'आज 12 तापाचे आणि 8 जुलाबाचे रुग्ण दिसले। ORS ची फक्त 20 पाकिटे उरली आहेत आणि लोहाच्या गोळ्या जवळजवळ संपल्या आहेत।', 'mock.time': '10:42 AM', 'mock.symptomsLabel': 'लक्षणे', 'mock.symptomsValue': 'ताप: 12; जुलाब: 8', 'mock.orsLabel': 'ORS', 'mock.orsValue': '20 पाकिटे', 'mock.ironLabel': 'लोह', 'mock.ironValue': 'जवळजवळ संपले', 'mock.verified': 'तपासलेले', 'chart.legendReported': 'नोंदवलेला कल', 'chart.legendToday': 'आज', 'voice.seconds': '{seconds} सेकंद'
+    },
+    ta: {
+      'ui.skipLink': 'முக்கிய உள்ளடக்கத்திற்குச் செல்லவும்', 'ui.mainNavigation': 'முக்கிய வழிசெலுத்தல்', 'ui.languageSelection': 'மொழியைத் தேர்ந்தெடுக்கவும்', 'ui.selectLanguage': 'மொழியைத் தேர்ந்தெடுக்கவும்', 'ui.trustIndicators': 'நம்பிக்கை குறியீடுகள்', 'ui.switchView': 'காட்சியை மாற்றவும்', 'ui.progress': 'முன்னேற்றம்: படி 1/3', 'ui.verification': 'சரிபார்ப்பு', 'ui.priorityAlert': 'முக்கிய எச்சரிக்கை', 'ui.keyMetrics': 'முக்கிய அளவுகள்', 'ui.medicineStock': 'மருந்து இருப்பு', 'ui.closeInventory': 'இருப்பு விவரத்தை மூடவும்', 'ui.chartAlt': '7 நாட்களில் காய்ச்சல் குறிப்பிடல்கள். நாள் 1: 31%, நாள் 2: 38%, நாள் 3: 27%, நாள் 4: 48%, நாள் 5: 45%, நாள் 6: 64%, நாள் 7 (இன்று): 84%', 'ui.chartLegend': 'வரைபட விளக்கம்', 'ui.facility': 'ராம்பூர் HWC', 'ui.location': 'ராம்பூர் வட்டம் / செயற்கை டெமோ தரவு', 'ui.inventoryRecent': 'ராம்பூர் HWC / 2 நிமிடங்களுக்கு முன் தெரிவிக்கப்பட்டது', 'ui.inventoryYesterday': 'ராம்பூர் HWC / நேற்றைய உள்ளூர் டெமோ நிலை', 'mock.fieldNote': 'இன்று 12 காய்ச்சல் மற்றும் 8 வயிற்றுப்போக்கு நோயாளிகளைப் பார்த்தோம். ORS பாக்கெட்டுகள் 20 மட்டுமே உள்ளன; இரும்பு மாத்திரைகள் கிட்டத்தட்ட முடிந்துவிட்டன.', 'mock.time': '10:42 AM', 'mock.symptomsLabel': 'அறிகுறிகள்', 'mock.symptomsValue': 'காய்ச்சல்: 12; வயிற்றுப்போக்கு: 8', 'mock.orsLabel': 'ORS', 'mock.orsValue': '20 பாக்கெட்டுகள்', 'mock.ironLabel': 'இரும்பு', 'mock.ironValue': 'கிட்டத்தட்ட முடிந்தது', 'mock.verified': 'சரிபார்க்கப்பட்டது', 'chart.legendReported': 'தெரிவிக்கப்பட்ட போக்கு', 'chart.legendToday': 'இன்று', 'voice.seconds': '{seconds} வினாடிகள்'
+    },
+    te: {
+      'ui.skipLink': 'ప్రధాన విషయానికి వెళ్లండి', 'ui.mainNavigation': 'ప్రధాన నావిగేషన్', 'ui.languageSelection': 'భాషను ఎంచుకోండి', 'ui.selectLanguage': 'భాషను ఎంచుకోండి', 'ui.trustIndicators': 'నమ్మక సూచనలు', 'ui.switchView': 'వీక్షణ మార్చండి', 'ui.progress': 'పురోగతి: దశ 1/3', 'ui.verification': 'తనిఖీ', 'ui.priorityAlert': 'ముఖ్య హెచ్చరిక', 'ui.keyMetrics': 'ముఖ్య కొలతలు', 'ui.medicineStock': 'మందుల నిల్వ', 'ui.closeInventory': 'నిల్వ వివరాలు మూసివేయండి', 'ui.chartAlt': '7 రోజుల్లో జ్వరం ప్రస్తావనలు. రోజు 1: 31%, రోజు 2: 38%, రోజు 3: 27%, రోజు 4: 48%, రోజు 5: 45%, రోజు 6: 64%, రోజు 7 (ఈ రోజు): 84%', 'ui.chartLegend': 'చార్ట్ వివరణ', 'ui.facility': 'రాంపూర్ HWC', 'ui.location': 'రాంపూర్ బ్లాక్ / కృత్రిమ డెమో డేటా', 'ui.inventoryRecent': 'రాంపూర్ HWC / 2 నిమిషాల క్రితం నివేదిక', 'ui.inventoryYesterday': 'రాంపూర్ HWC / నిన్నటి స్థానిక డెమో స్థితి', 'mock.fieldNote': 'ఈ రోజు 12 జ్వరం, 8 విరేచనాల రోగులను చూశాం. ORS ప్యాకెట్లు 20 మాత్రమే మిగిలాయి, ఇనుము మాత్రలు దాదాపు అయిపోయాయి.', 'mock.time': '10:42 AM', 'mock.symptomsLabel': 'లక్షణాలు', 'mock.symptomsValue': 'జ్వరం: 12; విరేచనాలు: 8', 'mock.orsLabel': 'ORS', 'mock.orsValue': '20 ప్యాకెట్లు', 'mock.ironLabel': 'ఇనుము', 'mock.ironValue': 'దాదాపు అయిపోయింది', 'mock.verified': 'తనిఖీ చేశారు', 'chart.legendReported': 'నివేదించిన ధోరణి', 'chart.legendToday': 'ఈ రోజు', 'voice.seconds': '{seconds} సెకన్లు'
+    },
+    bn: {
+      'ui.skipLink': 'মূল বিষয়বস্তুতে যান', 'ui.mainNavigation': 'প্রধান নেভিগেশন', 'ui.languageSelection': 'ভাষা বেছে নিন', 'ui.selectLanguage': 'ভাষা বেছে নিন', 'ui.trustIndicators': 'বিশ্বাসের সংকেত', 'ui.switchView': 'দৃশ্য বদলান', 'ui.progress': 'অগ্রগতি: ধাপ ১/৩', 'ui.verification': 'যাচাই', 'ui.priorityAlert': 'জরুরি সতর্কতা', 'ui.keyMetrics': 'মূল পরিমাপ', 'ui.medicineStock': 'ওষুধের মজুত', 'ui.closeInventory': 'মজুতের বিবরণ বন্ধ করুন', 'ui.chartAlt': '7 দিনে জ্বরের উল্লেখ। দিন 1: 31%, দিন 2: 38%, দিন 3: 27%, দিন 4: 48%, দিন 5: 45%, দিন 6: 64%, দিন 7 (আজ): 84%', 'ui.chartLegend': 'চার্টের ব্যাখ্যা', 'ui.facility': 'রামপুর HWC', 'ui.location': 'রামপুর ব্লক / কৃত্রিম ডেমো ডেটা', 'ui.inventoryRecent': 'রামপুর HWC / 2 মিনিট আগে রিপোর্ট', 'ui.inventoryYesterday': 'রামপুর HWC / গতকালের স্থানীয় ডেমো অবস্থা', 'mock.fieldNote': 'আজ 12 জন জ্বর এবং 8 জন ডায়রিয়ার রোগী দেখেছি। ORS প্যাকেট মাত্র 20টি আছে, আর লোহার ট্যাবলেট প্রায় শেষ।', 'mock.time': '10:42 AM', 'mock.symptomsLabel': 'লক্ষণ', 'mock.symptomsValue': 'জ্বর: 12; ডায়রিয়া: 8', 'mock.orsLabel': 'ORS', 'mock.orsValue': '20 প্যাকেট', 'mock.ironLabel': 'লোহা', 'mock.ironValue': 'প্রায় শেষ', 'mock.verified': 'যাচাই করা হয়েছে', 'chart.legendReported': 'জানানো প্রবণতা', 'chart.legendToday': 'আজ', 'voice.seconds': '{seconds} সেকেন্ড'
+    }
+  };
+  Object.entries(uiTranslations).forEach(([lang, values]) => Object.assign(locales[lang], values));
+  Object.assign(locales.en, { 'voice.zeroSeconds': '0s' });
+  Object.assign(locales.hi, { 'voice.zeroSeconds': '0 सेकंड' });
+  Object.assign(locales.mr, { 'voice.zeroSeconds': '0 सेकंद' });
+  Object.assign(locales.ta, { 'voice.zeroSeconds': '0 வினாடிகள்' });
+  Object.assign(locales.te, { 'voice.zeroSeconds': '0 సెకన్లు' });
+  Object.assign(locales.bn, { 'voice.zeroSeconds': '0 সেকেন্ড' });
+  Object.assign(locales.hi, { 'voice.demo': 'आवाज़ इनपुट (डेमो)', 'voice.listening': 'सुन रहे हैं...', 'voice.transcribed': 'लिखा हुआ पाठ जुड़ गया', 'voice.stop': 'रिकॉर्डिंग रोकें', 'voice.unsupported': 'इस ब्राउज़र में आवाज़ पहचान उपलब्ध नहीं है। कृपया रिपोर्ट लिखें।', 'voice.notAllowed': 'माइक्रोफोन की अनुमति नहीं मिली। अनुमति दें या रिपोर्ट लिखें।', 'voice.audioCapture': 'माइक्रोफोन में समस्या है। उसे जाँचकर फिर कोशिश करें।', 'voice.noSpeech': 'आवाज़ नहीं मिली। फिर कोशिश करें या रिपोर्ट लिखें।', 'voice.error': 'आवाज़ पहचान में समस्या हुई।', 'voice.startFailed': 'आवाज़ शुरू नहीं हो सकी।' });
+  Object.assign(locales.mr, { 'voice.demo': 'आवाज इनपुट (डेमो)', 'voice.listening': 'ऐकत आहे...', 'voice.transcribed': 'लिहिलेला मजकूर जोडला', 'voice.stop': 'रेकॉर्डिंग थांबवा', 'voice.unsupported': 'या ब्राउझरमध्ये आवाज ओळख उपलब्ध नाही। कृपया अहवाल लिहा।', 'voice.notAllowed': 'मायक्रोफोनची परवानगी मिळाली नाही। परवानगी द्या किंवा अहवाल लिहा।', 'voice.audioCapture': 'मायक्रोफोनमध्ये समस्या आहे। तो तपासून पुन्हा प्रयत्न करा।', 'voice.noSpeech': 'आवाज ऐकू आला नाही। पुन्हा प्रयत्न करा किंवा अहवाल लिहा।', 'voice.error': 'आवाज ओळखण्यात समस्या आली।', 'voice.startFailed': 'आवाज सुरू करता आला नाही।' });
+  Object.assign(locales.ta, { 'voice.demo': 'குரல் உள்ளீடு (டெமோ)', 'voice.listening': 'கேட்கிறது...', 'voice.transcribed': 'பேச்சு உரை சேர்க்கப்பட்டது', 'voice.stop': 'பதிவை நிறுத்தவும்', 'voice.unsupported': 'இந்த உலாவியில் குரல் அறிதல் இல்லை. அறிக்கையைத் தட்டச்சு செய்யவும்.', 'voice.notAllowed': 'ஒலிவாங்கி அனுமதி மறுக்கப்பட்டது. அனுமதி அளிக்கவும் அல்லது அறிக்கையைத் தட்டச்சு செய்யவும்.', 'voice.audioCapture': 'ஒலிவாங்கியில் சிக்கல். அதைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.', 'voice.noSpeech': 'குரல் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும் அல்லது அறிக்கையைத் தட்டச்சு செய்யவும்.', 'voice.error': 'குரல் அறிதலில் சிக்கல் ஏற்பட்டது.', 'voice.startFailed': 'குரலைத் தொடங்க முடியவில்லை.' });
+  Object.assign(locales.te, { 'voice.demo': 'వాయిస్ ఇన్‌పుట్ (డెమో)', 'voice.listening': 'వింటోంది...', 'voice.transcribed': 'మాటల పాఠ్యం జోడించబడింది', 'voice.stop': 'రికార్డింగ్ ఆపండి', 'voice.unsupported': 'ఈ బ్రౌజర్‌లో వాయిస్ గుర్తింపు లేదు. నివేదికను టైప్ చేయండి.', 'voice.notAllowed': 'మైక్రోఫోన్ అనుమతి లేదు. అనుమతి ఇవ్వండి లేదా నివేదికను టైప్ చేయండి.', 'voice.audioCapture': 'మైక్రోఫోన్‌లో సమస్య ఉంది. దాన్ని తనిఖీ చేసి మళ్లీ ప్రయత్నించండి.', 'voice.noSpeech': 'వాయిస్ వినిపించలేదు. మళ్లీ ప్రయత్నించండి లేదా నివేదికను టైప్ చేయండి.', 'voice.error': 'వాయిస్ గుర్తింపులో సమస్య వచ్చింది.', 'voice.startFailed': 'వాయిస్ ప్రారంభం కాలేదు.' });
+  Object.assign(locales.bn, { 'voice.demo': 'ভয়েস ইনপুট (ডেমো)', 'voice.listening': 'শোনা হচ্ছে...', 'voice.transcribed': 'কথার লেখা যোগ হয়েছে', 'voice.stop': 'রেকর্ডিং থামান', 'voice.unsupported': 'এই ব্রাউজারে ভয়েস শনাক্ত করা যায় না। রিপোর্ট লিখুন।', 'voice.notAllowed': 'মাইক্রোফোনের অনুমতি নেই। অনুমতি দিন বা রিপোর্ট লিখুন।', 'voice.audioCapture': 'মাইক্রোফোনে সমস্যা হয়েছে। পরীক্ষা করে আবার চেষ্টা করুন।', 'voice.noSpeech': 'কোনও কথা শোনা যায়নি। আবার চেষ্টা করুন বা রিপোর্ট লিখুন।', 'voice.error': 'ভয়েস শনাক্ত করতে সমস্যা হয়েছে।', 'voice.startFailed': 'ভয়েস শুরু করা যায়নি।' });
+
+  Object.assign(locales.en, { 'ui.activeFacility': 'Active facility', 'ui.tryExample': 'Try an example', 'ui.fieldReport': 'Field report', 'ui.extractedFields': 'Extracted fields', 'glossary.title': 'Glossary' });
+  Object.assign(locales.hi, { 'ui.activeFacility': 'सक्रिय केंद्र', 'ui.tryExample': 'एक उदाहरण आज़माएँ', 'ui.fieldReport': 'क्षेत्र रिपोर्ट', 'ui.extractedFields': 'निकाले गए खाने', 'glossary.title': 'शब्दावली' });
+  Object.assign(locales.mr, { 'ui.activeFacility': 'सध्याचे केंद्र', 'ui.tryExample': 'एक उदाहरण वापरा', 'ui.fieldReport': 'क्षेत्र अहवाल', 'ui.extractedFields': 'काढलेले भाग', 'glossary.title': 'शब्दकोश' });
+  Object.assign(locales.ta, { 'ui.activeFacility': 'செயலில் உள்ள மையம்', 'ui.tryExample': 'ஓர் உதாரணத்தை முயற்சிக்கவும்', 'ui.fieldReport': 'கள அறிக்கை', 'ui.extractedFields': 'பிரித்தெடுக்கப்பட்ட பகுதிகள்', 'glossary.title': 'சொற்களஞ்சியம்' });
+  Object.assign(locales.te, { 'ui.activeFacility': 'ప్రస్తుతం ఉన్న కేంద్రం', 'ui.tryExample': 'ఒక ఉదాహరణ ప్రయత్నించండి', 'ui.fieldReport': 'ఫీల్డ్ నివేదిక', 'ui.extractedFields': 'తీసిన అంశాలు', 'glossary.title': 'పదకోశం' });
+  Object.assign(locales.bn, { 'ui.activeFacility': 'সক্রিয় কেন্দ্র', 'ui.tryExample': 'একটি উদাহরণ চেষ্টা করুন', 'ui.fieldReport': 'ফিল্ড রিপোর্ট', 'ui.extractedFields': 'বের করা অংশ', 'glossary.title': 'শব্দকোষ' });
+
   const translationOverrides = {
     hi: {
       'app.name': 'BUSHO', 'app.tagline': 'नीचे से ऊपर तक स्मार्ट स्वास्थ्य समन्वयक',
@@ -413,6 +491,13 @@
           el.textContent = locale[key];
         }
       }
+    });
+
+    document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+      el.getAttribute('data-i18n-attr').split(',').forEach(attr => {
+        const [name, i18nKey] = attr.split(':');
+        if (locale[i18nKey]) el.setAttribute(name, locale[i18nKey]);
+      });
     });
 
     document.querySelectorAll('[data-i18n-html]').forEach(el => {

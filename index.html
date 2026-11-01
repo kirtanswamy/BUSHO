@@ -14,7 +14,7 @@
     <script src="i18n.js"></script>
   </head>
   <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-content" class="skip-link" data-i18n="ui.skipLink">Skip to main content</a>
     <div class="app-shell">
       <header class="topbar" role="banner">
         <div class="brand-lockup">
@@ -24,16 +24,16 @@
             <div class="brand-subtitle" data-i18n="app.tagline">Bottom-Up Smart Health Orchestrator</div>
           </div>
         </div>
-        <nav class="topbar-nav" aria-label="Main navigation">
+        <nav class="topbar-nav" aria-label="Main navigation" data-i18n-attr="aria-label:ui.mainNavigation">
           <a href="#how-it-works" class="nav-link" data-i18n="nav.howItWorks">How it works</a>
           <a href="#demo" class="nav-link" data-i18n="nav.tryDemo">Try the demo</a>
           <a href="#safety" class="nav-link" data-i18n="nav.safety">Safety</a>
         </nav>
         <div class="topbar-right">
           <span class="demo-badge" data-i18n="header.demoBadge">Demo: synthetic data</span>
-          <div class="lang-selector" role="region" aria-label="Language selection">
+          <div class="lang-selector" role="region" aria-label="Language selection" data-i18n-attr="aria-label:ui.languageSelection">
             <label for="lang-select" class="visually-hidden" data-i18n="header.langLabel">Language</label>
-            <select id="lang-select" aria-label="Select language">
+            <select id="lang-select" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
               <option value="en">English</option>
               <option value="hi">हिन्दी</option>
               <option value="ta">தமிழ்</option>
@@ -56,7 +56,7 @@
                 <a href="#demo" class="btn btn-primary" data-i18n="hero.tryDemo">Try the demo</a>
                 <a href="#how-it-works" class="btn btn-secondary" data-i18n="hero.seeHow">See how it works</a>
               </div>
-              <div class="trust-chips" role="list" aria-label="Trust indicators">
+              <div class="trust-chips" role="list" aria-label="Trust indicators" data-i18n-attr="aria-label:ui.trustIndicators">
                 <span class="trust-chip" role="listitem" data-i18n="hero.trust1">A person confirms every record</span>
                 <span class="trust-chip" role="listitem" data-i18n="hero.trust2">No diagnosis</span>
                 <span class="trust-chip" role="listitem" data-i18n="hero.trust3">Synthetic demo data</span>
@@ -72,17 +72,17 @@
                     <div class="mock-message incoming">
                       <div class="mock-avatar">AS</div>
                       <div class="mock-bubble">
-                        <p class="mock-text" id="mock-field-text">Today we saw 12 patients with fever and 8 with diarrhea. We have only 20 ORS packets left, and our iron tablets are almost finished.</p>
-                        <span class="mock-time">10:42 AM</span>
+                        <p class="mock-text" id="mock-field-text" data-i18n="mock.fieldNote">Today we saw 12 patients with fever and 8 with diarrhea. We have only 20 ORS packets left, and our iron tablets are almost finished.</p>
+                        <span class="mock-time" data-i18n="mock.time">10:42 AM</span>
                       </div>
                     </div>
                     <div class="mock-arrow" aria-hidden="true">→</div>
                     <div class="mock-message outgoing">
                       <div class="mock-bubble structured">
-                        <div class="mock-field"><span class="mock-label">Symptoms</span><span class="mock-value">Fever: 12; Diarrhea: 8</span></div>
-                        <div class="mock-field"><span class="mock-label">ORS</span><span class="mock-value">20 packets</span></div>
-                        <div class="mock-field"><span class="mock-label">Iron</span><span class="mock-value">Almost finished</span></div>
-                        <div class="mock-verified" aria-label="Verified">
+                        <div class="mock-field"><span class="mock-label" data-i18n="mock.symptomsLabel">Symptoms</span><span class="mock-value" data-i18n="mock.symptomsValue">Fever: 12; Diarrhea: 8</span></div>
+                        <div class="mock-field"><span class="mock-label" data-i18n="mock.orsLabel">ORS</span><span class="mock-value" data-i18n="mock.orsValue">20 packets</span></div>
+                        <div class="mock-field"><span class="mock-label" data-i18n="mock.ironLabel">Iron</span><span class="mock-value" data-i18n="mock.ironValue">Almost finished</span></div>
+                        <div class="mock-verified" aria-label="Verified" data-i18n-attr="aria-label:mock.verified">
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
                           <span data-i18n="worker.draftVerified">Verified by worker</span>
                         </div>
@@ -146,10 +146,10 @@
         <section id="demo" class="demo-section" aria-labelledby="demo-title">
           <div class="container">
             <div class="demo-header">
-              <div class="demo-context" aria-label="Active facility">
-                <span class="context-kicker" data-i18n="worker.sendUpdate">Active facility</span>
-                <strong>Rampur HWC</strong>
-                <span>Rampur block / Synthetic demo data</span>
+                <div class="demo-context" aria-label="Active facility" data-i18n-attr="aria-label:ui.activeFacility">
+                <span class="context-kicker" data-i18n="ui.activeFacility">Active facility</span>
+                <strong data-i18n="ui.facility">Rampur HWC</strong>
+                <span data-i18n="ui.location">Rampur block / Synthetic demo data</span>
               </div>
               <div class="demo-status" aria-live="polite">
                 <span class="status-dot" aria-hidden="true"></span>
@@ -162,7 +162,7 @@
                 <p class="section-kicker" data-i18n="app.tagline">Bottom-Up Smart Health Orchestrator</p>
                 <h2 id="demo-title" data-i18n="worker.title">Health worker</h2>
               </div>
-              <div class="role-switch" role="tablist" aria-label="Switch view">
+              <div class="role-switch" role="tablist" aria-label="Switch view" data-i18n-attr="aria-label:ui.switchView">
                 <button class="role-btn active" role="tab" aria-selected="true" aria-controls="worker-panel" id="tab-worker" data-view="worker" data-i18n="worker.title">Health worker</button>
                 <button class="role-btn" role="tab" aria-selected="false" aria-controls="supervisor-panel" id="tab-supervisor" data-view="supervisor" data-i18n="supervisor.title">Supervisor</button>
               </div>
@@ -177,7 +177,7 @@
                 </div>
               </div>
 
-              <div class="progress-indicator" aria-label="Progress: Step 1 of 3">
+              <div class="progress-indicator" aria-label="Progress: Step 1 of 3" data-i18n-attr="aria-label:ui.progress">
                 <div class="progress-step active" data-step="1">
                   <span class="progress-num">1</span>
                   <span class="progress-label" data-i18n="worker.step1">Report</span>
@@ -205,10 +205,10 @@
                     <span class="channel-chip" data-i18n="worker.channel">Text / Voice</span>
                   </header>
                   <div class="composer">
-                    <textarea id="report-input" aria-label="Field report" placeholder="" data-i18n="worker.placeholder" data-i18n-attr="placeholder:worker.placeholder"></textarea>
+                      <textarea id="report-input" aria-label="Field report" placeholder="" data-i18n="worker.placeholder" data-i18n-attr="aria-label:ui.fieldReport,placeholder:worker.placeholder"></textarea>
                     <div class="composer-actions">
-                      <button class="btn btn-secondary voice-button" type="button" aria-label="Voice input demo" data-i18n="worker.voiceBtn">Voice input (demo)</button>
-                      <div class="quick-actions" role="group" aria-label="Try an example">
+                      <button class="btn btn-secondary voice-button" type="button" aria-label="Voice input (demo)" data-i18n-attr="aria-label:voice.demo"><span data-i18n="voice.demo">Voice input (demo)</span><span class="record-time" aria-live="polite" data-i18n="voice.zeroSeconds" data-i18n-attr="aria-label:voice.zeroSeconds">0s</span></button>
+                      <div class="quick-actions" role="group" aria-label="Try an example" data-i18n-attr="aria-label:ui.tryExample">
                         <span class="quick-label" data-i18n="worker.tryExample">Try an example:</span>
                         <button class="btn btn-quiet quick-btn" type="button" data-sample="routine" data-i18n="worker.sample.routine">Routine report</button>
                         <button class="btn btn-quiet quick-btn" type="button" data-sample="ambiguous" data-i18n="worker.sample.ambiguous">Ambiguous report</button>
@@ -232,7 +232,7 @@
                     <span class="banner-icon" aria-hidden="true">i</span>
                     <div data-i18n="worker.provisional">AI-extracted information is provisional. Review each field. Nothing is committed until you confirm.</div>
                   </div>
-                  <div class="extraction-list" id="extraction-list" aria-label="Extracted fields">
+                  <div class="extraction-list" id="extraction-list" aria-label="Extracted fields" data-i18n-attr="aria-label:ui.extractedFields">
                     <div class="empty-extraction">
                       <div class="empty-state">
                         <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
@@ -249,7 +249,7 @@
               </div>
 
               <!-- Verification Bar -->
-              <div class="verification-bar hidden" id="verification-bar" role="region" aria-label="Verification">
+              <div class="verification-bar hidden" id="verification-bar" role="region" aria-label="Verification" data-i18n-attr="aria-label:ui.verification">
                 <div>
                   <p class="card-overline" data-i18n="worker.step3">Step 3 of 3: Confirm</p>
                   <p class="verify-prompt" data-i18n="worker.verifyPrompt">Does this look right for today's report?</p>
@@ -277,7 +277,7 @@
                 </div>
               </div>
 
-              <div class="priority-alert" role="region" aria-label="Priority alert">
+              <div class="priority-alert" role="region" aria-label="Priority alert" data-i18n-attr="aria-label:ui.priorityAlert">
                 <div>
                   <span class="priority-label" data-i18n="supervisor.priorityLabel">PRIORITY REVIEW</span>
                   <strong data-i18n="supervisor.priorityTitle">Reported fever signal at Rampur HWC</strong>
@@ -286,7 +286,7 @@
                 <span class="alert-state" data-i18n="supervisor.priorityState">Needs review</span>
               </div>
 
-              <div class="metric-grid" role="list" aria-label="Key metrics">
+              <div class="metric-grid" role="list" aria-label="Key metrics" data-i18n-attr="aria-label:ui.keyMetrics">
                 <article class="metric-card" role="listitem">
                   <p class="metric-label" data-i18n="supervisor.metric.reports">Reports received</p>
                   <strong id="reports-count">18</strong>
@@ -327,7 +327,7 @@
                     </div>
                   </div>
                   <div class="chart-container">
-                    <div class="chart-wrapper" role="img" aria-label="Fever mentions trend over 7 days. Day 1: 31%, Day 2: 38%, Day 3: 27%, Day 4: 48%, Day 5: 45%, Day 6: 64%, Day 7 (Today): 84%">
+                    <div class="chart-wrapper" role="img" aria-label="Fever mentions trend over 7 days. Day 1: 31%, Day 2: 38%, Day 3: 27%, Day 4: 48%, Day 5: 45%, Day 6: 64%, Day 7 (Today): 84%" data-i18n-attr="aria-label:ui.chartAlt">
                       <table class="chart-table" aria-hidden="true">
                         <thead>
                           <tr><th scope="col" data-i18n="supervisor.chartLabel">7 days ago</th><th scope="col"></th><th scope="col"></th><th scope="col"></th><th scope="col"></th><th scope="col"></th><th scope="col" data-i18n="supervisor.chartToday">Today</th></tr>
@@ -345,6 +345,7 @@
                         </tbody>
                       </table>
                     </div>
+                    <div class="chart-legend" aria-label="Chart legend" data-i18n-attr="aria-label:ui.chartLegend"><span><i class="legend-swatch reported" aria-hidden="true"></i><span data-i18n="chart.legendReported">Reported trend</span></span><span><i class="legend-swatch today" aria-hidden="true"></i><span data-i18n="chart.legendToday">Today</span></span></div>
                     <div class="chart-summary" aria-live="polite">
                       <p data-i18n="supervisor.safetyCallout">Reported health trend. This is a signal for human review. It does not confirm a medical event or outbreak.</p>
                     </div>
@@ -360,12 +361,12 @@
                     </div>
                     <button class="btn btn-quiet" id="view-inventory" type="button" data-i18n="supervisor.viewAll">View all</button>
                   </header>
-                  <div class="inventory-list" role="list" aria-label="Medicine stock">
+                  <div class="inventory-list" role="list" aria-label="Medicine stock" data-i18n-attr="aria-label:ui.medicineStock">
                     <div class="inventory-row" role="listitem">
                       <div class="medicine-icon ors" aria-hidden="true">ORS</div>
                       <div class="medicine-copy">
                         <strong data-i18n="supervisor.inventory.ors">ORS packets</strong>
-                        <span>Rampur HWC / reported 2m ago</span>
+                        <span data-i18n="ui.inventoryRecent">Rampur HWC / reported 2m ago</span>
                       </div>
                       <div class="stock-meter">
                         <div class="meter-label"><span id="ors-stock">20 / 50</span><b>40%</b></div>
@@ -377,7 +378,7 @@
                       <div class="medicine-icon ifa" aria-hidden="true">Fe</div>
                       <div class="medicine-copy">
                         <strong data-i18n="supervisor.inventory.ifa">Iron and folic acid</strong>
-                        <span>Rampur HWC / reported 2m ago</span>
+                        <span data-i18n="ui.inventoryRecent">Rampur HWC / reported 2m ago</span>
                       </div>
                       <div class="stock-meter">
                         <div class="meter-label"><span id="ifa-stock">14 / 60</span><b>23%</b></div>
@@ -389,7 +390,7 @@
                       <div class="medicine-icon zinc" aria-hidden="true">Zn</div>
                       <div class="medicine-copy">
                         <strong data-i18n="supervisor.inventory.zinc">Zinc tablets</strong>
-                        <span>Rampur HWC / local demo state, yesterday</span>
+                        <span data-i18n="ui.inventoryYesterday">Rampur HWC / local demo state, yesterday</span>
                       </div>
                       <div class="stock-meter">
                         <div class="meter-label"><span id="zinc-stock">72 / 100</span><b>72%</b></div>
@@ -422,7 +423,7 @@
                     <p class="card-overline" data-i18n="supervisor.inventoryLabel">SYNTHETIC INVENTORY</p>
                     <h3 id="drawer-title" data-i18n="supervisor.drawerTitle">Inventory detail</h3>
                   </div>
-                  <button class="btn btn-quiet" id="close-inventory" type="button" aria-label="Close inventory">Close</button>
+                  <button class="btn btn-quiet" id="close-inventory" type="button" aria-label="Close inventory" data-i18n="ui.closeInventory" data-i18n-attr="aria-label:ui.closeInventory">Close</button>
                 </header>
                 <p class="drawer-note" data-i18n="supervisor.drawerNote">Demo inventory only. Drafting an item prepares an approval record; it does not place an order.</p>
                 <div class="inventory-detail-list" id="inventory-detail-list" role="list"></div>
@@ -474,7 +475,7 @@
         <!-- Glossary -->
         <section class="glossary-section" aria-labelledby="glossary-title">
           <div class="container">
-            <h2 id="glossary-title" class="visually-hidden">Glossary</h2>
+            <h2 id="glossary-title" class="visually-hidden" data-i18n="glossary.title">Glossary</h2>
             <dl class="glossary-list">
               <div class="glossary-item">
                 <dt>HWC</dt>
@@ -504,9 +505,9 @@
             <a href="terms.html" data-i18n="footer.terms">Terms</a>
             <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
             <button class="reset-btn" id="reset-demo" type="button" data-i18n="footer.reset">Reset demo data</button>
-            <div class="lang-selector footer-lang" role="region" aria-label="Language selection">
+            <div class="lang-selector footer-lang" role="region" aria-label="Language selection" data-i18n-attr="aria-label:ui.languageSelection">
               <label for="lang-select-footer" class="visually-hidden" data-i18n="header.langLabel">Language</label>
-              <select id="lang-select-footer" aria-label="Select language">
+              <select id="lang-select-footer" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
                 <option value="en">English</option>
                 <option value="hi">हिन्दी</option>
                 <option value="ta">தமிழ்</option>
