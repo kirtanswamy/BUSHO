@@ -31,6 +31,7 @@ When field information is incomplete, inconsistent or slow to reach decision-mak
 - **The original report stays visible** next to every extracted field.
 - **No diagnosis, no automatic orders.** Replenishment is a draft only.
 - **Voice input:** Browser-native Web Speech API; browser/vendor service may process audio remotely; BUSHO does not store audio recordings; manual text entry is always available as a fallback; availability depends on browser, microphone permission and network.
+- **Honest labeling:** synthetic data, mock extraction and no live integrations are stated in the interface and docs.
 - **Built for local languages:** English, Hindi, Tamil, Telugu, Bengali and Marathi **[confirm all six are live before submitting]**.
 
 ## Who it is for
@@ -46,7 +47,8 @@ Intended alignment with **SDG 3 (Good Health and Well-Being)** and **SDG 10 (Red
 | Real in the prototype | Simulated or not built |
 |-----------------------|------------------------|
 | End-to-end worker to supervisor workflow | AI inference (extraction is rule-based) |
-| Human review and confirmation gates | Voice transcription (browser-native Web Speech API, no audio stored by BUSHO, manual fallback always available) |
+  | Human review and confirmation gates | Our own transcription service (voice input uses the browser's built-in recognition, not BUSHO's) |
+  | Optional voice input through the browser's speech recognition, manual typing always available | Real orders or procurement |
 | Editable drafts, saved in the browser | Shared backend, accounts, authentication |
 | Inventory attention logic on sample stock | Live government or facility inventory feeds |
 | Multilingual interface and sample reports | Real orders or procurement |
