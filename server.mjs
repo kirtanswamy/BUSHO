@@ -1,10 +1,12 @@
 import http from 'node:http';
 import { extname, resolve, sep } from 'node:path';
-import { readFile } from 'node:fs/promises';
+import { readFile, realpath } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 const publicRoot = resolve(fileURLToPath(new URL('./', import.meta.url)));
+const actualPublicRoot = await realpath(publicRoot);
 const port = Number(process.env.PORT) || 4173;
+const privateDirectories = new Set(['tests', 'scripts', 'docs', '.github', '.git']);
 
 // Only public demo assets are served. Server code, tests, docs, package files
 // and dotfiles (.git, .env) are never exposed by this local server.
@@ -30,13 +32,22 @@ const server = http.createServer(async (req, res) => {
     const insidePublicRoot = requestedPath === publicRoot || requestedPath.startsWith(`${publicRoot}${sep}`);
     const pathParts = relativePath.split(/[\\/]/);
     const hasHiddenPart = pathParts.some(part => part === '..' || part.startsWith('.'));
+    const hasPrivateDirectory = pathParts.some(part => privateDirectories.has(part.toLowerCase()));
     const type = mime[extname(requestedPath).toLowerCase()];
-    if (!insidePublicRoot || hasHiddenPart || relativePath.includes('\\') || !type) {
+    if (!insidePublicRoot || hasHiddenPart || hasPrivateDirectory || relativePath.includes('\\') || !type) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Not found');
       return;
     }
-    const data = await readFile(requestedPath);
+    const actualRequestedPath = await realpath(requestedPath);
+    const insideActualPublicRoot = actualRequestedPath === actualPublicRoot
+      || actualRequestedPath.startsWith(`${actualPublicRoot}${sep}`);
+    if (!insideActualPublicRoot) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('Not found');
+      return;
+    }
+    const data = await readFile(actualRequestedPath);
     res.writeHead(200, { 'Content-Type': type, 'X-Content-Type-Options': 'nosniff' });
     res.end(data);
   } catch {

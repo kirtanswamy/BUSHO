@@ -4,10 +4,12 @@
 // JavaScript parses, basic accessibility hygiene holds, and private files are not served.
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
+import { mkdtemp, rm, symlink, unlink, writeFile } from 'node:fs/promises';
 import http from 'node:http';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, join, basename } from 'node:path';
+import { tmpdir } from 'node:os';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const port = 4200 + Math.floor(Math.random() * 500);
@@ -17,8 +19,9 @@ const base = `http://127.0.0.1:${port}`;
 const bannedStrings = ['Code for Communities', 'lorem ipsum', 'TODO:'];
 // Paths that must never be served by the local demo server.
 const mustBeHidden = ['/.git/config', '/server.mjs', '/package.json', '/tests/extraction.test.cjs', '/README.md'];
+const existingNonPublicFiles = ['/tests/extraction.test.cjs'];
 const hiddenPaths = ['/.hidden', '/.git', '/.env', '/tests'];
-const disallowedExtensions = ['/index.txt', '/server.mjs.txt', '/data.json'];
+const disallowedExtensions = ['/package-lock.json'];
 const traversalPaths = [
   '/%2e%2e/%2e%2e/etc/passwd',
   '/%2e%2e/server.mjs',
@@ -99,6 +102,41 @@ function auditHtml(name, html) {
   for (const s of bannedStrings) check(!html.toLowerCase().includes(s.toLowerCase()), `no stale text "${s}"`);
 }
 
+async function checkOutsideSymlink() {
+  const linkPath = join(root, `busho-smoke-link-${process.pid}-${Date.now()}.js`);
+  const outsideDir = await mkdtemp(join(tmpdir(), 'busho-smoke-outside-'));
+  const outsideFile = join(outsideDir, 'outside.js');
+  try {
+    await writeFile(outsideFile, 'outside smoke fixture');
+    await symlink(outsideFile, linkPath, 'file');
+    const result = await rawGet(`/${basename(linkPath)}`);
+    check(result.status === 404, 'symlink outside public root is blocked');
+  } catch (error) {
+    if (['EACCES', 'EPERM', 'ENOTSUP'].includes(error.code)) {
+      console.log(`  SKIP  symlink outside public root (platform denied symlink creation: ${error.code})`);
+    } else {
+      bad(`symlink outside public root test errored: ${error.message}`);
+    }
+  } finally {
+    await unlink(linkPath).catch(() => {});
+    await rm(outsideDir, { recursive: true, force: true });
+  }
+}
+
+async function checkPrivateDirectoryFile() {
+  const fixturePath = join(root, 'scripts', `busho-smoke-private-${process.pid}-${Date.now()}.js`);
+  try {
+    await writeFile(fixturePath, 'private smoke fixture');
+    check(existsSync(fixturePath), '/scripts fixture exists with an allowed extension');
+    const result = await rawGet(`/${fixturePath.slice(root.length + 1).replaceAll('\\', '/')}`);
+    check(result.status === 404, 'existing allowed-extension file in /scripts is blocked');
+  } catch (error) {
+    bad(`private-directory fixture test errored: ${error.message}`);
+  } finally {
+    await unlink(fixturePath).catch(() => {});
+  }
+}
+
 let server;
 try {
   server = spawn(process.execPath, [join(root, 'server.mjs')], {
@@ -129,6 +167,12 @@ try {
     const r = await rawGet(p);
     check(r.status === 404, `${p} -> ${r.status}`);
   }
+  for (const p of existingNonPublicFiles) {
+    check(existsSync(join(root, p.slice(1))), `${p} exists as a non-public fixture`);
+    const r = await rawGet(p);
+    check(r.status === 404, `${p} existing non-public file -> ${r.status}`);
+  }
+  await checkPrivateDirectoryFile();
   console.log('\n[server hardening]');
   for (const p of hiddenPaths) {
     const r = await rawGet(p);
@@ -144,6 +188,7 @@ try {
     const r = await rawGet(p);
     check(r.status === 404, `${p} traversal blocked -> ${r.status}`);
   }
+  await checkOutsideSymlink();
 
   const i18n = join(root, 'scripts', 'check-i18n.mjs');
   if (existsSync(i18n)) {
