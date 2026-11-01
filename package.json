@@ -1,12 +1,16 @@
 {
   "name": "busho",
-  "version": "2.0.0",
-  "description": "BUSHO - Bottom-Up Smart Health Orchestrator prototype",
-  "type": "module",
+  "version": "0.2.0",
+  "description": "BUSHO (Bottom-Up Smart Health Orchestrator): a dependency-free first-mile health reporting prototype. Synthetic data only.",
+  "private": true,
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/kirtanswamy/BUSHO.git" },
+  "homepage": "https://project1busho.vercel.app",
+  "engines": { "node": ">=18" },
   "scripts": {
     "start": "node server.mjs",
-    "check:i18n": "node scripts/check-i18n.mjs"
-  },
-  "keywords": ["health", "prototype", "public-health"],
-  "license": "MIT"
+    "test": "node --test",
+    "smoke": "node scripts/smoke.mjs",
+    "check": "node --test && node scripts/smoke.mjs"
+  }
 }
