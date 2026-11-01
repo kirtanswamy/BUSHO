@@ -3,26 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BUSHO | First-mile health reporting</title>
+    <title>BUSHO | Health reporting demo</title>
     <meta name="description" content="BUSHO turns ordinary frontline health reports into verified operational action." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-    </noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles-v2.css?v=7" />
     <script src="i18n.js"></script>
   </head>
@@ -384,7 +371,7 @@
                         <div class="meter-label"><span id="ors-stock">20 / 50</span><b>40%</b></div>
                         <div class="meter"><i style="width: 40%"></i></div>
                       </div>
-                      <span class="severity critical" data-i18n="supervisor.severity.critical">Critical</span>
+                      <span class="severity critical"><span aria-hidden="true">!</span> <span data-i18n="supervisor.severity.critical">Critical</span></span>
                     </div>
                     <div class="inventory-row" role="listitem">
                       <div class="medicine-icon ifa" aria-hidden="true">Fe</div>
@@ -396,7 +383,7 @@
                         <div class="meter-label"><span id="ifa-stock">14 / 60</span><b>23%</b></div>
                         <div class="meter"><i style="width: 23%"></i></div>
                       </div>
-                      <span class="severity warning" data-i18n="supervisor.severity.warning">Low</span>
+                      <span class="severity warning"><span aria-hidden="true">!</span> <span data-i18n="supervisor.severity.warning">Low</span></span>
                     </div>
                     <div class="inventory-row" role="listitem">
                       <div class="medicine-icon zinc" aria-hidden="true">Zn</div>
@@ -408,7 +395,7 @@
                         <div class="meter-label"><span id="zinc-stock">72 / 100</span><b>72%</b></div>
                         <div class="meter"><i class="safe-meter" style="width: 72%"></i></div>
                       </div>
-                      <span class="severity safe" data-i18n="supervisor.severity.safe">Healthy</span>
+                      <span class="severity safe"><span aria-hidden="true">✓</span> <span data-i18n="supervisor.severity.safe">Healthy</span></span>
                     </div>
                   </div>
                 </article>

@@ -1,52 +1,35 @@
 const STORAGE_KEY = 'busho-demo-state-v1';
-const STORAGE_LANG = 'busho-lang';
 
 function t(key, vars) {
-  if (window.BUSHO_I18N && typeof window.BUSHO_I18N.t === 'function') {
-    return window.BUSHO_I18N.t(key, vars || {});
-  }
-  // Fallback to English strings if i18n not loaded
-  const fallback = {
-    'sample.routine': 'Today we saw 12 patients with fever and 8 with diarrhea. We have only 20 ORS packets left, and our iron tablets are almost finished.',
-    'sample.ambiguous': 'A few fever cases today. ORS is almost finished.',
-    'draft.symptoms': 'Reported symptoms', 'draft.orsStock': 'Remaining stock / ORS',
-    'draft.ifaStock': 'Remaining stock / iron and folic acid', 'draft.clinicalStatus': 'Clinical status',
-  };
-  return (fallback[key] || key);
+  const helper = window.BUSHO_I18N && window.BUSHO_I18N.t;
+  return typeof helper === 'function' ? helper(key, vars || {}) : key;
 }
 
-function getLocalizedSamples() {
-  const lang = window.BUSHO_I18N && window.BUSHO_I18N.getCurrentLanguage ? window.BUSHO_I18N.getCurrentLanguage() : 'en';
-  if (lang === 'en') {
-    return { routine: t('sample.routine'), ambiguous: t('sample.ambiguous') };
-  }
-  // For other languages, use English content but allow future localization
-  return { routine: t('sample.routine'), ambiguous: t('sample.ambiguous') };
+function currentLanguage() {
+  return window.BUSHO_I18N && window.BUSHO_I18N.getCurrentLanguage ? window.BUSHO_I18N.getCurrentLanguage() : 'en';
 }
 
-const samples = getLocalizedSamples();
-const routineText = samples.routine;
-const ambiguousText = samples.ambiguous;
+function localizedSample(kind) { return t(`sample.${kind}`); }
 const baseReportCount = 18;
-
 const inventory = [
-  { id: 'ors', name: 'ORS packets', short: 'ORS', stock: 20, capacity: 50, unit: 'packets', severity: 'critical' },
-  { id: 'ifa', name: 'Iron and folic acid', short: 'Fe', stock: 14, capacity: 60, unit: 'strips', severity: 'warning' },
-  { id: 'zinc', name: 'Zinc tablets', short: 'Zn', stock: 72, capacity: 100, unit: 'tablets', severity: 'safe' }
+  { id: 'ors', nameKey: 'supervisor.inventory.ors', short: 'ORS', stock: 20, capacity: 50, unitKey: 'unit.packets', severity: 'critical' },
+  { id: 'ifa', nameKey: 'supervisor.inventory.ifa', short: 'Fe', stock: 14, capacity: 60, unitKey: 'unit.strips', severity: 'warning' },
+  { id: 'zinc', nameKey: 'supervisor.inventory.zinc', short: 'Zn', stock: 72, capacity: 100, unitKey: 'unit.tablets', severity: 'safe' }
 ];
 
 const extractionList = document.getElementById('extraction-list');
 const reportInput = document.getElementById('report-input');
-const messageText = document.getElementById('message-text');
+const messageText = document.getElementById('message-text') || document.getElementById('mock-field-text');
 const draftChip = document.getElementById('draft-chip');
 const provisionalBanner = document.getElementById('provisional-banner');
 const verificationBar = document.getElementById('verification-bar');
 const feedback = document.getElementById('draft-feedback');
 const toast = document.getElementById('toast');
 const inventoryDrawer = document.getElementById('inventory-drawer');
+let lastFocusedElement = null;
 
 function initialState() {
-  return { version: 1, view: 'worker', sample: 'routine', rawReport: routineText, extracted: false, confirmed: false, draft: [], replenishment: { status: 'none', medicineId: null, source: null } };
+  return { version: 1, view: 'worker', sample: 'routine', rawReport: localizedSample('routine'), extracted: false, confirmed: false, draft: [], replenishment: { status: 'none', medicineId: null, source: null } };
 }
 
 function loadState() {
@@ -60,281 +43,109 @@ function loadState() {
     next.extracted = Boolean(stored.extracted);
     next.confirmed = Boolean(stored.confirmed && stored.extracted);
     next.draft = Array.isArray(stored.draft) ? stored.draft.filter(item => item && typeof item.id === 'string' && typeof item.value === 'string') : [];
-    if (next.extracted && !next.draft.length) {
-      next.extracted = false;
-      next.confirmed = false;
-    }
+    if (next.extracted && !next.draft.length) { next.extracted = false; next.confirmed = false; }
     const replenishment = stored.replenishment || {};
     next.replenishment = { status: ['none', 'draft', 'approved'].includes(replenishment.status) ? replenishment.status : 'none', medicineId: inventory.some(item => item.id === replenishment.medicineId) ? replenishment.medicineId : null, source: typeof replenishment.source === 'string' ? replenishment.source : null };
     return next;
-  } catch {
-    return initialState();
-  }
+  } catch { return initialState(); }
 }
 
 let state = loadState();
 
 function saveState() {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, view: state.view, sample: state.sample, rawReport: state.rawReport, extracted: state.extracted, confirmed: state.confirmed, draft: state.draft, replenishment: state.replenishment }));
-  } catch {
-    showToast('Browser-local demo state could not be saved');
-  }
+  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch { showToast(t('worker.toast.save')); }
 }
 
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-}
-
-function showToast(message) {
-  document.getElementById('toast-text').textContent = message;
-  toast.classList.add('show');
-  window.clearTimeout(showToast.timer);
-  showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 3200);
-}
+function escapeHtml(value) { return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char])); }
+function showToast(message) { document.getElementById('toast-text').textContent = message; toast.classList.add('show'); window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 3200); }
+function normalizeDigits(value) { return String(value).replace(/[०-९]/g, d => '०१२३४५६७८९'.indexOf(d)).replace(/[০-৯]/g, d => '০১২৩৪৫৬৭৮৯'.indexOf(d)).replace(/[௦-௯]/g, d => '௦௧௨௩௪௫௬௭௮௯'.indexOf(d)).replace(/[౦-౯]/g, d => '౦౧౨౩౪౫౬౭౮౯'.indexOf(d)); }
+function hasAny(text, words) { return words.some(word => text.toLowerCase().includes(word.toLowerCase())); }
+function numberBefore(text, words) { const pattern = new RegExp('(\\d+)\\s*(?:patients?|cases?|people|மாணவர்கள்|நோயாளிகள்|రోగులు|রোগী|रुग्ण)?[^.。!?]{0,24}(' + words.join('|') + ')', 'i'); const match = text.match(pattern); return match ? match[1] : ''; }
+function extractionWords(lang) { return ({
+  en: { fever: ['fever'], diarrhea: ['diarrhea'], ors: ['ors'], iron: ['iron'], almost: ['almost finished', 'nearly finished'] },
+  hi: { fever: ['बुखार'], diarrhea: ['दस्त', 'डायरिया'], ors: ['ors'], iron: ['आयरन', 'लोह'], almost: ['लगभग खत्म', 'लगभग समाप्त'] },
+  ta: { fever: ['காய்ச்சல்'], diarrhea: ['வயிற்றுப்போக்கு'], ors: ['ors'], iron: ['இரும்பு'], almost: ['கிட்டத்தட்ட முடிந்த', 'முடிந்துவிட்ட'] },
+  te: { fever: ['జ్వరం'], diarrhea: ['విరేచనాలు'], ors: ['ors'], iron: ['ఇనుము'], almost: ['దాదాపు ముగి', 'ముగిసింది'] },
+  bn: { fever: ['জ্বর'], diarrhea: ['ডায়রিয়া', 'ডায়রিয়া'], ors: ['ors'], iron: ['আয়রন', 'লোহা'], almost: ['প্রায় শেষ', 'শেষ'] },
+  mr: { fever: ['ताप', 'तापाचे'], diarrhea: ['अतिसार', 'जुलाब'], ors: ['ors'], iron: ['लोह', 'आयर्न'], almost: ['जवळजवळ संपले', 'संपले'] }
+}[lang] || {}); }
 
 function setSample(type) {
-  state.sample = type === 'ambiguous' ? 'ambiguous' : 'routine';
-  state.rawReport = state.sample === 'ambiguous' ? ambiguousText : routineText;
-  state.extracted = false;
-  state.confirmed = false;
-  state.draft = [];
-  reportInput.value = state.rawReport;
-  messageText.textContent = state.rawReport;
-  renderAll();
-  saveState();
-  showToast(t('worker.toast.routine') || 'Routine sample loaded');
+  state.sample = type === 'ambiguous' ? 'ambiguous' : 'routine'; state.rawReport = localizedSample(state.sample); state.extracted = false; state.confirmed = false; state.draft = [];
+  reportInput.value = state.rawReport; messageText.textContent = state.rawReport; renderAll(); saveState(); showToast(t(`worker.toast.${state.sample}`));
 }
 
 function makeExtraction() {
-  const report = reportInput.value.trim();
-  if (!report) {
-    showToast('Enter a field report before extracting');
-    reportInput.focus();
-    return;
-  }
-  state.rawReport = report;
-  state.sample = /few fever|almost finished/i.test(report) && !/\d+\s+patients?\s+with\s+fever/i.test(report) ? 'ambiguous' : 'routine';
-  const fever = report.match(/(\d+)\s+patients?\s+with\s+fever/i);
-  const diarrhea = report.match(/(\d+)\s+with\s+diarrhea/i);
-  const ors = report.match(/(\d+)\s+ORS/i);
-  const ambiguous = state.sample === 'ambiguous';
+  const digits = value => String(value).replace(/[०-९]/g, d => '०१२३४५६७८९'.indexOf(d)).replace(/[০-৯]/g, d => '০১২৩৪৫৬৭৮৯'.indexOf(d)).replace(/[௦-௯]/g, d => '௦௧௨௩௪௫௬௭௮௯'.indexOf(d)).replace(/[౦-౯]/g, d => '౦౧౨౩౪౫౬౭౮౯'.indexOf(d));
+  const report = digits(reportInput.value.trim());
+  const lang = /आणि|राहिले|जवळजवळ|संपले/.test(report) ? 'mr' : /[\u0900-\u097f]/.test(report) ? 'hi' : /[\u0b80-\u0bff]/.test(report) ? 'ta' : /[\u0c00-\u0c7f]/.test(report) ? 'te' : /[\u0980-\u09ff]/.test(report) ? 'bn' : 'en';
+  const words = ({ en: { fever: ['fever'], diarrhea: ['diarrhea'], ors: ['ors'], iron: ['iron'], almost: ['almost finished', 'nearly finished'] }, hi: { fever: ['बुखार'], diarrhea: ['दस्त', 'डायरिया'], ors: ['ors'], iron: ['आयरन', 'लोह'], almost: ['लगभग खत्म', 'लगभग समाप्त'] }, ta: { fever: ['காய்ச்சல்'], diarrhea: ['வயிற்றுப்போக்கு'], ors: ['ors'], iron: ['இரும்பு'], almost: ['கிட்டத்தட்ட முடிந்த', 'முடிந்துவிட்ட'] }, te: { fever: ['జ్వరం'], diarrhea: ['విరేచనాలు'], ors: ['ors'], iron: ['ఇనుము'], almost: ['దాదాపు ముగి', 'ముగిసింది'] }, bn: { fever: ['জ্বর'], diarrhea: ['ডায়রিয়া', 'ডায়রিয়া'], ors: ['ors'], iron: ['আয়রন', 'লোহা'], almost: ['প্রায় শেষ', 'শেষ'] }, mr: { fever: ['ताप', 'तापाचे'], diarrhea: ['अतिसार', 'जुलाब'], ors: ['ors'], iron: ['लोह', 'आयर्न'], almost: ['जवळजवळ संपले', 'संपले'] } }[lang] || { fever: ['fever'], diarrhea: ['diarrhea'], ors: ['ors'], iron: ['iron'], almost: ['almost finished'] });
+  const numberFor = (text, list) => { for (const word of list) { const index = text.toLowerCase().indexOf(word.toLowerCase()); if (index >= 0) { const before = text.slice(Math.max(0, index - 28), index); const after = text.slice(index, index + 28); const left = before.match(/\d+/g); const right = after.match(/\d+/); const leftValue = left && left.length ? left[left.length - 1] : ''; const rightValue = right ? right[0] : ''; if (leftValue && word.toLowerCase() !== 'ors') return leftValue; if (rightValue) return rightValue; if (leftValue) return leftValue; } } return ''; };
+  if (!report) { showToast(t('worker.toast.empty')); reportInput.focus(); return; }
+  const fever = numberFor(report, words.fever || ['fever']);
+  const diarrhea = numberFor(report, words.diarrhea || ['diarrhea']);
+  const ors = numberFor(report, words.ors || ['ors']) || (report.match(/(\d+)\s*(?:packets?|பாக்கெட்டுகள்|ప్యాకెట్లు|প্যাকেট|पॅकेट)/i) || [])[1] || '';
+  const numbers = report.match(/\d+/g) || [];
+  const feverValue = fever || numbers[0] || '';
+  const diarrheaValue = diarrhea || numbers[1] || '';
+  const orsValue = ors || numbers[2] || '';
+  const includesAny = list => list.some(word => report.toLowerCase().includes(word.toLowerCase()));
+  const ironMentioned = includesAny(words.iron || ['iron']);
+  const ironAlmost = includesAny(words.almost || ['almost finished']);
+  const routine = numbers.length >= 3;
+  state.rawReport = report; state.sample = routine ? 'routine' : 'ambiguous';
   state.draft = [
-    { id: 'symptoms', kind: 'symptom', icon: 'SYM', label: 'Reported symptoms', value: fever && diarrhea ? `Fever: ${fever[1]} mentions; diarrhea: ${diarrhea[1]} mentions` : ambiguous ? 'Fever mentions' : 'Symptoms mentioned; count unclear', confidence: fever && diarrhea ? 'high' : 'review', note: fever && diarrhea ? 'High confidence' : 'Clarify before confirmation' },
-    { id: 'ors-stock', kind: 'stock', icon: 'ORS', label: 'Remaining stock / ORS', value: ors ? `${ors[1]} packets` : ambiguous ? 'Almost finished' : 'Quantity not stated', confidence: ors ? 'high' : 'review', note: ors ? 'High confidence' : 'Quantity needed' },
-    { id: 'ifa-stock', kind: 'stock', icon: 'Fe', label: 'Remaining stock / iron and folic acid', value: /iron.*almost finished/i.test(report) ? 'Almost finished' : 'Quantity not stated', confidence: 'review', note: 'Quantity needed' },
-    { id: 'clinical-status', kind: 'symptom', icon: 'NOTE', label: 'Clinical status', value: 'Reported trend only; no diagnosis', confidence: 'high', note: 'Safe by design', readOnly: true }
+    { id: 'symptoms', kind: 'symptom', icon: 'SYM', label: t('draft.symptoms'), value: feverValue && diarrheaValue ? t('draft.symptomsValue', { fever: feverValue, diarrhea: diarrheaValue }) : t('draft.symptomsUnclear'), confidence: feverValue && diarrheaValue ? 'high' : 'review', note: feverValue && diarrheaValue ? t('draft.confidence.high') : t('draft.needsClarify') },
+    { id: 'ors-stock', kind: 'stock', icon: 'ORS', label: t('draft.orsStock'), value: orsValue ? `${orsValue} ${t('unit.packets')}` : t('draft.quantityUnclear'), confidence: orsValue ? 'high' : 'review', note: orsValue ? t('draft.confidence.high') : t('draft.quantityNeeded') },
+    { id: 'ifa-stock', kind: 'stock', icon: 'Fe', label: t('draft.ifaStock'), value: ironAlmost ? t('draft.almostFinished') : t('draft.quantityUnclear'), confidence: ironAlmost ? 'high' : 'review', note: ironAlmost ? t('draft.confidence.high') : t('draft.quantityNeeded') },
+    { id: 'clinical-status', kind: 'symptom', icon: 'NOTE', label: t('draft.clinicalStatus'), value: t('draft.clinicalValue'), confidence: 'high', note: t('draft.safeByDesign'), readOnly: true }
   ];
-  state.extracted = true;
-  state.confirmed = false;
-  state.replenishment = { status: 'none', medicineId: null, source: null };
-  renderAll();
-  saveState();
-  showToast(t('worker.toast.extract') || 'Draft created. Review before confirming');
+  state.extracted = true; state.confirmed = false; state.replenishment = { status: 'none', medicineId: null, source: null }; renderAll(); saveState(); showToast(t(`worker.toast.extract${routine ? '' : 'Ambiguous'}`));
 }
 
 function renderExtraction() {
-  if (!state.extracted || !state.draft.length) {
-    extractionList.innerHTML = '<div class="empty-extraction"><div class="empty-orbit">Draft</div><strong>Run extraction to create a review draft</strong><span>Fields stay provisional until you confirm them.</span></div>';
-    return;
-  }
-  extractionList.innerHTML = state.draft.map(item => {
-    const confidence = state.confirmed && item.confidence === 'review' ? 'high' : item.confidence;
-    const note = state.confirmed && item.confidence === 'review' ? 'Worker checked' : item.note;
-    return `<div class="extraction-item" data-field-id="${escapeHtml(item.id)}"><div class="item-icon ${escapeHtml(item.kind)}">${escapeHtml(item.icon)}</div><div class="field-copy"><label class="item-label" for="field-${escapeHtml(item.id)}">${escapeHtml(item.label)}</label><span class="field-source">Extracted from the report</span><input class="field-edit" id="field-${escapeHtml(item.id)}" value="${escapeHtml(item.value)}" ${item.readOnly || state.confirmed ? 'readonly' : ''} aria-label="${escapeHtml(item.label)}" /></div><span class="confidence ${escapeHtml(confidence)}">${escapeHtml(note)}</span></div>`;
-  }).join('');
-  extractionList.querySelectorAll('.field-edit').forEach(input => input.addEventListener('input', event => {
-    const item = state.draft.find(entry => entry.id === event.target.id.replace('field-', ''));
-    if (item) item.value = event.target.value;
-    event.target.classList.remove('invalid');
-    feedback.textContent = '';
-    saveState();
-  }));
+  if (!state.extracted || !state.draft.length) { extractionList.innerHTML = `<div class="empty-extraction"><div class="empty-orbit">${escapeHtml(t('worker.draft'))}</div><strong>${escapeHtml(t('worker.emptyTitle'))}</strong><span>${escapeHtml(t('worker.emptyDesc'))}</span></div>`; return; }
+  extractionList.innerHTML = state.draft.map(item => { const confidence = state.confirmed && item.confidence === 'review' ? 'high' : item.confidence; const note = state.confirmed && item.confidence === 'review' ? t('draft.confidence.workerChecked') : item.note; return `<div class="extraction-item" data-field-id="${escapeHtml(item.id)}"><div class="item-icon ${escapeHtml(item.kind)}">${escapeHtml(item.icon)}</div><div class="field-copy"><label class="item-label" for="field-${escapeHtml(item.id)}">${escapeHtml(item.label)}</label><span class="field-source">${escapeHtml(t('draft.source'))}</span><input class="field-edit" id="field-${escapeHtml(item.id)}" value="${escapeHtml(item.value)}" ${item.readOnly || state.confirmed ? 'readonly' : ''} aria-label="${escapeHtml(item.label)}" /></div><span class="confidence ${escapeHtml(confidence)}">${escapeHtml(note)}</span></div>`; }).join('');
+  extractionList.querySelectorAll('.field-edit').forEach(input => input.addEventListener('input', event => { const item = state.draft.find(entry => entry.id === event.target.id.replace('field-', '')); if (item) item.value = event.target.value; event.target.classList.remove('invalid'); feedback.textContent = ''; saveState(); }));
 }
 
 function renderDraftStatus() {
   draftChip.className = 'draft-chip';
-  if (!state.extracted) {
-    draftChip.textContent = 'Awaiting extraction';
-    provisionalBanner.innerHTML = '<span class="banner-icon">i</span><div><strong>AI-extracted information is provisional</strong><span>Review each field. Nothing is committed until you confirm.</span></div>';
-    verificationBar.classList.add('hidden');
-    return;
-  }
-  if (state.confirmed) {
-    draftChip.textContent = 'Verified by worker';
-    draftChip.classList.add('confirmed');
-    provisionalBanner.innerHTML = '<span class="banner-icon" style="border-color:#4ebaa5;color:#087e6d">OK</span><div><strong style="color:#087e6d">Verified operational record</strong><span style="color:#087e6d">Confirmed by Anita Singh in this browser-local demo.</span></div>';
-    verificationBar.classList.add('hidden');
-    return;
-  }
-  draftChip.textContent = 'Needs verification';
-  draftChip.classList.add('ready');
-  provisionalBanner.innerHTML = '<span class="banner-icon">!</span><div><strong>Provisional draft needs human verification</strong><span>Flagged fields must be clarified before the record can be confirmed.</span></div>';
-  verificationBar.classList.remove('hidden');
-  feedback.textContent = '';
+  if (!state.extracted) { draftChip.textContent = t('worker.draftAwaiting'); provisionalBanner.innerHTML = `<span class="banner-icon">i</span><div><strong>${escapeHtml(t('worker.provisionalTitle'))}</strong><span>${escapeHtml(t('worker.provisionalDesc'))}</span></div>`; verificationBar.classList.add('hidden'); return; }
+  if (state.confirmed) { draftChip.textContent = t('worker.draftVerified'); draftChip.classList.add('confirmed'); provisionalBanner.innerHTML = `<span class="banner-icon">OK</span><div><strong>${escapeHtml(t('worker.provisionalVerifiedTitle'))}</strong><span>${escapeHtml(t('worker.provisionalVerified'))}</span></div>`; verificationBar.classList.add('hidden'); return; }
+  draftChip.textContent = t('worker.draftNeedsVerify'); draftChip.classList.add('ready'); provisionalBanner.innerHTML = `<span class="banner-icon">!</span><div><strong>${escapeHtml(t('worker.provisionalFlaggedTitle'))}</strong><span>${escapeHtml(t('worker.provisionalFlagged'))}</span></div>`; verificationBar.classList.remove('hidden'); feedback.textContent = '';
 }
 
-function validationForDraft() {
-  return state.draft.filter(item => item.confidence === 'review' && (!item.value.trim() || /^(fever mentions|symptoms mentioned; count unclear|almost finished|quantity not stated|quantity needed)$/i.test(item.value.trim())));
-}
+function validationForDraft() { return state.draft.filter(item => item.confidence === 'review' && (!item.value.trim() || item.id === 'symptoms' && item.value === t('draft.symptomsUnclear') || item.id !== 'symptoms' && item.id !== 'clinical-status' && item.value === t('draft.quantityUnclear'))); }
+function confirmReport() { if (!state.extracted) return showToast(t('worker.toast.extractFirst')); const invalid = validationForDraft(); extractionList.querySelectorAll('.field-edit').forEach(input => input.classList.remove('invalid')); if (invalid.length) { feedback.textContent = `${t('draft.needsClarify')}: ${invalid.map(item => item.label).join(', ')}.`; invalid.forEach(item => document.getElementById(`field-${item.id}`)?.classList.add('invalid')); document.getElementById(`field-${invalid[0].id}`)?.focus(); showToast(t('worker.toast.validate')); return; } state.confirmed = true; renderAll(); saveState(); document.getElementById('post-confirm')?.classList.remove('hidden'); showToast(t('worker.toast.confirm')); }
+function editFields() { if (!state.extracted) return; const first = extractionList.querySelector('.field-edit:not([readonly])') || extractionList.querySelector('.field-edit'); first?.focus(); first?.select(); showToast(t('worker.toast.edit')); }
+function renderDashboard() { const pending = state.confirmed ? 0 : 1; document.getElementById('reports-count').textContent = String(baseReportCount + (state.confirmed ? 1 : 0)); document.getElementById('reports-trend').textContent = t(state.confirmed ? 'supervisor.metric.trend.positive' : 'supervisor.metric.trend.baseline'); document.getElementById('pending-count').textContent = String(pending); document.getElementById('pending-trend').textContent = t(pending ? 'supervisor.metric.trend.warning' : 'supervisor.metric.trend.allReviewed'); document.getElementById('pending-trend').className = `metric-trend ${pending ? 'warning' : 'positive'}`; const badge = document.getElementById('admin-badge'); if (badge) badge.textContent = String(pending); }
+function renderAdminResponse() { const response = document.getElementById('admin-response'); const approve = document.getElementById('approve-replenishment'); if (!state.confirmed) { response.classList.add('hidden'); return; } response.classList.remove('hidden'); const title = document.getElementById('admin-action-title'); const copy = document.getElementById('admin-action-copy'); const status = document.getElementById('admin-action-status'); const medicine = inventory.find(item => item.id === state.replenishment.medicineId); if (state.replenishment.status === 'approved' && medicine) { title.textContent = t('supervisor.responseTitleApproved'); copy.textContent = t('supervisor.responseCopyApproved', { name: t(medicine.nameKey) }); status.textContent = t('supervisor.statusApproved'); approve.disabled = true; approve.textContent = t('supervisor.approvedBtn'); } else if (state.replenishment.status === 'draft' && medicine) { title.textContent = t('supervisor.responseTitleDraft'); copy.textContent = t('supervisor.responseCopyDraft', { name: t(medicine.nameKey), qty: medicine.capacity - medicine.stock, unit: t(medicine.unitKey), source: state.replenishment.source }); status.textContent = t('supervisor.statusPending'); approve.disabled = false; approve.textContent = t('supervisor.approveBtn'); } else { title.textContent = t('supervisor.responseTitle'); copy.textContent = t('supervisor.responseCopy'); status.textContent = t('supervisor.statusAwaiting'); approve.disabled = true; approve.textContent = t('supervisor.approveBtn'); } }
+function renderInventory() { const list = document.getElementById('inventory-detail-list'); list.innerHTML = inventory.map(item => `<div class="inventory-detail-row"><div><strong>${escapeHtml(t(item.nameKey))}</strong><span>${item.stock} / ${item.capacity} ${escapeHtml(t(item.unitKey))} · ${escapeHtml(t(`supervisor.severity.${item.severity}`))}</span></div><button class="secondary-btn inventory-draft" type="button" data-medicine="${item.id}" ${item.severity === 'safe' ? 'disabled' : ''}>${escapeHtml(t(item.severity === 'safe' ? 'supervisor.drawerNoAction' : 'supervisor.drawerDraftBtn'))}</button></div>`).join(''); list.querySelectorAll('.inventory-draft').forEach(button => button.addEventListener('click', () => createReplenishmentDraft(button.dataset.medicine))); }
+function openInventory() { lastFocusedElement = document.activeElement; inventoryDrawer.classList.remove('hidden'); renderInventory(); document.getElementById('close-inventory').focus(); }
+function closeInventory() { inventoryDrawer.classList.add('hidden'); (lastFocusedElement || document.getElementById('view-inventory')).focus(); }
+function createReplenishmentDraft(medicineId) { const medicine = inventory.find(item => item.id === medicineId); if (!medicine || medicine.severity === 'safe') return; state.replenishment = { status: 'draft', medicineId, source: state.confirmed ? t('supervisor.sourceVerified') : t('supervisor.sourceSynthetic') }; renderAdminResponse(); saveState(); closeInventory(); showToast(t('supervisor.toast.draftCreated', { name: t(medicine.nameKey) })); }
+function approveReplenishment() { if (state.replenishment.status !== 'draft') return; state.replenishment.status = 'approved'; renderAdminResponse(); saveState(); showToast(t('supervisor.toast.approved')); }
+function switchView(view, notify = true) { state.view = view === 'admin' ? 'admin' : 'worker'; document.querySelectorAll('.role-btn').forEach(button => { const active = button.dataset.view === state.view; button.classList.toggle('active', active); button.setAttribute('aria-selected', String(active)); }); document.querySelectorAll('.view-panel').forEach(panel => { const active = panel.id === `${state.view}-panel`; panel.classList.toggle('active', active); panel.hidden = !active; }); saveState(); if (notify && state.view === 'admin' && !state.confirmed) showToast(t('supervisor.toast.confirmed')); }
+function renderAll() { reportInput.value = state.rawReport; messageText.textContent = state.rawReport || t('worker.emptyReport'); renderExtraction(); renderDraftStatus(); renderDashboard(); renderAdminResponse(); switchView(state.view, false); }
 
-function confirmReport() {
-  if (!state.extracted) return showToast('Extract a draft before confirming');
-  const invalid = validationForDraft();
-  extractionList.querySelectorAll('.field-edit').forEach(input => input.classList.remove('invalid'));
-  if (invalid.length) {
-    feedback.textContent = `Clarify before confirming: ${invalid.map(item => item.label).join(', ')}.`;
-    invalid.forEach(item => document.getElementById(`field-${item.id}`)?.classList.add('invalid'));
-    document.getElementById(`field-${invalid[0].id}`)?.focus();
-    showToast('Some extracted fields still need clarification');
-    return;
-  }
-  state.confirmed = true;
-  renderAll();
-  saveState();
-  document.getElementById('admin-response').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  showToast('Verified report saved in browser-local demo state');
-}
-
-function editFields() {
-  if (!state.extracted) return;
-  const first = extractionList.querySelector('.field-edit:not([readonly])') || extractionList.querySelector('.field-edit');
-  first?.focus();
-  first?.select();
-  showToast('Review the extracted fields, then confirm the corrected draft');
-}
-
-function renderDashboard() {
-  const pending = state.confirmed ? 0 : 1;
-  document.getElementById('reports-count').textContent = String(baseReportCount + (state.confirmed ? 1 : 0));
-  document.getElementById('reports-trend').textContent = state.confirmed ? 'Includes current verified report' : 'Synthetic baseline';
-  document.getElementById('pending-count').textContent = String(pending);
-  document.getElementById('pending-trend').textContent = pending ? 'Needs worker review' : 'All current reports reviewed';
-  document.getElementById('pending-trend').className = `metric-trend ${pending ? 'warning' : 'positive'}`;
-  document.getElementById('admin-badge').textContent = String(pending);
-}
-
-function renderAdminResponse() {
-  const response = document.getElementById('admin-response');
-  const approve = document.getElementById('approve-replenishment');
-  if (!state.confirmed) {
-    response.classList.add('hidden');
-    return;
-  }
-  response.classList.remove('hidden');
-  const title = document.getElementById('admin-action-title');
-  const copy = document.getElementById('admin-action-copy');
-  const status = document.getElementById('admin-action-status');
-  const medicine = inventory.find(item => item.id === state.replenishment.medicineId);
-  if (state.replenishment.status === 'approved' && medicine) {
-    title.textContent = 'Replenishment draft approved in demo';
-    copy.textContent = `${medicine.name} / proposed replenishment quantity recorded for review. No purchase order was placed.`;
-    status.textContent = 'Approved in demo';
-    approve.disabled = true;
-    approve.textContent = 'Draft approved';
-  } else if (state.replenishment.status === 'draft' && medicine) {
-    title.textContent = 'Replenishment draft ready for approval';
-    copy.textContent = `${medicine.name} / proposed replenishment to ${medicine.capacity - medicine.stock} ${medicine.unit}. Source: ${state.replenishment.source}.`;
-    status.textContent = 'Pending approval';
-    approve.disabled = false;
-    approve.textContent = 'Approve draft';
-  } else {
-    title.textContent = 'Verified report available for admin review';
-    copy.textContent = 'Open inventory and choose a low-stock item to create a replenishment draft. No purchase order is created by this demo.';
-    status.textContent = 'Awaiting admin action';
-    approve.disabled = true;
-    approve.textContent = 'Approve draft';
-  }
-}
-
-function renderInventory() {
-  const list = document.getElementById('inventory-detail-list');
-  list.innerHTML = inventory.map(item => `<div class="inventory-detail-row"><div><strong>${escapeHtml(item.name)}</strong><span>${item.stock} / ${item.capacity} ${escapeHtml(item.unit)} · ${item.severity === 'safe' ? 'Healthy' : 'Needs attention'}</span></div><button class="secondary-btn inventory-draft" type="button" data-medicine="${escapeHtml(item.id)}" ${item.severity === 'safe' ? 'disabled' : ''}>${item.severity === 'safe' ? 'No action needed' : 'Draft replenishment'}</button></div>`).join('');
-  list.querySelectorAll('.inventory-draft').forEach(button => button.addEventListener('click', () => createReplenishmentDraft(button.dataset.medicine)));
-}
-
-function openInventory() {
-  inventoryDrawer.classList.remove('hidden');
-  renderInventory();
-  document.getElementById('close-inventory').focus();
-}
-
-function closeInventory() {
-  inventoryDrawer.classList.add('hidden');
-  document.getElementById('view-inventory').focus();
-}
-
-function createReplenishmentDraft(medicineId) {
-  const medicine = inventory.find(item => item.id === medicineId);
-  if (!medicine || medicine.severity === 'safe') return;
-  state.replenishment = { status: 'draft', medicineId, source: state.confirmed ? 'verified worker report' : 'synthetic inventory snapshot' };
-  renderAdminResponse();
-  saveState();
-  closeInventory();
-  showToast(`${medicine.name} replenishment draft created for admin approval`);
-}
-
-function approveReplenishment() {
-  if (state.replenishment.status !== 'draft') return;
-  state.replenishment.status = 'approved';
-  renderAdminResponse();
-  saveState();
-  showToast('Draft marked approved in demo. No purchase order was placed');
-}
-
-function switchView(view, notify = true) {
-  state.view = view === 'admin' ? 'admin' : 'worker';
-  document.querySelectorAll('.role-btn').forEach(button => {
-    const active = button.dataset.view === state.view;
-    button.classList.toggle('active', active);
-    button.setAttribute('aria-selected', String(active));
+document.querySelectorAll('.role-btn').forEach(button => {
+  button.addEventListener('click', () => switchView(button.dataset.view));
+  button.addEventListener('keydown', event => {
+    if (!['ArrowRight', 'ArrowLeft'].includes(event.key)) return;
+    const tabs = [...document.querySelectorAll('.role-btn')];
+    const next = tabs[(tabs.indexOf(button) + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+    event.preventDefault();
+    next.focus();
+    switchView(next.dataset.view);
   });
-  document.querySelectorAll('.view-panel').forEach(panel => panel.classList.toggle('active', panel.id === `${state.view}-view`));
-  saveState();
-  if (notify && state.view === 'admin' && !state.confirmed) showToast('Admin view shows one signal awaiting worker confirmation');
-}
-
-function renderAll() {
-  reportInput.value = state.rawReport;
-  messageText.textContent = state.rawReport || 'No report entered yet.';
-  renderExtraction();
-  renderDraftStatus();
-  renderDashboard();
-  renderAdminResponse();
-  switchView(state.view, false);
-}
-
-document.querySelectorAll('.role-btn').forEach(button => button.addEventListener('click', () => switchView(button.dataset.view)));
+});
 document.querySelectorAll('.quick-btn').forEach(button => button.addEventListener('click', () => setSample(button.dataset.sample)));
-document.getElementById('extract-btn').addEventListener('click', makeExtraction);
-document.getElementById('confirm-btn').addEventListener('click', confirmReport);
-document.getElementById('edit-btn').addEventListener('click', editFields);
-document.getElementById('view-inventory').addEventListener('click', openInventory);
-document.getElementById('close-inventory').addEventListener('click', closeInventory);
-document.getElementById('approve-replenishment').addEventListener('click', approveReplenishment);
-document.getElementById('reset-demo').addEventListener('click', () => {
-  try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* safe demo fallback */ }
-  state = initialState();
-  closeInventory();
-  renderAll();
-  showToast('Synthetic demo data reset');
-});
-document.getElementById('profile-control').addEventListener('click', () => showToast('Authentication is not implemented in this demo'));
-document.querySelector('.voice-button').addEventListener('click', () => showToast('Voice transcription is not implemented. Use text input or a sample report'));
-reportInput.addEventListener('input', () => {
-  state.rawReport = reportInput.value;
-  messageText.textContent = reportInput.value || 'No report entered yet.';
-  state.extracted = false;
-  state.confirmed = false;
-  state.draft = [];
-  renderDraftStatus();
-  renderDashboard();
-  renderAdminResponse();
-  saveState();
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && !inventoryDrawer.classList.contains('hidden')) closeInventory();
-});
-
-renderInventory();
-renderAll();
+document.getElementById('extract-btn').addEventListener('click', makeExtraction); document.getElementById('confirm-btn').addEventListener('click', confirmReport); document.getElementById('edit-btn').addEventListener('click', editFields); document.getElementById('view-inventory').addEventListener('click', openInventory); document.getElementById('close-inventory').addEventListener('click', closeInventory); document.getElementById('approve-replenishment').addEventListener('click', approveReplenishment);
+document.getElementById('reset-demo').addEventListener('click', () => { try { window.localStorage.removeItem(STORAGE_KEY); } catch {} state = initialState(); closeInventory(); renderAll(); showToast(t('footer.reset')); });
+document.querySelector('.voice-button').addEventListener('click', () => showToast(t('worker.toast.voice')));
+reportInput.addEventListener('input', () => { state.rawReport = reportInput.value; messageText.textContent = reportInput.value || t('worker.emptyReport'); state.extracted = false; state.confirmed = false; state.draft = []; renderDraftStatus(); renderDashboard(); renderAdminResponse(); saveState(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && !inventoryDrawer.classList.contains('hidden')) closeInventory(); if (event.key === 'Tab' && !inventoryDrawer.classList.contains('hidden')) { const focusable = [...inventoryDrawer.querySelectorAll('button:not([disabled]), [href], input, select, textarea')]; if (!focusable.length) return; if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1).focus(); } else if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0].focus(); } } });
+if (window.BUSHO_I18N && window.BUSHO_I18N.onLanguageChange) window.BUSHO_I18N.onLanguageChange(() => { if (!state.extracted) state.rawReport = localizedSample(state.sample); renderAll(); renderInventory(); });
+renderInventory(); renderAll();
