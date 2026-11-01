@@ -470,9 +470,9 @@
     localStorage.setItem('busho-lang', lang);
 
     const locale = locales[lang];
-    document.title = `${locale['app.name']} | ${locale['hero.headline'].slice(0, 50)}...`;
+    document.title = `${westernizeDigits(locale['app.name'])} | ${westernizeDigits(locale['hero.headline'].slice(0, 50))}...`;
     const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute('content', locale['hero.subtext']);
+    if (metaDesc) metaDesc.setAttribute('content', westernizeDigits(locale['hero.subtext']));
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
@@ -482,13 +482,13 @@
             const attrs = el.getAttribute('data-i18n-attr').split(',');
             attrs.forEach(attr => {
               const [name, i18nKey] = attr.split(':');
-              if (locale[i18nKey]) el.setAttribute(name, locale[i18nKey]);
+              if (locale[i18nKey]) el.setAttribute(name, westernizeDigits(locale[i18nKey]));
             });
           } else if (el.placeholder !== undefined && locale[key]) {
-            el.placeholder = locale[key];
+            el.placeholder = westernizeDigits(locale[key]);
           }
         } else {
-          el.textContent = locale[key];
+          el.textContent = westernizeDigits(locale[key]);
         }
       }
     });
@@ -496,16 +496,21 @@
     document.querySelectorAll('[data-i18n-attr]').forEach(el => {
       el.getAttribute('data-i18n-attr').split(',').forEach(attr => {
         const [name, i18nKey] = attr.split(':');
-        if (locale[i18nKey]) el.setAttribute(name, locale[i18nKey]);
+        if (locale[i18nKey]) el.setAttribute(name, westernizeDigits(locale[i18nKey]));
       });
     });
 
     document.querySelectorAll('[data-i18n-html]').forEach(el => {
       const key = el.getAttribute('data-i18n-html');
-      if (locale[key]) el.innerHTML = locale[key];
+      if (locale[key]) el.innerHTML = westernizeDigits(locale[key]);
     });
 
     listeners.forEach(fn => fn(lang, locale));
+  }
+
+  function westernizeDigits(value) {
+    const native = '०१२३४५६७८९০১২৩৪৫৬৭৮৯௦௧௨௩௪௫௬௭௮௯౦౧౨౩౪౫౬౭౮౯';
+    return String(value).replace(/[०-९০-৯௦-௯౦-౯]/g, digit => String(native.indexOf(digit) % 10));
   }
 
   function t(key, vars = {}) {
@@ -515,7 +520,7 @@
     Object.entries(vars).forEach(([k, v]) => {
       str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
     });
-    return str;
+    return westernizeDigits(str);
   }
 
   function onLanguageChange(fn) {
