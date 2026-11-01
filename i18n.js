@@ -74,7 +74,7 @@
       'worker.toast.confirm': 'Verified report saved in browser-local demo state',
       'worker.toast.edit': 'Review the extracted fields, then confirm the corrected draft',
       'worker.toast.validate': 'Some extracted fields still need clarification',
-      'worker.toast.voice': 'Voice transcription is not implemented. Use text input or a sample report',
+      'worker.toast.voice': 'Voice input uses your browser\'s speech recognition service, which may send audio to the browser vendor. BUSHO does not store audio. Don\'t say names, phone numbers or diagnoses.',
       'voice.demo': 'Voice input (demo)',
       'voice.listening': 'Listening...',
       'voice.transcribed': 'Transcript added',

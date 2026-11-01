@@ -24,7 +24,7 @@ Complements `DEMO_SCENARIOS.md` (step lists) with spoken lines, timing and hones
 
 - Extraction is **rule-based and simulated** in this prototype.
 - All data is **synthetic**.
-- Voice input is a **demo control**; transcription is not implemented.
+- Voice input uses the browser's native Web Speech API; the browser or its vendor may process audio remotely; BUSHO does not store audio recordings; manual text entry remains the fallback; availability depends on browser support, microphone permission and network.
 - No live integrations, no real orders, not field-validated.
 
 ## Likely questions
