@@ -10,6 +10,13 @@ function currentLanguage() {
 }
 
 function localizedSample(kind) { return t(`sample.${kind}`); }
+function updateReportInput(value) {
+  state.rawReport = value;
+  reportInput.value = value;
+  messageText.textContent = value || t('worker.emptyReport');
+  state.extracted = false; state.confirmed = false; state.draft = [];
+  renderDraftStatus(); renderDashboard(); renderAdminResponse(); saveState();
+}
 const baseReportCount = 18;
 const inventory = [
   { id: 'ors', nameKey: 'supervisor.inventory.ors', short: 'ORS', stock: 20, capacity: 50, unitKey: 'unit.packets', severity: 'critical' },
@@ -144,8 +151,117 @@ document.querySelectorAll('.role-btn').forEach(button => {
 document.querySelectorAll('.quick-btn').forEach(button => button.addEventListener('click', () => setSample(button.dataset.sample)));
 document.getElementById('extract-btn').addEventListener('click', makeExtraction); document.getElementById('confirm-btn').addEventListener('click', confirmReport); document.getElementById('edit-btn').addEventListener('click', editFields); document.getElementById('view-inventory').addEventListener('click', openInventory); document.getElementById('close-inventory').addEventListener('click', closeInventory); document.getElementById('approve-replenishment').addEventListener('click', approveReplenishment);
 document.getElementById('reset-demo').addEventListener('click', () => { try { window.localStorage.removeItem(STORAGE_KEY); } catch {} state = initialState(); closeInventory(); renderAll(); showToast(t('footer.reset')); });
-document.querySelector('.voice-button').addEventListener('click', () => showToast(t('worker.toast.voice')));
-reportInput.addEventListener('input', () => { state.rawReport = reportInput.value; messageText.textContent = reportInput.value || t('worker.emptyReport'); state.extracted = false; state.confirmed = false; state.draft = []; renderDraftStatus(); renderDashboard(); renderAdminResponse(); saveState(); });
+// Voice input using native Web Speech API
+let recognition = null;
+let recordingTimer = null;
+let recordingSeconds = 0;
+let isRecording = false;
+let isStopping = false;
+let currentSessionId = 0;
+
+function startVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showToast(t('voice.unsupported') || 'Speech recognition not supported in this browser');
+    return;
+  }
+  if (isRecording || isStopping) { try { recognition.stop(); } catch (e) {} return; }
+  recognition = new SpeechRecognition();
+  isRecording = true;
+  const sessionId = ++currentSessionId;
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+  const lang = currentLanguage();
+  const speechLang = lang === 'hi' ? 'hi-IN' : lang === 'ta' ? 'ta-IN' : lang === 'te' ? 'te-IN' : lang === 'bn' ? 'bn-IN' : lang === 'mr' ? 'mr-IN' : 'en-IN';
+  recognition.lang = speechLang;
+  const btn = document.querySelector('.voice-button');
+  btn.classList.add('recording');
+  btn.setAttribute('aria-label', t('voice.listening'));
+  recordingSeconds = 0;
+  if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s';
+  showToast(t('voice.listening') || 'Listening...');
+  recognition.onstart = () => {
+    if (sessionId !== currentSessionId) return;
+    isRecording = true; recordingSeconds = 0;
+    const btn = document.querySelector('.voice-button');
+    btn.classList.add('recording');
+    btn.setAttribute('aria-label', t('voice.listening'));
+    if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s';
+    recordingTimer = setInterval(() => { recordingSeconds += 1; if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = recordingSeconds + 's'; }, 1000);
+  };
+  recognition.onresult = (event) => {
+    if (sessionId !== currentSessionId) return;
+    let finalTranscript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
+    }
+    if (finalTranscript.trim()) {
+      const currentText = reportInput.value.trim();
+      const newText = (currentText ? currentText + ' ' : '') + finalTranscript.trim().replace(/\s+/g, ' ');
+      updateReportInput(newText);
+      showToast(t('voice.transcribed') || 'Transcript added');
+    }
+  };
+  recognition.onerror = (event) => {
+    if (sessionId !== currentSessionId) return;
+    isStopping = true;
+    clearInterval(recordingTimer);
+    recordingTimer = null;
+    isRecording = false;
+    recordingSeconds = 0;
+    const btn = document.querySelector('.voice-button');
+    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo') || 'Voice input demo'); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s'; }
+    if (event.error === 'no-speech') showToast(t('voice.noSpeech') || 'No speech detected');
+    else if (event.error === 'audio-capture') showToast(t('voice.audioCapture') || 'Microphone error');
+    else if (event.error === 'not-allowed') showToast(t('voice.notAllowed') || 'Microphone permission denied');
+    else showToast(t('voice.error') || 'Recognition error: ' + event.error);
+  };
+  recognition.onend = () => {
+    if (sessionId !== currentSessionId) return;
+    clearInterval(recordingTimer);
+    recordingTimer = null;
+    isRecording = false;
+    isStopping = false;
+    recordingSeconds = 0;
+    const btn = document.querySelector('.voice-button');
+    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo') || 'Voice input demo'); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s'; }
+    recognition = null;
+  };
+  try { recognition.start(); } catch (e) {
+    if (recognition && currentSessionId === sessionId) { recognition = null; }
+    clearInterval(recordingTimer); recordingTimer = null; isRecording = false; isStopping = false; recordingSeconds = 0;
+    const btn = document.querySelector('.voice-button');
+    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo') || 'Voice input demo'); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s'; }
+    showToast(t('voice.startFailed') || 'Failed to start recognition');
+  }
+}
+
+function stopVoice() {
+  isStopping = true;
+  const capturedRecognition = recognition;
+  const capturedSessionId = currentSessionId;
+  if (capturedRecognition) {
+    try { capturedRecognition.stop(); } catch (e) {
+      if (capturedRecognition === recognition && capturedSessionId === currentSessionId) {
+        clearInterval(recordingTimer);
+        recordingTimer = null;
+        isRecording = false;
+        isStopping = false;
+        recordingSeconds = 0;
+        const btn = document.querySelector('.voice-button');
+        if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo') || 'Voice input demo'); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = '0s'; }
+        if (recognition === capturedRecognition) { recognition = null; }
+      }
+    }
+  }
+}
+
+document.querySelector('.voice-button').addEventListener('click', () => {
+  if (document.querySelector('.voice-button').classList.contains('recording')) { stopVoice(); } else { startVoice(); }
+});
+
+reportInput.addEventListener('input', () => updateReportInput(reportInput.value));
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && !inventoryDrawer.classList.contains('hidden')) closeInventory(); if (event.key === 'Tab' && !inventoryDrawer.classList.contains('hidden')) { const focusable = [...inventoryDrawer.querySelectorAll('button:not([disabled]), [href], input, select, textarea')]; if (!focusable.length) return; if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1).focus(); } else if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0].focus(); } } });
 if (window.BUSHO_I18N && window.BUSHO_I18N.onLanguageChange) window.BUSHO_I18N.onLanguageChange(() => { if (!state.extracted) state.rawReport = localizedSample(state.sample); renderAll(); renderInventory(); });
 renderInventory(); renderAll();
