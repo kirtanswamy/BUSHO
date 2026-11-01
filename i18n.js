@@ -302,7 +302,29 @@
     bn: { 'worker.subtitle': 'স্বাভাবিকভাবে লিখুন। নিশ্চিত করার আগে BUSHO কী বুঝেছে দেখুন।', 'worker.step1': 'ধাপ ১/৩: রিপোর্ট', 'worker.step2': 'ধাপ ২/৩: পরীক্ষা', 'worker.step3': 'ধাপ ৩/৩: নিশ্চিত', 'worker.sendUpdate': 'ফিল্ড আপডেট পাঠান', 'worker.placeholder': 'আজ যা দেখেছেন লিখুন: লক্ষণ, সংখ্যা, মজুত...', 'worker.extractBtn': 'খসড়া তৈরি করুন', 'worker.draftAwaiting': 'খসড়ার অপেক্ষা', 'worker.draftNeedsVerify': 'যাচাই দরকার', 'worker.draftVerified': 'কর্মী যাচাই করেছেন', 'worker.provisionalTitle': 'খসড়াটি অস্থায়ী', 'worker.provisionalDesc': 'নিশ্চিত করার আগে প্রতিটি অংশ দেখুন।', 'worker.confirmBtn': 'রিপোর্ট নিশ্চিত করুন', 'worker.editBtn': 'অংশ সম্পাদনা করুন', 'worker.toast.empty': 'খসড়া তৈরির আগে রিপোর্ট লিখুন', 'worker.toast.extract': 'খসড়া তৈরি হয়েছে। নিশ্চিত করার আগে দেখুন', 'worker.toast.extractAmbiguous': 'খসড়া তৈরি হয়েছে। চিহ্নিত অংশ স্পষ্ট করুন', 'worker.toast.confirm': 'নিশ্চিত রিপোর্ট এই ব্রাউজারে রাখা হয়েছে', 'worker.toast.voice': 'ভয়েস ইনপুট নেই। টেক্সট বা উদাহরণ ব্যবহার করুন', 'worker.toast.routine': 'সাধারণ উদাহরণ লোড হয়েছে', 'worker.toast.ambiguous': 'অস্পষ্ট উদাহরণ লোড হয়েছে', 'worker.toast.validate': 'কিছু অংশ এখনও স্পষ্ট করা দরকার', 'worker.draft': 'খসড়া', 'worker.emptyTitle': 'যাচাই খসড়া দেখতে রিপোর্ট তৈরি করুন', 'worker.emptyDesc': 'নিশ্চিত না হওয়া পর্যন্ত অংশগুলি অস্থায়ী', 'draft.symptomsValue': 'জ্বর: {fever}; ডায়রিয়া: {diarrhea}', 'draft.symptomsUnclear': 'লক্ষণ আছে; সংখ্যা স্পষ্ট নয়', 'draft.quantityUnclear': 'পরিমাণ বলা হয়নি', 'draft.almostFinished': 'প্রায় শেষ', 'draft.source': 'রিপোর্ট থেকে নেওয়া', 'draft.needsClarify': 'নিশ্চিত করার আগে স্পষ্ট করুন', 'draft.quantityNeeded': 'পরিমাণ দরকার', 'draft.safeByDesign': 'নিরাপত্তার জন্য', 'draft.clinicalValue': 'শুধু রিপোর্ট করা প্রবণতা; রোগ নির্ণয় নয়', 'supervisor.sourceVerified': 'যাচাই করা কর্মীর রিপোর্ট', 'supervisor.sourceSynthetic': 'কৃত্রিম মজুতের ছবি' },
     mr: { 'worker.subtitle': 'सहजपणे लिहा. पुष्टी करण्यापूर्वी BUSHO ने काय समजले ते पाहा.', 'worker.step1': 'पायरी १/३: अहवाल', 'worker.step2': 'पायरी २/३: तपासणी', 'worker.step3': 'पायरी ३/३: पुष्टी', 'worker.sendUpdate': 'क्षेत्र अहवाल पाठवा', 'worker.placeholder': 'आज काय पाहिले ते लिहा: लक्षणे, संख्या, साठा...', 'worker.extractBtn': 'मसुदा तयार करा', 'worker.draftAwaiting': 'मसुद्याची प्रतीक्षा', 'worker.draftNeedsVerify': 'तपासणी आवश्यक', 'worker.draftVerified': 'कर्मचाऱ्याने तपासले', 'worker.provisionalTitle': 'मसुदा तात्पुरता आहे', 'worker.provisionalDesc': 'पुष्टीपूर्वी प्रत्येक भाग तपासा.', 'worker.confirmBtn': 'अहवालाची पुष्टी करा', 'worker.editBtn': 'भाग बदला', 'worker.toast.empty': 'मसुदा तयार करण्यापूर्वी अहवाल लिहा', 'worker.toast.extract': 'मसुदा तयार झाला. पुष्टीपूर्वी तपासा', 'worker.toast.extractAmbiguous': 'मसुदा तयार झाला. चिन्हांकित भाग स्पष्ट करा', 'worker.toast.confirm': 'पुष्टी केलेला अहवाल या ब्राउझरमध्ये जतन झाला', 'worker.toast.voice': 'आवाज इनपुट उपलब्ध नाही. मजकूर किंवा उदाहरण वापरा', 'worker.toast.routine': 'सामान्य उदाहरण लोड झाले', 'worker.toast.ambiguous': 'अस्पष्ट उदाहरण लोड झाले', 'worker.toast.validate': 'काही भाग अजून स्पष्ट करणे आवश्यक आहे', 'worker.draft': 'मसुदा', 'worker.emptyTitle': 'तपासणीचा मसुदा पाहण्यासाठी अहवाल तयार करा', 'worker.emptyDesc': 'पुष्टी होईपर्यंत भाग तात्पुरते राहतील', 'draft.symptomsValue': 'ताप: {fever}; अतिसार: {diarrhea}', 'draft.symptomsUnclear': 'लक्षणे सांगितली; संख्या स्पष्ट नाही', 'draft.quantityUnclear': 'प्रमाण सांगितले नाही', 'draft.almostFinished': 'जवळजवळ संपले', 'draft.source': 'अहवालातून घेतले', 'draft.needsClarify': 'पुष्टीपूर्वी स्पष्ट करा', 'draft.quantityNeeded': 'प्रमाण आवश्यक', 'draft.safeByDesign': 'सुरक्षिततेसाठी', 'draft.clinicalValue': 'फक्त नोंदवलेला कल; निदान नाही', 'supervisor.sourceVerified': 'तपासलेला कर्मचाऱ्याचा अहवाल', 'supervisor.sourceSynthetic': 'कृत्रिम साठा नोंद' }
   };
-  Object.keys(locales.en).forEach(key => Object.keys(locales).filter(lang => lang !== 'en').forEach(lang => { if (!locales[lang][key]) locales[lang][key] = (addedTranslations[lang] && addedTranslations[lang][key]) || `${localeLabels[lang]}: ${locales.en[key]}`; }));
+  const translationOverrides = {
+    hi: {
+      'app.name': 'BUSHO', 'app.tagline': 'नीचे से ऊपर तक स्मार्ट स्वास्थ्य समन्वयक',
+      'nav.howItWorks': 'यह कैसे काम करता है', 'nav.tryDemo': 'डेमो आज़माएँ', 'nav.safety': 'सुरक्षा', 'header.langLabel': 'भाषा',
+      'hero.tryDemo': 'डेमो आज़माएँ', 'hero.seeHow': 'काम करने का तरीका देखें', 'hero.trust1': 'हर रिकॉर्ड की पुष्टि व्यक्ति करता है', 'hero.trust2': 'कोई निदान नहीं', 'hero.trust3': 'कृत्रिम डेमो डेटा',
+      'how.title': 'यह कैसे काम करता है', 'how.step1.title': 'रिपोर्ट', 'how.step1.by': 'स्वास्थ्य कार्यकर्ता', 'how.step1.desc': 'अपने शब्दों में छोटा क्षेत्र अपडेट लिखता या बोलता है।', 'how.step2.title': 'मसौदा', 'how.step3.title': 'पुष्टि', 'how.step3.by': 'स्वास्थ्य कार्यकर्ता', 'how.step3.desc': 'कार्यकर्ता हर खाने को देखकर रिकॉर्ड की पुष्टि करता है।', 'how.step4.title': 'कार्रवाई', 'how.step4.by': 'पर्यवेक्षक', 'how.step4.desc': 'सत्यापित संकेत से दवा भरने का मसौदा तैयार होता है।',
+      'worker.title': 'स्वास्थ्य कार्यकर्ता', 'worker.sendUpdate': 'क्षेत्र अपडेट भेजें', 'worker.channel': 'टेक्स्ट / आवाज़', 'worker.voiceBtn': 'आवाज़ इनपुट (डेमो)', 'worker.voiceNote': 'इस प्रोटोटाइप में आवाज़ से लिखना केवल डेमो है', 'worker.tryExample': 'उदाहरण आज़माएँ', 'worker.sample.routine': 'सामान्य रिपोर्ट', 'worker.sample.ambiguous': 'अस्पष्ट रिपोर्ट', 'worker.extractBtn': 'रिपोर्ट का मसौदा बनाएँ', 'worker.privacy': 'नाम, फोन नंबर या निदान नहीं लिए जाते।', 'worker.draftAwaiting': 'मसौदा बनने की प्रतीक्षा', 'worker.draftNeedsVerify': 'पुष्टि ज़रूरी', 'worker.draftVerified': 'स्वास्थ्य कार्यकर्ता ने जाँचा',
+      'worker.provisional': 'यह जानकारी अस्थायी है। हर खाने को देखें। पुष्टि से पहले कुछ भी दर्ज नहीं होगा।', 'worker.provisionalFlagged': 'अस्थायी मसौदे की मानव जाँच ज़रूरी है। चिन्हित खाने स्पष्ट करने के बाद ही रिकॉर्ड की पुष्टि होगी।', 'worker.provisionalVerified': 'सत्यापित कामकाजी रिकॉर्ड। इस ब्राउज़र के डेमो में स्वास्थ्य कार्यकर्ता ने इसकी पुष्टि की है।', 'worker.confidenceKey': 'भरोसा अधिक · जाँच ज़रूरी', 'worker.engineLabel': 'नियम आधारित डेमो जाँच · ढाँचा जाँचा गया', 'worker.editBtn': 'खाने बदलें', 'worker.confirmBtn': 'रिपोर्ट की पुष्टि करें', 'worker.seeSupervisor': 'पर्यवेक्षक का दृश्य देखें',
+      'worker.toast.routine': 'सामान्य उदाहरण लोड हुआ', 'worker.toast.ambiguous': 'अस्पष्ट उदाहरण लोड हुआ', 'worker.toast.extract': 'मसौदा बना। पुष्टि से पहले जाँचें', 'worker.toast.extractAmbiguous': 'मसौदा बना। चिन्हित खाने स्पष्ट करें', 'worker.toast.empty': 'मसौदा बनाने से पहले क्षेत्र रिपोर्ट लिखें', 'worker.toast.confirm': 'सत्यापित रिपोर्ट इस ब्राउज़र में सहेजी गई', 'worker.toast.edit': 'खाने जाँचें और सही मसौदे की पुष्टि करें', 'worker.toast.validate': 'कुछ खाने अभी स्पष्ट करने हैं', 'worker.toast.voice': 'आवाज़ से लिखना उपलब्ध नहीं है। टेक्स्ट या उदाहरण प्रयोग करें',
+      'draft.symptoms': 'बताए गए लक्षण', 'draft.orsStock': 'बचा हुआ स्टॉक / ORS', 'draft.ifaStock': 'बचा हुआ स्टॉक / आयरन और फोलिक एसिड', 'draft.clinicalStatus': 'स्वास्थ्य स्थिति', 'draft.source': 'रिपोर्ट से लिया गया', 'draft.confidence.high': 'भरोसा अधिक', 'draft.confidence.review': 'जाँच ज़रूरी', 'draft.confidence.workerChecked': 'कार्यकर्ता ने जाँचा', 'draft.needsClarify': 'पुष्टि से पहले स्पष्ट करें', 'draft.quantityNeeded': 'मात्रा चाहिए', 'draft.safeByDesign': 'सुरक्षा के लिए',
+      'supervisor.title': 'पर्यवेक्षक', 'supervisor.subtitle': 'सत्यापित स्टॉक संकेतों को साफ संदर्भ और मानव मंज़ूरी के साथ देखें।', 'supervisor.priorityLabel': 'ज़रूरी जाँच', 'supervisor.priorityTitle': 'रामपुर HWC में बुखार का संकेत', 'supervisor.priorityTrend': '+38% उल्लेख / केवल स्वास्थ्य रुझान', 'supervisor.priorityState': 'जाँच ज़रूरी', 'supervisor.metric.reports': 'मिली रिपोर्ट', 'supervisor.metric.pending': 'पुष्टि की प्रतीक्षा', 'supervisor.metric.lowStock': 'कम स्टॉक वाली दवाएँ', 'supervisor.metric.stockout': 'स्टॉक खत्म होने की आशंका', 'supervisor.metric.trend.positive': 'मौजूदा सत्यापित रिपोर्ट शामिल है', 'supervisor.metric.trend.baseline': 'कृत्रिम आधार', 'supervisor.metric.trend.warning': 'कार्यकर्ता की जाँच ज़रूरी', 'supervisor.metric.trend.allReviewed': 'मौजूदा सभी रिपोर्ट जाँची गईं', 'supervisor.metric.trend.stockout': 'ORS · बताए गए इस्तेमाल के आधार पर', 'supervisor.trendLabel': 'स्वास्थ्य संकेत की जाँच', 'supervisor.trendTitle': 'संदर्भ सहित बताए गए लक्षण', 'supervisor.trendChip': 'जाँच ज़रूरी', 'supervisor.trendNumber': 'रामपुर HWC में बुखार के उल्लेख', 'supervisor.trendDesc': 'पिछले 7 दिनों की रिपोर्टिंग से तुलना', 'supervisor.chartLabel': '7 दिन पहले', 'supervisor.safetyCallout': 'यह बताया गया स्वास्थ्य रुझान है। मानव जाँच के लिए संकेत है। इससे बीमारी या प्रकोप की पुष्टि नहीं होती।', 'supervisor.inventoryLabel': 'स्टॉक की जानकारी', 'supervisor.inventoryTitle': 'ध्यान देने योग्य स्टॉक', 'supervisor.viewAll': 'सब देखें', 'supervisor.inventory.ifa': 'आयरन और फोलिक एसिड', 'supervisor.inventory.zinc': 'जिंक की गोलियाँ', 'supervisor.inventory.needsAttention': 'ध्यान दें',
+      'supervisor.chartToday': 'आज', 'supervisor.inventory.ors': 'ORS पैकेट', 'supervisor.inventory.healthy': 'स्टॉक ठीक है', 'supervisor.severity.critical': 'बहुत कम', 'supervisor.severity.warning': 'कम', 'supervisor.severity.safe': 'ठीक',
+      'safety.state1.label': 'अवस्था ०१', 'safety.state1.pill': 'असत्यापित', 'safety.state2.label': 'अवस्था ०२', 'safety.state3.label': 'अवस्था ०३',
+      'supervisor.responseTitle': 'सत्यापित रिपोर्ट प्रशासनिक जाँच के लिए उपलब्ध है', 'supervisor.responseCopy': 'कम स्टॉक वाली वस्तु चुनकर भरपाई का मसौदा बनाएँ। यह डेमो कोई खरीद आदेश नहीं बनाता।', 'supervisor.responseTitleDraft': 'भरपाई का मसौदा मंज़ूरी के लिए तैयार है', 'supervisor.responseCopyDraft': '{name} / {qty} {unit} तक भरपाई का प्रस्ताव। स्रोत: {source}।', 'supervisor.responseTitleApproved': 'डेमो में भरपाई का मसौदा मंज़ूर हुआ', 'supervisor.responseCopyApproved': '{name} / प्रस्तावित भरपाई की मात्रा जाँच के लिए दर्ज है। कोई खरीद आदेश नहीं दिया गया।', 'supervisor.statusAwaiting': 'प्रशासनिक कार्रवाई की प्रतीक्षा', 'supervisor.statusPending': 'मंज़ूरी की प्रतीक्षा', 'supervisor.statusApproved': 'डेमो में मंज़ूर', 'supervisor.approveBtn': 'मसौदा मंज़ूर करें', 'supervisor.approvedBtn': 'मसौदा मंज़ूर हुआ', 'supervisor.drawerTitle': 'स्टॉक का विवरण', 'supervisor.drawerNote': 'यह केवल डेमो स्टॉक है। वस्तु का मसौदा मंज़ूरी रिकॉर्ड बनाता है; कोई आदेश नहीं देता।', 'supervisor.drawerDraftBtn': 'भरपाई का मसौदा बनाएँ', 'supervisor.drawerNoAction': 'कार्रवाई की ज़रूरत नहीं', 'supervisor.toast.draftCreated': '{name} की भरपाई का मसौदा प्रशासनिक मंज़ूरी के लिए बना', 'supervisor.toast.approved': 'डेमो में मसौदा मंज़ूर किया गया। कोई खरीद आदेश नहीं दिया गया', 'supervisor.toast.confirmed': 'पर्यवेक्षक दृश्य में एक संकेत स्वास्थ्य कार्यकर्ता की पुष्टि की प्रतीक्षा कर रहा है',
+      'safety.title': 'बनी हुई सुरक्षा सीमाएँ', 'safety.subtitle': 'साफ अवस्थाएँ उत्पाद पर भरोसा बढ़ाती हैं।', 'safety.desc': 'BUSHO कार्यकर्ता की रिपोर्ट, मानव जाँच और प्रशासनिक प्रतिक्रिया को अलग-अलग रिकॉर्ड के रूप में दिखाता है।', 'safety.state1.title': 'बताया गया स्वास्थ्य रुझान', 'safety.state1.desc': 'स्रोत और संदर्भ के साथ मानव जाँच के लिए क्षेत्र संकेत।', 'safety.state1.footer': 'स्रोत: पहचान हटाई गई कार्यकर्ता रिपोर्ट', 'safety.state2.pill': 'सबूत ज़रूरी', 'safety.state2.title': 'पुष्ट चिकित्सकीय घटना', 'safety.state2.desc': 'चिकित्सकीय निष्कर्ष के लिए अधिकृत जाँच ज़रूरी है। BUSHO यह निर्णय अपने मसौदा प्रवाह से बाहर रखता है।', 'safety.state2.footer': 'चिकित्सकीय जाँच मानव के नेतृत्व में', 'safety.state3.pill': 'मंज़ूरी ज़रूरी', 'safety.state3.title': 'प्रशासनिक कार्रवाई', 'safety.state3.desc': 'सत्यापित स्टॉक से भरपाई का मसौदा बन सकता है। अधिकृत प्रशासक ही अनुरोध मंज़ूर करता है।', 'safety.state3.footer': 'मंज़ूरी की प्रतीक्षा में मसौदा अनुरोध',
+      'footer.terms': 'शर्तें', 'footer.privacy': 'गोपनीयता', 'footer.reset': 'डेमो डेटा रीसेट', 'footer.aiNote': 'अनुवाद डेमो के लिए तैयार किए गए हैं और वास्तविक उपयोग से पहले स्थानीय वक्ता की जाँच ज़रूरी है।', 'glossary.hwc': 'स्वास्थ्य और कल्याण केंद्र', 'glossary.cho': 'सामुदायिक स्वास्थ्य अधिकारी', 'glossary.ors': 'मौखिक पुनर्जलीकरण लवण', 'unit.packets': 'पैकेट', 'unit.strips': 'स्ट्रिप', 'unit.tablets': 'गोलियाँ',
+      'worker.draft': 'मसौदा', 'worker.emptyTitle': 'जाँच मसौदा बनाने के लिए रिपोर्ट चलाएँ', 'worker.emptyDesc': 'पुष्टि तक खाने अस्थायी रहेंगे', 'worker.provisionalTitle': 'मसौदा जानकारी अस्थायी है', 'worker.provisionalDesc': 'हर खाने को देखें। पुष्टि तक कुछ भी दर्ज नहीं होगा।', 'worker.provisionalFlaggedTitle': 'मसौदे की मानव जाँच ज़रूरी है', 'worker.provisionalVerifiedTitle': 'सत्यापित कामकाजी रिकॉर्ड', 'worker.emptyReport': 'अभी कोई रिपोर्ट नहीं लिखी गई', 'worker.toast.save': 'ब्राउज़र में डेमो स्थिति सहेजी नहीं जा सकी', 'worker.toast.extractFirst': 'पुष्टि से पहले मसौदा बनाएँ', 'draft.symptomsValue': 'बुखार: {fever} उल्लेख; दस्त: {diarrhea} उल्लेख', 'draft.quantityUnclear': 'मात्रा नहीं बताई गई', 'draft.almostFinished': 'लगभग खत्म', 'supervisor.sourceVerified': 'सत्यापित कार्यकर्ता रिपोर्ट', 'supervisor.sourceSynthetic': 'कृत्रिम स्टॉक विवरण'
+    }
+  };
+  Object.entries(addedTranslations).forEach(([lang, values]) => Object.assign(locales[lang], values));
+  Object.entries(translationOverrides).forEach(([lang, values]) => Object.assign(locales[lang], values));
+  Object.keys(locales.en).forEach(key => Object.keys(locales).filter(lang => lang !== 'en').forEach(lang => { if (!locales[lang][key]) console.warn(`Missing translation: ${lang}.${key}`); }));
+  const enabledLanguages = ['en', 'hi'];
 
   let currentLang = 'en';
   let listeners = [];
@@ -310,20 +332,20 @@
   function detectLanguage() {
     const params = new URLSearchParams(window.location.search);
     const urlLang = params.get('lang');
-    if (urlLang && locales[urlLang]) return urlLang;
+    if (urlLang && locales[urlLang] && enabledLanguages.includes(urlLang)) return urlLang;
 
     const stored = localStorage.getItem('busho-lang');
-    if (stored && locales[stored]) return stored;
+    if (stored && locales[stored] && enabledLanguages.includes(stored)) return stored;
 
     const navLang = navigator.language || navigator.userLanguage || 'en';
     const short = navLang.split('-')[0];
-    if (locales[short]) return short;
+    if (locales[short] && enabledLanguages.includes(short)) return short;
 
     return 'en';
   }
 
   function setLanguage(lang) {
-    if (!locales[lang]) lang = 'en';
+    if (!locales[lang] || !enabledLanguages.includes(lang)) lang = 'en';
     currentLang = lang;
     document.documentElement.lang = lang;
     document.documentElement.setAttribute('data-lang', lang);
@@ -363,7 +385,8 @@
 
   function t(key, vars = {}) {
     const locale = locales[currentLang] || locales.en;
-    let str = locale[key] || locales.en[key] || key;
+    let str = locale[key] || locales.en[key];
+    if (str === undefined) { console.warn(`Missing i18n key: ${key}`); str = key; }
     Object.entries(vars).forEach(([k, v]) => {
       str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
     });
@@ -375,7 +398,7 @@
   }
 
   function getLocales() {
-    return Object.keys(locales);
+    return enabledLanguages.slice();
   }
 
   function getCurrentLanguage() {
@@ -389,6 +412,7 @@
   exposed.onLanguageChange = onLanguageChange;
   exposed.getLocales = getLocales;
   exposed.getCurrentLanguage = getCurrentLanguage;
+  exposed.enabledLanguages = enabledLanguages.slice();
   exposed.locales = locales;
   window.BUSHO_I18N = exposed;
 
@@ -398,6 +422,7 @@
     const selects = document.querySelectorAll('#lang-select, #lang-select-footer');
     selects.forEach(select => {
       if (select) {
+        select.querySelectorAll('option').forEach(option => { option.hidden = !enabledLanguages.includes(option.value); option.disabled = !enabledLanguages.includes(option.value); });
         select.value = currentLang;
         select.addEventListener('change', (e) => {
           setLanguage(e.target.value);
