@@ -16,3 +16,5 @@ Thumbs.db
 outputs/
 __pycache__/
 .agents/
+
+/*.py
