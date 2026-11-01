@@ -1,0 +1,12 @@
+{
+  "name": "busho",
+  "version": "2.0.0",
+  "description": "BUSHO - Bottom-Up Smart Health Orchestrator prototype",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "check:i18n": "node scripts/check-i18n.mjs"
+  },
+  "keywords": ["health", "prototype", "public-health"],
+  "license": "MIT"
+}

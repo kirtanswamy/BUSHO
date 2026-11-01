@@ -1,6 +1,32 @@
 const STORAGE_KEY = 'busho-demo-state-v1';
-const routineText = 'Today we saw 12 patients with fever and 8 with diarrhea. We have only 20 ORS packets left, and our iron tablets are almost finished.';
-const ambiguousText = 'A few fever cases today. ORS is almost finished.';
+const STORAGE_LANG = 'busho-lang';
+
+function t(key, vars) {
+  if (window.BUSHO_I18N && typeof window.BUSHO_I18N.t === 'function') {
+    return window.BUSHO_I18N.t(key, vars || {});
+  }
+  // Fallback to English strings if i18n not loaded
+  const fallback = {
+    'sample.routine': 'Today we saw 12 patients with fever and 8 with diarrhea. We have only 20 ORS packets left, and our iron tablets are almost finished.',
+    'sample.ambiguous': 'A few fever cases today. ORS is almost finished.',
+    'draft.symptoms': 'Reported symptoms', 'draft.orsStock': 'Remaining stock / ORS',
+    'draft.ifaStock': 'Remaining stock / iron and folic acid', 'draft.clinicalStatus': 'Clinical status',
+  };
+  return (fallback[key] || key);
+}
+
+function getLocalizedSamples() {
+  const lang = window.BUSHO_I18N && window.BUSHO_I18N.getCurrentLanguage ? window.BUSHO_I18N.getCurrentLanguage() : 'en';
+  if (lang === 'en') {
+    return { routine: t('sample.routine'), ambiguous: t('sample.ambiguous') };
+  }
+  // For other languages, use English content but allow future localization
+  return { routine: t('sample.routine'), ambiguous: t('sample.ambiguous') };
+}
+
+const samples = getLocalizedSamples();
+const routineText = samples.routine;
+const ambiguousText = samples.ambiguous;
 const baseReportCount = 18;
 
 const inventory = [
@@ -77,7 +103,7 @@ function setSample(type) {
   messageText.textContent = state.rawReport;
   renderAll();
   saveState();
-  showToast(state.sample === 'ambiguous' ? 'Ambiguous sample loaded' : 'Routine sample loaded');
+  showToast(t('worker.toast.routine') || 'Routine sample loaded');
 }
 
 function makeExtraction() {
@@ -104,7 +130,7 @@ function makeExtraction() {
   state.replenishment = { status: 'none', medicineId: null, source: null };
   renderAll();
   saveState();
-  showToast(ambiguous ? 'Draft created. Clarify the flagged fields' : 'Draft created. Review before confirming');
+  showToast(t('worker.toast.extract') || 'Draft created. Review before confirming');
 }
 
 function renderExtraction() {
