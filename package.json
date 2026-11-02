@@ -4,9 +4,14 @@
   "description": "BUSHO (Bottom-Up Smart Health Orchestrator): a dependency-free first-mile health reporting prototype. Synthetic data only.",
   "private": true,
   "license": "MIT",
-  "repository": { "type": "git", "url": "git+https://github.com/kirtanswamy/BUSHO.git" },
-  "homepage": "https://project1busho.vercel.app",
-  "engines": { "node": ">=18" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kirtanswamy/BUSHO.git"
+  },
+  "homepage": "https://busho.de5.net",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test",
