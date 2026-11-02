@@ -1,0 +1,33 @@
+name: Translation correction
+description: Suggest a correction to a BUSHO interface translation.
+title: "[i18n]: "
+labels: ["translation"]
+body:
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options: [English, Hindi, Tamil, Telugu, Bengali, Marathi]
+    validations:
+      required: true
+  - type: input
+    id: key
+    attributes:
+      label: Translation key or screen
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current wording
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Suggested wording
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "Please have a fluent speaker review the proposed wording. Do not include patient or personal data."
