@@ -1,5 +1,8 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: Report a security issue privately
+  - name: Security vulnerability
     url: https://github.com/kirtanswamy/BUSHO/security/advisories/new
-    about: Please do not open public issues for vulnerabilities.
+    about: Report security issues privately. Do not open a public issue.
+  - name: Project documentation
+    url: https://github.com/kirtanswamy/BUSHO#readme
+    about: Read the prototype scope, setup instructions, and safety boundaries.
