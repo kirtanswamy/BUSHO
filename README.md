@@ -2,30 +2,65 @@
 
 <div align="center">
 
-<img src="assets/busho-github-hero.svg" alt="BUSHO — Make the first mile of health information work better" width="100%" />
+<img src="assets/busho-github-hero.svg" alt="BUSHO — Bottom-Up Smart Health Orchestrator: a human-reviewed workflow from frontline reports to supervisor review" width="100%" />
 
 <br />
 
-[![Live Demo](https://img.shields.io/badge/LIVE_DEMO-busho.de5.net-0B7A70?style=for-the-badge&logo=vercel&logoColor=white)](https://busho.de5.net)
+[![Live Demo](https://img.shields.io/badge/LIVE-busho.de5.net-00B981?style=for-the-badge&logo=vercel&logoColor=white)](https://busho.de5.net)
+[![Prototype](https://img.shields.io/badge/STATUS-prototype-7657D5?style=for-the-badge)](#what-exists-today)
+[![TypeScript](https://img.shields.io/badge/TypeScript-React-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](#run-locally)
 [![CI](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-4C9A82.svg)](LICENSE)
 
 **Frontline workers see the first signal. BUSHO explores how that signal can reach the right people—clearly, safely, and with a human in control.**
 
-**Live prototype: [https://busho.de5.net](https://busho.de5.net)**  
-[Alternate Vercel URL](https://project1busho.vercel.app/) · [Source code](https://github.com/kirtanswamy/BUSHO) · [Report an issue](https://github.com/kirtanswamy/BUSHO/issues)
-
-[Problem](#the-gap) · [Workflow](#how-it-works) · [Evidence](#why-this-workflow-matters) · [Run locally](#run-locally) · [Roadmap](#before-a-real-pilot)
+[**↗ Open the live prototype — busho.de5.net**](https://busho.de5.net)  
+[Repository](https://github.com/kirtanswamy/BUSHO) · [Report an issue](https://github.com/kirtanswamy/BUSHO/issues) · [Contribute](CONTRIBUTING.md)
 
 </div>
 
 ---
 
-## What is BUSHO?
+## About BUSHO
 
-**BUSHO (Bottom-Up Smart Health Orchestrator)** is a browser prototype for turning frontline health-worker notes into structured, human-verified operational information—and helping supervisors review medicine-stock signals without automating clinical decisions or procurement.
+**BUSHO (Bottom-Up Smart Health Orchestrator)** is a browser-based public-health workflow prototype that explores how frontline health-worker reports can be structured, verified, and surfaced to supervisors—without automating clinical decisions or procurement.
 
-It explores one specific hand-off: **community → frontline worker → facility / supervisor**.
+It focuses on one hand-off: **community → frontline worker → facility / supervisor**.
+
+<table>
+  <tr>
+    <td width="25%" valign="top">
+
+### ◉ Capture
+
+Report needs through text or voice, with a multilingual interface.
+
+</td>
+    <td width="25%" valign="top">
+
+### ◈ Extract
+
+Turn unstructured notes into editable, structured draft fields.
+
+</td>
+    <td width="25%" valign="top">
+
+### ◎ Organize
+
+Keep the original report visible and put human verification first.
+
+</td>
+    <td width="25%" valign="top">
+
+### ↗ Act
+
+Surface sample stock attention and prepare a supervisor-reviewed draft.
+
+</td>
+  </tr>
+</table>
+
+> **Important:** BUSHO is a prototype, not a live health system. It uses synthetic sample data, mock rule-based extraction, and browser-local storage. It does not diagnose, place medicine orders, or connect to government inventory systems.
 
 ## The gap
 
@@ -195,7 +230,7 @@ Contributions are welcome, especially bug reports, accessibility improvements, t
 
 **Built as a social-impact prototype. Designed around human review. Open to evidence and iteration.**
 
-**Live prototype: [busho.de5.net](https://busho.de5.net)**
+[**↗ Open BUSHO — busho.de5.net**](https://busho.de5.net)
 
 [Alternate Vercel deployment](https://project1busho.vercel.app/) · [Architecture](ARCHITECTURE.md) · [Impact & implementation plan](IMPACT_AND_IMPLEMENTATION.md)
 
