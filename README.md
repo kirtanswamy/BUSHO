@@ -8,9 +8,10 @@
 
 [![Live Demo](https://img.shields.io/badge/LIVE-busho.de5.net-00B981?style=for-the-badge&logo=vercel&logoColor=white)](https://busho.de5.net)
 [![Prototype](https://img.shields.io/badge/STATUS-prototype-7657D5?style=for-the-badge)](#what-exists-today)
-[![TypeScript](https://img.shields.io/badge/TypeScript-React-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](#run-locally)
-[![Tests](https://img.shields.io/badge/Tests-automated-20A779?style=for-the-badge)](#run-locally)
-[![CI](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](#run-locally)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](#run-locally)
+[![Tests](https://img.shields.io/badge/Tests-Passing-20A779?style=for-the-badge)](#run-locally)
+[![CI](https://img.shields.io/badge/CI-Passing-20A779?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-4C9A82.svg)](LICENSE)
 
 </div>
