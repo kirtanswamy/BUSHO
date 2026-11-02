@@ -1,57 +1,52 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="600" viewBox="0 0 1440 600" role="img" aria-labelledby="title desc">
 <title id="title">BUSHO — Bottom-Up Smart Health Orchestrator</title>
-<desc id="desc">A conceptual illustration of an ASHA worker reporting a community health need, with a human-reviewed structured report for a supervisor.</desc>
+<desc id="desc">A conceptual illustration of an ASHA worker using a phone at a primary health centre, with a human-reviewed sample report workflow. BUSHO is a prototype.</desc>
 <defs>
- <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#031c20"/><stop offset=".55" stop-color="#073b3b"/><stop offset="1" stop-color="#071b25"/></linearGradient>
- <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#74f5d0"/><stop offset="1" stop-color="#28c7a4"/></linearGradient>
- <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#173e43"/><stop offset="1" stop-color="#0b272f"/></linearGradient>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#031719"/><stop offset=".55" stop-color="#073b3b"/><stop offset="1" stop-color="#071b25"/></linearGradient>
+ <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#79f4d1"/><stop offset="1" stop-color="#27c6a2"/></linearGradient>
+ <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#183e43"/><stop offset="1" stop-color="#0b272f"/></linearGradient>
  <radialGradient id="glow"><stop stop-color="#1bc6a1" stop-opacity=".3"/><stop offset="1" stop-color="#1bc6a1" stop-opacity="0"/></radialGradient>
  <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#76e8ce" opacity=".25"/></pattern>
  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="18"/></filter>
 </defs>
 <rect width="1440" height="600" rx="28" fill="url(#bg)"/>
-<rect width="820" height="600" rx="28" fill="url(#dots)" opacity=".55"/>
-<ellipse cx="1040" cy="290" rx="460" ry="360" fill="url(#glow)"/>
-<path d="M780 0 C700 150 720 430 835 600" stroke="#24c9a7" stroke-opacity=".45" stroke-width="2" fill="none"/>
-<!-- brand -->
-<g transform="translate(76 52)">
+<rect width="800" height="600" rx="28" fill="url(#dots)" opacity=".45"/>
+<ellipse cx="1080" cy="280" rx="440" ry="350" fill="url(#glow)"/>
+<path d="M770 0 C700 150 720 430 835 600" stroke="#24c9a7" stroke-opacity=".45" stroke-width="2" fill="none"/>
+<g transform="translate(76 43)">
  <rect x="0" y="5" width="22" height="58" rx="11" fill="#f4fffc"/><rect x="-18" y="23" width="58" height="22" rx="11" fill="url(#mint)"/>
  <text x="62" y="40" fill="#f4fffc" font-family="Inter,Arial,sans-serif" font-size="39" font-weight="800">BUSHO</text>
- <text x="64" y="68" fill="#a8d9d0" font-family="Inter,Arial,sans-serif" font-size="16" letter-spacing=".6">BOTTOM-UP SMART HEALTH ORCHESTRATOR</text>
+ <text x="64" y="68" fill="#a8d9d0" font-family="Inter,Arial,sans-serif" font-size="15" letter-spacing=".8">BOTTOM-UP SMART HEALTH ORCHESTRATOR</text>
 </g>
-<rect x="1104" y="46" width="260" height="42" rx="21" fill="#e8f4f3" opacity=".96"/>
-<text x="1234" y="72" text-anchor="middle" fill="#12353a" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700">DIGITAL PUBLIC HEALTH PROTOTYPE</text>
-<!-- left copy -->
-<text x="76" y="174" fill="#f7fffd" font-family="Inter,Arial,sans-serif" font-size="48" font-weight="800">Make the first mile</text>
-<text x="76" y="228" fill="#f7fffd" font-family="Inter,Arial,sans-serif" font-size="48" font-weight="800">of health information</text>
-<text x="76" y="282" fill="#69e8c7" font-family="Inter,Arial,sans-serif" font-size="48" font-weight="800">work better.</text>
-<text x="78" y="328" fill="#d0e4df" font-family="Inter,Arial,sans-serif" font-size="19">A human-reviewed workflow for frontline reporting</text>
-<text x="78" y="355" fill="#d0e4df" font-family="Inter,Arial,sans-serif" font-size="19">and medicine-stock coordination.</text>
-<!-- problem / approach -->
-<rect x="76" y="390" width="272" height="100" rx="18" fill="#172b32" stroke="#6e6660"/>
-<text x="98" y="421" fill="#ff987d" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="700">THE CHALLENGE</text>
-<text x="98" y="449" fill="#f0f6f4" font-family="Inter,Arial,sans-serif" font-size="15">Reports can lose context</text><text x="98" y="471" fill="#f0f6f4" font-family="Inter,Arial,sans-serif" font-size="15">between field and facility.</text>
-<path d="M365 440h38m-10 -10 10 10 -10 10" stroke="#e4fff8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-<rect x="418" y="390" width="314" height="100" rx="18" fill="#0b4945" stroke="#26d4ae" stroke-width="1.5"/>
-<text x="442" y="421" fill="#70f0ce" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="700">THE BUSHO APPROACH</text>
-<text x="442" y="449" fill="#f0fffb" font-family="Inter,Arial,sans-serif" font-size="15">Capture, structure, verify and</text><text x="442" y="471" fill="#f0fffb" font-family="Inter,Arial,sans-serif" font-size="15">surface reports for supervisors.</text>
-<!-- capability icons -->
+<rect x="1095" y="42" width="270" height="42" rx="21" fill="#e8f4f3" opacity=".96"/>
+<text x="1230" y="68" text-anchor="middle" fill="#12353a" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700">DIGITAL PUBLIC HEALTH PROTOTYPE</text>
+<text x="76" y="164" fill="#f7fffd" font-family="Inter,Arial,sans-serif" font-size="47" font-weight="800">From field reports to</text>
+<text x="76" y="218" fill="#f7fffd" font-family="Inter,Arial,sans-serif" font-size="47" font-weight="800">actionable <tspan fill="#69e8c7">health insights.</tspan></text>
+<text x="78" y="263" fill="#d0e4df" font-family="Inter,Arial,sans-serif" font-size="18">A human-reviewed workflow to structure frontline reports,</text>
+<text x="78" y="289" fill="#d0e4df" font-family="Inter,Arial,sans-serif" font-size="18">organize facility needs and support supervisor review.</text>
+<rect x="76" y="320" width="265" height="100" rx="17" fill="#172b32" stroke="#78685e"/>
+<text x="98" y="351" fill="#ff987d" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="700">THE CHALLENGE</text>
+<text x="98" y="379" fill="#f0f6f4" font-family="Inter,Arial,sans-serif" font-size="15">Reports can lose context</text><text x="98" y="401" fill="#f0f6f4" font-family="Inter,Arial,sans-serif" font-size="15">between field and facility.</text>
+<path d="M357 370h38m-10 -10 10 10 -10 10" stroke="#e4fff8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="410" y="320" width="322" height="100" rx="17" fill="#0b4945" stroke="#26d4ae" stroke-width="1.5"/>
+<text x="434" y="351" fill="#70f0ce" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="700">THE BUSHO APPROACH</text>
+<text x="434" y="379" fill="#f0fffb" font-family="Inter,Arial,sans-serif" font-size="15">Capture, structure, verify and</text><text x="434" y="401" fill="#f0fffb" font-family="Inter,Arial,sans-serif" font-size="15">surface reports for supervisors.</text>
 <g font-family="Inter,Arial,sans-serif" text-anchor="middle">
- <g transform="translate(118 535)" fill="none" stroke="#60e8c8" stroke-width="2"><circle r="19"/><path d="M-8 -4h16v11h-7l-5 5v-5h-4z"/></g><text x="118" y="577" fill="#e5f8f3" font-size="13">TEXT &amp; VOICE</text>
- <g transform="translate(270 535)" fill="none" stroke="#60e8c8" stroke-width="2"><path d="M-17 -12h34v24h-34zM-9 -5h18M-9 1h13M-9 7h8"/></g><text x="270" y="577" fill="#e5f8f3" font-size="13">LOCAL LANGUAGES</text>
- <g transform="translate(430 535)" fill="none" stroke="#60e8c8" stroke-width="2"><path d="M0 -18 18 -8 0 2 -18 -8zM-18 0 0 10 18 0M-18 8 0 18 18 8"/></g><text x="430" y="577" fill="#e5f8f3" font-size="13">STRUCTURED DRAFTS</text>
- <g transform="translate(590 535)" fill="none" stroke="#60e8c8" stroke-width="2"><rect x="-15" y="-15" width="30" height="30" rx="4"/><path d="M-8 -6h16M-8 0h16M-8 6h10"/></g><text x="590" y="577" fill="#e5f8f3" font-size="13">HUMAN REVIEW</text>
+ <g transform="translate(116 470)" fill="none" stroke="#60e8c8" stroke-width="2"><circle r="17"/><path d="M-8 -4h16v11h-7l-5 5v-5h-4z"/></g><text x="116" y="507" fill="#e5f8f3" font-size="13">VOICE &amp; TEXT</text>
+ <g transform="translate(267 470)" fill="none" stroke="#60e8c8" stroke-width="2"><path d="M-15 -13h30v26h-30zM-8 -6h16M-8 0h13M-8 6h8"/></g><text x="267" y="507" fill="#e5f8f3" font-size="13">LOCAL LANGUAGES</text>
+ <g transform="translate(430 470)" fill="none" stroke="#60e8c8" stroke-width="2"><path d="M0 -17 17 -8 0 2 -17 -8zM-17 0 0 10 17 0M-17 8 0 18 17 8"/></g><text x="430" y="507" fill="#e5f8f3" font-size="13">STRUCTURED DRAFTS</text>
+ <g transform="translate(590 470)" fill="none" stroke="#60e8c8" stroke-width="2"><rect x="-14" y="-14" width="28" height="28" rx="4"/><path d="M-7 -5h14M-7 1h14M-7 7h9"/></g><text x="590" y="507" fill="#e5f8f3" font-size="13">HUMAN REVIEW</text>
 </g>
-<!-- right illustration background -->
+<a href="https://busho.de5.net"><rect x="76" y="535" width="270" height="48" rx="13" fill="url(#mint)"/><text x="211" y="565" text-anchor="middle" fill="#062d2a" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="800">↗  TRY BUSHO LIVE  •  busho.de5.net</text></a>
+<a href="https://github.com/kirtanswamy/BUSHO"><rect x="362" y="535" width="250" height="48" rx="13" fill="#102d35" stroke="#b4ddd4" stroke-width="1.5"/><text x="487" y="565" text-anchor="middle" fill="#f3fffb" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="700">VIEW ON GITHUB  ↗</text></a>
+<!-- clinic illustration -->
 <path d="M825 600 Q910 470 860 350 Q820 220 925 120 Q1040 10 1200 90 Q1370 180 1440 95 V600Z" fill="#0b4c4b" opacity=".65"/>
 <circle cx="1170" cy="250" r="245" fill="url(#glow)"/>
-<!-- health centre -->
 <rect x="1050" y="144" width="340" height="150" rx="16" fill="#e5ece4"/>
 <path d="M1034 164h372v-18q0-12-12-12h-348q-12 0-12 12z" fill="#f8faf5"/>
 <rect x="1082" y="184" width="276" height="94" rx="8" fill="#c6d6cf"/>
 <path d="M1196 196h48v18h-15v15h-18v-15h-15z" fill="#d94d4d"/>
 <text x="1220" y="258" text-anchor="middle" fill="#254b4b" font-family="Arial,sans-serif" font-size="17" font-weight="700">PRIMARY HEALTH CENTRE</text>
-<!-- ASHA worker stylized -->
 <ellipse cx="1008" cy="560" rx="155" ry="26" fill="#001518" opacity=".35" filter="url(#shadow)"/>
 <path d="M900 600 Q895 495 943 415 Q982 355 1050 390 Q1104 426 1120 600Z" fill="#df4e83"/>
 <path d="M932 423 Q970 378 1035 389 Q1084 397 1101 445 L1067 487 Q1026 463 978 481 L943 499Z" fill="#f0a2bf"/>
@@ -60,20 +55,18 @@
 <path d="M979 313 Q982 250 1044 253 Q1091 265 1084 325 Q1068 284 1037 282 Q1004 283 979 313Z" fill="#20232a"/>
 <path d="M987 392 Q1025 420 1065 392 L1080 420 Q1040 456 970 431Z" fill="#fff8ef"/>
 <text x="1024" y="432" text-anchor="middle" fill="#31535a" font-family="Arial,sans-serif" font-size="15" font-weight="700">ASHA</text>
-<!-- arm + phone -->
 <path d="M1074 430 Q1122 424 1142 465 L1112 488 Q1084 469 1052 475Z" fill="#9b5d43"/>
 <rect x="1120" y="410" width="38" height="68" rx="7" fill="#101d27" transform="rotate(12 1120 410)"/>
 <rect x="1126" y="417" width="26" height="51" rx="3" fill="#8ddfce" transform="rotate(12 1126 417)"/>
-<!-- voice bubble -->
 <rect x="1190" y="320" width="208" height="94" rx="18" fill="#102d35" stroke="#7cebd2" stroke-width="1.5"/>
 <circle cx="1218" cy="352" r="10" fill="none" stroke="#65e6c6" stroke-width="2"/><path d="M1218 340v24m-8 -7q8 17 16 0" stroke="#65e6c6" fill="none" stroke-width="2"/>
 <path d="M1242 352h8l5 -12 7 24 7 -19 7 14 6 -7h12" fill="none" stroke="#65e6c6" stroke-width="2" stroke-linecap="round"/>
 <text x="1294" y="389" text-anchor="middle" fill="#e9faf5" font-family="Inter,Arial,sans-serif" font-size="13">FIELD REPORT • SAMPLE</text>
-<!-- review card -->
+<path d="M1292 416q0 20 20 28" stroke="#d7fff4" stroke-width="2" fill="none"/>
 <rect x="1134" y="444" width="270" height="130" rx="18" fill="#f4f7f1" stroke="#a5f6df" stroke-width="2"/>
 <rect x="1134" y="444" width="270" height="38" rx="18" fill="#123c3d"/><path d="M1134 465h270v17h-270z" fill="#123c3d"/>
 <circle cx="1157" cy="463" r="8" fill="#6ce8c7"/><text x="1175" y="469" fill="#f3fffb" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700">BUSHO • REVIEW DRAFT</text>
-<text x="1155" y="507" fill="#234247" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="700">EXTRACTED NEEDS</text>
-<rect x="1152" y="518" width="234" height="22" rx="7" fill="#e2eee8"/><text x="1164" y="533" fill="#254448" font-family="Inter,Arial,sans-serif" font-size="12">Sample medicine stock attention</text>
+<text x="1155" y="507" fill="#234247" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="700">SAMPLE NEEDS</text>
+<rect x="1152" y="518" width="234" height="22" rx="7" fill="#e2eee8"/><text x="1164" y="533" fill="#254448" font-family="Inter,Arial,sans-serif" font-size="12">Inventory attention • synthetic data</text>
 <rect x="1152" y="545" width="234" height="18" rx="7" fill="#c9f4e5"/><text x="1164" y="558" fill="#12634f" font-family="Inter,Arial,sans-serif" font-size="11" font-weight="700">Human verification required</text>
 </svg>
