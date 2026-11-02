@@ -76,7 +76,7 @@ This is not a claim that India has no digital health or supply-chain systems. Pu
 
 ## How it works
 
-<img src="assets/busho-workflow.svg" alt="BUSHO workflow: field report, mock extraction, human review, synthetic stock signal and administrator-reviewed draft" width="100%" />
+<img src="assets/busho-workflow.png" alt="BUSHO workflow: report, AI assist, human review, fulfilment, and tracking to closure. Prototype demonstration using simulated data." width="100%" />
 
 1. **Report** — a frontline worker enters a short field update in plain language.
 2. **Structure** — the prototype proposes fields using mock, rule-based extraction.
