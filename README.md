@@ -9,13 +9,9 @@
 [![Live Demo](https://img.shields.io/badge/LIVE-busho.de5.net-00B981?style=for-the-badge&logo=vercel&logoColor=white)](https://busho.de5.net)
 [![Prototype](https://img.shields.io/badge/STATUS-prototype-7657D5?style=for-the-badge)](#what-exists-today)
 [![TypeScript](https://img.shields.io/badge/TypeScript-React-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](#run-locally)
+[![Tests](https://img.shields.io/badge/Tests-automated-20A779?style=for-the-badge)](#run-locally)
 [![CI](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-4C9A82.svg)](LICENSE)
-
-**Frontline workers see the first signal. BUSHO explores how that signal can reach the right people—clearly, safely, and with a human in control.**
-
-[**↗ Open the live prototype — busho.de5.net**](https://busho.de5.net)  
-[Repository](https://github.com/kirtanswamy/BUSHO) · [Report an issue](https://github.com/kirtanswamy/BUSHO/issues) · [Contribute](CONTRIBUTING.md)
 
 </div>
 
@@ -33,14 +29,14 @@ It focuses on one hand-off: **community → frontline worker → facility / supe
 
 ### ◉ Capture
 
-Report needs through text or voice, with a multilingual interface.
+Report needs via text or voice in local languages.
 
 </td>
     <td width="25%" valign="top">
 
 ### ◈ Extract
 
-Turn unstructured notes into editable, structured draft fields.
+Convert unstructured reports into structured, editable draft fields.
 
 </td>
     <td width="25%" valign="top">
@@ -54,13 +50,13 @@ Keep the original report visible and put human verification first.
 
 ### ↗ Act
 
-Surface sample stock attention and prepare a supervisor-reviewed draft.
+Highlight sample stock risks and prepare supervisor-reviewed drafts.
 
 </td>
   </tr>
 </table>
 
-> **Important:** BUSHO is a prototype, not a live health system. It uses synthetic sample data, mock rule-based extraction, and browser-local storage. It does not diagnose, place medicine orders, or connect to government inventory systems.
+> **Prototype boundary:** BUSHO uses synthetic sample data, mock rule-based extraction, and browser-local storage. It is not a live health system, does not diagnose, does not place medicine orders, and does not connect to government inventory systems.
 
 ## The gap
 
