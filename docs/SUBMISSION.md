@@ -1,78 +1,80 @@
 # BUSHO: Submission Draft (Hack for Social Cause, VBYLD 2027)
 
-> Draft text for the submission form. Items in **[brackets]** need your real information. Everything else matches what the prototype actually does; keep it that way.
+> Draft text for the submission form. Items in **[brackets]** need your real information. Keep all claims aligned with the working prototype.
 
 ## Name and tagline
 
 **BUSHO: Bottom-Up Smart Health Orchestrator**
 
-*Frontline health workers report in their own words. BUSHO turns it into a verified record and a safe, human-approved next step.*
+*Frontline health workers report in their own words. BUSHO drafts a structured record for human verification and a supervisor-reviewed operational next step.*
 
 ## Summary (about 100 words)
 
-Frontline health workers see what is happening in a community first: rising fevers, children with diarrhea, medicines running out. But that knowledge often travels slowly, through calls, paper registers and unstructured messages. BUSHO is a working prototype of a first-mile reporting flow. A worker writes a short update in their own language; BUSHO drafts a structured record; the worker verifies and corrects it; only then does a supervisor see a verified signal and prepare a draft medicine-replenishment request that a human approves. A person stays in control at every step.
+Frontline health workers often notice community health-service signals first: recurring symptoms, follow-up needs, or medicines running low. But information can lose consistency and context as it moves from field notes into registers, calls and administrative workflows. BUSHO is a browser-based prototype exploring a first-mile reporting flow. A worker enters a short update; BUSHO proposes structured fields using mock, rule-based extraction; the worker reviews and confirms the record; a supervisor can then inspect a synthetic stock signal and prepare a replenishment draft for human approval. BUSHO does not diagnose, place orders, or replace existing health information systems.
 
 ## The problem
 
-When field information is incomplete, inconsistent or slow to reach decision-makers, administrators have less timely visibility into stock-outs and service trends that deserve review. This is a workflow problem at the very first mile of the health system, where reports start as everyday language, not structured data.
+When field information is incomplete, inconsistent or slow to reach decision-makers, administrators may have less timely visibility into issues that deserve review. This is a workflow problem at the first mile, where reports often begin as everyday language rather than structured data.
 
 ## Our approach
 
 | Step | What happens | Who is in control |
-|------|--------------|-------------------|
-| Report | Worker writes a field update in plain language | Health worker |
-| Draft | BUSHO proposes structured fields next to the original text | Draft only, never a fact |
+|---|---|---|
+| Report | Worker enters a field update in plain language | Health worker |
+| Draft | BUSHO proposes structured fields next to the original text | Provisional draft only |
 | Verify | Worker edits and confirms the record | Health worker |
-| Act | Supervisor sees verified stock signals and prepares a replenishment **draft** | Supervisor, with approval |
+| Review | Supervisor inspects verified operational information and synthetic stock signals | Supervisor |
+| Prepare | Supervisor prepares a replenishment draft | Authorized human approval; no real order |
 
 ## What makes it responsible
 
-- **Three clearly separated states:** an unverified reported trend, a confirmed medical event (needs evidence and authorized review, outside BUSHO), and an administrative action (needs approval).
-- **The original report stays visible** next to every extracted field.
-- **No diagnosis, no automatic orders.** Replenishment is a draft only.
-- **Voice input:** Browser-native Web Speech API; browser/vendor service may process audio remotely; BUSHO does not store audio recordings; manual text entry is always available as a fallback; availability depends on browser, microphone permission and network.
-- **Honest labeling:** synthetic data, mock extraction and no live integrations are stated in the interface and docs.
-- **Built for local languages:** English, Hindi, Tamil, Telugu, Bengali and Marathi **[confirm all six are live before submitting]**.
+- **The original report stays visible** next to proposed structured fields.
+- **No diagnosis, no automatic orders.** Replenishment remains a draft.
+- **Voice input:** Browser-native Web Speech API; the browser/vendor service may process audio remotely; BUSHO does not store audio recordings; manual text entry remains available; availability depends on browser, permission and network.
+- **Honest labeling:** synthetic data, mock extraction and absent live integrations are stated in the interface and documentation.
+- **Local-language interface:** English, Hindi, Tamil, Telugu, Bengali and Marathi. Translation quality still needs native-speaker review before a real pilot.
 
 ## Who it is for
 
-Frontline health workers (for example CHOs, ANMs and ASHAs in India's primary care setting), facility or store staff, and block or district supervisors. The prototype has **not** yet been validated with these users.
+Potential users include frontline health workers (for example CHOs, ANMs and ASHAs in India's primary-care setting), facility or store staff, and block or district supervisors. The prototype has **not** yet been validated with these users.
 
 ## Social impact and SDGs
 
-Intended alignment with **SDG 3 (Good Health and Well-Being)** and **SDG 10 (Reduced Inequalities)**, through better coordination of essential-medicine service delivery for communities that may face access barriers. This is an intended alignment, not measured progress. See `IMPACT_AND_IMPLEMENTATION.md` for risks, controls and proposed evaluation metrics.
+Intended alignment with **SDG 3 (Good Health and Well-Being)** and **SDG 10 (Reduced Inequalities)** through better coordination of essential-medicine service delivery. This is an intended alignment, not measured progress. See [IMPACT_AND_IMPLEMENTATION.md](../IMPACT_AND_IMPLEMENTATION.md) for risks, safeguards and proposed evaluation metrics.
 
 ## What is real and what is simulated
 
 | Real in the prototype | Simulated or not built |
-|-----------------------|------------------------|
-| End-to-end worker to supervisor workflow | AI inference (extraction is rule-based) |
-  | Human review and confirmation gates | Our own transcription service (voice input uses the browser's built-in recognition, not BUSHO's) |
-  | Optional voice input through the browser's speech recognition, manual typing always available | Real orders or procurement |
-| Editable drafts, saved in the browser | Shared backend, accounts, authentication |
+|---|---|
+| Worker-to-supervisor demonstration workflow | Production AI inference (extraction is mock/rule-based) |
+| Human review and confirmation gates | Clinical diagnosis or triage |
+| Optional browser-native speech recognition, where supported | BUSHO-operated transcription service |
+| Editable drafts saved in the browser | Shared backend, accounts or production authentication |
 | Inventory attention logic on sample stock | Live government or facility inventory feeds |
 | Multilingual interface and sample reports | Real orders or procurement |
-| Automated extraction tests and CI | Field validation or measured impact |
+| Automated extraction tests and CI workflow | Field validation or measured impact |
 
 ## Technology
 
-Plain HTML, CSS and JavaScript (no framework, no build step, no dependencies), a small Node.js static server for local runs, Vercel for hosting, GitHub Actions for tests and checks. Chosen so it loads fast on low-end phones and any team can run it in one command.
+Plain HTML, CSS and JavaScript (no framework or runtime dependencies), a small Node.js static server for local runs, Vercel for hosting, and GitHub Actions for automated checks.
 
 ## Challenges and what we learned
 
-**[Write 2 or 3 honest sentences about what was hard and what you learned. For example: designing so that AI output can never look like a confirmed fact; keeping a six-language interface readable on a small phone; deciding what to leave out. Use only what is true for your team.]**
+**[Write 2–3 sentences about what was genuinely difficult and what the team learned. Do not use generic claims.]**
 
 ## What is next
 
-1. Co-design and test the workflow with health workers and supervisors.
-2. Replace mock extraction with a validated model, keeping mandatory human approval.
-3. Add authentication, role-based access, a protected backend and audit logs.
-4. Native-speaker review of every translation and real voice input.
-5. Privacy and security review before any real data is handled.
+1. Co-design and test the workflow with frontline workers and supervisors.
+2. Check for duplication with existing HMIS and state inventory workflows.
+3. Build secure authentication, role-based access, a protected backend and audit logs.
+4. Validate extraction against labelled examples and keep mandatory human approval.
+5. Obtain native-speaker translation review and complete privacy/security review before any real data is handled.
+6. Run a supervised pilot with baseline measures and predefined stop conditions.
 
 ## Links
 
-- Live demo: https://project1busho.vercel.app
+- **Live demo:** https://busho.de5.net
+- Alternate deployment: https://project1busho.vercel.app/
 - Code: https://github.com/kirtanswamy/BUSHO
 - Demo video: **[add link]**
 - Slides (if any): **[add link]**
@@ -83,4 +85,4 @@ Plain HTML, CSS and JavaScript (no framework, no build step, no dependencies), a
 
 ## AI tools disclosure
 
-Complete `AI_USAGE_DISCLOSURE.md` with your team's real tools, tasks and honest estimate, and paste the final text into the submission form. Do not submit the worksheet with bracketed placeholders.
+Complete `AI_USAGE_DISCLOSURE.md` with the team's actual tools, tasks and honest estimate, then paste the final disclosure into the submission form. Do not submit the worksheet with bracketed placeholders.
