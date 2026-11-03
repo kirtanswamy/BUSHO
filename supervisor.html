@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BUSHO | Supervisor Portal</title>
+    <meta name="description" content="BUSHO turns ordinary frontline health reports into verified operational action." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-v2.css?v=9" />
+    <script src="i18n.js"></script>
+  </head>
+  <body class="supervisor-portal-body">
+    <a href="#main-content" class="skip-link" data-i18n="ui.skipLink">Skip to main content</a>
+    <div class="app-shell">
+      <header class="topbar" role="banner">
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div>
+            <div class="brand-name" data-i18n="app.name">BUSHO</div>
+            <div class="brand-subtitle" data-i18n="app.tagline">Bottom-Up Smart Health Orchestrator</div>
+          </div>
+        </div>
+        <nav class="topbar-nav" aria-label="Portal navigation"><a href="index.html" class="nav-link">Public website</a></nav>
+        <div class="topbar-right">
+          <span class="demo-badge">Demo: synthetic data</span>
+          <div class="lang-selector" role="region" aria-label="Language selection" data-i18n-attr="aria-label:ui.languageSelection">
+            <label for="lang-select" class="visually-hidden" data-i18n="header.langLabel">Language</label>
+            <select id="lang-select" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="ta">தமிழ்</option>
+              <option value="te">తెలుగు</option>
+              <option value="bn">বাংলা</option>
+              <option value="mr">मराठी</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <main id="main-content" role="main" class="portal-page" data-portal-role="supervisor">
+        <section class="portal-login-section" id="portal-login" aria-labelledby="portal-login-title">
+          <div class="portal-login-card">
+            <p class="section-kicker">BUSHO SECURE WORKSPACE · DEMO</p>
+            <h1 id="portal-login-title">Supervisor Portal</h1>
+            <p>Operations oversight and administrative review. Sign in with the synthetic credentials below to explore this prototype.</p>
+            <form id="portal-login-form" class="portal-login-form">
+              <label for="portal-username">Email</label>
+              <input id="portal-username" name="username" type="email" autocomplete="username" required placeholder="name@busho.demo">
+              <label for="portal-password">Password</label>
+              <input id="portal-password" name="password" type="password" autocomplete="current-password" required>
+              <p class="portal-login-error" id="portal-login-error" role="alert" aria-live="polite"></p>
+              <button class="btn btn-primary" type="submit">Sign in to Supervisor Portal</button>
+            </form>
+            <div class="demo-credentials"><strong>Synthetic demo credentials</strong><code>supervisor@busho.demo / supervisor123</code><span>These credentials are for this local prototype only. This client-side demo gate is not production authentication.</span></div>
+            <a href="index.html" class="portal-back-link">← Back to BUSHO landing page</a>
+          </div>
+        </section>
+        <div id="portal-app" class="portal-app hidden" aria-hidden="true"><aside class="portal-sidebar supervisor-sidebar" aria-label="Supervisor navigation">
+  <a class="sidebar-brand" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span><strong>BUSHO</strong><small>OPERATIONS CONSOLE</small></span></a>
+  <p class="sidebar-label">OPERATIONS</p>
+  <button class="sidebar-link active" data-portal-view="overview"><span>▦</span> Overview</button>
+  <button class="sidebar-link" data-portal-view="reports"><span>▤</span> Reports Inbox <b class="sidebar-count">08</b></button>
+  <button class="sidebar-link" data-portal-view="trends"><span>⌁</span> Health Trends</button>
+  <button class="sidebar-link" data-portal-view="inventory"><span>▣</span> Inventory</button>
+  <button class="sidebar-link" data-portal-view="facilities"><span>⌂</span> Facilities</button>
+  <button class="sidebar-link" data-portal-view="workers"><span>♙</span> Health Workers</button>
+  <button class="sidebar-link" data-portal-view="approvals"><span>✓</span> Approvals <b class="sidebar-count">03</b></button>
+  <p class="sidebar-label">ADMINISTRATION</p>
+  <button class="sidebar-link" data-portal-view="activity"><span>◷</span> Activity Log</button>
+  <button class="sidebar-link" data-portal-view="settings"><span>⚙</span> Settings</button>
+  <div class="sidebar-bottom"><span class="demo-sidebar-label">SYNTHETIC DEMO</span><a href="index.html">← Public website</a></div>
+</aside>
+
+                  <!-- Interactive Demo -->
+        <section id="demo" class="demo-section" aria-labelledby="demo-title">
+          <div class="container">
+            <div class="portal-session-bar"><span>Signed in to the Supervisor demo workspace</span><button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button></div>
+            <div class="demo-header">
+                <div class="demo-context" aria-label="Active facility" data-i18n-attr="aria-label:ui.activeFacility">
+                <span class="context-kicker" data-i18n="ui.activeFacility">Active facility</span>
+                <strong data-i18n="ui.facility">Rampur HWC</strong>
+                <span data-i18n="ui.location">Rampur block / Synthetic demo data</span>
+              </div>
+              <div class="demo-status" aria-live="polite">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span data-i18n="header.demoBadge">Demo: synthetic data</span>
+              </div>
+            </div>
+
+            <div class="workspace-head">
+              <div>
+                <p class="section-kicker" data-i18n="app.tagline">Bottom-Up Smart Health Orchestrator</p>
+                <h2 id="demo-title">Supervisor operations</h2>
+              </div>
+            </div>
+            <section class="portal-module active" data-module="overview">
+              <div class="module-heading"><div><p class="section-kicker">OPERATIONS OVERVIEW</p><h2>Supervisor operations</h2><p>Monitor confirmed field reports and operational signals across your assigned facilities.</p></div><span class="scope-label">Rampur block · Synthetic data</span></div>
+            </section>
+            <section class="portal-module" data-module="reports"><div class="module-heading"><div><p class="section-kicker">REPORT MANAGEMENT</p><h2>Reports Inbox</h2><p>Review confirmed field reports from your assigned facilities.</p></div></div><article class="module-card"><div class="module-card-head"><div><h3>Incoming reports</h3><p>Synthetic report records for interface demonstration</p></div><div class="filter-chips"><span>All reports</span><span>Needs review</span><span>Reviewed</span></div></div><div class="simple-table"><div class="simple-row simple-header"><span>REPORT / FACILITY</span><span>WORKER</span><span>STATUS</span><span>PRIORITY</span></div><div class="simple-row"><span>Fever mentions · Rampur HWC</span><span>Demo Worker A</span><span><b class="status-pill status-review">Needs review</b></span><span>High</span></div><div class="simple-row"><span>ORS stock update · Rampur HWC</span><span>Demo Worker B</span><span><b class="status-pill status-confirmed">Confirmed</b></span><span>Medium</span></div><div class="simple-row"><span>Routine field update · North HWC</span><span>Demo Worker C</span><span><b class="status-pill status-confirmed">Confirmed</b></span><span>Normal</span></div></div></article></section>
+            <section class="portal-module" data-module="trends"><div class="module-heading"><div><p class="section-kicker">REPORTING PATTERNS</p><h2>Health Trends</h2><p>Signals for human review, not clinical conclusions.</p></div></div><article class="module-card"><h3>Reported symptom signals</h3><p>Fever mentions: +38% against the previous synthetic seven-day period.</p><p class="muted-copy">This illustrative trend does not establish an outbreak or confirmed medical event.</p></article></section>
+            <section class="portal-module" data-module="inventory"><div class="module-heading"><div><p class="section-kicker">STOCK MONITORING</p><h2>Inventory</h2><p>Review reported stock signals for assigned facilities.</p></div></div><article class="module-card"><div class="simple-table"><div class="simple-row simple-header"><span>ITEM</span><span>FACILITY</span><span>REPORTED STOCK</span><span>STATUS</span></div><div class="simple-row"><span>ORS packets</span><span>Rampur HWC</span><span>20 / 50</span><span><b class="status-pill status-review">Critical</b></span></div><div class="simple-row"><span>Iron and folic acid</span><span>Rampur HWC</span><span>14 / 60</span><span><b class="status-pill status-review">Low</b></span></div><div class="simple-row"><span>Zinc tablets</span><span>Rampur HWC</span><span>72 / 100</span><span><b class="status-pill status-confirmed">Healthy</b></span></div></div></article></section>
+            <section class="portal-module" data-module="facilities"><div class="module-heading"><div><p class="section-kicker">COVERAGE</p><h2>Facilities</h2><p>Assigned facility overview.</p></div></div><article class="module-card"><div class="simple-table"><div class="simple-row simple-header"><span>FACILITY</span><span>REPORTS</span><span>STOCK SIGNALS</span><span>STATUS</span></div><div class="simple-row"><span>Rampur HWC</span><span>18</span><span>2</span><span><b class="status-pill status-review">Attention</b></span></div><div class="simple-row"><span>North HWC</span><span>12</span><span>0</span><span><b class="status-pill status-confirmed">Normal</b></span></div></div></article></section>
+            <section class="portal-module" data-module="workers"><div class="module-heading"><div><p class="section-kicker">TEAM</p><h2>Health Workers</h2><p>Reporting activity for workers in your assigned scope.</p></div></div><article class="module-card"><div class="simple-table"><div class="simple-row simple-header"><span>WORKER</span><span>FACILITY</span><span>REPORTS THIS WEEK</span><span>STATUS</span></div><div class="simple-row"><span>Demo Worker A</span><span>Rampur HWC</span><span>6</span><span><b class="status-pill status-confirmed">Active</b></span></div><div class="simple-row"><span>Demo Worker B</span><span>North HWC</span><span>4</span><span><b class="status-pill status-confirmed">Active</b></span></div></div></article></section>
+            <section class="portal-module" data-module="approvals"><div class="module-heading"><div><p class="section-kicker">ADMINISTRATIVE CONTROL</p><h2>Approvals</h2><p>Administrative requests are separate from report review.</p></div></div><article class="module-card"><div class="module-card-head"><div><h3>Replenishment requests</h3><p>Illustrative requests requiring an authorized decision</p></div></div><div class="simple-table"><div class="simple-row simple-header"><span>REQUEST</span><span>FACILITY</span><span>STATUS</span><span>ACTION</span></div><div class="simple-row"><span>ORS replenishment draft</span><span>Rampur HWC</span><span><b class="status-pill status-review">Pending approval</b></span><button class="text-action" data-go-view="overview">Review stock signal →</button></div></div></article></section>
+            <section class="portal-module" data-module="activity"><div class="module-heading"><div><p class="section-kicker">AUDIT TRAIL</p><h2>Activity Log</h2><p>Illustrative demo activity; not a production audit record.</p></div></div><article class="module-card"><div class="simple-row"><span>10:42 AM</span><span>Worker confirmed routine field report</span><span>Rampur HWC</span></div><div class="simple-row"><span>Yesterday</span><span>Inventory signal flagged for review</span><span>Rampur HWC</span></div></article></section>
+            <section class="portal-module" data-module="settings"><div class="module-heading"><div><p class="section-kicker">PREFERENCES</p><h2>Settings</h2></div></div><article class="module-card"><p>Supervisor demo preferences and assigned-scope settings will be configured here.</p></article></section>
+            <div class="portal-module" data-module="overview-content">
+<!-- Worker View -->
+            <div class="view-panel active" id="worker-panel" role="tabpanel" aria-labelledby="demo-title">
+              <div class="panel-intro" aria-hidden="true">
+                <div class="intro-icon">01</div>
+                <div>
+                  <h3 data-i18n="worker.subtitle">Speak naturally. Review what BUSHO understood before you confirm.</h3>
+                </div>
+              </div>
+
+              <div class="progress-indicator" aria-label="Progress: Step 1 of 3" data-i18n-attr="aria-label:ui.progress">
+                <div class="progress-step active" data-step="1">
+                  <span class="progress-num">1</span>
+                  <span class="progress-label" data-i18n="worker.step1">Report</span>
+                </div>
+                <div class="progress-connector"></div>
+                <div class="progress-step" data-step="2">
+                  <span class="progress-num">2</span>
+                  <span class="progress-label" data-i18n="worker.step2">Check</span>
+                </div>
+                <div class="progress-connector"></div>
+                <div class="progress-step" data-step="3">
+                  <span class="progress-num">3</span>
+                  <span class="progress-label" data-i18n="worker.step3">Confirm</span>
+                </div>
+              </div>
+
+              <div class="worker-grid">
+                <!-- Report Input Card -->
+                <article class="card report-card" aria-labelledby="report-title">
+                  <header class="card-head">
+                    <div>
+                      <p class="card-overline" data-i18n="worker.step1">Step 1 of 3: Report</p>
+                      <h3 id="report-title" data-i18n="worker.sendUpdate">Send a field update</h3>
+                    </div>
+                    <span class="channel-chip" data-i18n="worker.channel">Text / Voice</span>
+                  </header>
+                  <div class="composer">
+                      <textarea id="report-input" aria-label="Field report" placeholder="" data-i18n="worker.placeholder" data-i18n-attr="aria-label:ui.fieldReport,placeholder:worker.placeholder"></textarea>
+                    <div class="composer-actions">
+                      <button class="btn btn-secondary voice-button" type="button" aria-label="Voice input (demo)" data-i18n-attr="aria-label:voice.demo"><span data-i18n="voice.demo">Voice input (demo)</span><span class="record-time" aria-live="polite" data-i18n="voice.zeroSeconds" data-i18n-attr="aria-label:voice.zeroSeconds">0s</span></button>
+                      <div class="quick-actions" role="group" aria-label="Try an example" data-i18n-attr="aria-label:ui.tryExample">
+                        <span class="quick-label" data-i18n="worker.tryExample">Try an example:</span>
+                        <button class="btn btn-quiet quick-btn" type="button" data-sample="routine" data-i18n="worker.sample.routine">Routine report</button>
+                        <button class="btn btn-quiet quick-btn" type="button" data-sample="ambiguous" data-i18n="worker.sample.ambiguous">Ambiguous report</button>
+                      </div>
+                      <button class="btn btn-primary" id="extract-btn" type="button" data-i18n="worker.extractBtn">Extract report</button>
+                    </div>
+                  </div>
+                  <p class="privacy-note" data-i18n="worker.privacy">No names, phone numbers or diagnoses are collected.</p>
+                </article>
+
+                <!-- Extraction Card -->
+                <article class="card extraction-card" aria-labelledby="extraction-title">
+                  <header class="card-head">
+                    <div>
+                      <p class="card-overline" data-i18n="worker.step2">Step 2 of 3: Check</p>
+                      <h3 id="extraction-title" data-i18n="worker.draftTitle">What BUSHO heard</h3>
+                    </div>
+                    <span class="draft-chip" id="draft-chip" data-i18n="worker.draftAwaiting">Awaiting extraction</span>
+                  </header>
+                  <div class="provisional-banner" id="provisional-banner" role="status" aria-live="polite">
+                    <span class="banner-icon" aria-hidden="true">i</span>
+                    <div data-i18n="worker.provisional">AI-extracted information is provisional. Review each field. Nothing is committed until you confirm.</div>
+                  </div>
+                  <div class="extraction-list" id="extraction-list" aria-label="Extracted fields" data-i18n-attr="aria-label:ui.extractedFields">
+                    <div class="empty-extraction">
+                      <div class="empty-state">
+                        <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <p class="empty-title" data-i18n="worker.draftAwaiting">Awaiting extraction</p>
+                        <p class="empty-desc" data-i18n="worker.provisional">Run extraction to create a review draft. Fields stay provisional until you confirm them.</p>
+                      </div>
+                    </div>
+                  </div>
+                  <footer class="extraction-footer">
+                    <span class="confidence-key" data-i18n="worker.confidenceKey">High confidence · Needs review</span>
+                    <span class="engine-label" data-i18n="worker.engineLabel">Mock extraction engine · Schema validated</span>
+                  </footer>
+                </article>
+              </div>
+
+              <!-- Verification Bar -->
+              <div class="verification-bar hidden" id="verification-bar" role="region" aria-label="Verification" data-i18n-attr="aria-label:ui.verification">
+                <div>
+                  <p class="card-overline" data-i18n="worker.step3">Step 3 of 3: Confirm</p>
+                  <p class="verify-prompt" data-i18n="worker.verifyPrompt">Does this look right for today's report?</p>
+                  <p class="verify-note" data-i18n="worker.verifyNote">Confirmation creates a verified operational record. BUSHO does not diagnose.</p>
+                  <div class="draft-feedback" id="draft-feedback" role="alert" aria-live="polite"></div>
+                </div>
+                <div class="verification-actions">
+                  <button class="btn btn-secondary" id="edit-btn" type="button" data-i18n="worker.editBtn">Edit fields</button>
+                  <button class="btn btn-primary" id="confirm-btn" type="button" data-i18n="worker.confirmBtn">Confirm report</button>
+                </div>
+              </div>
+
+              <!-- Post-confirm prompt -->
+              <div class="post-confirm hidden" id="post-confirm" role="status" aria-live="polite">
+                <p data-i18n="worker.seeSupervisor">See what the supervisor sees →</p>
+              </div>
+            </div>
+
+            <!-- Supervisor View -->
+            <div class="view-panel" id="supervisor-panel" role="tabpanel" aria-labelledby="demo-title" hidden>
+              <div class="panel-intro" aria-hidden="true">
+                <div class="intro-icon admin-icon">02</div>
+                <div>
+                  <h3 data-i18n="supervisor.subtitle">Respond to verified stock signals with clear context and human approval.</h3>
+                </div>
+              </div>
+
+              <div class="priority-alert" role="region" aria-label="Priority alert" data-i18n-attr="aria-label:ui.priorityAlert">
+                <div>
+                  <span class="priority-label" data-i18n="supervisor.priorityLabel">PRIORITY REVIEW</span>
+                  <strong data-i18n="supervisor.priorityTitle">Reported fever signal at Rampur HWC</strong>
+                </div>
+                <span class="priority-trend" data-i18n="supervisor.priorityTrend">+38% mentions / health trend only</span>
+                <span class="alert-state" data-i18n="supervisor.priorityState">Needs review</span>
+              </div>
+
+              <div class="metric-grid" role="list" aria-label="Key metrics" data-i18n-attr="aria-label:ui.keyMetrics">
+                <article class="metric-card" role="listitem">
+                  <p class="metric-label" data-i18n="supervisor.metric.reports">Reports received</p>
+                  <strong id="reports-count">18</strong>
+                  <p class="metric-trend positive" id="reports-trend" data-i18n="supervisor.metric.trend.baseline">Synthetic baseline</p>
+                </article>
+                <article class="metric-card" role="listitem">
+                  <p class="metric-label" data-i18n="supervisor.metric.pending">Awaiting confirmation</p>
+                  <strong id="pending-count">1</strong>
+                  <p class="metric-trend warning" id="pending-trend" data-i18n="supervisor.metric.trend.warning">Needs worker review</p>
+                </article>
+                <article class="metric-card" role="listitem">
+                  <p class="metric-label" data-i18n="supervisor.metric.lowStock">Low-stock medicines</p>
+                  <strong id="low-stock-count">2</strong>
+                  <p class="metric-trend critical" id="low-stock-trend" data-i18n="supervisor.metric.trend.critical">At Rampur HWC</p>
+                </article>
+                <article class="metric-card accent-metric" role="listitem">
+                  <p class="metric-label" data-i18n="supervisor.metric.stockout">Potential stockout</p>
+                  <strong>48h</strong>
+                  <p class="metric-trend" data-i18n="supervisor.metric.trend.stockout">ORS · based on reported use</p>
+                </article>
+              </div>
+
+              <div class="supervisor-grid">
+                <!-- Trend Card -->
+                <article class="card trend-card" aria-labelledby="trend-title">
+                  <header class="card-head">
+                    <div>
+                      <p class="card-overline" data-i18n="supervisor.trendLabel">HEALTH SIGNAL REVIEW</p>
+                      <h3 id="trend-title" data-i18n="supervisor.trendTitle">Reported symptoms in context</h3>
+                    </div>
+                    <span class="review-chip" data-i18n="supervisor.trendChip">Needs review</span>
+                  </header>
+                  <div class="trend-signal">
+                    <div class="trend-number">+38<span>%</span></div>
+                    <div>
+                      <strong data-i18n="supervisor.trendNumber">Fever mentions at Rampur HWC</strong>
+                      <p data-i18n="supervisor.trendDesc">Compared with the previous 7-day reporting period</p>
+                    </div>
+                  </div>
+                  <div class="chart-container">
+                    <div class="chart-wrapper" role="img" aria-label="Fever mentions trend over 7 days. Day 1: 31%, Day 2: 38%, Day 3: 27%, Day 4: 48%, Day 5: 45%, Day 6: 64%, Day 7 (Today): 84%" data-i18n-attr="aria-label:ui.chartAlt">
+                      <table class="chart-table" aria-hidden="true">
+                        <thead>
+                          <tr><th scope="col" data-i18n="supervisor.chartLabel">7 days ago</th><th scope="col"></th><th scope="col"></th><th scope="col"></th><th scope="col"></th><th scope="col"></th><th scope="col" data-i18n="supervisor.chartToday">Today</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr class="chart-bars">
+                            <td><div class="bar" style="height: 31%"></div></td>
+                            <td><div class="bar" style="height: 38%"></div></td>
+                            <td><div class="bar" style="height: 27%"></div></td>
+                            <td><div class="bar" style="height: 48%"></div></td>
+                            <td><div class="bar" style="height: 45%"></div></td>
+                            <td><div class="bar" style="height: 64%"></div></td>
+                            <td><div class="bar bar-hot" style="height: 84%"></div></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="chart-legend" aria-label="Chart legend" data-i18n-attr="aria-label:ui.chartLegend"><span><i class="legend-swatch reported" aria-hidden="true"></i><span data-i18n="chart.legendReported">Reported trend</span></span><span><i class="legend-swatch today" aria-hidden="true"></i><span data-i18n="chart.legendToday">Today</span></span></div>
+                    <div class="chart-summary" aria-live="polite">
+                      <p data-i18n="supervisor.safetyCallout">Reported health trend. This is a signal for human review. It does not confirm a medical event or outbreak.</p>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Inventory Card -->
+                <article class="card inventory-card" aria-labelledby="inventory-title">
+                  <header class="card-head">
+                    <div>
+                      <p class="card-overline" data-i18n="supervisor.inventoryLabel">INVENTORY INTELLIGENCE</p>
+                      <h3 id="inventory-title" data-i18n="supervisor.inventoryTitle">Stock that needs attention</h3>
+                    </div>
+                    <button class="btn btn-quiet" id="view-inventory" type="button" data-i18n="supervisor.viewAll">View all</button>
+                  </header>
+                  <div class="inventory-list" role="list" aria-label="Medicine stock" data-i18n-attr="aria-label:ui.medicineStock">
+                    <div class="inventory-row" role="listitem">
+                      <div class="medicine-icon ors" aria-hidden="true">ORS</div>
+                      <div class="medicine-copy">
+                        <strong data-i18n="supervisor.inventory.ors">ORS packets</strong>
+                        <span data-i18n="ui.inventoryRecent">Rampur HWC / reported 2m ago</span>
+                      </div>
+                      <div class="stock-meter">
+                        <div class="meter-label"><span id="ors-stock">20 / 50</span><b>40%</b></div>
+                        <div class="meter"><i style="width: 40%"></i></div>
+                      </div>
+                      <span class="severity critical"><span aria-hidden="true">!</span> <span data-i18n="supervisor.severity.critical">Critical</span></span>
+                    </div>
+                    <div class="inventory-row" role="listitem">
+                      <div class="medicine-icon ifa" aria-hidden="true">Fe</div>
+                      <div class="medicine-copy">
+                        <strong data-i18n="supervisor.inventory.ifa">Iron and folic acid</strong>
+                        <span data-i18n="ui.inventoryRecent">Rampur HWC / reported 2m ago</span>
+                      </div>
+                      <div class="stock-meter">
+                        <div class="meter-label"><span id="ifa-stock">14 / 60</span><b>23%</b></div>
+                        <div class="meter"><i style="width: 23%"></i></div>
+                      </div>
+                      <span class="severity warning"><span aria-hidden="true">!</span> <span data-i18n="supervisor.severity.warning">Low</span></span>
+                    </div>
+                    <div class="inventory-row" role="listitem">
+                      <div class="medicine-icon zinc" aria-hidden="true">Zn</div>
+                      <div class="medicine-copy">
+                        <strong data-i18n="supervisor.inventory.zinc">Zinc tablets</strong>
+                        <span data-i18n="ui.inventoryYesterday">Rampur HWC / local demo state, yesterday</span>
+                      </div>
+                      <div class="stock-meter">
+                        <div class="meter-label"><span id="zinc-stock">72 / 100</span><b>72%</b></div>
+                        <div class="meter"><i class="safe-meter" style="width: 72%"></i></div>
+                      </div>
+                      <span class="severity safe"><span aria-hidden="true">✓</span> <span data-i18n="supervisor.severity.safe">Healthy</span></span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <!-- Admin Response -->
+              <article class="admin-response hidden" id="admin-response" aria-labelledby="admin-action-title">
+                <div class="response-icon" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div>
+                  <p class="card-overline" data-i18n="supervisor.responseTitle">Verified report available for admin review</p>
+                  <strong id="admin-action-title" data-i18n="supervisor.responseTitle">Verified report available for admin review</strong>
+                  <p id="admin-action-copy" data-i18n="supervisor.responseCopy">Open inventory and choose a low-stock item to create a replenishment draft. No purchase order is created by this demo.</p>
+                  <button class="btn btn-secondary admin-approve" id="approve-replenishment" type="button" disabled data-i18n="supervisor.approveBtn">Approve draft</button>
+                </div>
+                <span class="draft-status" id="admin-action-status" data-i18n="supervisor.statusAwaiting">Awaiting admin action</span>
+              </article>
+
+              <!-- Inventory Drawer -->
+              <div class="inventory-drawer hidden" id="inventory-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+                <header class="drawer-head">
+                  <div>
+                    <p class="card-overline" data-i18n="supervisor.inventoryLabel">SYNTHETIC INVENTORY</p>
+                    <h3 id="drawer-title" data-i18n="supervisor.drawerTitle">Inventory detail</h3>
+                  </div>
+                  <button class="btn btn-quiet" id="close-inventory" type="button" aria-label="Close inventory" data-i18n="ui.closeInventory" data-i18n-attr="aria-label:ui.closeInventory">Close</button>
+                </header>
+                <p class="drawer-note" data-i18n="supervisor.drawerNote">Demo inventory only. Drafting an item prepares an approval record; it does not place an order.</p>
+                <div class="inventory-detail-list" id="inventory-detail-list" role="list"></div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </section>
+
+
+        </div>
+      </main>
+      <footer class="footer" role="contentinfo">
+        <div class="container">
+          <div class="footer-main">
+            <p class="footer-event" data-i18n="footer.event">Hack for Social Cause, VBYLD 2027</p>
+            <p class="footer-prototype" data-i18n="footer.prototype">Prototype: not for real patient data</p>
+            <p class="footer-ai-note" data-i18n="footer.aiNote">Translations were AI-drafted and need native-speaker review before any real pilot.</p>
+          </div>
+          <div class="footer-links">
+            <a href="terms.html" data-i18n="footer.terms">Terms</a>
+            <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+            <button class="reset-btn" id="reset-demo" type="button" data-i18n="footer.reset">Reset demo data</button>
+            <div class="lang-selector footer-lang" role="region" aria-label="Language selection" data-i18n-attr="aria-label:ui.languageSelection">
+              <label for="lang-select-footer" class="visually-hidden" data-i18n="header.langLabel">Language</label>
+              <select id="lang-select-footer" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ta">தமிழ்</option>
+                <option value="te">తెలుగు</option>
+                <option value="bn">বাংলা</option>
+                <option value="mr">मराठी</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span class="toast-icon" aria-hidden="true">✓</span>
+      <span id="toast-text"></span>
+    </div>
+
+    <script src="app-v2.js?v=9"></script>
+    <script src="role-auth.js?v=1"></script>
+    <script src="portal-navigation.js?v=1"></script>
+  </body>
+</html>

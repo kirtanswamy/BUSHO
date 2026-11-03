@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'busho-demo-state-v1';
+const PORTAL_ROLE = document.querySelector('[data-portal-role]')?.dataset.portalRole || null;
 
 function t(key, vars) {
   const helper = window.BUSHO_I18N && window.BUSHO_I18N.t;
@@ -44,7 +45,7 @@ function loadState() {
     const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || 'null');
     if (!stored || stored.version !== 1 || typeof stored.rawReport !== 'string') return initialState();
     const next = initialState();
-    next.view = stored.view === 'admin' ? 'admin' : 'worker';
+    next.view = PORTAL_ROLE === 'supervisor' ? 'supervisor' : 'worker';
     next.sample = stored.sample === 'ambiguous' ? 'ambiguous' : 'routine';
     next.rawReport = stored.rawReport.slice(0, 4000);
     next.extracted = Boolean(stored.extracted);
@@ -134,7 +135,7 @@ function openInventory() { lastFocusedElement = document.activeElement; inventor
 function closeInventory() { inventoryDrawer.classList.add('hidden'); (lastFocusedElement || document.getElementById('view-inventory')).focus(); }
 function createReplenishmentDraft(medicineId) { const medicine = inventory.find(item => item.id === medicineId); if (!medicine || medicine.severity === 'safe') return; state.replenishment = { status: 'draft', medicineId, source: state.confirmed ? t('supervisor.sourceVerified') : t('supervisor.sourceSynthetic') }; renderAdminResponse(); saveState(); closeInventory(); showToast(t('supervisor.toast.draftCreated', { name: t(medicine.nameKey) })); }
 function approveReplenishment() { if (state.replenishment.status !== 'draft') return; state.replenishment.status = 'approved'; renderAdminResponse(); saveState(); showToast(t('supervisor.toast.approved')); }
-function switchView(view, notify = true) { state.view = view === 'admin' || view === 'supervisor' ? 'supervisor' : 'worker'; document.querySelectorAll('.role-btn').forEach(button => { const active = button.dataset.view === state.view; button.classList.toggle('active', active); button.setAttribute('aria-selected', String(active)); }); document.querySelectorAll('.view-panel').forEach(panel => { const active = panel.id === `${state.view}-panel`; panel.classList.toggle('active', active); panel.hidden = !active; }); saveState(); if (notify && state.view === 'supervisor' && !state.confirmed) showToast(t('supervisor.toast.confirmed')); }
+function switchView(view, notify = true) { state.view = PORTAL_ROLE ? (PORTAL_ROLE === 'supervisor' ? 'supervisor' : 'worker') : (view === 'admin' || view === 'supervisor' ? 'supervisor' : 'worker'); document.querySelectorAll('.role-btn').forEach(button => { const active = !PORTAL_ROLE && button.dataset.view === state.view; button.classList.toggle('active', active); button.setAttribute('aria-selected', String(active)); }); document.querySelectorAll('.view-panel').forEach(panel => { const active = panel.id === `${state.view}-panel`;  panel.classList.toggle('active', active); panel.hidden = !active; }); saveState(); if (notify && state.view === 'supervisor' && !state.confirmed) showToast(t('supervisor.toast.confirmed')); }
 function renderAll() { reportInput.value = state.rawReport; messageText.textContent = state.rawReport || t('worker.emptyReport'); renderExtraction(); renderDraftStatus(); renderDashboard(); renderAdminResponse(); switchView(state.view, false); }
 
 document.querySelectorAll('.role-btn').forEach(button => {

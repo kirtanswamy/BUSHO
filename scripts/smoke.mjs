@@ -150,9 +150,23 @@ try {
   check(index.status === 200 && index.type.startsWith('text/html'), 'GET / returns 200 text/html');
   auditHtml('index.html', index.body);
 
+  console.log('\n[role portals]');
+  const workerPage = await rawGet('/worker.html');
+  const supervisorPage = await rawGet('/supervisor.html');
+  check(workerPage.status === 200 && workerPage.body.includes('data-portal-role=\"worker\"'), 'health worker portal route is served with worker role');
+  check(supervisorPage.status === 200 && supervisorPage.body.includes('data-portal-role=\"supervisor\"'), 'supervisor portal route is served with supervisor role');
+  check(workerPage.body.includes('worker@busho.demo') && !workerPage.body.includes('supervisor@busho.demo'), 'worker portal exposes only worker demo credentials');
+  check(supervisorPage.body.includes('supervisor@busho.demo') && !supervisorPage.body.includes('worker@busho.demo'), 'supervisor portal exposes only supervisor demo credentials');
+  check(!index.body.includes('id=\"worker-panel\"') && !index.body.includes('id=\"supervisor-panel\"'), 'public landing page does not embed either private workspace');
+  check(workerPage.body.includes('class="portal-sidebar worker-sidebar"') && workerPage.body.includes('data-portal-view="new-report"'), 'worker portal has its own field-work navigation');
+  check(supervisorPage.body.includes('class="portal-sidebar supervisor-sidebar"') && supervisorPage.body.includes('data-portal-view="reports"') && supervisorPage.body.includes('data-portal-view="approvals"'), 'supervisor portal has dedicated reports and approvals navigation');
+  check(workerPage.body.includes('data-module="my-reports"') && supervisorPage.body.includes('data-module="reports"'), 'worker report history and supervisor reports inbox are separate modules');
+
   console.log('\n[assets]');
-  const pages = [index.body];
-  for (const ref of localRefs(index.body)) {
+  const pages = [index.body, workerPage.body, supervisorPage.body];
+  const allPageBodies = [index.body, workerPage.body, supervisorPage.body];
+  const allRefs = [...new Set(allPageBodies.flatMap(localRefs))];
+  for (const ref of allRefs) {
     const r = await rawGet(ref);
     check(r.status === 200, `${ref} resolves (${r.status})`);
     if (r.status === 200 && ref.endsWith('.js')) {

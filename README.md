@@ -8,8 +8,6 @@
 
 [![Live Demo](https://img.shields.io/badge/LIVE-busho.de5.net-00B981?style=for-the-badge&logo=vercel&logoColor=white)](https://busho.de5.net)
 [![Prototype](https://img.shields.io/badge/STATUS-prototype-7657D5?style=for-the-badge)](#what-exists-today)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](#run-locally)
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](#run-locally)
 [![Tests](https://img.shields.io/badge/Tests-Passing-20A779?style=for-the-badge)](#run-locally)
 [![CI](https://img.shields.io/badge/CI-Passing-20A779?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-4C9A82.svg)](LICENSE)
@@ -153,6 +151,21 @@ India and Chhattisgarh have existing health-information and medicine-supply init
 | Automated prototype checks | Measured health outcomes or proven impact |
 
 **Voice privacy:** Voice input uses the browser's speech-recognition service, which may send audio to the browser vendor. BUSHO does not store audio recordings. Manual text entry remains available. Do not speak names, phone numbers, diagnoses, government IDs, or other identifying patient details.
+
+## Website portals
+
+BUSHO has one shared public landing page and two separate web portals:
+
+- `/` — common public landing page and role selection.
+- `/worker.html` — Health Worker Portal for field reporting, draft review, and confirmation.
+- `/supervisor.html` — Supervisor Portal for operational monitoring, inventory signals, and administrative review.
+
+The planned mobile app is initially for Health Workers only. The portal sign-ins currently use synthetic, client-side demo credentials and are **not production authentication**. Do not enter real patient or sensitive health data.
+
+Demo credentials:
+
+- Health Worker: `worker@busho.demo` / `worker123`
+- Supervisor: `supervisor@busho.demo` / `supervisor123`
 
 ## Run locally
 
