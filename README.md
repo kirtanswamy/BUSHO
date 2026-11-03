@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="assets/busho-github-hero.png" alt="BUSHO — Bottom-Up Smart Health Orchestrator: a human-reviewed workflow from frontline reports to supervisor review" width="100%" />
+<img src="assets/busho-github-banner.jpg" alt="BUSHO — Bottom-Up Smart Health Orchestrator: a human-reviewed workflow from frontline reports to supervisor review" width="100%" />
 
 <br />
 
