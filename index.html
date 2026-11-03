@@ -25,7 +25,7 @@
           </div>
         </div>
         <nav class="topbar-nav" aria-label="Main navigation" data-i18n-attr="aria-label:ui.mainNavigation">
-          <a href="#how-it-works" class="nav-link" data-i18n="nav.howItWorks">How it works</a>
+          <a href="#capabilities" class="nav-link">Platform</a>
           <a href="signin.html" class="nav-link">Sign in</a>
           <a href="#safety" class="nav-link" data-i18n="nav.safety">Safety</a>
         </nav>
@@ -35,11 +35,11 @@
             <label for="lang-select" class="visually-hidden" data-i18n="header.langLabel">Language</label>
             <select id="lang-select" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
               <option value="en">English</option>
-              <option value="hi">हिन्दी</option>
-              <option value="ta">தமிழ்</option>
-              <option value="te">తెలుగు</option>
-              <option value="bn">বাংলা</option>
-              <option value="mr">मराठी</option>
+              <option value="hi">à¤¹à¤¿à¤¨à¥à¤¦à¥€</option>
+              <option value="ta">à®¤à®®à®¿à®´à¯</option>
+              <option value="te">à°¤à±†à°²à±à°—à±</option>
+              <option value="bn">à¦¬à¦¾à¦‚à¦²à¦¾</option>
+              <option value="mr">à¤®à¤°à¤¾à¤ à¥€</option>
             </select>
           </div>
         </div>
@@ -50,11 +50,11 @@
         <section class="hero-section" aria-labelledby="hero-title">
           <div class="hero-container">
             <div class="hero-content">
-              <p class="eyebrow" data-i18n="hero.subtext">Reports travel slowly by calls and registers. BUSHO turns a field note into a verified draft the worker confirms, so a supervisor can act.</p>
+
               <h1 id="hero-title" data-i18n="hero.headline">Health workers report in their own words. BUSHO helps the right people act, safely.</h1>
               <div class="hero-actions">
                 <a href="#portals" class="btn btn-primary">Sign in to BUSHO</a>
-                <a href="#how-it-works" class="btn btn-secondary">See how it works</a>
+                <a href="#capabilities" class="btn btn-secondary">Explore the platform</a>
               </div>
               <div class="trust-chips" role="list" aria-label="Trust indicators" data-i18n-attr="aria-label:ui.trustIndicators">
                 <span class="trust-chip" role="listitem" data-i18n="hero.trust1">A person confirms every record</span>
@@ -76,7 +76,7 @@
                         <span class="mock-time" data-i18n="mock.time">10:42 AM</span>
                       </div>
                     </div>
-                    <div class="mock-arrow" aria-hidden="true">→</div>
+                    <div class="mock-arrow" aria-hidden="true">â†’</div>
                     <div class="mock-message outgoing">
                       <div class="mock-bubble structured">
                         <div class="mock-field"><span class="mock-label" data-i18n="mock.symptomsLabel">Symptoms</span><span class="mock-value" data-i18n="mock.symptomsValue">Fever: 12; Diarrhea: 8</span></div>
@@ -95,59 +95,63 @@
           </div>
         </section>
 
-        <!-- How it works -->
-        <section id="how-it-works" class="how-section" aria-labelledby="how-title">
+        <!-- Platform capabilities -->
+        <section id="capabilities" class="capabilities-section" aria-labelledby="capabilities-title">
           <div class="container">
-            <header class="section-header">
-              <h2 id="how-title" data-i18n="how.title">How it works</h2>
+            <header class="section-header capabilities-header">
+              <p class="section-kicker">PLATFORM CAPABILITIES</p>
+              <h2 id="capabilities-title">A clearer view of frontline health operations.</h2>
+              <p>BUSHO brings field observations, human verification and operational follow-up into one role-based workspace.</p>
             </header>
-            <div class="steps-grid">
-              <article class="step-card" aria-labelledby="step1-title">
-                <div class="step-icon" aria-hidden="true">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                </div>
-                <div class="step-number">01</div>
-                <h3 id="step1-title" data-i18n="how.step1.title">Report</h3>
-                <p class="step-by" data-i18n="how.step1.by">Health worker</p>
-                <p class="step-desc" data-i18n="how.step1.desc">Writes or speaks a short field update in their own words.</p>
+            <div class="capability-grid">
+              <article class="capability-card">
+                <span class="capability-index">01</span>
+                <div class="capability-icon" aria-hidden="true">â†—</div>
+                <h3>Field reporting</h3>
+                <p>Capture short field updates in a health workerâ€™s own words, using text or browser-supported voice input.</p>
+                <span class="capability-meta">HEALTH WORKER WORKSPACE</span>
               </article>
-              <article class="step-card" aria-labelledby="step2-title">
-                <div class="step-icon" aria-hidden="true">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                </div>
-                <div class="step-number">02</div>
-                <h3 id="step2-title" data-i18n="how.step2.title">Draft</h3>
-                <p class="step-by" data-i18n="how.step2.by">BUSHO suggests</p>
-                <p class="step-desc" data-i18n="how.step2.desc">AI creates a structured draft from the free-text note.</p>
+              <article class="capability-card">
+                <span class="capability-index">02</span>
+                <div class="capability-icon" aria-hidden="true">âœ“</div>
+                <h3>Structured review</h3>
+                <p>Turn observations into a readable draft. Review and confirm extracted fields before they are treated as a report.</p>
+                <span class="capability-meta">HUMAN CONFIRMATION</span>
               </article>
-              <article class="step-card" aria-labelledby="step3-title">
-                <div class="step-icon" aria-hidden="true">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-                <div class="step-number">03</div>
-                <h3 id="step3-title" data-i18n="how.step3.title">Confirm</h3>
-                <p class="step-by" data-i18n="how.step3.by">Health worker</p>
-                <p class="step-desc" data-i18n="how.step3.desc">Worker reviews each field and confirms the record.</p>
-              </article>
-              <article class="step-card" aria-labelledby="step4-title">
-                <div class="step-icon" aria-hidden="true">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                </div>
-                <div class="step-number">04</div>
-                <h3 id="step4-title" data-i18n="how.step4.title">Act</h3>
-                <p class="step-by" data-i18n="how.step4.by">Supervisor</p>
-                <p class="step-desc" data-i18n="how.step4.desc">Verified signal informs a replenishment draft for approval.</p>
+              <article class="capability-card">
+                <span class="capability-index">03</span>
+                <div class="capability-icon" aria-hidden="true">â–¤</div>
+                <h3>Operational oversight</h3>
+                <p>Give supervisors a consolidated view of submitted reports, reported stock signals and items requiring attention.</p>
+                <span class="capability-meta">SUPERVISOR WORKSPACE</span>
               </article>
             </div>
+            <p class="capabilities-note">Demonstration capabilities only. The current prototype uses synthetic data and does not connect to government health systems.</p>
           </div>
         </section>
 
+        <!-- Role-based workspaces -->
         <section id="portals" class="portal-entry-section" aria-labelledby="portals-title">
-          <div class="container signin-prompt">
-            <p class="section-kicker">BUSHO WORKSPACES</p>
-            <h2 id="portals-title">One platform. Two dedicated workspaces.</h2>
-            <p>Frontline reporting and operational oversight, with access shaped around each role.</p>
-            <a class="btn btn-primary" href="signin.html">Sign in to BUSHO <span aria-hidden="true">→</span></a>
+          <div class="container">
+            <header class="section-header workspace-section-header">
+              <p class="section-kicker">ROLE-BASED ACCESS</p>
+              <h2 id="portals-title">One platform. Dedicated workspaces.</h2>
+              <p>Different responsibilities, with information presented around the work each role performs.</p>
+            </header>
+            <div class="workspace-cards">
+              <article class="workspace-card">
+                <div class="workspace-card-top"><span>01 / FRONTLINE</span><span aria-hidden="true">â†—</span></div>
+                <h3>Health worker</h3>
+                <p>Prepare field updates, review structured observations and confirm reports.</p>
+                <a href="signin.html" class="workspace-link">Access workspace <span aria-hidden="true">â†’</span></a>
+              </article>
+              <article class="workspace-card workspace-card-supervisor">
+                <div class="workspace-card-top"><span>02 / OPERATIONS</span><span aria-hidden="true">â†—</span></div>
+                <h3>Supervisor</h3>
+                <p>Review submitted reports, monitor stock signals and assess operational follow-up.</p>
+                <a href="signin.html" class="workspace-link">Access workspace <span aria-hidden="true">â†’</span></a>
+              </article>
+            </div>
           </div>
         </section>
 
@@ -191,26 +195,6 @@
           </div>
         </section>
 
-        <!-- Glossary -->
-        <section class="glossary-section" aria-labelledby="glossary-title">
-          <div class="container">
-            <h2 id="glossary-title" class="visually-hidden" data-i18n="glossary.title">Glossary</h2>
-            <dl class="glossary-list">
-              <div class="glossary-item">
-                <dt>HWC</dt>
-                <dd data-i18n="glossary.hwc">Health & Wellness Centre</dd>
-              </div>
-              <div class="glossary-item">
-                <dt>CHO</dt>
-                <dd data-i18n="glossary.cho">Community Health Officer</dd>
-              </div>
-              <div class="glossary-item">
-                <dt>ORS</dt>
-                <dd data-i18n="glossary.ors">Oral rehydration salts</dd>
-              </div>
-            </dl>
-          </div>
-        </section>
       </main>
 
       <footer class="footer" role="contentinfo">
@@ -228,11 +212,11 @@
               <label for="lang-select-footer" class="visually-hidden" data-i18n="header.langLabel">Language</label>
               <select id="lang-select-footer" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
                 <option value="en">English</option>
-                <option value="hi">हिन्दी</option>
-                <option value="ta">தமிழ்</option>
-                <option value="te">తెలుగు</option>
-                <option value="bn">বাংলা</option>
-                <option value="mr">मराठी</option>
+                <option value="hi">à¤¹à¤¿à¤¨à¥à¤¦à¥€</option>
+                <option value="ta">à®¤à®®à®¿à®´à¯</option>
+                <option value="te">à°¤à±†à°²à±à°—à±</option>
+                <option value="bn">à¦¬à¦¾à¦‚à¦²à¦¾</option>
+                <option value="mr">à¤®à¤°à¤¾à¤ à¥€</option>
               </select>
             </div>
           </div>
@@ -241,7 +225,7 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite">
-      <span class="toast-icon" aria-hidden="true">✓</span>
+      <span class="toast-icon" aria-hidden="true">âœ“</span>
       <span id="toast-text"></span>
     </div>
 
