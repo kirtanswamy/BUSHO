@@ -274,7 +274,7 @@ function startVoice() {
       window.setTimeout(() => {
         if (sessionId !== currentSessionId || !voiceWanted) return;
         recognition = null;
-        createRecognitionSession(sessionId);
+        startVoice();
       }, 400);
     } else resetVoiceSession(sessionId);
   };
