@@ -599,6 +599,33 @@
   Object.assign(locales.te, { 'draft.reportedDetails': "తెలిపిన ఆరోగ్య వివరాలు", 'draft.reportedMedicines': "పేర్కొన్న మందులు మరియు సరఫరాలు", 'draft.reportedQuantities': "పేర్కొన్న సంఖ్యలు మరియు పరిమాణాలు", 'draft.originalReport': "అసలు ఫీల్డ్ నివేదిక", 'draft.notDetected': "నమ్మకంగా గుర్తించబడలేదు — అసలు నివేదికను పరిశీలించండి", 'voice.captureHint': "వాయిస్ రికార్డింగ్ ప్రారంభమైంది. సహజంగా మాట్లాడండి; ముగించడానికి మైక్రోఫోన్‌ను మళ్లీ నొక్కండి." });
   Object.assign(locales.mr, { 'draft.reportedDetails': "नोंदवलेली आरोग्यविषयक माहिती", 'draft.reportedMedicines': "नोंदवलेली औषधे आणि साहित्य", 'draft.reportedQuantities': "नोंदवलेले आकडे आणि प्रमाण", 'draft.originalReport': "मूळ क्षेत्रीय अहवाल", 'draft.notDetected': "विश्वासार्हपणे ओळखले नाही — मूळ अहवाल तपासा", 'voice.captureHint': "व्हॉइस रेकॉर्डिंग सुरू झाले आहे. नैसर्गिकपणे बोला; थांबवण्यासाठी मायक्रोफोन पुन्हा दाबा." });
 
+
+  // Structured clinical review labels (catalog matching is independent of UI language).
+  Object.assign(locales.en, {
+    'draft.diseaseTable':'Reported diseases and patient counts',
+    'draft.medicineTable':'Medicine stock and quantities'
+  });
+  Object.assign(locales.hi, {
+    'draft.diseaseTable':'रिपोर्ट की गई बीमारियाँ और मरीजों की संख्या',
+    'draft.medicineTable':'दवाइयों का स्टॉक और मात्रा'
+  });
+  Object.assign(locales.ta, {
+    'draft.diseaseTable':'தெரிவிக்கப்பட்ட நோய்கள் மற்றும் நோயாளிகள் எண்ணிக்கை',
+    'draft.medicineTable':'மருந்து இருப்பு மற்றும் அளவுகள்'
+  });
+  Object.assign(locales.te, {
+    'draft.diseaseTable':'నివేదించిన వ్యాధులు మరియు రోగుల సంఖ్య',
+    'draft.medicineTable':'మందుల నిల్వ మరియు పరిమాణాలు'
+  });
+  Object.assign(locales.bn, {
+    'draft.diseaseTable':'রিপোর্ট করা রোগ ও রোগীর সংখ্যা',
+    'draft.medicineTable':'ওষুধের মজুত ও পরিমাণ'
+  });
+  Object.assign(locales.mr, {
+    'draft.diseaseTable':'नोंदवलेले आजार आणि रुग्णांची संख्या',
+    'draft.medicineTable':'औषधांचा साठा आणि प्रमाण'
+  });
+
   // Expose locale dictionaries directly for scripts/check-untranslated.mjs
   const exposed = Object.assign({}, locales);
   exposed.t = t;
