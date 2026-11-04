@@ -154,8 +154,11 @@ function catalogMatches(text, catalog) {
   return matches.sort((x, y) => x.index - y.index);
 }
 function nearestNumber(text, index, before = 55, after = 45) {
-  const left = text.slice(Math.max(0, index - before), index);
-  const right = text.slice(index, index + after);
+  const leftBoundary = Math.max(text.lastIndexOf('.', index), text.lastIndexOf('!', index), text.lastIndexOf('?', index), text.lastIndexOf('।', index), text.lastIndexOf('॥', index), text.lastIndexOf('\\n', index)) + 1;
+  const rightCandidates = ['.', '!', '?', '।', '॥', '\\n'].map(mark => text.indexOf(mark, index)).filter(pos => pos >= 0);
+  const rightBoundary = rightCandidates.length ? Math.min(...rightCandidates) : text.length;
+  const left = text.slice(Math.max(leftBoundary, index - before), index);
+  const right = text.slice(index, Math.min(rightBoundary, index + after));
   const lm = [...left.matchAll(/[0-9]+/g)].at(-1);
   const rm = right.match(/[0-9]+/);
   const ld = lm ? left.length - lm.index - lm[0].length : Infinity;
