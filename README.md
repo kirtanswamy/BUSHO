@@ -143,7 +143,7 @@ India and Chhattisgarh have existing health-information and medicine-supply init
 | Worker and supervisor demo views | Production authentication or role-based access |
 | Mock, rule-based extraction | Production AI inference |
 | Editable records and human confirmation | Clinical diagnosis or triage |
-| Browser-native voice input, where supported | BUSHO-operated transcription service |
+| Browser-native voice input (English, Hindi, Bengali, Tamil, Telugu and Marathi locale selection; Chrome verified) | BUSHO-operated transcription service |
 | Synthetic inventory attention logic | Live government / facility inventory feeds |
 | Replenishment draft workflow | Real orders or procurement |
 | English, Hindi, Tamil, Telugu, Bengali and Marathi interface | Field validation with health workers |
