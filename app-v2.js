@@ -121,7 +121,7 @@ function makeExtraction() {
 }
 function renderExtraction() {
   if (!state.extracted || !state.draft.length) { extractionList.innerHTML = `<div class="empty-extraction"><div class="empty-orbit">${escapeHtml(t('worker.draft'))}</div><strong>${escapeHtml(t('worker.emptyTitle'))}</strong><span>${escapeHtml(t('worker.emptyDesc'))}</span></div>`; return; }
-  extractionList.innerHTML = state.draft.map(item => { const confidence = state.confirmed && item.confidence === 'review' ? 'high' : item.confidence; const note = state.confirmed && item.confidence === 'review' ? t('draft.confidence.workerChecked') : item.note; return `<div class="extraction-item" data-field-id="${escapeHtml(item.id)}"><div class="item-icon ${escapeHtml(item.kind)}">${escapeHtml(item.icon)}</div><div class="field-copy"><label class="item-label" for="field-${escapeHtml(item.id)}">${escapeHtml(item.label)}</label><span class="field-source">${escapeHtml(t('draft.source'))}</span><input class="field-edit" id="field-${escapeHtml(item.id)}" value="${escapeHtml(item.value)}" ${item.readOnly || state.confirmed ? 'readonly' : ''} aria-label="${escapeHtml(item.label)}" /></div><span class="confidence ${escapeHtml(confidence)}">${escapeHtml(note)}</span></div>`; }).join('');
+  extractionList.innerHTML = state.draft.map(item => { const confidence = state.confirmed && item.confidence === 'review' ? 'high' : item.confidence; const note = state.confirmed && item.confidence === 'review' ? t('draft.confidence.workerChecked') : item.note; return `<div class="extraction-item" data-field-id="${escapeHtml(item.id)}"><div class="item-icon ${escapeHtml(item.kind)}">${escapeHtml(item.icon)}</div><div class="field-copy"><label class="item-label" for="field-${escapeHtml(item.id)}">${escapeHtml(({ 'reported-details': t('draft.reportedDetails'), 'reported-medicines': t('draft.reportedMedicines'), 'reported-quantities': t('draft.reportedQuantities'), 'original-report': t('draft.originalReport') })[item.id] || item.label)}</label><span class="field-source">${escapeHtml(t('draft.source'))}</span><input class="field-edit" id="field-${escapeHtml(item.id)}" value="${escapeHtml(item.value)}" ${item.readOnly || state.confirmed ? 'readonly' : ''} aria-label="${escapeHtml(item.label)}" /></div><span class="confidence ${escapeHtml(confidence)}">${escapeHtml(note)}</span></div>`; }).join('');
   extractionList.querySelectorAll('.field-edit').forEach(input => input.addEventListener('input', event => { const item = state.draft.find(entry => entry.id === event.target.id.replace('field-', '')); if (item) item.value = event.target.value; event.target.classList.remove('invalid'); feedback.textContent = ''; saveState(); }));
 }
 
@@ -276,6 +276,7 @@ function startVoice() {
   session.onend = () => {
     if (sessionId !== currentSessionId || recognition !== session) return;
     isRecording = false;
+    recognition = null;
     if (voiceWanted && !isStopping) {
       setVoiceButtonState('starting');
       window.setTimeout(() => {
