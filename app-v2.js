@@ -51,7 +51,7 @@ function loadState() {
     next.extracted = Boolean(stored.extracted);
     next.confirmed = Boolean(stored.confirmed && stored.extracted);
     next.draft = Array.isArray(stored.draft) ? stored.draft.filter(item => item && typeof item.id === 'string' && typeof item.value === 'string') : [];
-    if (next.extracted && !next.draft.length) { next.extracted = false; next.confirmed = false; }
+    if (next.extracted && (!next.draft.length || !next.draft.some(item => item.id === 'disease-table') || !next.draft.some(item => item.id === 'medicine-table'))) { next.extracted = false; next.confirmed = false; next.draft = []; }
     const replenishment = stored.replenishment || {};
     next.replenishment = { status: ['none', 'draft', 'approved'].includes(replenishment.status) ? replenishment.status : 'none', medicineId: inventory.some(item => item.id === replenishment.medicineId) ? replenishment.medicineId : null, source: typeof replenishment.source === 'string' ? replenishment.source : null };
     return next;
