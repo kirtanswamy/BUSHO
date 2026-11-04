@@ -264,7 +264,7 @@ function startVoice() {
     isStopping = true;
     setVoiceButtonState('idle');
     console.warn('[BUSHO voice] Speech recognition error:', event.error, event.message || '');
-    if (event.error === 'no-speech') return;
+    if (event.error === 'no-speech') { isStopping = false; return; }
     else if (event.error === 'audio-capture') showToast(t('voice.audioCapture'));
     else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') showToast(t('voice.notAllowed'));
     else if (event.error === 'network') { voiceWanted = false; showToast(t(isBraveBrowser ? 'voice.braveNetwork' : 'voice.network')); }
