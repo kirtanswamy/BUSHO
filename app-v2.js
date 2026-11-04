@@ -84,47 +84,144 @@ function setSample(type) {
   reportInput.value = state.rawReport; messageText.textContent = state.rawReport; renderAll(); saveState(); showToast(t(`worker.toast.${state.sample}`));
 }
 
+const MEDICINE_CATALOG = [
+  ['Paracetamol','paracetamol','acetaminophen','crocin','calpol','dolo','p-500','पैरासिटामोल','पेरासिटामोल','paracetmol'],
+  ['Cetirizine','cetirizine','zyrtec','cetzine','cetcip','सेटिरिज़िन','सेट्रीज़िन'],
+  ['Levocetirizine','levocetirizine','xyzal','levo cetirizine'],
+  ['Ibuprofen','ibuprofen','brufen','combiflam','इबुप्रोफेन'],
+  ['Amoxicillin','amoxicillin','amox','mox','novamox','अमोक्सिसिलिन'],
+  ['Azithromycin','azithromycin','azithral','zithromax','अज़िथ्रोमाइसिन'],
+  ['Metformin','metformin','glycomet','glucophage','मेटफॉर्मिन'],
+  ['ORS','ors','oral rehydration salts','oral rehydration solution','ओआरएस'],
+  ['Iron / IFA','iron folic acid','ifa','ferrous sulfate','ferrous sulphate','iron tablets','आयरन','लोह','இரும்பு','ఇనుము'],
+  ['Folic acid','folic acid','folvite','फोलिक एसिड'],
+  ['Zinc','zinc','zinc sulfate','zinc sulphate','जिंक','துத்தநாகம்','జింక్'],
+  ['Amlodipine','amlodipine','amlong'],['Losartan','losartan','losar'],['Atenolol','atenolol','tenormin'],
+  ['Omeprazole','omeprazole','omez'],['Pantoprazole','pantoprazole','pantocid','pan'],
+  ['Domperidone','domperidone','motilium','domstal'],['Ondansetron','ondansetron','ondem'],
+  ['Metronidazole','metronidazole','flagyl'],['Ciprofloxacin','ciprofloxacin','ciplox'],
+  ['Doxycycline','doxycycline','doxicip'],['Albendazole','albendazole','zentel'],
+  ['Salbutamol','salbutamol','albuterol','asthalin'],['Montelukast','montelukast','montek'],
+  ['Loratadine','loratadine','claritin'],['Insulin','insulin','actrapid','mixtard'],
+  ['Aspirin','aspirin','ecosprin'],['Clopidogrel','clopidogrel','clopilet'],
+  ['Atorvastatin','atorvastatin','atorva'],['Diclofenac','diclofenac','voveran'],
+  ['Calcium','calcium carbonate','shelcal'],['Vitamin D3','vitamin d3','cholecalciferol','uprise-d3'],
+  ['Multivitamin','multivitamin','becosules','supradyn'],['Cotrimoxazole','cotrimoxazole','septran'],
+  ['Artemether + Lumefantrine','artemether lumefantrine','coartem'],
+  ['Chloroquine','chloroquine'],['Prednisolone','prednisolone','wysolone'],
+  ['Dexamethasone','dexamethasone','decadron'],['Mupirocin','mupirocin','t-bact'],
+  ['Clotrimazole','clotrimazole','canesten'],['Fluconazole','fluconazole','forcan']
+];
+const DISEASE_CATALOG = [
+  ['Malaria','malaria','मलेरिया','maleriya','மலேரியா','మలేరియా','ম্যালেরিয়া'],
+  ['Dengue','dengue','डेंगू','dengu','டெங்கு','డెంగ్యూ','ডেঙ্গু'],
+  ['Chikungunya','chikungunya','चिकनगुनिया','சிக்குன்குனியா','చికున్‌గున్యా'],
+  ['Fever','fever','बुखार','bukhar','ताप','காய்ச்சல்','ஜ்வரம்','జ్వరం','জ্বর'],
+  ['Diarrhoea','diarrhea','diarrhoea','दस्त','डायरिया','जुलाब','வயிற்றுப்போக்கு','విరేచనాలు','ডায়রিয়া'],
+  ['Cough','cough','खांसी','khansi','खोकला','இருமல்','దగ్గు','কাশি'],
+  ['Common cold','common cold','cold','जुकाम','sardi','सर्दी','சளி','జలుబు','সর্দি'],
+  ['Diabetes','diabetes','मधुमेह','डायबिटीज','நீரிழிவு','మధుమేహం','ডায়াবেটিস'],
+  ['Hypertension','hypertension','high blood pressure','उच्च रक्तचाप','बीपी','உயர் இரத்த அழுத்தம்','అధిక రక్తపోటు'],
+  ['Tuberculosis','tuberculosis','tb','टीबी','क्षयरोग','காசநோய்','క్షయ','যক্ষ্মা'],
+  ['Typhoid','typhoid','टाइफाइड','टायफॉइड','டைபாய்டு','టైఫాయిడ్'],
+  ['Asthma','asthma','दमा','अस्थमा','ஆஸ்துமா','ఉబ్బసం'],
+  ['Anaemia','anaemia','anemia','खून की कमी','रक्ताल्पता','अशक्तपणा','இரத்தசோகை','రక్తహీనత'],
+  ['Pneumonia','pneumonia','निमोनिया','நிமோனியா','న్యుమోనియా'],
+  ['Headache','headache','सिरदर्द','डोकेदुखी','தலைவலி','తలనొప్పి'],
+  ['Vomiting','vomiting','उल्टी','उलटी','வாந்தி','వాంతులు'],
+  ['Abdominal pain','abdominal pain','stomach pain','पेट दर्द','पोटदुखी','வயிற்று வலி','కడుపు నొప్పి'],
+  ['Urinary tract infection','urinary tract infection','uti','मूत्र संक्रमण'],
+  ['Chickenpox','chickenpox','चेचक','कांजिण्या','சின்னம்மை']
+];
+function catalogMatches(text, catalog) {
+  const lower = text.toLocaleLowerCase();
+  const matches = [];
+  for (const row of catalog) {
+    let best = null;
+    for (const alias of row.slice(1)) {
+      const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const latin = /^[a-z0-9 +.-]+$/i.test(alias);
+      const pattern = latin ? new RegExp('(^|[^a-z0-9])(' + escaped + ')(?=$|[^a-z0-9])', 'i') : new RegExp(escaped, 'i');
+      const found = pattern.exec(lower);
+      if (found) {
+        const index = found.index + (latin && found[1] ? found[1].length : 0);
+        const length = latin && found[2] ? found[2].length : found[0].length;
+        if (!best || index < best.index) best = { index, end: index + length, alias };
+      }
+    }
+    if (best) matches.push({ name: row[0], ...best });
+  }
+  return matches.sort((x, y) => x.index - y.index);
+}
+function nearestNumber(text, index, before = 55, after = 45) {
+  const left = text.slice(Math.max(0, index - before), index);
+  const right = text.slice(index, index + after);
+  const lm = [...left.matchAll(/[0-9]+/g)].at(-1);
+  const rm = right.match(/[0-9]+/);
+  const ld = lm ? left.length - lm.index - lm[0].length : Infinity;
+  const rd = rm ? rm.index : Infinity;
+  if (Math.min(ld, rd) > 26) return '';
+  return ld <= rd ? lm[0] : rm[0];
+}
+function medicineQuantity(report, match) {
+  const before = report.slice(Math.max(0, match.index - 55), match.index);
+  const after = report.slice(match.end, Math.min(report.length, match.end + 75));
+  const context = before + ' ' + after;
+  const quantity = nearestNumber(report, match.index, 55, 75);
+  const unit = (context.match(/\b(tablets?|tabs?|strips?|packs?|packets?|bottles?|capsules?|caps?|sachets?|vials?|ampoules?|ml|millilit(?:er|re)s?|doses?|units?|गोलियां|गोलियाँ|गोली|पत्ते|पैकेट|மாத்திரைகள்|மாத்திரை|మాత్రలు|టాబ్లెట్లు)\b/i) || [])[1] || '';
+  const remaining = /(left|remaining|remain|balance|stock|available|bacha|bache|bachi|shesh|बचे|बचा|बची|बाकी|शेष|உள்ளன|மீதம்|మిగిలి|బাকি|বাকি|অবশিষ্ট)/i.test(context);
+  return { quantity, unit, stockStatus: quantity ? (remaining ? 'Remaining stock · verify' : 'Quantity mentioned · verify') : 'Quantity not stated · clarify' };
+}
+function conditionPatientCount(report, match) {
+  const context = report.slice(Math.max(0, match.index - 55), Math.min(report.length, match.end + 45));
+  const count = nearestNumber(report, match.index, 55, 45);
+  const patientCue = /(patient|patients|people|cases?|मरीज|रोगी|पेशेंट|நோயாளி|రోగి|রোগী|रुग्ण)/i.test(context);
+  return { patients: count && patientCue ? count : '', countStatus: count && patientCue ? 'Patient count · verify' : 'Not stated · clarify' };
+}
 function makeExtraction() {
   const report = normalizeDigits(reportInput.value.trim());
   if (!report) { showToast(t('worker.toast.empty')); reportInput.focus(); return; }
-  const lang = currentLanguage();
-  const catalog = {
-    en: ['ORS','oral rehydration salts','paracetamol','acetaminophen','ibuprofen','amoxicillin','azithromycin','iron','folic acid','IFA','zinc','insulin','metformin','antibiotic','antibiotics','tablet','tablets','capsule','capsules','syrup','injection','malaria','dengue','diabetes','hypertension','fever','cough','cold','diarrhea','diarrhoea','vomiting','headache','anemia','asthma','tuberculosis','typhoid'],
-    hi: ['ओआरएस','पैरासिटामोल','पेरासिटामोल','आइबुप्रोफेन','एमोक्सिसिलिन','एज़िथ्रोमाइसिन','आयरन','फोलिक एसिड','जिंक','इंसुलिन','मेटफॉर्मिन','एंटीबायोटिक','गोली','दवा','दवाई','सिरप','इंजेक्शन','मलेरिया','डेंगू','मधुमेह','डायबिटीज','उच्च रक्तचाप','बुखार','खांसी','जुकाम','दस्त','उल्टी','सिरदर्द','एनीमिया','टीबी','टाइफाइड'],
-    bn: ['ওআরএস','প্যারাসিটামল','আইবুপ্রোফেন','অ্যামোক্সিসিলিন','অ্যাজিথ্রোমাইসিন','আয়রন','ফলিক অ্যাসিড','জিঙ্ক','ইনসুলিন','মেটফর্মিন','অ্যান্টিবায়োটিক','ট্যাবলেট','ওষুধ','সিরাপ','ইনজেকশন','ম্যালেরিয়া','ডেঙ্গু','ডায়াবেটিস','উচ্চ রক্তচাপ','জ্বর','কাশি','সর্দি','ডায়রিয়া','বমি','মাথাব্যথা','রক্তাল্পতা','যক্ষ্মা','টাইফয়েড'],
-    ta: ['ஓஆர்எஸ்','பாராசிட்டமால்','ஐபுபுரூஃபன்','அமோக்சிசிலின்','அசித்ரோமைசின்','இரும்பு','ஃபோலிக் அமிலம்','துத்தநாகம்','இன்சுலின்','மெட்ஃபார்மின்','ஆண்டிபயாடிக்','மாத்திரை','மருந்து','சிரப்','ஊசி','மலேரியா','டெங்கு','நீரிழிவு','உயர் இரத்த அழுத்தம்','காய்ச்சல்','இருமல்','சளி','வயிற்றுப்போக்கு','வாந்தி','தலைவலி','இரத்தசோகை','காசநோய்','டைபாய்டு'],
-    te: ['ఓఆర్ఎస్','పారాసిటమాల్','ఇబుప్రోఫెన్','అమోక్సిసిలిన్','అజిత్రోమైసిన్','ఇనుము','ఫోలిక్ యాసిడ్','జింక్','ఇన్సులిన్','మెట్‌ఫార్మిన్','యాంటీబయాటిక్','మాత్రలు','మందు','సిరప్','ఇంజెక్షన్','మలేరియా','డెంగ్యూ','మధుమేహం','అధిక రక్తపోటు','జ్వరం','దగ్గు','జలుబు','విరేచనాలు','వాంతులు','తలనొప్పి','రక్తహీనత','క్షయ','టైఫాయిడ్'],
-    mr: ['ओआरएस','पॅरासिटामॉल','आयबुप्रोफेन','अमॉक्सिसिलिन','अॅझिथ्रोमायसिन','लोह','फॉलिक अॅसिड','झिंक','इन्सुलिन','मेटफॉर्मिन','प्रतिजैविक','गोळी','औषध','सिरप','इंजेक्शन','मलेरिया','डेंग्यू','मधुमेह','उच्च रक्तदाब','ताप','खोकला','सर्दी','जुलाब','उलटी','डोकेदुखी','अशक्तपणा','क्षयरोग','टायफॉइड']
-  };
-  const terms = catalog[lang] || catalog.en;
-  const lower = report.toLocaleLowerCase();
-  const medicines = terms.filter(term => lower.includes(term.toLocaleLowerCase()));
-  const numbers = [...report.matchAll(/[0-9]+/g)].map(match => match[0]);
-  const makeItem = (id, kind, icon, label, value, note) => ({
-    id, kind, icon, label, value: value || t('draft.notDetected'),
-    confidence: value ? 'review' : 'review',
-    note: value ? t('draft.confidence.review') : note
+  const medicines = catalogMatches(report, MEDICINE_CATALOG).map(match => ({ name: match.name, mentionedAs: match.alias, ...medicineQuantity(report, match) }));
+  const conditions = catalogMatches(report, DISEASE_CATALOG).map(match => ({ name: match.name, ...conditionPatientCount(report, match) }));
+  const makeTable = (id, kind, icon, label, rows) => ({
+    id, kind, icon, label, rows, value: JSON.stringify(rows), confidence: 'review',
+    note: rows.length ? t('draft.confidence.review') : t('draft.notDetected')
   });
   state.rawReport = report;
   state.draft = [
-    makeItem('reported-details','symptom','+',t('draft.reportedDetails'),report,t('draft.needsClarify')),
-    makeItem('reported-medicines','medicine','Rx',t('draft.reportedMedicines'),medicines.join(', '),t('draft.notDetected')),
-    makeItem('reported-quantities','quantity','#',t('draft.reportedQuantities'),numbers.join(', '),t('draft.notDetected')),
-    { id:'original-report', kind:'source', icon:'Aa', label:t('draft.originalReport'), value:report, confidence:'high', note:t('draft.source'), readOnly:true }
+    makeTable('disease-table', 'symptom', '+', t('draft.diseaseTable'), conditions),
+    makeTable('medicine-table', 'medicine', 'Rx', t('draft.medicineTable'), medicines),
+    { id: 'original-report', kind: 'source', icon: 'Aa', label: t('draft.originalReport'), value: report, confidence: 'high', note: t('draft.source'), readOnly: true }
   ];
   state.extracted = true;
   state.confirmed = false;
-  state.replenishment = { status:'none', medicineId:null, source:null };
+  state.replenishment = { status: 'none', medicineId: null, source: null };
   renderAll();
   saveState();
   showToast(t('worker.toast.extract'));
 }
 function renderExtraction() {
-  if (!state.extracted || !state.draft.length) { extractionList.innerHTML = `<div class="empty-extraction"><div class="empty-orbit">${escapeHtml(t('worker.draft'))}</div><strong>${escapeHtml(t('worker.emptyTitle'))}</strong><span>${escapeHtml(t('worker.emptyDesc'))}</span></div>`; return; }
-  extractionList.innerHTML = state.draft.map(item => { const confidence = state.confirmed && item.confidence === 'review' ? 'high' : item.confidence; const note = state.confirmed && item.confidence === 'review' ? t('draft.confidence.workerChecked') : item.id === 'original-report' ? t('draft.source') : item.value === t('draft.notDetected') ? t('draft.notDetected') : t('draft.needsClarify'); return `<div class="extraction-item" data-field-id="${escapeHtml(item.id)}"><div class="item-icon ${escapeHtml(item.kind)}">${escapeHtml(item.icon)}</div><div class="field-copy"><label class="item-label" for="field-${escapeHtml(item.id)}">${escapeHtml(({ 'reported-details': t('draft.reportedDetails'), 'reported-medicines': t('draft.reportedMedicines'), 'reported-quantities': t('draft.reportedQuantities'), 'original-report': t('draft.originalReport') })[item.id] || item.label)}</label><span class="field-source">${escapeHtml(t('draft.source'))}</span><input class="field-edit" id="field-${escapeHtml(item.id)}" value="${escapeHtml(item.value)}" ${item.readOnly || state.confirmed ? 'readonly' : ''} aria-label="${escapeHtml(item.label)}" /></div><span class="confidence ${escapeHtml(confidence)}">${escapeHtml(note)}</span></div>`; }).join('');
-  extractionList.querySelectorAll('.field-edit').forEach(input => input.addEventListener('input', event => { const item = state.draft.find(entry => entry.id === event.target.id.replace('field-', '')); if (item) item.value = event.target.value; event.target.classList.remove('invalid'); feedback.textContent = ''; saveState(); }));
+  if (!state.extracted || !state.draft.length) {
+    extractionList.innerHTML = `<div class="empty-extraction"><div class="empty-state"><strong>${escapeHtml(t('worker.emptyTitle'))}</strong><p>${escapeHtml(t('worker.emptyDesc'))}</p></div></div>`;
+    return;
+  }
+  const tableItem = (id) => state.draft.find(item => item.id === id);
+  const diseaseItem = tableItem('disease-table');
+  const medicineItem = tableItem('medicine-table');
+  const sourceItem = tableItem('original-report');
+  const renderTable = (item, columns, emptyText) => {
+    const rows = item.rows || [];
+    return `<section class="clinical-result-section">
+      <div class="clinical-result-heading"><div><span class="clinical-result-icon">${escapeHtml(item.icon)}</span><div><h4>${escapeHtml(item.label)}</h4><p>${rows.length} ${rows.length === 1 ? 'record' : 'records'} identified · worker review required</p></div></div><span class="confidence review">${escapeHtml(t('draft.confidence.review'))}</span></div>
+      <div class="clinical-table-wrap"><table class="clinical-table"><thead><tr>${columns.map(col => `<th scope="col">${escapeHtml(col.label)}</th>`).join('')}</tr></thead><tbody>${rows.length ? rows.map((row,index) => `<tr>${columns.map(col => `<td>${escapeHtml(row[col.key] || (col.key === 'patients' ? 'Not stated' : 'Needs review'))}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${columns.length}" class="clinical-empty">${escapeHtml(emptyText)}</td></tr>`}</tbody></table></div>
+    </section>`;
+  };
+  extractionList.innerHTML = [
+    renderTable(diseaseItem,[{key:'name',label:'Reported condition'},{key:'patients',label:'Patients'},{key:'countStatus',label:'Count status'}],'No recognised disease or symptom mentioned. Check the original report.'),
+    renderTable(medicineItem,[{key:'name',label:'Medicine / drug'},{key:'quantity',label:'Quantity'},{key:'unit',label:'Unit'},{key:'stockStatus',label:'Stock interpretation'}],'No recognised medicine found. Unmatched drug names must be checked against the original report.'),
+    `<details class="clinical-source"><summary>Original field report · show source text</summary><p>${escapeHtml(sourceItem.value)}</p></details>`
+  ].join('');
 }
-
 function renderDraftStatus() {
   draftChip.className = 'draft-chip';
   if (!state.extracted) { draftChip.textContent = t('worker.draftAwaiting'); provisionalBanner.innerHTML = `<span class="banner-icon">i</span><div><strong>${escapeHtml(t('worker.provisionalTitle'))}</strong><span>${escapeHtml(t('worker.provisionalDesc'))}</span></div>`; verificationBar.classList.add('hidden'); return; }
