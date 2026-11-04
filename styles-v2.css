@@ -1250,3 +1250,56 @@ html, body { overflow-x: hidden; }
  .capability-icon { margin-bottom:20px; }
  .workspace-card { padding:22px; }
 }
+
+
+/* Voice capture control — compact, accessible, and stateful. */
+.voice-button {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  min-height: 48px;
+  padding: 0;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--teal-dark);
+  background: var(--teal-soft);
+  border: 1px solid rgba(49, 92, 186, .18);
+  transition: background .18s ease, color .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.voice-button:hover {
+  color: #fff;
+  background: var(--teal);
+  border-color: var(--teal);
+  transform: translateY(-1px);
+}
+.voice-button svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.voice-button .voice-stop-icon { display: none; }
+.voice-button.recording {
+  color: #fff;
+  background: var(--red);
+  border-color: var(--red);
+  animation: voice-pulse 1.6s ease-out infinite;
+}
+.voice-button.recording:hover { background: #bf4545; border-color: #bf4545; }
+.voice-button.recording .voice-mic-icon { display: none; }
+.voice-button.recording .voice-stop-icon { display: block; }
+.voice-button.is-starting { opacity: .72; cursor: progress; }
+.voice-button:focus-visible { outline: 3px solid rgba(49, 92, 186, .35); outline-offset: 3px; }
+@keyframes voice-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(214, 92, 92, .28); }
+  70% { box-shadow: 0 0 0 9px rgba(214, 92, 92, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(214, 92, 92, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .voice-button, .voice-button.recording { animation: none; transition: none; }
+}
