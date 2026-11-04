@@ -252,10 +252,14 @@ function startVoice() {
     isStarting = false;
     isStopping = true;
     setVoiceButtonState('idle');
+    console.warn('[BUSHO voice] Speech recognition error:', event.error, event.message || '');
     if (event.error === 'no-speech') showToast(t('voice.noSpeech'));
     else if (event.error === 'audio-capture') showToast(t('voice.audioCapture'));
     else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') showToast(t('voice.notAllowed'));
-    else if (event.error !== 'aborted') showToast(t('voice.error'));
+    else if (event.error === 'network') showToast(t('voice.network'));
+    else if (event.error === 'language-not-supported') showToast(t('voice.languageUnsupported'));
+    else if (event.error === 'aborted') return;
+    else showToast(t('voice.errorDetail', { error: event.error || 'unknown' }));
   };
 
   session.onend = () => resetVoiceSession(sessionId);
