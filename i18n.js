@@ -551,6 +551,16 @@
   Object.assign(locales.te, { 'voice.demo': 'వాయిస్ ఇన్‌పుట్ ప్రారంభించండి', 'voice.secureContext': 'వాయిస్ ఇన్‌పుట్‌కు సురక్షిత HTTPS కనెక్షన్ అవసరం.' });
   Object.assign(locales.bn, { 'voice.demo': 'ভয়েস ইনপুট শুরু করুন', 'voice.secureContext': 'ভয়েস ইনপুটের জন্য নিরাপদ HTTPS সংযোগ প্রয়োজন।' });
 
+  Object.assign(locales.en, {
+    'voice.network': 'Speech service network error. Check your connection, VPN or browser speech service.',
+    'voice.languageUnsupported': 'Speech recognition does not support the selected language in this browser. Try English.',
+    'voice.errorDetail': 'Speech recognition failed ({error}). Check the browser console for details.'
+  });
+  Object.assign(locales.hi, {
+    'voice.network': 'स्पीच सेवा में नेटवर्क त्रुटि। इंटरनेट कनेक्शन, VPN या ब्राउज़र स्पीच सेवा जाँचें।',
+    'voice.languageUnsupported': 'इस ब्राउज़र में चुनी गई भाषा के लिए स्पीच पहचान उपलब्ध नहीं है। अंग्रेज़ी आज़माएँ।',
+    'voice.errorDetail': 'स्पीच पहचान विफल हुई ({error})। अधिक जानकारी के लिए ब्राउज़र कंसोल देखें।'
+  });
   // Expose locale dictionaries directly for scripts/check-untranslated.mjs
   const exposed = Object.assign({}, locales);
   exposed.t = t;
