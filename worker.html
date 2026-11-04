@@ -160,13 +160,12 @@
                       <p class="card-overline" data-i18n="worker.step1">Step 1 of 3: Report</p>
                       <h3 id="report-title" data-i18n="worker.sendUpdate">Send a field update</h3>
                     </div>
-                    <span class="channel-chip" data-i18n="worker.channel">Text / Voice</span>
                   </header>
                   <div class="composer">
                       <textarea id="report-input" aria-label="Field report" placeholder="" data-i18n="worker.placeholder" data-i18n-attr="aria-label:ui.fieldReport,placeholder:worker.placeholder"></textarea>
                     <div id="message-text" class="visually-hidden" aria-live="polite"></div>
                     <div class="composer-actions">
-                      <button class="btn btn-secondary voice-button" type="button" aria-label="Voice input (demo)" data-i18n-attr="aria-label:voice.demo"><span data-i18n="voice.demo">Voice input (demo)</span><span class="record-time" aria-live="polite" data-i18n="voice.zeroSeconds" data-i18n-attr="aria-label:voice.zeroSeconds">0s</span></button>
+                      <button class="btn btn-secondary voice-button" id="voice-button" type="button" aria-label="Start voice input" title="Start voice input" aria-pressed="false"><svg class="voice-mic-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v3m-4 0h8"></path></svg><svg class="voice-stop-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="2"></rect></svg><span class="visually-hidden">Start voice input</span></button>
                       <div class="quick-actions" role="group" aria-label="Try an example" data-i18n-attr="aria-label:ui.tryExample">
                         <span class="quick-label" data-i18n="worker.tryExample">Try an example:</span>
                         <button class="btn btn-quiet quick-btn" type="button" data-sample="routine" data-i18n="worker.sample.routine">Routine report</button>
