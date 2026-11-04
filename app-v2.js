@@ -85,33 +85,40 @@ function setSample(type) {
 }
 
 function makeExtraction() {
-  const digits = value => String(value).replace(/[०-९]/g, d => '०१२३४५६७८९'.indexOf(d)).replace(/[০-৯]/g, d => '০১২৩৪৫৬৭৮৯'.indexOf(d)).replace(/[௦-௯]/g, d => '௦௧௨௩௪௫௬௭௮௯'.indexOf(d)).replace(/[౦-౯]/g, d => '౦౧౨౩౪౫౬౭౮౯'.indexOf(d));
-  const report = digits(reportInput.value.trim());
-  const lang = /आणि|राहिले|जवळजवळ|संपले/.test(report) ? 'mr' : /[\u0900-\u097f]/.test(report) ? 'hi' : /[\u0b80-\u0bff]/.test(report) ? 'ta' : /[\u0c00-\u0c7f]/.test(report) ? 'te' : /[\u0980-\u09ff]/.test(report) ? 'bn' : 'en';
-  const words = ({ en: { fever: ['fever'], diarrhea: ['diarrhea'], ors: ['ors'], iron: ['iron'], almost: ['almost finished', 'nearly finished'] }, hi: { fever: ['बुखार'], diarrhea: ['दस्त', 'डायरिया'], ors: ['ors'], iron: ['आयरन', 'लोह'], almost: ['लगभग खत्म', 'लगभग समाप्त'] }, ta: { fever: ['காய்ச்சல்'], diarrhea: ['வயிற்றுப்போக்கு'], ors: ['ors'], iron: ['இரும்பு'], almost: ['கிட்டத்தட்ட முடிந்த', 'முடிந்துவிட்ட'] }, te: { fever: ['జ్వరం'], diarrhea: ['విరేచనాలు'], ors: ['ors'], iron: ['ఇనుము'], almost: ['దాదాపు ముగి', 'ముగిసింది'] }, bn: { fever: ['জ্বর'], diarrhea: ['ডায়রিয়া', 'ডায়রিয়া'], ors: ['ors'], iron: ['আয়রন', 'লোহা'], almost: ['প্রায় শেষ', 'শেষ'] }, mr: { fever: ['ताप'], diarrhea: ['जुलाब'], ors: ['ors'], iron: ['लोह'], almost: ['जवळजवळ संपले', 'संपले'] } }[lang] || { fever: ['fever'], diarrhea: ['diarrhea'], ors: ['ors'], iron: ['iron'], almost: ['almost finished'] });
-  const numberFor = (text, list) => { for (const word of list) { const index = text.toLowerCase().indexOf(word.toLowerCase()); if (index >= 0) { const before = text.slice(Math.max(0, index - 28), index); const after = text.slice(index, index + 28); const left = before.match(/\d+/g); const right = after.match(/\d+/); const leftValue = left && left.length ? left[left.length - 1] : ''; const rightValue = right ? right[0] : ''; if (leftValue && word.toLowerCase() !== 'ors') return leftValue; if (rightValue) return rightValue; if (leftValue) return leftValue; } } return ''; };
+  const report = normalizeDigits(reportInput.value.trim());
   if (!report) { showToast(t('worker.toast.empty')); reportInput.focus(); return; }
-  const fever = numberFor(report, words.fever || ['fever']);
-  const diarrhea = numberFor(report, words.diarrhea || ['diarrhea']);
-  const ors = numberFor(report, words.ors || ['ors']) || (report.match(/(\d+)\s*(?:packets?|பாக்கெட்டுகள்|ప్యాకెట్లు|প্যাকেট|पॅकेट)/i) || [])[1] || '';
-  const numbers = report.match(/\d+/g) || [];
-  const feverValue = fever || numbers[0] || '';
-  const diarrheaValue = diarrhea || numbers[1] || '';
-  const orsValue = ors || numbers[2] || '';
-  const includesAny = list => list.some(word => report.toLowerCase().includes(word.toLowerCase()));
-  const ironMentioned = includesAny(words.iron || ['iron']);
-  const ironAlmost = includesAny(words.almost || ['almost finished']);
-  const routine = numbers.length >= 3;
-  state.rawReport = report; state.sample = routine ? 'routine' : 'ambiguous';
+  const lang = currentLanguage();
+  const catalog = {
+    en: ['ORS','oral rehydration salts','paracetamol','acetaminophen','ibuprofen','amoxicillin','azithromycin','iron','folic acid','IFA','zinc','insulin','metformin','antibiotic','antibiotics','tablet','tablets','capsule','capsules','syrup','injection','malaria','dengue','diabetes','hypertension','fever','cough','cold','diarrhea','diarrhoea','vomiting','headache','anemia','asthma','tuberculosis','typhoid'],
+    hi: ['ओआरएस','पैरासिटामोल','पेरासिटामोल','आइबुप्रोफेन','एमोक्सिसिलिन','एज़िथ्रोमाइसिन','आयरन','फोलिक एसिड','जिंक','इंसुलिन','मेटफॉर्मिन','एंटीबायोटिक','गोली','दवा','दवाई','सिरप','इंजेक्शन','मलेरिया','डेंगू','मधुमेह','डायबिटीज','उच्च रक्तचाप','बुखार','खांसी','जुकाम','दस्त','उल्टी','सिरदर्द','एनीमिया','टीबी','टाइफाइड'],
+    bn: ['ওআরএস','প্যারাসিটামল','আইবুপ্রোফেন','অ্যামোক্সিসিলিন','অ্যাজিথ্রোমাইসিন','আয়রন','ফলিক অ্যাসিড','জিঙ্ক','ইনসুলিন','মেটফর্মিন','অ্যান্টিবায়োটিক','ট্যাবলেট','ওষুধ','সিরাপ','ইনজেকশন','ম্যালেরিয়া','ডেঙ্গু','ডায়াবেটিস','উচ্চ রক্তচাপ','জ্বর','কাশি','সর্দি','ডায়রিয়া','বমি','মাথাব্যথা','রক্তাল্পতা','যক্ষ্মা','টাইফয়েড'],
+    ta: ['ஓஆர்எஸ்','பாராசிட்டமால்','ஐபுபுரூஃபன்','அமோக்சிசிலின்','அசித்ரோமைசின்','இரும்பு','ஃபோலிக் அமிலம்','துத்தநாகம்','இன்சுலின்','மெட்ஃபார்மின்','ஆண்டிபயாடிக்','மாத்திரை','மருந்து','சிரப்','ஊசி','மலேரியா','டெங்கு','நீரிழிவு','உயர் இரத்த அழுத்தம்','காய்ச்சல்','இருமல்','சளி','வயிற்றுப்போக்கு','வாந்தி','தலைவலி','இரத்தசோகை','காசநோய்','டைபாய்டு'],
+    te: ['ఓఆర్ఎస్','పారాసిటమాల్','ఇబుప్రోఫెన్','అమోక్సిసిలిన్','అజిత్రోమైసిన్','ఇనుము','ఫోలిక్ యాసిడ్','జింక్','ఇన్సులిన్','మెట్‌ఫార్మిన్','యాంటీబయాటిక్','మాత్రలు','మందు','సిరప్','ఇంజెక్షన్','మలేరియా','డెంగ్యూ','మధుమేహం','అధిక రక్తపోటు','జ్వరం','దగ్గు','జలుబు','విరేచనాలు','వాంతులు','తలనొప్పి','రక్తహీనత','క్షయ','టైఫాయిడ్'],
+    mr: ['ओआरएस','पॅरासिटामॉल','आयबुप्रोफेन','अमॉक्सिसिलिन','अॅझिथ्रोमायसिन','लोह','फॉलिक अॅसिड','झिंक','इन्सुलिन','मेटफॉर्मिन','प्रतिजैविक','गोळी','औषध','सिरप','इंजेक्शन','मलेरिया','डेंग्यू','मधुमेह','उच्च रक्तदाब','ताप','खोकला','सर्दी','जुलाब','उलटी','डोकेदुखी','अशक्तपणा','क्षयरोग','टायफॉइड']
+  };
+  const terms = catalog[lang] || catalog.en;
+  const lower = report.toLocaleLowerCase();
+  const medicines = terms.filter(term => lower.includes(term.toLocaleLowerCase()));
+  const numbers = [...report.matchAll(/[0-9]+/g)].map(match => match[0]);
+  const makeItem = (id, kind, icon, label, value, note) => ({
+    id, kind, icon, label, value: value || t('draft.notDetected'),
+    confidence: value ? 'review' : 'review',
+    note: value ? t('draft.confidence.review') : note
+  });
+  state.rawReport = report;
   state.draft = [
-    { id: 'symptoms', kind: 'symptom', icon: 'SYM', label: t('draft.symptoms'), value: feverValue && diarrheaValue ? t('draft.symptomsValue', { fever: feverValue, diarrhea: diarrheaValue }) : t('draft.symptomsUnclear'), confidence: feverValue && diarrheaValue ? 'high' : 'review', note: feverValue && diarrheaValue ? t('draft.confidence.high') : t('draft.needsClarify') },
-    { id: 'ors-stock', kind: 'stock', icon: 'ORS', label: t('draft.orsStock'), value: orsValue ? `${orsValue} ${t('unit.packets')}` : t('draft.quantityUnclear'), confidence: orsValue ? 'high' : 'review', note: orsValue ? t('draft.confidence.high') : t('draft.quantityNeeded') },
-    { id: 'ifa-stock', kind: 'stock', icon: 'Fe', label: t('draft.ifaStock'), value: ironAlmost ? t('draft.almostFinished') : t('draft.quantityUnclear'), confidence: ironAlmost ? 'high' : 'review', note: ironAlmost ? t('draft.confidence.high') : t('draft.quantityNeeded') },
-    { id: 'clinical-status', kind: 'symptom', icon: 'NOTE', label: t('draft.clinicalStatus'), value: t('draft.clinicalValue'), confidence: 'high', note: t('draft.safeByDesign'), readOnly: true }
+    makeItem('reported-details','symptom','+',t('draft.reportedDetails'),report,t('draft.needsClarify')),
+    makeItem('reported-medicines','medicine','Rx',t('draft.reportedMedicines'),medicines.join(', '),t('draft.notDetected')),
+    makeItem('reported-quantities','quantity','#',t('draft.reportedQuantities'),numbers.join(', '),t('draft.notDetected')),
+    { id:'original-report', kind:'source', icon:'Aa', label:t('draft.originalReport'), value:report, confidence:'high', note:t('draft.source'), readOnly:true }
   ];
-  state.extracted = true; state.confirmed = false; state.replenishment = { status: 'none', medicineId: null, source: null }; renderAll(); saveState(); showToast(t(`worker.toast.extract${routine ? '' : 'Ambiguous'}`));
+  state.extracted = true;
+  state.confirmed = false;
+  state.replenishment = { status:'none', medicineId:null, source:null };
+  renderAll();
+  saveState();
+  showToast(t('worker.toast.extract'));
 }
-
 function renderExtraction() {
   if (!state.extracted || !state.draft.length) { extractionList.innerHTML = `<div class="empty-extraction"><div class="empty-orbit">${escapeHtml(t('worker.draft'))}</div><strong>${escapeHtml(t('worker.emptyTitle'))}</strong><span>${escapeHtml(t('worker.emptyDesc'))}</span></div>`; return; }
   extractionList.innerHTML = state.draft.map(item => { const confidence = state.confirmed && item.confidence === 'review' ? 'high' : item.confidence; const note = state.confirmed && item.confidence === 'review' ? t('draft.confidence.workerChecked') : item.note; return `<div class="extraction-item" data-field-id="${escapeHtml(item.id)}"><div class="item-icon ${escapeHtml(item.kind)}">${escapeHtml(item.icon)}</div><div class="field-copy"><label class="item-label" for="field-${escapeHtml(item.id)}">${escapeHtml(item.label)}</label><span class="field-source">${escapeHtml(t('draft.source'))}</span><input class="field-edit" id="field-${escapeHtml(item.id)}" value="${escapeHtml(item.value)}" ${item.readOnly || state.confirmed ? 'readonly' : ''} aria-label="${escapeHtml(item.label)}" /></div><span class="confidence ${escapeHtml(confidence)}">${escapeHtml(note)}</span></div>`; }).join('');
