@@ -152,13 +152,41 @@ document.querySelectorAll('.role-btn').forEach(button => {
 document.querySelectorAll('.quick-btn').forEach(button => button.addEventListener('click', () => setSample(button.dataset.sample)));
 document.getElementById('extract-btn').addEventListener('click', makeExtraction); document.getElementById('confirm-btn').addEventListener('click', confirmReport); document.getElementById('edit-btn').addEventListener('click', editFields); document.getElementById('view-inventory').addEventListener('click', openInventory); document.getElementById('close-inventory').addEventListener('click', closeInventory); document.getElementById('approve-replenishment').addEventListener('click', approveReplenishment);
 document.getElementById('reset-demo').addEventListener('click', () => { try { window.localStorage.removeItem(STORAGE_KEY); } catch {} state = initialState(); closeInventory(); renderAll(); showToast(t('footer.reset')); });
-// Voice input using native Web Speech API
+// Voice input using the browser Web Speech API.
+const voiceButton = document.querySelector('.voice-button');
 let recognition = null;
-let recordingTimer = null;
-let recordingSeconds = 0;
 let isRecording = false;
+let isStarting = false;
 let isStopping = false;
 let currentSessionId = 0;
+
+const speechLocales = {
+  en: 'en-IN',
+  hi: 'hi-IN',
+  ta: 'ta-IN',
+  te: 'te-IN',
+  bn: 'bn-IN',
+  mr: 'mr-IN'
+};
+
+function setVoiceButtonState(mode) {
+  if (!voiceButton) return;
+  const recording = mode === 'listening' || mode === 'starting';
+  voiceButton.classList.toggle('recording', recording);
+  voiceButton.classList.toggle('is-starting', mode === 'starting');
+  voiceButton.setAttribute('aria-pressed', String(recording));
+  voiceButton.setAttribute('aria-label', t(recording ? 'voice.listening' : 'voice.demo'));
+  voiceButton.setAttribute('title', t(recording ? 'voice.stop' : 'voice.demo'));
+}
+
+function resetVoiceSession(sessionId) {
+  if (sessionId !== currentSessionId) return;
+  isRecording = false;
+  isStarting = false;
+  isStopping = false;
+  recognition = null;
+  setVoiceButtonState('idle');
+}
 
 function startVoice() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -166,102 +194,100 @@ function startVoice() {
     showToast(t('voice.unsupported'));
     return;
   }
-  if (isRecording || isStopping) { try { recognition.stop(); } catch (e) {} return; }
-  recognition = new SpeechRecognition();
-  isRecording = true;
+  if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    showToast(t('voice.secureContext'));
+    return;
+  }
+  if (isRecording || isStarting) {
+    stopVoice();
+    return;
+  }
+  if (isStopping || recognition) return;
+
+  let session;
+  try {
+    session = new SpeechRecognition();
+  } catch {
+    showToast(t('voice.startFailed'));
+    return;
+  }
+
+  recognition = session;
   const sessionId = ++currentSessionId;
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  recognition.maxAlternatives = 1;
-  const lang = currentLanguage();
-  const speechLang = lang === 'hi' ? 'hi-IN' : lang === 'ta' ? 'ta-IN' : lang === 'te' ? 'te-IN' : lang === 'bn' ? 'bn-IN' : lang === 'mr' ? 'mr-IN' : 'en-IN';
-  recognition.lang = speechLang;
-  const btn = document.querySelector('.voice-button');
-  btn.classList.add('recording');
-  btn.setAttribute('aria-label', t('voice.listening'));
-  recordingSeconds = 0;
-  if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 });
-  showToast(t('voice.listening'));
-  recognition.onstart = () => {
-    if (sessionId !== currentSessionId) return;
-    isRecording = true; recordingSeconds = 0;
-    const btn = document.querySelector('.voice-button');
-    btn.classList.add('recording');
-    btn.setAttribute('aria-label', t('voice.listening'));
-    if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 });
-    recordingTimer = setInterval(() => { recordingSeconds += 1; if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: recordingSeconds }); }, 1000);
+  isStarting = true;
+  session.continuous = false;
+  session.interimResults = true;
+  session.maxAlternatives = 1;
+  session.lang = speechLocales[currentLanguage()] || 'en-IN';
+  setVoiceButtonState('starting');
+
+  session.onstart = () => {
+    if (sessionId !== currentSessionId || recognition !== session) return;
+    isStarting = false;
+    isRecording = true;
+    setVoiceButtonState('listening');
+    showToast(t('voice.listening'));
   };
-  recognition.onresult = (event) => {
-    if (sessionId !== currentSessionId) return;
-    let finalTranscript = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
+
+  session.onresult = (event) => {
+    if (sessionId !== currentSessionId || recognition !== session) return;
+    const finalParts = [];
+    for (let index = event.resultIndex; index < event.results.length; index += 1) {
+      const result = event.results[index];
+      if (result.isFinal && result[0]?.transcript) finalParts.push(result[0].transcript.trim());
     }
-    if (finalTranscript.trim()) {
-      const currentText = reportInput.value.trim();
-      const newText = (currentText ? currentText + ' ' : '') + finalTranscript.trim().replace(/\s+/g, ' ');
-      updateReportInput(newText);
-      showToast(t('voice.transcribed'));
-    }
+    const transcript = finalParts.join(' ').replace(/\s+/g, ' ').trim();
+    if (!transcript) return;
+
+    const existingText = reportInput.value.trim();
+    const separator = existingText && !/[\s]$/.test(reportInput.value) ? ' ' : '';
+    updateReportInput(existingText ? reportInput.value + separator + transcript : transcript);
+    reportInput.focus();
+    showToast(t('voice.transcribed'));
   };
-  recognition.onerror = (event) => {
-    if (sessionId !== currentSessionId) return;
-    isStopping = true;
-    clearInterval(recordingTimer);
-    recordingTimer = null;
+
+  session.onerror = (event) => {
+    if (sessionId !== currentSessionId || recognition !== session) return;
     isRecording = false;
-    recordingSeconds = 0;
-    const btn = document.querySelector('.voice-button');
-    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo')); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 }); }
+    isStarting = false;
+    isStopping = true;
+    setVoiceButtonState('idle');
     if (event.error === 'no-speech') showToast(t('voice.noSpeech'));
     else if (event.error === 'audio-capture') showToast(t('voice.audioCapture'));
-    else if (event.error === 'not-allowed') showToast(t('voice.notAllowed'));
-    else showToast(t('voice.error'));
+    else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') showToast(t('voice.notAllowed'));
+    else if (event.error !== 'aborted') showToast(t('voice.error'));
   };
-  recognition.onend = () => {
-    if (sessionId !== currentSessionId) return;
-    clearInterval(recordingTimer);
-    recordingTimer = null;
-    isRecording = false;
-    isStopping = false;
-    recordingSeconds = 0;
-    const btn = document.querySelector('.voice-button');
-    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo')); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 }); }
-    recognition = null;
-  };
-  try { recognition.start(); } catch (e) {
-    if (recognition && currentSessionId === sessionId) { recognition = null; }
-    clearInterval(recordingTimer); recordingTimer = null; isRecording = false; isStopping = false; recordingSeconds = 0;
-    const btn = document.querySelector('.voice-button');
-    if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo')); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 }); }
+
+  session.onend = () => resetVoiceSession(sessionId);
+
+  try {
+    session.start();
+  } catch {
+    resetVoiceSession(sessionId);
     showToast(t('voice.startFailed'));
   }
 }
 
 function stopVoice() {
+  if (!recognition || isStopping) return;
   isStopping = true;
-  const capturedRecognition = recognition;
-  const capturedSessionId = currentSessionId;
-  if (capturedRecognition) {
-    try { capturedRecognition.stop(); } catch (e) {
-      if (capturedRecognition === recognition && capturedSessionId === currentSessionId) {
-        clearInterval(recordingTimer);
-        recordingTimer = null;
-        isRecording = false;
-        isStopping = false;
-        recordingSeconds = 0;
-        const btn = document.querySelector('.voice-button');
-        if (btn) { btn.classList.remove('recording'); btn.setAttribute('aria-label', t('voice.demo')); if (btn.querySelector('.record-time')) btn.querySelector('.record-time').textContent = t('voice.seconds', { seconds: 0 }); }
-        if (recognition === capturedRecognition) { recognition = null; }
-      }
-    }
+  isRecording = false;
+  isStarting = false;
+  setVoiceButtonState('idle');
+  try {
+    recognition.stop();
+  } catch {
+    const sessionId = currentSessionId;
+    resetVoiceSession(sessionId);
   }
 }
 
-document.querySelector('.voice-button').addEventListener('click', () => {
-  if (document.querySelector('.voice-button').classList.contains('recording')) { stopVoice(); } else { startVoice(); }
-});
-
+if (voiceButton) {
+  voiceButton.addEventListener('click', () => {
+    if (isRecording || isStarting) stopVoice();
+    else startVoice();
+  });
+}
 reportInput.addEventListener('input', () => updateReportInput(reportInput.value));
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && !inventoryDrawer.classList.contains('hidden')) closeInventory(); if (event.key === 'Tab' && !inventoryDrawer.classList.contains('hidden')) { const focusable = [...inventoryDrawer.querySelectorAll('button:not([disabled]), [href], input, select, textarea')]; if (!focusable.length) return; if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1).focus(); } else if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0].focus(); } } });
 if (window.BUSHO_I18N && window.BUSHO_I18N.onLanguageChange) window.BUSHO_I18N.onLanguageChange(() => { if (!state.extracted) state.rawReport = localizedSample(state.sample); renderAll(); renderInventory(); });
