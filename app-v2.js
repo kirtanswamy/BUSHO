@@ -159,6 +159,7 @@ let isRecording = false;
 let isStarting = false;
 let isStopping = false;
 let currentSessionId = 0;
+let voiceWanted = false;
 
 const speechLocales = {
   en: 'en-IN',
@@ -216,8 +217,9 @@ function startVoice() {
 
   recognition = session;
   const sessionId = ++currentSessionId;
+  voiceWanted = true;
   isStarting = true;
-  session.continuous = false;
+  session.continuous = true;
   session.interimResults = true;
   session.maxAlternatives = 1;
   session.lang = speechLocales[currentLanguage()] || 'en-IN';
@@ -255,16 +257,27 @@ function startVoice() {
     isStopping = true;
     setVoiceButtonState('idle');
     console.warn('[BUSHO voice] Speech recognition error:', event.error, event.message || '');
-    if (event.error === 'no-speech') showToast(t('voice.noSpeech'));
+    if (event.error === 'no-speech') return;
     else if (event.error === 'audio-capture') showToast(t('voice.audioCapture'));
     else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') showToast(t('voice.notAllowed'));
-    else if (event.error === 'network') showToast(t(isBraveBrowser ? 'voice.braveNetwork' : 'voice.network'));
+    else if (event.error === 'network') { voiceWanted = false; showToast(t(isBraveBrowser ? 'voice.braveNetwork' : 'voice.network')); }
     else if (event.error === 'language-not-supported') showToast(t('voice.languageUnsupported'));
     else if (event.error === 'aborted') return;
     else showToast(t('voice.errorDetail', { error: event.error || 'unknown' }));
   };
 
-  session.onend = () => resetVoiceSession(sessionId);
+  session.onend = () => {
+    if (sessionId !== currentSessionId || recognition !== session) return;
+    isRecording = false;
+    if (voiceWanted && !isStopping) {
+      setVoiceButtonState('starting');
+      window.setTimeout(() => {
+        if (sessionId !== currentSessionId || !voiceWanted) return;
+        recognition = null;
+        createRecognitionSession(sessionId);
+      }, 400);
+    } else resetVoiceSession(sessionId);
+  };
 
   try {
     session.start();
@@ -276,6 +289,7 @@ function startVoice() {
 
 function stopVoice() {
   if (!recognition || isStopping) return;
+  voiceWanted = false;
   isStopping = true;
   isRecording = false;
   isStarting = false;
