@@ -163,11 +163,13 @@ let currentSessionId = 0;
 const speechLocales = {
   en: 'en-IN',
   hi: 'hi-IN',
+  bn: 'bn-IN',
   ta: 'ta-IN',
   te: 'te-IN',
-  bn: 'bn-IN',
   mr: 'mr-IN'
 };
+// Brave exposes navigator.brave; its speech service may fail even when mic access works.
+const isBraveBrowser = Boolean(navigator.brave);
 
 function setVoiceButtonState(mode) {
   if (!voiceButton) return;
@@ -256,7 +258,7 @@ function startVoice() {
     if (event.error === 'no-speech') showToast(t('voice.noSpeech'));
     else if (event.error === 'audio-capture') showToast(t('voice.audioCapture'));
     else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') showToast(t('voice.notAllowed'));
-    else if (event.error === 'network') showToast(t('voice.network'));
+    else if (event.error === 'network') showToast(t(isBraveBrowser ? 'voice.braveNetwork' : 'voice.network'));
     else if (event.error === 'language-not-supported') showToast(t('voice.languageUnsupported'));
     else if (event.error === 'aborted') return;
     else showToast(t('voice.errorDetail', { error: event.error || 'unknown' }));
