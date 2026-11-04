@@ -544,6 +544,13 @@
   Object.assign(locales.te, { 'voice.toast.voice': 'వాయిస్ ఇన్పుట్ మీ బ్రౌజర్ స్పీచ్ గుర్తింపు సేవను ఉపయోగిస్తుంది, ఇది ఆడియోను బ్రౌజర్ వెండార్‌కు పంపవచ్చు. BUSHO ఆడియోను నిల్వ చేయదు. పేర్లు, ఫోన్ నంబర్లు లేదా నిర్ధారణలు చెప్పవద్దు.' });
   Object.assign(locales.bn, { 'voice.toast.voice': 'ভয়েস ইনপুট আপনার ব্রাউজারের স্পিচ রিকগনিশন সার্ভিস ব্যবহার করে, যা অডিও ব্রাউজার ভেন্ডরের কাছে পাঠাতে পারে। BUSHO অডিও সংরক্ষণ করে না। নাম, ফোন নম্বর বা রোগ নির্ণয় বলবেন না।' });
 
+  Object.assign(locales.en, { 'voice.demo': 'Start voice input', 'voice.secureContext': 'Voice input requires a secure HTTPS connection.' });
+  Object.assign(locales.hi, { 'voice.demo': 'वॉइस इनपुट शुरू करें', 'voice.secureContext': 'वॉइस इनपुट के लिए सुरक्षित HTTPS कनेक्शन आवश्यक है।' });
+  Object.assign(locales.mr, { 'voice.demo': 'आवाज इनपुट सुरू करा', 'voice.secureContext': 'आवाज इनपुटसाठी सुरक्षित HTTPS कनेक्शन आवश्यक आहे.' });
+  Object.assign(locales.ta, { 'voice.demo': 'குரல் உள்ளீட்டைத் தொடங்கு', 'voice.secureContext': 'குரல் உள்ளீட்டிற்கு பாதுகாப்பான HTTPS இணைப்பு தேவை.' });
+  Object.assign(locales.te, { 'voice.demo': 'వాయిస్ ఇన్‌పుట్ ప్రారంభించండి', 'voice.secureContext': 'వాయిస్ ఇన్‌పుట్‌కు సురక్షిత HTTPS కనెక్షన్ అవసరం.' });
+  Object.assign(locales.bn, { 'voice.demo': 'ভয়েস ইনপুট শুরু করুন', 'voice.secureContext': 'ভয়েস ইনপুটের জন্য নিরাপদ HTTPS সংযোগ প্রয়োজন।' });
+
   // Expose locale dictionaries directly for scripts/check-untranslated.mjs
   const exposed = Object.assign({}, locales);
   exposed.t = t;
