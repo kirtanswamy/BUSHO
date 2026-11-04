@@ -561,6 +561,37 @@
     'voice.languageUnsupported': 'इस ब्राउज़र में चुनी गई भाषा के लिए स्पीच पहचान उपलब्ध नहीं है। अंग्रेज़ी आज़माएँ।',
     'voice.errorDetail': 'स्पीच पहचान विफल हुई ({error})। अधिक जानकारी के लिए ब्राउज़र कंसोल देखें।'
   });
+  Object.assign(locales.en, {
+    'voice.braveNetwork': 'Brave cannot reach its speech service here. Use Chrome for voice input, or continue by typing.',
+    'voice.network': 'Speech service network error. Check your connection, VPN or browser speech service.',
+    'voice.languageUnsupported': 'Speech recognition does not support this language in this browser. Try Chrome or select another language.'
+  });
+  Object.assign(locales.hi, {
+    'voice.braveNetwork': 'इस Brave ब्राउज़र में स्पीच सेवा उपलब्ध नहीं है। वॉइस इनपुट के लिए Chrome इस्तेमाल करें या रिपोर्ट टाइप करें।',
+    'voice.network': 'स्पीच सेवा में नेटवर्क त्रुटि। इंटरनेट कनेक्शन, VPN या ब्राउज़र स्पीच सेवा जाँचें।',
+    'voice.languageUnsupported': 'इस ब्राउज़र में इस भाषा की स्पीच पहचान उपलब्ध नहीं है। Chrome आज़माएँ या दूसरी भाषा चुनें।'
+  });
+  Object.assign(locales.bn, {
+    'voice.braveNetwork': 'এই Brave ব্রাউজারে স্পিচ পরিষেবা পৌঁছানো যাচ্ছে না। ভয়েস ইনপুটের জন্য Chrome ব্যবহার করুন অথবা রিপোর্ট টাইপ করুন।',
+    'voice.network': 'স্পিচ পরিষেবায় নেটওয়ার্ক সমস্যা। ইন্টারনেট সংযোগ, VPN বা ব্রাউজারের স্পিচ পরিষেবা পরীক্ষা করুন।',
+    'voice.languageUnsupported': 'এই ব্রাউজারে এই ভাষার স্পিচ শনাক্তকরণ সমর্থিত নয়। Chrome ব্যবহার করুন বা অন্য ভাষা বেছে নিন।'
+  });
+  Object.assign(locales.ta, {
+    'voice.braveNetwork': 'இந்த Brave உலாவியில் பேச்சு சேவையை அணுக முடியவில்லை. குரல் உள்ளீட்டிற்கு Chrome பயன்படுத்தவும் அல்லது அறிக்கையைத் தட்டச்சு செய்யவும்.',
+    'voice.network': 'பேச்சு சேவையில் நெட்வொர்க் பிழை. இணைய இணைப்பு, VPN அல்லது உலாவி பேச்சு சேவையைச் சரிபார்க்கவும்.',
+    'voice.languageUnsupported': 'இந்த உலாவியில் இந்த மொழிக்கான பேச்சு அறிதல் ஆதரிக்கப்படவில்லை. Chrome முயற்சிக்கவும் அல்லது வேறு மொழியைத் தேர்ந்தெடுக்கவும்.'
+  });
+  Object.assign(locales.te, {
+    'voice.braveNetwork': 'ఈ Brave బ్రౌజర్‌లో స్పీచ్ సేవను చేరుకోలేకపోయింది. వాయిస్ ఇన్‌పుట్ కోసం Chrome ఉపయోగించండి లేదా నివేదికను టైప్ చేయండి.',
+    'voice.network': 'స్పీచ్ సేవలో నెట్‌వర్క్ లోపం. ఇంటర్నెట్ కనెక్షన్, VPN లేదా బ్రౌజర్ స్పీచ్ సేవను తనిఖీ చేయండి.',
+    'voice.languageUnsupported': 'ఈ బ్రౌజర్‌లో ఈ భాషకు స్పీచ్ గుర్తింపు మద్దతు లేదు. Chrome ప్రయత్నించండి లేదా మరో భాష ఎంచుకోండి.'
+  });
+  Object.assign(locales.mr, {
+    'voice.braveNetwork': 'या Brave ब्राउझरमध्ये स्पीच सेवा उपलब्ध नाही. व्हॉइस इनपुटसाठी Chrome वापरा किंवा अहवाल टाइप करा.',
+    'voice.network': 'स्पीच सेवेत नेटवर्क त्रुटी. इंटरनेट कनेक्शन, VPN किंवा ब्राउझर स्पीच सेवा तपासा.',
+    'voice.languageUnsupported': 'या ब्राउझरमध्ये या भाषेचे स्पीच ओळख समर्थित नाही. Chrome वापरा किंवा दुसरी भाषा निवडा.'
+  });
+
   // Expose locale dictionaries directly for scripts/check-untranslated.mjs
   const exposed = Object.assign({}, locales);
   exposed.t = t;
