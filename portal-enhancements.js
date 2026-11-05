@@ -117,13 +117,7 @@
       const existing=read().filter(r=>r.id!==currentId);
       const record={id:currentId,title:text.length>56?text.slice(0,53)+'…':text,createdAt:new Date().toISOString(),status:'Draft · awaiting worker confirmation',priority:fields.some(f=>f.confidence!=='High')?'Needs review':'Normal',fields};
       existing.push(record); write(existing);
-      // The original extraction engine remains authoritative. This shared record bridges the worker demo to the supervisor inbox.
-      window.setTimeout(() => {
-        const rendered=list && list.querySelector('.extraction-item');
-        if(!rendered && list) {
-          list.innerHTML=fields.map((f,i)=>`<div class="extraction-item"><div class="item-icon">${i+1}</div><div class="field-copy"><label class="item-label">${safeDraft(f.label)}</label><input class="field-edit" value="${safeDraft(f.value)}" aria-label="${safeDraft(f.label)}"></div><span class="confidence ${f.confidence==='High'?'high':'review'}">${safeDraft(f.confidence)}</span></div>`).join('');
-        }
-      },80);
+      // app-v2.js owns extraction and renders the structured clinical review tables. This listener only records a draft for the supervisor bridge.
     });
     confirm?.addEventListener('click',()=> {
       window.setTimeout(()=>{
