@@ -72,3 +72,21 @@ test('supports empty report validation and keeps extraction provisional', () => 
   assert.equal(valid.calls.saved, 1);
   assert.equal(valid.calls.rendered, 1);
 });
+
+test('recovers a highly predictable medicine typo without guessing distant spellings', () => {
+  const { state } = runExtraction('We need 15 paracetamoi tablets remaining and 20 amoxicillin.');
+  const rows = state.draft.find(x => x.id === 'medicine-table').rows;
+  assert.ok(rows.some(x => x.name === 'Paracetamol' && x.quantity === '15' && x.fuzzy === true));
+  assert.ok(rows.some(x => x.name === 'Amoxicillin' && x.quantity === '20'));
+  assert.ok(!rows.some(x => x.name === 'Azithromycin'));
+});
+
+test('keeps disease counts and medicine quantities within their own clauses', () => {
+  const { state } = runExtraction('Today 10 patients with fever and 8 patients with dengue; 20 amoxicillin and 15 paracetamol.');
+  const diseases = state.draft.find(x => x.id === 'disease-table').rows;
+  const medicines = state.draft.find(x => x.id === 'medicine-table').rows;
+  assert.equal(diseases.find(x => x.name === 'Fever').patients, '10');
+  assert.equal(diseases.find(x => x.name === 'Dengue').patients, '8');
+  assert.equal(medicines.find(x => x.name === 'Amoxicillin').quantity, '20');
+  assert.equal(medicines.find(x => x.name === 'Paracetamol').quantity, '15');
+});
