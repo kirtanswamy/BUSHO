@@ -133,54 +133,22 @@ const DISEASE_CATALOG = [
   ['Urinary tract infection','urinary tract infection','uti','मूत्र संक्रमण'],
   ['Chickenpox','chickenpox','चेचक','कांजिण्या','சின்னம்மை']
 ];
-function catalogMatches(text, catalog) {
-  const lower = text.toLocaleLowerCase();
-  const matches = [];
-  for (const row of catalog) {
-    let best = null;
-    for (const alias of row.slice(1)) {
-      const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const latin = /^[a-z0-9 +.-]+$/i.test(alias);
-      const pattern = latin ? new RegExp('(^|[^a-z0-9])(' + escaped + ')(?=$|[^a-z0-9])', 'i') : new RegExp(escaped, 'i');
-      const found = pattern.exec(lower);
-      if (found) {
-        const index = found.index + (latin && found[1] ? found[1].length : 0);
-        const length = latin && found[2] ? found[2].length : found[0].length;
-        if (!best || index < best.index) best = { index, end: index + length, alias };
-      }
-    }
-    if (best) matches.push({ name: row[0], ...best });
-  }
-  return matches.sort((x, y) => x.index - y.index);
+function editDistance(a,b){const p=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let d=p[0];p[0]=i;for(let j=1;j<=b.length;j++){const q=p[j];p[j]=Math.min(p[j]+1,p[j-1]+1,d+(a[i-1]===b[j-1]?0:1));d=q;}}return p[b.length];}
+function catalogMatches(text,catalog){
+ const lower=text.toLocaleLowerCase(),matches=[];
+ for(const row of catalog){let best=null;
+  for(const alias of row.slice(1)){
+   const escaped=alias.replace(/[.*+?^$()|[\]\\]/g,'\\$&'),latin=/^[a-z0-9 +.-]+$/i.test(alias);
+   const re=latin?new RegExp('(^|[^a-z0-9])('+escaped+')(?=$|[^a-z0-9])','i'):new RegExp(escaped,'i'),found=re.exec(lower);
+   if(found){const index=found.index+(latin&&found[1]?found[1].length:0),length=latin&&found[2]?found[2].length:found[0].length;if(!best||index<best.index)best={index,end:index+length,alias,fuzzy:false};}
+   if(!best&&/^[a-z]{6,}$/i.test(alias)){for(const word of lower.matchAll(/[a-z]{5,}/g)){const limit=alias.length>=12?2:1;if(Math.abs(word[0].length-alias.length)<=limit&&editDistance(word[0],alias.toLowerCase())<=limit){best={index:word.index,end:word.index+word[0].length,alias,fuzzy:true};break;}}}
+  }if(best)matches.push({name:row[0],...best});
+ }return matches.sort((a,b)=>a.index-b.index);
 }
-function nearestNumber(text, index, before = 55, after = 45) {
-  const leftBoundary = Math.max(text.lastIndexOf('.', index), text.lastIndexOf('!', index), text.lastIndexOf('?', index), text.lastIndexOf('।', index), text.lastIndexOf('॥', index), text.lastIndexOf('\\n', index)) + 1;
-  const rightCandidates = ['.', '!', '?', '।', '॥', '\\n'].map(mark => text.indexOf(mark, index)).filter(pos => pos >= 0);
-  const rightBoundary = rightCandidates.length ? Math.min(...rightCandidates) : text.length;
-  const left = text.slice(Math.max(leftBoundary, index - before), index);
-  const right = text.slice(index, Math.min(rightBoundary, index + after));
-  const lm = [...left.matchAll(/[0-9]+/g)].at(-1);
-  const rm = right.match(/[0-9]+/);
-  const ld = lm ? left.length - lm.index - lm[0].length : Infinity;
-  const rd = rm ? rm.index : Infinity;
-  if (Math.min(ld, rd) > 26) return '';
-  return ld <= rd ? lm[0] : rm[0];
-}
-function medicineQuantity(report, match) {
-  const before = report.slice(Math.max(0, match.index - 55), match.index);
-  const after = report.slice(match.end, Math.min(report.length, match.end + 75));
-  const context = before + ' ' + after;
-  const quantity = nearestNumber(report, match.index, 55, 75);
-  const unit = (context.match(/\b(tablets?|tabs?|strips?|packs?|packets?|bottles?|capsules?|caps?|sachets?|vials?|ampoules?|ml|millilit(?:er|re)s?|doses?|units?|गोलियां|गोलियाँ|गोली|पत्ते|पैकेट|மாத்திரைகள்|மாத்திரை|మాత్రలు|టాబ్లెట్లు)\b/i) || [])[1] || '';
-  const remaining = /(left|remaining|remain|balance|stock|available|bacha|bache|bachi|shesh|बचे|बचा|बची|बाकी|शेष|உள்ளன|மீதம்|మిగిలి|బাকি|বাকি|অবশিষ্ট)/i.test(context);
-  return { quantity, unit, stockStatus: quantity ? (remaining ? 'Remaining stock · verify' : 'Quantity mentioned · verify') : 'Quantity not stated · clarify' };
-}
-function conditionPatientCount(report, match) {
-  const context = report.slice(Math.max(0, match.index - 55), Math.min(report.length, match.end + 45));
-  const count = nearestNumber(report, match.index, 55, 45);
-  const patientCue = /(patient|patients|people|cases?|मरीज|रोगी|पेशेंट|நோயாளி|రోగి|রোগী|रुग्ण)/i.test(context);
-  return { patients: count && patientCue ? count : '', countStatus: count && patientCue ? 'Patient count · verify' : 'Not stated · clarify' };
-}
+function reportClause(report,index,end){const bounds=[...report.matchAll(/[,;.!?।॥]|\\band\\b/gi)].map(m=>({start:m.index,end:m.index+m[0].length}));const left=bounds.filter(x=>x.end<=index).at(-1)?.end??0,right=bounds.find(x=>x.start>=end)?.start??report.length;return report.slice(left,right);}
+function nearestNumber(text,index,before=55,after=45){const l=text.slice(Math.max(0,index-before),index),r=text.slice(index,Math.min(text.length,index+after)),lm=[...l.matchAll(/[0-9]+/g)].at(-1),rm=r.match(/[0-9]+/),ld=lm?l.length-lm.index-lm[0].length:Infinity,rd=rm?rm.index:Infinity;if(Math.min(ld,rd)>26)return '';return ld<=rd?lm[0]:rm[0];}
+function medicineQuantity(report,match){const clause=reportClause(report,match.index,match.end),index=match.index-report.indexOf(clause),quantity=nearestNumber(clause,index,45,55),unit=(clause.match(/\\b(tablets?|tabs?|strips?|packs?|packets?|bottles?|capsules?|caps?|sachets?|vials?|ampoules?|ml|millilit(?:er|re)s?|doses?|units?|गोलियां|गोलियाँ|गोली|पत्ते|पैकेट|மாத்திரைகள்|மாத்திரை|మాత్రలు|టాబ్లెట్లు)\\b/i)||[])[1]||'',remaining=/(left|remaining|remain|balance|stock|available|only|bacha|bache|bachi|shesh|बचे|बचा|बची|बाकी|शेष|உள்ளன|மீதம்|మిగిలి|বাকি|অবশিষ্ট)/i.test(clause);return{quantity,unit,stockStatus:quantity?(remaining?'Remaining stock · verify':'Quantity mentioned · verify'):'Quantity not stated · clarify',sourcePhrase:clause.trim(),fuzzy:Boolean(match.fuzzy)};}
+function conditionPatientCount(report,match){const clause=reportClause(report,match.index,match.end),index=match.index-report.indexOf(clause),count=nearestNumber(clause,index,45,45),cue=/(patient|patients|people|cases?|मरीज|रोगी|पेशेंट|நோயாளி|రోగి|রোগী|रुग्ण)/i.test(clause);return{patients:count&&cue?count:'',countStatus:count&&cue?'Patient count · verify':'Not stated · clarify',sourcePhrase:clause.trim()};}
 function makeExtraction() {
   const report = normalizeDigits(reportInput.value.trim());
   if (!report) { showToast(t('worker.toast.empty')); reportInput.focus(); return; }
