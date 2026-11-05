@@ -1349,6 +1349,12 @@
     "lp.mock.received": "प्राप्त"
   });
 
+
+  Object.assign(locales.ta, { 'voice.errorDetail': 'பேச்சு அறிதல் தோல்வியடைந்தது ({error}). விவரங்களுக்கு உலாவி கன்சோலைப் பார்க்கவும்.' });
+  Object.assign(locales.te, { 'voice.errorDetail': 'వాయిస్ గుర్తింపు విఫలమైంది ({error}). వివరాల కోసం బ్రౌజర్ కన్సోల్ చూడండి.' });
+  Object.assign(locales.bn, { 'voice.errorDetail': 'স্পিচ শনাক্তকরণ ব্যর্থ হয়েছে ({error})। বিস্তারিত জানতে ব্রাউজার কনসোল দেখুন।' });
+  Object.assign(locales.mr, { 'voice.errorDetail': 'व्हॉइस ओळख अयशस्वी झाली ({error}). तपशीलांसाठी ब्राउझर कन्सोल पहा.' });
+
   // Expose locale dictionaries directly for scripts/check-untranslated.mjs
   const exposed = Object.assign({}, locales);
   exposed.t = t;
