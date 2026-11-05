@@ -472,9 +472,12 @@
     localStorage.setItem('busho-lang', lang);
 
     const locale = locales[lang];
-    document.title = `${westernizeDigits(locale['app.name'])} | ${westernizeDigits(locale['hero.headline'].slice(0, 50))}...`;
+    const isLanding = document.body.classList.contains('landing-v3');
+    document.title = isLanding
+      ? `${westernizeDigits(locale['app.name'])} | ${westernizeDigits(locale['lp.hero.title'] || 'Frontline health reporting')}`
+      : `${westernizeDigits(locale['app.name'])} | ${westernizeDigits(locale['hero.headline'].slice(0, 50))}...`;
     const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute('content', westernizeDigits(locale['hero.subtext']));
+    if (metaDesc) metaDesc.setAttribute('content', westernizeDigits(isLanding ? locale['lp.hero.description'] : locale['hero.subtext']));
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
