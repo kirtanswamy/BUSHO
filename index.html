@@ -1,234 +1,70 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BUSHO | Bottom-Up Smart Health Orchestrator</title>
-    <meta name="description" content="BUSHO turns ordinary frontline health reports into verified operational action." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles-v2.css?v=7" />
-    <script src="i18n.js"></script>
-  </head>
-  <body>
-    <a href="#main-content" class="skip-link" data-i18n="ui.skipLink">Skip to main content</a>
-    <div class="app-shell">
-      <header class="topbar" role="banner">
-        <div class="brand-lockup">
-          <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div>
-            <div class="brand-name" data-i18n="app.name">BUSHO</div>
-            <div class="brand-subtitle" data-i18n="app.tagline">Bottom-Up Smart Health Orchestrator</div>
-          </div>
-        </div>
-        <nav class="topbar-nav" aria-label="Main navigation" data-i18n-attr="aria-label:ui.mainNavigation">
-          <a href="#capabilities" class="nav-link">Platform</a>
-          <a href="signin.html" class="nav-link">Sign in</a>
-          <a href="#safety" class="nav-link" data-i18n="nav.safety">Safety</a>
-        </nav>
-        <div class="topbar-right">
-          <span class="demo-badge" data-i18n="header.demoBadge">Demo: synthetic data</span>
-          <div class="lang-selector" role="region" aria-label="Language selection" data-i18n-attr="aria-label:ui.languageSelection">
-            <label for="lang-select" class="visually-hidden" data-i18n="header.langLabel">Language</label>
-            <select id="lang-select" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
-              <option value="en">English</option>
-              <option value="hi">हिन्दी</option>
-              <option value="ta">தமிழ்</option>
-              <option value="te">తెలుగు</option>
-              <option value="bn">বাংলা</option>
-              <option value="mr">मराठी</option>
-            </select>
-          </div>
-        </div>
-      </header>
-
-      <main id="main-content" role="main">
-        <!-- Hero Section -->
-        <section class="hero-section" aria-labelledby="hero-title">
-          <div class="hero-container">
-            <div class="hero-content">
-
-              <h1 id="hero-title" data-i18n="hero.headline">Health workers report in their own words. BUSHO helps the right people act, safely.</h1>
-              <div class="hero-actions">
-                <a href="#portals" class="btn btn-primary">Sign in to BUSHO</a>
-                <a href="#capabilities" class="btn btn-secondary">Explore the platform</a>
-              </div>
-              <div class="trust-chips" role="list" aria-label="Trust indicators" data-i18n-attr="aria-label:ui.trustIndicators">
-                <span class="trust-chip" role="listitem" data-i18n="hero.trust1">A person confirms every record</span>
-                <span class="trust-chip" role="listitem" data-i18n="hero.trust2">No diagnosis</span>
-                <span class="trust-chip" role="listitem" data-i18n="hero.trust3">Synthetic demo data</span>
-              </div>
-            </div>
-            <div class="hero-mock" aria-hidden="true">
-              <div class="phone-frame">
-                <div class="phone-header">
-                  <div class="phone-notch"></div>
-                </div>
-                <div class="phone-screen">
-                  <div class="mock-chat">
-                    <div class="mock-message incoming">
-                      <div class="mock-avatar">AS</div>
-                      <div class="mock-bubble">
-                        <p class="mock-text" id="mock-field-text" data-i18n="mock.fieldNote">Today we saw 12 patients with fever and 8 with diarrhea. We have only 20 ORS packets left, and our iron tablets are almost finished.</p>
-                        <span class="mock-time" data-i18n="mock.time">10:42 AM</span>
-                      </div>
-                    </div>
-                    <div class="mock-arrow" aria-hidden="true">→</div>
-                    <div class="mock-message outgoing">
-                      <div class="mock-bubble structured">
-                        <div class="mock-field"><span class="mock-label" data-i18n="mock.symptomsLabel">Symptoms</span><span class="mock-value" data-i18n="mock.symptomsValue">Fever: 12; Diarrhea: 8</span></div>
-                        <div class="mock-field"><span class="mock-label" data-i18n="mock.orsLabel">ORS</span><span class="mock-value" data-i18n="mock.orsValue">20 packets</span></div>
-                        <div class="mock-field"><span class="mock-label" data-i18n="mock.ironLabel">Iron</span><span class="mock-value" data-i18n="mock.ironValue">Almost finished</span></div>
-                        <div class="mock-verified" aria-label="Verified" data-i18n-attr="aria-label:mock.verified">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                          <span data-i18n="worker.draftVerified">Verified by worker</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Platform capabilities -->
-        <section id="capabilities" class="capabilities-section" aria-labelledby="capabilities-title">
-          <div class="container">
-            <header class="section-header capabilities-header">
-              <p class="section-kicker">PLATFORM CAPABILITIES</p>
-              <h2 id="capabilities-title">A clearer view of frontline health operations.</h2>
-              <p>BUSHO brings field observations, human verification and operational follow-up into one role-based workspace.</p>
-            </header>
-            <div class="capability-grid">
-              <article class="capability-card">
-                <span class="capability-index">01</span>
-                <div class="capability-icon" aria-hidden="true">↗</div>
-                <h3>Field reporting</h3>
-                <p>Capture short field updates in a health worker’s own words, using text or browser-supported voice input.</p>
-                <span class="capability-meta">HEALTH WORKER WORKSPACE</span>
-              </article>
-              <article class="capability-card">
-                <span class="capability-index">02</span>
-                <div class="capability-icon" aria-hidden="true">✓</div>
-                <h3>Structured review</h3>
-                <p>Turn observations into a readable draft. Review and confirm extracted fields before they are treated as a report.</p>
-                <span class="capability-meta">HUMAN CONFIRMATION</span>
-              </article>
-              <article class="capability-card">
-                <span class="capability-index">03</span>
-                <div class="capability-icon" aria-hidden="true">▤</div>
-                <h3>Operational oversight</h3>
-                <p>Give supervisors a consolidated view of submitted reports, reported stock signals and items requiring attention.</p>
-                <span class="capability-meta">SUPERVISOR WORKSPACE</span>
-              </article>
-            </div>
-            <p class="capabilities-note">Demonstration capabilities only. The current prototype uses synthetic data and does not connect to government health systems.</p>
-          </div>
-        </section>
-
-        <!-- Role-based workspaces -->
-        <section id="portals" class="portal-entry-section" aria-labelledby="portals-title">
-          <div class="container">
-            <header class="section-header workspace-section-header">
-              <p class="section-kicker">ROLE-BASED ACCESS</p>
-              <h2 id="portals-title">One platform. Dedicated workspaces.</h2>
-              <p>Different responsibilities, with information presented around the work each role performs.</p>
-            </header>
-            <div class="workspace-cards">
-              <article class="workspace-card">
-                <div class="workspace-card-top"><span>01 / FRONTLINE</span><span aria-hidden="true">↗</span></div>
-                <h3>Health worker</h3>
-                <p>Prepare field updates, review structured observations and confirm reports.</p>
-                <a href="signin.html" class="workspace-link">Access workspace <span aria-hidden="true">→</span></a>
-              </article>
-              <article class="workspace-card workspace-card-supervisor">
-                <div class="workspace-card-top"><span>02 / OPERATIONS</span><span aria-hidden="true">↗</span></div>
-                <h3>Supervisor</h3>
-                <p>Review submitted reports, monitor stock signals and assess operational follow-up.</p>
-                <a href="signin.html" class="workspace-link">Access workspace <span aria-hidden="true">→</span></a>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <!-- Safety / Guardrails -->
-        <section id="safety" class="guardrails-section" aria-labelledby="safety-title">
-          <div class="container">
-            <header class="guardrails-header">
-              <p class="eyebrow" data-i18n="safety.subtitle">Clear states make the product trustworthy.</p>
-              <h2 id="safety-title" data-i18n="safety.title">Built-in guardrails</h2>
-              <p data-i18n="safety.desc">BUSHO shows the worker report, the human verification step, and the administrator response as separate records.</p>
-            </header>
-            <div class="guardrail-grid">
-              <article class="guardrail-card reported" aria-labelledby="state1-title">
-                <header class="state-top">
-                  <span class="state-label" data-i18n="safety.state1.label">STATE 01</span>
-                  <span class="state-pill" data-i18n="safety.state1.pill">Unverified</span>
-                </header>
-                <h3 id="state1-title" data-i18n="safety.state1.title">Reported health trend</h3>
-                <p data-i18n="safety.state1.desc">A field signal for review, with its source and context attached.</p>
-                <footer class="state-footer"><span data-i18n="safety.state1.footer">Source: anonymized worker reports</span></footer>
-              </article>
-              <article class="guardrail-card confirmed" aria-labelledby="state2-title">
-                <header class="state-top">
-                  <span class="state-label" data-i18n="safety.state2.label">STATE 02</span>
-                  <span class="state-pill" data-i18n="safety.state2.pill">Requires evidence</span>
-                </header>
-                <h3 id="state2-title" data-i18n="safety.state2.title">Confirmed medical event</h3>
-                <p data-i18n="safety.state2.desc">A clinical conclusion requires an authorized review process. BUSHO keeps that decision outside the extraction flow.</p>
-                <footer class="state-footer"><span data-i18n="safety.state2.footer">Clinical review remains human-led</span></footer>
-              </article>
-              <article class="guardrail-card action" aria-labelledby="state3-title">
-                <header class="state-top">
-                  <span class="state-label" data-i18n="safety.state3.label">STATE 03</span>
-                  <span class="state-pill" data-i18n="safety.state3.pill">Requires approval</span>
-                </header>
-                <h3 id="state3-title" data-i18n="safety.state3.title">Administrative action</h3>
-                <p data-i18n="safety.state3.desc">Inventory responses can be drafted from verified stock data. An authorized administrator approves the request.</p>
-                <footer class="state-footer"><span data-i18n="safety.state3.footer">Draft request, pending approval</span></footer>
-              </article>
-            </div>
-          </div>
-        </section>
-
-      </main>
-
-      <footer class="footer" role="contentinfo">
-        <div class="container">
-          <div class="footer-main">
-            <p class="footer-event" data-i18n="footer.event">Hack for Social Cause, VBYLD 2027</p>
-            <p class="footer-prototype" data-i18n="footer.prototype">Prototype: not for real patient data</p>
-            <p class="footer-ai-note" data-i18n="footer.aiNote">Translations were AI-drafted and need native-speaker review before any real pilot.</p>
-          </div>
-          <div class="footer-links">
-            <a href="terms.html" data-i18n="footer.terms">Terms</a>
-            <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
-            <button class="reset-btn" id="reset-demo" type="button" data-i18n="footer.reset">Reset demo data</button>
-            <div class="lang-selector footer-lang" role="region" aria-label="Language selection" data-i18n-attr="aria-label:ui.languageSelection">
-              <label for="lang-select-footer" class="visually-hidden" data-i18n="header.langLabel">Language</label>
-              <select id="lang-select-footer" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
-                <option value="en">English</option>
-                <option value="hi">हिन्दी</option>
-                <option value="ta">தமிழ்</option>
-                <option value="te">తెలుగు</option>
-                <option value="bn">বাংলা</option>
-                <option value="mr">मराठी</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
-
-    <div class="toast" id="toast" role="status" aria-live="polite">
-      <span class="toast-icon" aria-hidden="true">✓</span>
-      <span id="toast-text"></span>
-    </div>
-
-    <script src="app-v2.js?v=7"></script>
-  </body>
-</html>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BUSHO | Frontline health reporting and human review</title>
+<meta name="description" content="BUSHO is a public health workflow prototype for capturing frontline reports, organizing observations and supporting human review.">
+<meta name="theme-color" content="#f7f9fc">
+<meta property="og:type" content="website"><meta property="og:title" content="BUSHO | Clearer frontline health reporting"><meta property="og:description" content="A human reviewed workflow for frontline reports, structured observations and supervisor oversight."><meta property="og:image" content="https://busho.de5.net/assets/busho-github-banner.jpg"><meta property="og:url" content="https://busho.de5.net/">
+<link rel="canonical" href="https://busho.de5.net/">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%232b58b8'/%3E%3Cpath d='M10 34h7V22h-7zm11 0h7V14h-7zm11 0h7V8h-7z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="landing-v3.css?v=1"><script src="i18n.js"></script><script defer src="landing-v3.js?v=1"></script>
+</head>
+<body class="landing-v3">
+<a class="lp-skip" href="#main-content" data-i18n="ui.skipLink">Skip to main content</a>
+<header class="lp-header"><div class="lp-header-inner">
+<a href="#top" class="lp-brand" aria-label="BUSHO home"><span class="lp-brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="lp-brand-copy"><strong>BUSHO</strong><small data-i18n="app.tagline">Bottom Up Smart Health Orchestrator</small></span></a>
+<button class="lp-menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="lp-navigation"><span></span><span></span></button>
+<nav class="lp-nav" id="lp-navigation" aria-label="Main navigation"><a href="#platform" data-i18n="lp.nav.platform">Platform</a><a href="#workflow" data-i18n="lp.nav.workflow">How it works</a><a href="#principles" data-i18n="lp.nav.principles">Safety principles</a><a href="signin.html" class="lp-nav-cta" data-i18n="lp.nav.signin">Sign in</a></nav>
+<div class="lp-header-tools"><span class="lp-demo-flag"><i></i><span data-i18n="header.demoBadge">Demo with synthetic data</span></span><label class="lp-language"><span class="visually-hidden" data-i18n="header.langLabel">Language</span><select id="lang-select" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage"><option value="en">EN</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="mr">मराठी</option></select></label></div>
+</div></header>
+<main id="main-content">
+<section class="lp-hero" id="top"><div class="lp-hero-grid">
+<div class="lp-hero-copy" data-reveal><p class="lp-eyebrow"><i></i><span data-i18n="lp.hero.eyebrow">A clearer first mile for public health operations</span></p><h1 data-i18n="lp.hero.title">Field reports deserve a clearer path to action.</h1><p class="lp-hero-description" data-i18n="lp.hero.description">BUSHO helps frontline health workers turn everyday observations into structured drafts that people can review, correct and confirm.</p>
+<div class="lp-hero-actions"><a class="lp-button lp-button-primary" href="signin.html"><span data-i18n="lp.hero.cta">Explore the live demo</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M10 5l5 5-5 5"/></svg></a><a class="lp-text-link" href="#workflow"><span data-i18n="lp.hero.secondary">See the workflow</span><span>↘</span></a></div>
+<div class="lp-proof-row"><span>✓</span><p data-i18n="lp.hero.proof">Human review stays in the loop. BUSHO does not diagnose or place orders.</p></div></div>
+<div class="lp-hero-visual" data-reveal><div class="lp-visual-topline"><span data-i18n="lp.preview.label">WORKFLOW PREVIEW</span><span class="lp-live-tag"><i></i><span data-i18n="lp.preview.synthetic">SYNTHETIC EXAMPLE</span></span></div>
+<div class="lp-product-window"><div class="lp-window-bar"><div class="lp-window-dots"><i></i><i></i><i></i></div><span data-i18n="lp.preview.workspace">Health worker workspace</span><small>BUSHO / 01</small></div><div class="lp-window-body">
+<div class="lp-window-heading"><div><span data-i18n="lp.preview.step">STEP 01 / FIELD UPDATE</span><strong data-i18n="lp.preview.heading">A report in the worker’s words</strong></div><b>HW</b></div>
+<div class="lp-report-note"><small data-i18n="lp.preview.original">ORIGINAL NOTE</small><p data-i18n="mock.fieldNote">Today we saw 12 patients with fever and 8 with diarrhea. We have only 20 ORS packets left, and our iron tablets are almost finished.</p><span>10:42 AM&nbsp; • &nbsp;<span data-i18n="lp.preview.sample">Sample report</span></span></div>
+<div class="lp-parse-line"><i></i><span data-i18n="lp.preview.structured">STRUCTURED FOR REVIEW</span><i></i></div>
+<div class="lp-preview-table"><div class="lp-preview-table-head"><span data-i18n="lp.preview.field">FIELD</span><span data-i18n="lp.preview.observation">OBSERVATION</span><span data-i18n="lp.preview.state">STATE</span></div>
+<div class="lp-preview-row"><span><i class="lp-category-icon">+</i><b data-i18n="lp.preview.condition">Condition</b></span><strong data-i18n="mock.symptomsValue">Fever: 12; Diarrhea: 8</strong><em data-i18n="lp.preview.review">Review</em></div>
+<div class="lp-preview-row"><span><i class="lp-category-icon medicine">Rx</i><b data-i18n="lp.preview.stock">Medicine stock</b></span><strong data-i18n="mock.orsValue">20 packets</strong><em data-i18n="lp.preview.review">Review</em></div>
+<div class="lp-preview-row"><span><i class="lp-category-icon source">Aa</i><b data-i18n="lp.preview.source">Source note</b></span><strong data-i18n="lp.preview.kept">Original kept</strong><em class="linked" data-i18n="lp.preview.linked">Linked</em></div></div>
+<div class="lp-window-footer"><span><i></i><span data-i18n="lp.preview.provisional">Provisional draft</span></span><span data-i18n="lp.preview.human">Awaiting worker confirmation</span></div></div></div>
+<div class="lp-visual-caption"><b>01</b><span data-i18n="lp.preview.caption">From a spoken or written observation to a reviewable operational record.</span></div></div></div>
+<div class="lp-hero-bottom"><span data-i18n="lp.hero.bottom">BUILT AROUND THE FRONTLINE WORKFLOW</span><div><span data-i18n="lp.hero.stage1">Capture</span><i></i><span data-i18n="lp.hero.stage2">Structure</span><i></i><span data-i18n="lp.hero.stage3">Verify</span><i></i><span data-i18n="lp.hero.stage4">Review</span></div></div></section>
+<section class="lp-statement"><div class="lp-statement-inner" data-reveal><p class="lp-section-kicker" data-i18n="lp.statement.kicker">THE PRINCIPLE</p><h2 data-i18n="lp.statement.title">Better information starts with the people closest to the community.</h2><p data-i18n="lp.statement.copy">A practical reporting layer should preserve what was observed, make it easier to review and leave important decisions with people.</p></div></section>
+<section class="lp-workflow section-pad" id="workflow"><div class="lp-section-head" data-reveal><div><p class="lp-section-kicker" data-i18n="lp.workflow.kicker">FROM FIELD NOTE TO REVIEW</p><h2 data-i18n="lp.workflow.title">One report. A more useful handoff.</h2></div><p data-i18n="lp.workflow.intro">BUSHO keeps the original observation close to the structured draft, so workers can check what the system understood before a supervisor sees it.</p></div>
+<div class="lp-workflow-grid">
+<article class="lp-workflow-step primary" data-reveal><span class="lp-step-number">01</span><div class="lp-step-icon">✎</div><h3 data-i18n="lp.workflow.step1.title">Capture the field update</h3><p data-i18n="lp.workflow.step1.copy">Workers describe what they observed in everyday language, through text or supported browser voice input.</p><small data-i18n="lp.workflow.step1.foot">TEXT OR VOICE INPUT</small></article>
+<article class="lp-workflow-step" data-reveal><span class="lp-step-number">02</span><div class="lp-step-icon">▤</div><h3 data-i18n="lp.workflow.step2.title">Structure the observation</h3><p data-i18n="lp.workflow.step2.copy">BUSHO proposes condition and medicine fields while keeping the source report available for comparison.</p><small data-i18n="lp.workflow.step2.foot">EDITABLE DRAFT</small></article>
+<article class="lp-workflow-step" data-reveal><span class="lp-step-number">03</span><div class="lp-step-icon">✓</div><h3 data-i18n="lp.workflow.step3.title">Verify before handoff</h3><p data-i18n="lp.workflow.step3.copy">The health worker corrects and confirms the draft. Supervisors review the resulting operational record.</p><small data-i18n="lp.workflow.step3.foot">HUMAN CONFIRMATION</small></article>
+</div></section>
+<section class="lp-platform section-pad" id="platform"><div class="lp-platform-intro" data-reveal><p class="lp-section-kicker" data-i18n="lp.platform.kicker">DESIGNED FOR TWO CONNECTED ROLES</p><h2 data-i18n="lp.platform.title">A shared picture of the work. Clear responsibility at every step.</h2><p data-i18n="lp.platform.copy">Field workers and supervisors see different parts of the same reporting flow, with review and approval kept explicit.</p></div>
+<div class="lp-role-panels">
+<article class="lp-role-panel lp-role-worker" data-reveal><div class="lp-role-panel-copy"><small>01 / FRONTLINE</small><h3 data-i18n="lp.platform.worker.title">For health workers</h3><p data-i18n="lp.platform.worker.copy">A focused place to report an observation, inspect the draft and confirm what should be handed forward.</p><a href="signin.html" class="lp-inline-link"><span data-i18n="lp.platform.worker.link">Open worker workspace</span> ↗</a></div>
+<div class="lp-role-visual lp-worker-visual" aria-hidden="true"><div class="lp-mini-app-head"><b>BUSHO</b><small>FIELD REPORT</small></div><div class="lp-mini-app-title">Today’s update <i>Draft</i></div><div class="lp-mini-input"><small>ORIGINAL REPORT</small><span>12 patients with fever. 20 ORS packets left.</span></div><div class="lp-mini-draft"><div><i>+</i><span>Condition</span><b>Fever</b><em>12 patients</em></div><div><i>Rx</i><span>Stock</span><b>ORS</b><em>20 packets</em></div></div><div class="lp-mini-app-action"><span>Review fields</span><b>Confirm report →</b></div></div></article>
+<article class="lp-role-panel lp-role-supervisor" data-reveal><div class="lp-role-panel-copy"><small>02 / OPERATIONS</small><h3 data-i18n="lp.platform.supervisor.title">For supervisors</h3><p data-i18n="lp.platform.supervisor.copy">A consolidated view of confirmed field reports, operational signals and follow up that still needs review.</p><a href="signin.html" class="lp-inline-link"><span data-i18n="lp.platform.supervisor.link">Open supervisor workspace</span> ↗</a></div>
+<div class="lp-role-visual lp-supervisor-visual" aria-hidden="true"><div class="lp-supervisor-top"><span>OPERATIONS OVERVIEW</span><i>DEMO DATA</i></div><div class="lp-supervisor-metric"><div><small>REPORTS</small><strong>18</strong><span>Sample records</span></div><div><small>AWAITING REVIEW</small><strong>04</strong><span>Illustrative queue</span></div></div><div class="lp-signal-list"><div><i class="warning"></i><p><b>Stock attention</b><small>ORS · sample inventory</small></p><em>Review</em></div><div><i class="stable"></i><p><b>Field report</b><small>Confirmed by worker</small></p><em class="stable">Received</em></div></div></div></article></div>
+<p class="lp-demo-footnote" data-i18n="lp.platform.note">All dashboard figures and records shown here are fictional examples from the prototype.</p></section>
+<section class="lp-principles section-pad" id="principles"><div class="lp-principles-head" data-reveal><p class="lp-section-kicker" data-i18n="lp.principles.kicker">TRUST IS A WORKFLOW DECISION</p><h2 data-i18n="lp.principles.title">Useful signals. Clear boundaries.</h2><p data-i18n="lp.principles.copy">Health reporting needs careful handling. BUSHO keeps observation, verification and administrative action as distinct steps.</p></div>
+<div class="lp-principle-list">
+<article data-reveal><span>01</span><div><h3 data-i18n="lp.principles.one.title">A report is not a diagnosis</h3><p data-i18n="lp.principles.one.copy">The prototype organizes reported observations. It does not diagnose, triage or recommend treatment.</p></div><b>↗</b></article>
+<article data-reveal><span>02</span><div><h3 data-i18n="lp.principles.two.title">A draft is not a verified record</h3><p data-i18n="lp.principles.two.copy">Workers can review, correct and confirm the proposed fields before the record is treated as verified.</p></div><b>↗</b></article>
+<article data-reveal><span>03</span><div><h3 data-i18n="lp.principles.three.title">A stock signal is not an order</h3><p data-i18n="lp.principles.three.copy">The supervisor can review an illustrative replenishment draft. The demo does not place orders or connect to live inventory.</p></div><b>↗</b></article>
+</div></section>
+<section class="lp-tagline" data-reveal><p data-i18n="lp.tagline.kicker">THE BUSHO APPROACH</p><h2 data-i18n="lp.tagline.title">Keep the human close to the information. Keep the decision with the human.</h2></section>
+<section class="lp-faq section-pad" id="faq"><div class="lp-faq-heading" data-reveal><p class="lp-section-kicker" data-i18n="lp.faq.kicker">BEFORE YOU EXPLORE</p><h2 data-i18n="lp.faq.title">A few important details.</h2></div><div class="lp-faq-grid">
+<article data-reveal><h3 data-i18n="lp.faq.q1">Is BUSHO a live government health platform?</h3><p data-i18n="lp.faq.a1">No. The current website is a synthetic data prototype. It is not connected to government health systems or facility databases.</p></article>
+<article data-reveal><h3 data-i18n="lp.faq.q2">Does BUSHO diagnose diseases?</h3><p data-i18n="lp.faq.a2">No. It structures reported observations for human review. It does not make clinical decisions.</p></article>
+<article data-reveal><h3 data-i18n="lp.faq.q3">Can workers report by voice?</h3><p data-i18n="lp.faq.a3">The prototype supports browser native speech input where available. Recognition depends on browser and language support.</p></article>
+<article data-reveal><h3 data-i18n="lp.faq.q4">What data should I enter?</h3><p data-i18n="lp.faq.a4">Use synthetic examples only. Do not enter real patient names, phone numbers, identifiers or sensitive health information.</p></article>
+</div></section>
+<section class="lp-final-cta" id="portals"><div class="lp-final-inner" data-reveal><div><p class="lp-section-kicker" data-i18n="lp.final.kicker">EXPLORE THE PROTOTYPE</p><h2 data-i18n="lp.final.title">See how a field report moves through BUSHO.</h2><p data-i18n="lp.final.copy">Explore the worker and supervisor views using synthetic demo data.</p></div><a href="signin.html" class="lp-button lp-button-light"><span data-i18n="lp.final.cta">Enter the demo workspace</span> ↗</a></div></section>
+</main>
+<footer class="lp-footer"><div class="lp-footer-main"><a href="#top" class="lp-brand lp-footer-brand"><span class="lp-brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="lp-brand-copy"><strong>BUSHO</strong><small data-i18n="app.tagline">Bottom Up Smart Health Orchestrator</small></span></a><p data-i18n="lp.footer.note">A workflow prototype designed around human review.</p></div><div class="lp-footer-bottom"><span data-i18n="lp.footer.status">Prototype only. Synthetic data. Not for real patient information.</span><div><a href="terms.html" data-i18n="footer.terms">Terms</a><a href="privacy.html" data-i18n="footer.privacy">Privacy</a><a href="https://github.com/kirtanswamy/BUSHO" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
+</body></html>
