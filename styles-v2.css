@@ -1351,3 +1351,28 @@ html, body { overflow-x: hidden; }
  .clinical-result-heading { align-items:flex-start; }
  .clinical-result-heading .confidence { white-space:normal; }
 }
+
+
+/* Clinical review v6 */
+.worker-portal-body .provisional-banner{padding:0!important;margin:0 16px!important;border:0!important;background:transparent!important;min-height:0}
+.worker-portal-body .provisional-banner>div{display:none}
+.worker-portal-body .provisional-banner .banner-icon{display:inline-grid;place-items:center;width:25px;height:25px;border:1px solid #edc98f;border-radius:50%;color:#a65a0a;background:#fff7e9;cursor:pointer}
+.clinical-summary{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:2px 0 4px;color:#53647d;font-size:12px}
+.clinical-summary>span:not(.clinical-review-hint){padding:9px 13px;border:1px solid #e2e9f3;border-radius:10px;background:#f7f9fd}
+.clinical-summary strong{color:#2454ae;font-size:17px;margin-right:4px}
+.clinical-review-hint{margin-left:auto;color:#9a681f;font-size:11px}
+.clinical-result-heading{flex-wrap:wrap}
+.clinical-add{border:1px solid #cbd8ee;border-radius:8px;padding:8px 11px;background:#f5f8ff;color:#2454ae;font:600 11px inherit;cursor:pointer}
+.clinical-edit-input{width:100%;min-width:65px;max-width:190px;border:1px solid #dce4ef;border-radius:7px;padding:8px 9px;background:#fff;color:#20324e;font:500 12px inherit}
+.clinical-edit-input:focus{outline:2px solid rgba(49,92,186,.22);border-color:#5279c8}
+.clinical-item-name{display:flex;align-items:center;gap:7px;min-width:150px}
+.clinical-mini-icon{display:inline-grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:#edf3ff;color:#315cba;font-size:12px;font-weight:800}
+.clinical-mini-icon.medicine{font-size:9px}
+.clinical-alias{display:block;margin:4px 0 0 33px;color:#8290a5;font-size:10px}
+.clinical-status{display:inline-block;padding:5px 8px;border-radius:20px;background:#fff4e4;color:#94601e;font-size:10px;white-space:nowrap}
+.clinical-remove{border:0;background:transparent;color:#8b5360;font-size:10px;cursor:pointer}
+.clinical-table{min-width:560px}
+.clinical-table td{padding:9px 10px}
+.worker-portal-body .extraction-footer{display:none!important}
+.worker-portal-body .verification-bar{margin-top:14px}
+@media(max-width:760px){.clinical-review-hint{width:100%;margin-left:0}.clinical-result-heading{align-items:center}.clinical-add{margin-left:45px}.clinical-table{min-width:540px}}
