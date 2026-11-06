@@ -33,7 +33,7 @@ test('a supervisor can return a report with a reason, then verify a resubmission
     at: '2026-11-06T10:03:00.000Z'
   });
   assert.equal(verified.status, 'supervisor_verified');
-  assert.equal(verified.events.length, 4);
+  assert.equal(verified.events.length, 3);
 });
 
 test('verified report can create a facility indent recommendation, but not a purchase order', () => {

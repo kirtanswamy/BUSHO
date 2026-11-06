@@ -34,7 +34,6 @@
   const INDENT_TRANSITIONS = {
     recommended_to_facility_store: {
       supervisor_approved: { roles: ['supervisor'], action: 'supervisor_approved_indent' },
-      submitted_to_dpdmis: { roles: ['supervisor', 'storekeeper'], action: 'dpdmis_submission_recorded', needsReference: true },
       returned_for_clarification: { roles: ['supervisor', 'storekeeper'], action: 'indent_returned', needsNote: true }
     },
     supervisor_approved: {
