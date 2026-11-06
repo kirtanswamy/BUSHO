@@ -83,7 +83,8 @@ test('DPDMIS submission and dispatch require external references before receipt 
     reference: 'DEMO-CHALLAN-001', at: '2026-11-06T10:06:00.000Z'
   });
   assert.throws(() => workflow.transitionIndent(dispatched, {
-    to: 'received', actorRole: 'supervisor', actorLabel: 'Demo Supervisor', receivedQty: 31
+    to: 'received', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
+    reference: 'DEMO-GRN-OVER', receivedQty: 31
   }), /exceed/i);
   const received = workflow.transitionIndent(dispatched, {
     to: 'received', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
