@@ -1,4 +1,5 @@
 (() => {
+  document.documentElement.classList.add('lp-enhanced');
   const menuButton = document.querySelector('.lp-menu-toggle');
   const navigation = document.getElementById('lp-navigation');
 
@@ -7,6 +8,7 @@
     menuButton.setAttribute('aria-expanded', 'false');
     menuButton.setAttribute('aria-label', 'Open navigation');
     navigation.classList.remove('is-open');
+    document.body.classList.remove('lp-menu-open');
   };
 
   menuButton?.addEventListener('click', () => {
@@ -14,6 +16,7 @@
     menuButton.setAttribute('aria-expanded', String(open));
     menuButton.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
     navigation?.classList.toggle('is-open', open);
+    document.body.classList.toggle('lp-menu-open', open);
   });
 
   navigation?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
@@ -43,6 +46,7 @@
     const heading = document.querySelector('.lp-tagline h2');
     if (!heading) return;
     if (wordObserver) wordObserver.disconnect();
+    heading.classList.add('lp-word-reveal');
     const phrase = heading.textContent.trim().split(/\s+/);
     heading.textContent = '';
     phrase.forEach((word, index) => {
