@@ -7,10 +7,12 @@ const directory = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 
 
 test('directory carries the Local Government Directory source date and full CG hierarchy', () => {
   assert.equal(directory.geography.stateCode, '22');
-  assert.equal(directory.geography.blocks.length, 147);
+  assert.equal(directory.geography.blocks.length, 146);
   assert.equal(directory.geography.districts.length, 33);
   assert.equal(directory.geography.sourceDate, '21Oct2026');
   assert.ok(directory.geography.blocks.every(block => block.code && block.districtCode));
+  assert.equal(new Set(directory.geography.blocks.map(block => block.code)).size, 146);
+  assert.ok(directory.geography.blocks.some(block => block.mappingReviewRequired));
 });
 
 test('Dhamtari demo seed uses a real LGD block code and remains explicitly synthetic', () => {
