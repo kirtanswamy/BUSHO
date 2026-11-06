@@ -8,6 +8,8 @@ create schema if not exists app_private;
 revoke all on schema app_private from public, anon, authenticated;
 
 -- ---------------------------------------------------------------------------
+-- PMBJK district-wise snapshot totals 352 as of 2026-02-28; a separate state aggregate is 371 as of 2026-06-30.
+-- ---------------------------------------------------------------------------
 -- 1. Administrative reference data: LGD geography and separate PMBJK snapshots
 -- ---------------------------------------------------------------------------
 create table if not exists public.states (
@@ -696,16 +698,35 @@ begin
   end if;
 
   if new.status is not distinct from old.status then
-    if v_role <> 'worker'
-       or old.worker_id is distinct from app_private.auth_worker_id()
-       or old.status not in ('draft','correction_requested')
-       or new.review_note is distinct from old.review_note
-       or new.reviewed_by_user_id is distinct from old.reviewed_by_user_id
-       or new.reviewed_at is distinct from old.reviewed_at
-       or new.verified_at is distinct from old.verified_at
-       or new.escalated_at is distinct from old.escalated_at
-       or new.closed_at is distinct from old.closed_at then
-      raise exception 'This report update is not allowed';
+    if v_role = 'worker' then
+      if old.worker_id is distinct from app_private.auth_worker_id()
+         or not app_private.has_facility_access(old.facility_id, array['worker']::text[])
+         or old.status not in ('draft','correction_requested')
+         or new.review_note is distinct from old.review_note
+         or new.reviewed_by_user_id is distinct from old.reviewed_by_user_id
+         or new.reviewed_at is distinct from old.reviewed_at
+         or new.verified_at is distinct from old.verified_at
+         or new.escalated_at is distinct from old.escalated_at
+         or new.closed_at is distinct from old.closed_at then
+        raise exception 'This worker report update is not allowed';
+      end if;
+    elsif v_role = 'supervisor' then
+      if not app_private.has_facility_access(old.facility_id, array['supervisor']::text[])
+         or new.original_text is distinct from old.original_text
+         or new.worker_id is distinct from old.worker_id
+         or new.facility_id is distinct from old.facility_id
+         or new.reporting_date is distinct from old.reporting_date
+         or new.language_code is distinct from old.language_code
+         or new.reviewed_by_user_id is distinct from old.reviewed_by_user_id
+         or new.reviewed_at is distinct from old.reviewed_at
+         or new.verified_at is distinct from old.verified_at
+         or new.escalated_at is distinct from old.escalated_at
+         or new.closed_at is distinct from old.closed_at
+         or old.status not in ('submitted','resubmitted','supervisor_verified','escalated') then
+        raise exception 'This supervisor report correction is not allowed';
+      end if;
+    else
+      raise exception 'An active worker or assigned supervisor is required';
     end if;
     return new;
   end if;
@@ -1144,7 +1165,7 @@ create policy reports_supervisor_update on public.reports
   with check (
     app_private.current_profile_role() = 'supervisor'
     and app_private.has_facility_access(facility_id, array['supervisor']::text[])
-    and status in ('supervisor_verified','correction_requested','escalated','rejected','closed')
+    and status in ('submitted','resubmitted','supervisor_verified','correction_requested','escalated','rejected','closed')
   );
 
 create policy report_items_scoped_select on public.report_items
