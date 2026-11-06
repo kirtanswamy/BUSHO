@@ -56,9 +56,21 @@ test('DPDMIS submission and dispatch require external references before receipt 
     events: [], purchaseOrderCreated: false
   };
   assert.throws(() => workflow.transitionIndent(indent, {
+    to: 'submitted_to_dpdmis', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
+    reference: 'DEMO-DPDMIS-001'
+  }), /not available/i);
+  assert.throws(() => workflow.transitionIndent(indent, {
+    to: 'supervisor_approved', actorRole: 'worker', actorLabel: 'Demo CHO'
+  }), /not allowed/i);
+  const approved = workflow.transitionIndent(indent, {
+    to: 'supervisor_approved', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
+    at: '2026-11-06T10:04:30.000Z'
+  });
+  assert.equal(approved.status, 'supervisor_approved');
+  assert.throws(() => workflow.transitionIndent(approved, {
     to: 'submitted_to_dpdmis', actorRole: 'supervisor', actorLabel: 'Demo Supervisor'
   }), /reference/i);
-  const submitted = workflow.transitionIndent(indent, {
+  const submitted = workflow.transitionIndent(approved, {
     to: 'submitted_to_dpdmis', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
     reference: 'DEMO-DPDMIS-001', at: '2026-11-06T10:05:00.000Z'
   });
