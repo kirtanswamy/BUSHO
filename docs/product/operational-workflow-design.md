@@ -21,6 +21,10 @@ The current public-demo credentials and browser storage are not production authe
 | CMHO / Directorate / CGMSC / warehouse | State-defined scrutiny, annual indent consolidation, procurement, warehouse issue and distribution | These are not represented as BUSHO actions in the browser demo |
 | Jan Aushadhi Kendra operator / PMBI network | PMBI Kendra inventory and replenishment through PMBI's own portal, warehouses and authorised distributors | A PMBJK's stock must not be mixed with public HWC/CGMSC stock |
 
+## Worker report context
+
+The worker form records an optional service-area classification based on the 12 HWC-SHC comprehensive primary health-care packages in IPHS 2022: care in pregnancy and childbirth; neonatal and infant health; childhood and adolescent health; family planning and reproductive health; national communicable-disease programmes; common communicable diseases and minor ailments; NCD screening and follow-up; common ophthalmic and ENT problems; basic oral health; elderly and palliative care; emergency services including burns and trauma; and mental-health screening/basic management. A worker may optionally enter an aggregate activity count. No person-level names, identifiers or individual clinical details are collected.
+
 ## Target report and supply workflow
 
 1. Worker captures an aggregate field observation. No patient name, phone number, ABHA number, address, or individual clinical record is permitted in the demo.

@@ -88,10 +88,12 @@
   function getAuditLog() { return clone(readState().auditLog).sort((a,b)=>b.at.localeCompare(a.at)); }
   function getMedicineCatalog() { return clone(medicines); }
 
-  function submitReport({rawText, workerName='Anita Verma', facilityId=FACILITY_ID, conditions=[], medicines:reportedMedicines=[]}) {
+  function submitReport({rawText, workerName='Anita Verma', facilityId=FACILITY_ID, conditions=[], medicines:reportedMedicines=[], serviceArea='General facility update', aggregateCount=''}) {
     const note = required(rawText, 'Original field note');
     if (note.length > 4000) throw new Error('Field note must be 4,000 characters or fewer.');
     if (facilityId !== FACILITY_ID) throw new Error('This demo is enabled only for its single synthetic facility.');
+    const activityCount = aggregateCount === '' || aggregateCount === null || aggregateCount === undefined ? null : Number(aggregateCount);
+    if (activityCount !== null && (!Number.isInteger(activityCount) || activityCount < 0 || activityCount > 99999)) throw new Error('Aggregate activity count must be a whole number from 0 to 99,999.');
     const state = readState();
     const report = {
       id:id('RPT'), createdAt:now(), updatedAt:now(), workerName:String(workerName),
@@ -99,6 +101,7 @@
       districtName:'Dhamtari', blockName:'Dhamtari',
       rawText:note, conditions:clone(Array.isArray(conditions)?conditions:[]),
       medicines:clone(Array.isArray(reportedMedicines)?reportedMedicines:[]),
+      serviceArea:String(serviceArea || 'General facility update'), aggregateCount:activityCount,
       status:'submitted', reviewNote:'', reviewedBy:null, reviewedAt:null,
       indentIds:[], synthetic:true, source:'Worker-confirmed field report'
     };
@@ -151,6 +154,9 @@
     if (!Array.isArray(items) || items.length !== 1) throw new Error('Create one medicine line per demo indent.');
     const lines = items.map(item => {
       const medicine = byId(medicines,item.medicineId,'Medicine');
+      const sourceMention = (report.medicines || []).find(row => row.medicineId === medicine.id);
+      if (!sourceMention) throw new Error('The medicine must be mentioned in the verified worker report before a store indent can be drafted.');
+      if (!String(sourceMention.quantity || '').trim()) throw new Error('The report must include a reviewed stock quantity before a store indent can be drafted.');
       if (!positive(item.requestedQuantity)) throw new Error('Requested quantity must be greater than zero.');
       return {medicineId:medicine.id,medicineName:medicine.name,requestedQuantity:Number(item.requestedQuantity),unit:item.unit || medicine.unit,issuedQuantity:0,receivedQuantity:0};
     });

@@ -32,12 +32,16 @@ test('worker submission creates a supervisor-review record and preserves the sou
     workerName: 'Anita Verma',
     facilityId: 'demo-hwc-dhamtari',
     conditions: [{ label: 'Fever mentions', value: '6' }],
-    medicines: [{ medicineId: 'ors', label: 'ORS packets', quantity: 20, unit: 'packets' }]
+    medicines: [{ medicineId: 'ors', label: 'ORS packets', name: 'ORS packets', quantity: '20', unit: 'packets' }],
+    serviceArea: 'Non-communicable disease screening and follow-up',
+    aggregateCount: '12'
   });
 
   assert.equal(report.status, 'submitted');
   assert.match(report.id, /^BUSHO-DEMO-RPT-/);
   assert.equal(report.rawText, 'Synthetic demo: ORS stock is 20 packets; request review.');
+  assert.equal(report.serviceArea, 'Non-communicable disease screening and follow-up');
+  assert.equal(report.aggregateCount, 12);
   assert.equal(workflow.getReports().length, 1);
 });
 
@@ -71,7 +75,7 @@ test('report review supports verify, correction and rejection with an audit even
 
 test('an indent cannot be created until its linked report is verified', () => {
   const { workflow } = loadWorkflow();
-  const report = workflow.submitReport({ rawText: 'Synthetic stock note', facilityId: 'demo-hwc-dhamtari' });
+  const report = workflow.submitReport({ rawText: 'Synthetic stock note', facilityId: 'demo-hwc-dhamtari', medicines: [{ medicineId: 'ors', name: 'ORS packets', quantity: '20', unit: 'packets' }] });
 
   assert.throws(() => workflow.createIndentDraft(report.id, {
     actor: 'Store demo',
@@ -89,7 +93,7 @@ test('an indent cannot be created until its linked report is verified', () => {
 
 test('indent, warehouse issue, dispatch and receipt are separate guarded events', () => {
   const { workflow } = loadWorkflow();
-  const report = workflow.submitReport({ rawText: 'Synthetic stock note', facilityId: 'demo-hwc-dhamtari' });
+  const report = workflow.submitReport({ rawText: 'Synthetic stock note', facilityId: 'demo-hwc-dhamtari', medicines: [{ medicineId: 'ors', name: 'ORS packets', quantity: '20', unit: 'packets' }] });
   workflow.reviewReport(report.id, { decision: 'verify', actor: 'Supervisor demo', note: 'Checked.' });
   const indent = workflow.createIndentDraft(report.id, {
     actor: 'Store demo',
@@ -137,7 +141,7 @@ test('indent, warehouse issue, dispatch and receipt are separate guarded events'
 
 test('receipt quantity cannot exceed warehouse-issued quantity', () => {
   const { workflow } = loadWorkflow();
-  const report = workflow.submitReport({ rawText: 'Synthetic stock note', facilityId: 'demo-hwc-dhamtari' });
+  const report = workflow.submitReport({ rawText: 'Synthetic stock note', facilityId: 'demo-hwc-dhamtari', medicines: [{ medicineId: 'ors', name: 'ORS packets', quantity: '20', unit: 'packets' }] });
   workflow.reviewReport(report.id, { decision: 'verify', actor: 'Supervisor demo', note: 'Checked.' });
   const indent = workflow.createIndentDraft(report.id, {
     actor: 'Store demo',
@@ -202,4 +206,19 @@ test('consumption follows FEFO and cannot issue more than available stock', () =
     actor: 'Store demo',
     issueTo: 'Demo OPD'
   }), /available stock/i);
+});
+
+
+test('an indent cannot be drafted for a medicine absent from the verified worker report', () => {
+  const { workflow } = loadWorkflow();
+  const report = workflow.submitReport({
+    rawText: 'Synthetic stock note',
+    facilityId: 'demo-hwc-dhamtari',
+    medicines: [{ medicineId: 'ors', name: 'ORS packets', quantity: '20', unit: 'packets' }]
+  });
+  workflow.reviewReport(report.id, { decision: 'verify', actor: 'Supervisor demo', note: 'Checked.' });
+  assert.throws(() => workflow.createIndentDraft(report.id, {
+    actor: 'Store demo',
+    items: [{ medicineId: 'paracetamol', requestedQuantity: 25, unit: 'tablets' }]
+  }), /mentioned in the verified worker report/i);
 });

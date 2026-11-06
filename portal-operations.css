@@ -84,3 +84,10 @@
 @media(max-width:850px){.ops-directory-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.ops-audit-item{grid-template-columns:30px minmax(0,1fr)}.ops-audit-item>.status-pill{grid-column:2}.ops-record-top{align-items:flex-start}.ops-field-grid{gap:8px}}
 @media(max-width:560px){.ops-field-grid,.ops-form-grid{grid-template-columns:1fr}.ops-record-card{padding:14px}.ops-record-top{flex-direction:column}.ops-card-actions,.ops-action-row{align-items:stretch;flex-direction:column}.ops-card-actions button,.ops-action-row button{width:100%}.ops-directory-summary{gap:8px}.ops-directory-summary>div{padding:12px}.ops-directory-summary strong{font-size:22px}.ops-supply-track{grid-template-columns:repeat(2,minmax(0,1fr))}.ops-stock-row{grid-template-columns:minmax(0,1fr) auto}.ops-stock-row>.status-pill{grid-column:1/-1;justify-self:start}.ops-bars{gap:6px;padding:8px}.ops-bars i{width:65%}.ops-table{min-width:580px}}
 @media(prefers-reduced-motion:reduce){.ops-notice-panel{scroll-behavior:auto}}
+
+/* Worker report metadata for the 12 HWC service packages. */
+.ops-worker-meta{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(180px,.8fr);gap:12px;margin:12px 0;padding:12px;border:1px solid #e1e8f2;border-radius:9px;background:#f9fbfe}
+.ops-worker-meta label{display:flex;flex-direction:column;gap:6px;color:#60748f;font-size:12px;font-weight:650}
+.ops-worker-meta select,.ops-worker-meta input{width:100%;min-width:0;padding:10px 12px;border:1px solid #dce5f0;border-radius:8px;background:#fff;color:#233953;font:inherit;font-size:13px}
+.ops-worker-meta p{grid-column:1/-1;margin:0;color:#8391a4;font-size:10px;line-height:1.5}
+@media(max-width:560px){.ops-worker-meta{grid-template-columns:1fr}.ops-worker-meta p{grid-column:auto}}

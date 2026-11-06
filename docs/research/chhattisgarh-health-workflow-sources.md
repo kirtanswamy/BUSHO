@@ -18,6 +18,10 @@
 | PMBJP / Janaushadhi | [PMBI: About PMBJP](https://janaushadhi.gov.in/about-pmbjb), [PMBI Kendra locator](https://janaushadhi.gov.in/locate-kendra), [PMBI agreement](https://janaushadhi.gov.in/pdf/Updated%20Tripartite%20Agreement_12122023.pdf) | Separate PMBI procurement/supply model and official Kendra locator | Do not merge PMBJK stock with CGMSC public-facility inventory |
 | National AAM scale | [MoHFW Ayushman Arogya Mandir dashboard](https://aam.mohfw.gov.in/) | National/state dashboard for functional AAM counts | Dashboard is an aggregate; it is not a facility-by-facility downloadable master |
 
+## Worker reporting scope: IPHS 2022 service packages
+
+IPHS 2022 says HWCs are designated to provide 12 packages of comprehensive primary health care. The service-area selector in the worker form uses those 12 headings as an aggregate reporting context. It does not imply that every service is delivered by every worker role at every facility; local staffing, scope of practice, referral and programme protocols still apply. The optional activity count is only a demo aggregate and is not a patient register.
+
 ## Findings that change the product
 
 ### 1. “Supervisor approves medicine order” is not a safe assumption

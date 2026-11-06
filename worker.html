@@ -164,6 +164,29 @@
                   </header>
                   <div class="composer">
                       <textarea id="report-input" aria-label="Field report" placeholder="" data-i18n="worker.placeholder" data-i18n-attr="aria-label:ui.fieldReport,placeholder:worker.placeholder"></textarea>
+                      <div class="ops-worker-meta" aria-label="Health service reporting context">
+                        <label for="report-service-area">HWC service area
+                          <select id="report-service-area" name="serviceArea">
+                            <option value="General facility update">General facility update</option>
+                            <option value="Care in pregnancy and childbirth">Care in pregnancy and childbirth</option>
+                            <option value="Neonatal and infant health care">Neonatal and infant health care</option>
+                            <option value="Childhood and adolescent health care">Childhood and adolescent health care</option>
+                            <option value="Family planning and reproductive health">Family planning and reproductive health</option>
+                            <option value="Communicable disease national programmes">Communicable disease national programmes</option>
+                            <option value="Common communicable diseases and minor ailments">Common communicable diseases and minor ailments</option>
+                            <option value="Non-communicable disease screening and follow-up">Non-communicable disease screening and follow-up</option>
+                            <option value="Common ophthalmic and ENT problems">Common ophthalmic and ENT problems</option>
+                            <option value="Basic oral health care">Basic oral health care</option>
+                            <option value="Elderly and palliative health care">Elderly and palliative health care</option>
+                            <option value="Emergency services including burns and trauma">Emergency services including burns and trauma</option>
+                            <option value="Mental health screening and basic support">Mental health screening and basic support</option>
+                          </select>
+                        </label>
+                        <label for="report-activity-count">Aggregate activity count (optional)
+                          <input id="report-activity-count" name="activityCount" type="number" min="0" max="99999" step="1" placeholder="e.g. 12">
+                        </label>
+                        <p>Aggregate totals only. Do not enter patient names, phone numbers, ABHA IDs or individual clinical details.</p>
+                      </div>
                     <div id="message-text" class="visually-hidden" aria-live="polite"></div>
                     <div class="composer-actions">
                       <button class="btn btn-secondary voice-button" id="voice-button" type="button" aria-label="Start voice input" title="Start voice input" aria-pressed="false"><svg class="voice-mic-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v3m-4 0h8"></path></svg><svg class="voice-stop-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="2"></rect></svg><span class="visually-hidden">Start voice input</span></button>
