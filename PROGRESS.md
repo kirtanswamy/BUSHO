@@ -87,6 +87,13 @@ Production branch: unchanged
 - Access to the existing Vercel team-scoped BUSHO project returned 403. A single-use access request was generated but requires the project owner to approve it; no team scope has been changed by the agent.
 - The local container cannot resolve GitHub for a clone, so repository edits have been made via GitHub API commits. GitHub Actions is being used for test execution.
 
+## Review checkpoint
+
+- Draft PR: https://github.com/kirtanswamy/BUSHO/pull/5
+- PR is open, mergeable and deliberately unmerged.
+- Latest verified PR CI run: https://github.com/kirtanswamy/BUSHO/actions/runs/42265557716
+- Vercel deployment status for PR head: success (from the GitHub commit status).
+
 ## Recent commits on this branch
 
 - `aa5e25f` — test: define Chhattisgarh operational workflow contracts
@@ -97,7 +104,7 @@ Production branch: unchanged
 - `63fb528` — fix: require supervisor approval before DPDMIS submission
 - `784b60d` — test: provide receipt reference when checking quantity guard
 
-Latest completed CI run: `42265302540` (success) on commit `96470f1`, across Node 18, 22 and 24. The earlier red runs were expected test-first failures; the final matrix now passes.
+Latest pull-request CI run: `42265557716` (success) on commit `61ffc9f`, across Node 18, 22 and 24. GitHub also reports Vercel deployment status success for the PR head. Earlier red runs were test-first failures; the final matrix passes.
 
 ## Immediate next actions
 
