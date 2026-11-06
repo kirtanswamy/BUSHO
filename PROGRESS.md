@@ -22,7 +22,7 @@ Production branch: unchanged
 | Part | Scope | Status | Exit criteria |
 |---|---|---|---|
 | 0 | Repository, data-flow, role and product audit | Complete | Existing role portals, shared browser store, dashboard placeholders, auth and deployment limits documented |
-| 1 | Operational workflow foundation | In progress | CI green on Node 18/22/24; report permissions and corrections; indent approval; DPDMIS reference states; receipt guards; audit events |
+| 1 | Operational workflow foundation | Complete | CI green on Node 18/22/24; report permissions and corrections; indent approval; DPDMIS reference states; receipt guards; audit events |
 | 2 | Persistent backend and role security | Blocked / not started | Connected database project; server-side role auth; shared worker/supervisor records; facility scope and audit permissions |
 | 3 | Health worker portal | Not started | Worker can save draft, review extracted fields, submit, see supervisor actions/return reason, resubmit, track stock observations |
 | 4 | Supervisor portal | Not started | Inbox opens record detail; verify/return/escalate; compare recent history; approve indent; view facilities/workers and event trail |
@@ -97,16 +97,16 @@ Production branch: unchanged
 - `63fb528` — fix: require supervisor approval before DPDMIS submission
 - `784b60d` — test: provide receipt reference when checking quantity guard
 
-Check the Actions tab for the latest run on this branch before continuing. A failed earlier run is expected during test-first development; only mark Part 1 complete after the latest run is green across Node 18, 22 and 24.
+Latest completed CI run: `42265302540` (success) on commit `96470f1`, across Node 18, 22 and 24. The earlier red runs were expected test-first failures; the final matrix now passes.
 
 ## Immediate next actions
 
-1. Verify CI run for latest commit `784b60d`; inspect logs if any matrix job fails.
-2. Once green, add supervisor/worker screens that consume `workflow-core.js`, replacing hardcoded inbox and approvals rows with real workflow records.
-3. Add tests for the screen-to-store hand-off before implementing the UI integration.
-4. Add block selector/search using the sourced LGD codes, with every unseeded block visibly empty rather than pre-populated.
-5. Design the Supabase schema only after its connection is confirmed: users/roles, districts, blocks, facilities, facility assignments, reports, report events, stock observations, indents, indent events, external references and stock ledger.
-6. Test the complete Dhamtari synthetic scenario end to end before expanding to more sample data.
+1. Begin Part 2: design the persistent data model and RLS/role-access rules; Supabase connection is still required before applying migrations or obtaining live project credentials.
+2. Build tested API/data adapters so worker and supervisor screens read/write one shared workflow source, not duplicated browser-local rows.
+3. Integrate report submission, supervisor verify/return/escalate, indent approval, external DPDMIS references, dispatch and receipt into the portals.
+4. Add tests for each screen-to-store hand-off before implementing the related UI.
+5. Add block selector/search using sourced LGD codes; every unseeded block must visibly remain empty.
+6. Test the complete Dhamtari synthetic scenario end to end before expanding sample activity.
 
 ## Resume prompt for a new chat
 
