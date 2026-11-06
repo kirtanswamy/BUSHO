@@ -148,7 +148,7 @@
     const state = readState();
     const report = byId(state.reports,reportId,'Report');
     if (report.status !== 'verified') throw new Error('A supervisor-verified report is required before an indent can be drafted.');
-    if (!Array.isArray(items) || !items.length) throw new Error('Add at least one medicine line to the indent.');
+    if (!Array.isArray(items) || items.length !== 1) throw new Error('Create one medicine line per demo indent.');
     const lines = items.map(item => {
       const medicine = byId(medicines,item.medicineId,'Medicine');
       if (!positive(item.requestedQuantity)) throw new Error('Requested quantity must be greater than zero.');
@@ -275,12 +275,13 @@
 
   function getInventory(facilityId=FACILITY_ID,medicineId) {
     const state=readState();
-    return medicines.filter(m=>!medicineId||m.id===medicineId).map(m=>{
+    const result = medicines.filter(m=>!medicineId||m.id===medicineId).map(m=>{
       const lots=state.inventoryLots.filter(lot=>lot.facilityId===facilityId && lot.medicineId===m.id);
       const quantityOnHand=lots.reduce((sum,lot)=>sum+Math.max(0,lot.quantity),0);
       const availableLots=lots.filter(lot=>lot.quantity>0).sort((a,b)=>a.expiryDate.localeCompare(b.expiryDate));
       return {...m,quantityOnHand,low:quantityOnHand<=m.reorderAt,lots:clone(availableLots),nextExpiry:availableLots[0]?.expiryDate||null,source:'Synthetic demo balance'};
     });
+    return medicineId ? (result[0] || null) : result;
   }
 
   function getIndent(indentId) { return clone(byId(readState().indents,indentId,'Indent')); }
