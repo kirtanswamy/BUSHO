@@ -229,6 +229,7 @@ body.landing-v3 { margin: 0; background: var(--lp-paper); color: var(--lp-ink); 
   .lp-role-visual { max-width: 100%; }
 }
 @media (max-width: 850px) {
+  body.lp-menu-open { overflow: hidden; }
   .lp-header-inner { gap: 16px; padding: 0 16px; }
   .lp-header-tools { margin-left: auto; }
   .lp-demo-flag { display: none; }

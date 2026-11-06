@@ -46,6 +46,7 @@
     const heading = document.querySelector('.lp-tagline h2');
     if (!heading) return;
     if (wordObserver) wordObserver.disconnect();
+    heading.classList.add('lp-word-reveal');
     const phrase = heading.textContent.trim().split(/\s+/);
     heading.textContent = '';
     phrase.forEach((word, index) => {
