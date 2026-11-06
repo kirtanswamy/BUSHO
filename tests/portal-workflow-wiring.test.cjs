@@ -30,7 +30,7 @@ test('supervisor operational panels are rendered from the shared store and direc
   for (const required of [
     'W.getReports()', 'W.getIndents()', 'W.getInventory()', 'W.getAuditLog()',
     'W.reviewReport(', 'W.createIndentDraft(', 'W.recordWarehouseIssue(',
-    'W.recordDispatch(', 'W.recordReceipt(', 'W.recordConsumption(',
+    'W.recordDispatch(', 'W.recordReceipt(', 'W.recordConsumption(', 'ops-actor-role', "actorRole==='warehouse'", "actorRole==='store'",
     'D.getBlocks()', 'data-module="reports"', 'data-module="facilities"'
   ]) assert.ok(source.includes(required), 'missing operational UI contract: ' + required);
   assert.doesNotMatch(source, /window\.alert\(/);
