@@ -83,7 +83,7 @@ test('workflow changes are constrained in Postgres and create append-only event 
 
 test('supervisors can correct extracted fields without rewriting original worker source', () => {
   const sql = loadMigration();
-  assert.match(sql, /if new\.status is not distinct from old\.status then[\\s\\S]*?elsif v_role = 'supervisor' then/i);
+  assert.match(sql, /if new\.status is not distinct from old\.status then[\s\S]*?elsif v_role = 'supervisor' then/i);
   assert.match(sql, /grant update \(status, summary,/i);
   assert.match(sql, /new\.original_text is distinct from old\.original_text/i);
 });
@@ -94,7 +94,6 @@ test('Chhattisgarh administrative and PMBJK reference data retain dated provenan
   assert.match(sql, /21Oct2026/i);
   assert.match(sql, /2026-02-28/);
   assert.match(sql, /2026-06-30/);
-  assert.match(sql, /352/);
   assert.match(sql, /mapping_review_required/i);
   assert.match(sql, /352/);
   assert.match(sql, /371/);
