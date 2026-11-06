@@ -174,7 +174,7 @@ test('consumption follows FEFO and cannot issue more than available stock', () =
     medicineId: 'ors',
     batchNumber: 'DEMO-ORS-EARLY',
     quantity: 5,
-    expiryDate: '2027-01-31'
+    expiryDate: '2026-12-15'
   });
   workflow.addDemoLot({
     facilityId: 'demo-hwc-dhamtari',
@@ -192,8 +192,8 @@ test('consumption follows FEFO and cannot issue more than available stock', () =
     issueTo: 'Demo OPD'
   });
   assert.deepEqual(Array.from(issue.allocations, row => [row.batchNumber, row.quantity]), [
-    ['DEMO-ORS-2026-OPEN', 5],
-    ['DEMO-ORS-EARLY', 2]
+    ['DEMO-ORS-EARLY', 5],
+    ['DEMO-ORS-2026-OPEN', 2]
   ]);
   assert.throws(() => workflow.recordConsumption({
     facilityId: 'demo-hwc-dhamtari',
