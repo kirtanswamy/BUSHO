@@ -492,3 +492,11 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Corrected the final, effective guard in `20261107230000_busho_storekeeper_separation.sql`: after assigned supervisor/storekeeper facility authorization, an assigned storekeeper may replay an exact unchanged partial/final receipt (same status, cumulative quantity and receipt reference). Any changed receipt data still follows the guarded transition; movement trigger remains a no-op for exact replay.
 - Removed temporary diagnostic notice from the earlier migration. No schema changes beyond the guard logic; no live migration.
 - Latest code commits: `4360ba9` (effective final guard), `c3e865d` (remove temporary diagnostic). Latest CI for the corrected effective migration still needs confirmation; prior run `42403999433` failed because it applied the later migration that overwrote the earlier retry logic.
+
+
+## Part 2G.2 — immutable inventory movement ledger permissions — 2026-11-08
+
+- CI run `42404742567` passed Node 18/22/24 and the PostgreSQL contract advanced through cross-facility checks, but exposed a genuine ledger-write privilege gap: authenticated storekeeper could UPDATE `inventory_movements` despite the intended append-only design.
+- Updated `20261107233000_busho_inventory_movement_ledger.sql` to explicitly revoke all table privileges from PUBLIC, anon and authenticated, then grant authenticated SELECT only. The receipt trigger remains SECURITY DEFINER; service_role receives explicit CRUD only when that role exists in the target environment.
+- Existing PostgreSQL contract already attempts to mutate an inbound movement and expects rejection. This should now fail closed at the privilege boundary.
+- Migration commit `e2031d4`; CI pending. No live migration or production change.
