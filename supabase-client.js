@@ -407,7 +407,7 @@
     }
 
     async function listInventory() {
-      return restRequest('inventory_items?is_active=eq.true&select=*,inventory_snapshots(*)&order=name.asc');
+      return restRequest('inventory_items?is_active=eq.true&select=*,inventory_snapshots(*),inventory_movements(*)&order=name.asc');
     }
 
     async function createStockObservation(input) {
@@ -462,7 +462,7 @@
 
     async function listMyReplenishments() {
       return restRequest(
-        'replenishment_requests?select=*,replenishment_events(*)&order=created_at.desc'
+        'replenishment_requests?select=*,replenishment_events(*),inventory_movements(*)&order=created_at.desc'
       );
     }
 
