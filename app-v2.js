@@ -244,6 +244,9 @@ async function confirmReport() {
   }
 
   const button = document.getElementById('confirm-btn');
+  const submittingUserId = activeAuthUserId;
+  const submittingState = state;
+  const logoutButton = document.getElementById('portal-logout');
   const persistence = window.BUSHO_REPORT_PERSISTENCE;
   const clientFactory = window.BUSHO_SUPABASE_CLIENT;
   const config = window.BUSHO_SUPABASE_CONFIG;
@@ -254,6 +257,7 @@ async function confirmReport() {
   }
 
   button.disabled = true;
+  if (logoutButton) logoutButton.disabled = true;
   button.setAttribute('aria-busy', 'true');
   let draftCheckpointSaved = Boolean(state.reportId);
   state.syncStatus = 'saving';
@@ -270,21 +274,35 @@ async function confirmReport() {
       languageCode: currentLanguage(),
       draft: state.draft,
       onDraftCreated: async reportId => {
+        if (activeAuthUserId !== submittingUserId || state !== submittingState) {
+          throw new Error('The signed-in account changed before the draft checkpoint could be saved.');
+        }
         state.reportId = reportId;
         state.syncStatus = 'draft_saved';
         persistState();
         draftCheckpointSaved = true;
       }
     });
+    if (activeAuthUserId !== submittingUserId || state !== submittingState) {
+      throw new Error('The signed-in account changed while the report was being submitted. Sign in again to reconcile its server status.');
+    }
     state.reportId = result.report.id;
     state.serverStatus = result.report.status;
     state.syncStatus = 'submitted';
     state.confirmed = true;
     renderAll();
     saveState();
-    document.getElementById('post-confirm')?.classList.remove('hidden');
-    feedback.textContent = 'Report submitted for supervisor review. Reference: ' + state.reportId;
-    showToast('Report submitted successfully for supervisor review.');
+    const postConfirm = document.getElementById('post-confirm');
+    if (postConfirm) {
+      const statusLabel = state.serverStatus === 'supervisor_verified' ? 'Supervisor verified'
+        : state.serverStatus === 'closed' ? 'Report closed'
+        : state.serverStatus === 'resubmitted' ? 'Resubmitted for supervisor review'
+        : 'Submitted for supervisor review';
+      postConfirm.textContent = statusLabel + ' · Reference ' + state.reportId;
+      postConfirm.classList.remove('hidden');
+    }
+    feedback.textContent = 'Report submitted. Reference: ' + state.reportId;
+    showToast('Report submitted successfully.');
   } catch (cause) {
     state.confirmed = false;
     state.syncStatus = state.reportId ? 'draft_saved' : 'error';
@@ -297,6 +315,7 @@ async function confirmReport() {
     showToast('Report not submitted. Please review the message and retry.');
   } finally {
     button.disabled = false;
+    if (logoutButton) logoutButton.disabled = false;
     button.removeAttribute('aria-busy');
   }
 }
