@@ -6,7 +6,7 @@
   const portalKind = page.dataset.portalRole;
   const allowedRoles = portalKind === 'worker'
     ? ['worker']
-    : ['supervisor', 'storekeeper', 'district_admin', 'state_admin', 'platform_admin'];
+    : ['supervisor', 'district_admin', 'state_admin'];
 
   const login = document.getElementById('portal-login');
   const app = document.getElementById('portal-app');
