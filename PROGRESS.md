@@ -365,3 +365,13 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - New assertions require Supervisor B to see exactly the Balod report and its item, not the Dhamtari report or its item; attempts to update the Dhamtari report must affect zero rows, while the assigned Balod report can be verified.
 - All test identities, facilities, reports and items are confined to the disposable PostgreSQL CI fixture. The connected Supabase project was queried read-only and remains empty of operational users, facilities, assignments and reports. No live accounts, migrations, Edge Functions or production deployments were created.
 - Latest test SQL commits: `08bc5970251ea832f266b0b2f699f62fd97c296c` and `e45e2c049855c3c17f099ad39eb49726b1242ca5`. The second commit also asserts that Supervisor B cannot read Worker A's worker record. CI status for these latest commits is not yet confirmed; the GitHub connector's commit-run lookup returned no PR-triggered run, and Vercel reports only the existing build-rate limit.
+
+
+## Part 2E.1 — storekeeper fulfilment separation and synthetic receipt lifecycle — 2026-11-07
+
+- Reviewed `app_private.guard_replenishment_transition()` and found that the prior transition guard admitted both supervisors and storekeepers for allocation, dispatch and receipt transitions. This did not preserve the intended separation of duties.
+- Added an additive migration `20261107230000_busho_storekeeper_separation.sql`; the original security-foundation migration remains unchanged. The additive guard requires an assigned supervisor for DPDMIS submission after approval and an assigned storekeeper for allocation, dispatch and goods receipts.
+- Extended the disposable PostgreSQL contract with a synthetic Balod storekeeper scoped to block LGD 3629. The synthetic supervisor approves and submits a replenishment recommendation; the storekeeper then records allocation, dispatch, a partial receipt and the final receipt.
+- Added negative assertions: supervisor cannot allocate; storekeeper cannot read or update the Dhamtari request; over-receipt is rejected; the two receipt events and their external references are preserved.
+- All records are synthetic CI fixtures only. Connected Supabase remains unchanged; no live migrations, Auth accounts, facilities, reports, Edge Functions or production deployments were created.
+- Latest test SQL blob SHA: `38ed0f01ab2cf9e87dd07203d235192ee6516ae6`. CI has not yet been confirmed for this head.
