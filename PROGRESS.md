@@ -611,3 +611,16 @@ No live Supabase migration, operational account creation, real facility/medicine
 - Add positive-path admin provisioning controller test with a verified facility fixture, including required worker consent and exactly-one-facility behavior.
 - Add REST-contract integration tests for worker report draft → item persistence → submission and supervisor review/correction, using deterministic mocked HTTP responses while preserving database RLS tests.
 - After approval of a non-production Supabase environment and synthetic test accounts/facilities, run real browser E2E and record screenshots/log evidence.
+
+
+## Part 2H.3 — administrator provisioning positive-path UI test — 2026-11-08
+
+- Extended `tests/admin-provisioning-demo.test.cjs` to execute the actual admin controller with one explicitly verified synthetic facility fixture. It verifies the worker role becomes selectable only when a verified facility exists, the UI submits exactly one facility ID, worker consent is passed as true, and the success message is visible.
+- Negative-path coverage also asserts worker role is disabled and server invocation is never attempted when the verified facility list is empty; a forced stale/disabled role value is rejected again by the submit handler. State-admin UI with an empty directory gets only the district placeholder and all facility/district-dependent roles remain disabled.
+- The positive-path integration test exposed a real UI bug: the invitation success message was immediately cleared by `updateRoleSections()`. Fixed the ordering in `admin-portal.js` and bumped its cache key in `admin.html`.
+- CI run `42409576022` passed all four jobs: Node 18, Node 22, Node 24 and PostgreSQL 17. Node matrix reports 166 tests passed, zero failed, and smoke test starts successfully.
+- No invitation was sent; the UI test uses a deterministic mocked client and synthetic facility fixture only.
+
+### Part 2H.4 next
+- Build deterministic REST contract integration tests for worker report draft → structured items → submit acknowledgement and supervisor review/correction. Assert authorization headers, server-controlled facility IDs, idempotent retries, and truthful failure states.
+- Then run browser-level multi-user E2E only after an approved non-production Supabase environment and synthetic accounts/facility assignments are available.
