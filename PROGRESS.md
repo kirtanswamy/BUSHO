@@ -422,3 +422,5 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Controller SHA: `29386896a721e5f6c62a768ee7e1d4fbde61e72d`. PostgreSQL CI run for the preceding head was observed in progress; latest head verification still pending.
 
 - CI run `42397275850` exposed a pre-existing malformed PostgreSQL test block delimiter at line 213 (`do $` rather than `do $$`). All three Node-version checks passed; both new migrations applied successfully in PostgreSQL; the database contract stopped at this syntax error before executing the assertions. Fixed the delimiter in the contract file. Re-run pending.
+
+- Follow-up CI run `42397363718` repeated the PostgreSQL syntax error because the first delimiter edit did not persist; re-fetched the branch file and verified exactly one malformed `do $` block remained at line 213, then corrected it directly. Latest test-file commit: `2a30dc541ece54d4de71a67c7c7af98f13002511`; fetched the file again and verified zero malformed delimiters. New CI run pending.
