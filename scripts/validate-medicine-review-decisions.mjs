@@ -48,6 +48,7 @@ export function validateMedicineReviewBatch(batch, sourceDocuments) {
     if (decision.printedPage !== source.sourcePage) errors.push({ row, code: 'source_page_mismatch', key });
     if (decision.sourceDescription !== source.sourceDescription) errors.push({ row, code: 'source_description_mismatch', key });
     if (decision.sourcePdfChecked !== true) errors.push({ row, code: 'rendered_pdf_check_required', key });
+    if (!nonEmpty(decision.reviewedAt) || Number.isNaN(Date.parse(decision.reviewedAt))) errors.push({ row, code: 'review_timestamp_required', key });
     if (!ALLOWED_STATUS.has(decision.reviewStatus)) errors.push({ row, code: 'invalid_review_status', key });
     if (!nonEmpty(decision.evidenceNote) || decision.evidenceNote.trim().length < 20) {
       errors.push({ row, code: 'review_evidence_required', key });
@@ -75,7 +76,7 @@ export function validateMedicineReviewBatch(batch, sourceDocuments) {
     status: 'review_batch_validation_only',
     summary: {
       decisions_submitted: entries.length,
-      valid_decisions: Math.max(0, entries.length - errors.filter(error => error.row).length),
+      valid_decisions: Math.max(0, entries.length - new Set(errors.filter(error => error.row).map(error => error.row)).size),
       error_count: errors.length
     },
     authority_notice: 'Reviewer identity and authorization are self-reported and must be confirmed by the responsible organization outside this tool.',
