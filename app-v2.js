@@ -13,7 +13,7 @@ function currentLanguage() {
 
 function localizedSample(kind) { return t(`sample.${kind}`); }
 function updateReportInput(value) {
-  if (['submitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
+  if (['submitted', 'resubmitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
     state.reportId = null;
     state.serverStatus = null;
     state.syncStatus = 'idle';
@@ -105,7 +105,7 @@ function extractionWords(lang) { return ({
 }[lang] || {}); }
 
 function setSample(type) {
-  if (['submitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
+  if (['submitted', 'resubmitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
     state.reportId = null;
     state.serverStatus = null;
     state.syncStatus = 'idle';
