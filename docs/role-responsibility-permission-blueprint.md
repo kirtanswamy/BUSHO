@@ -187,12 +187,12 @@ Do not seed these records into the connected live Supabase project yet. First bu
 ## 9. Known schema / product gaps to resolve before implementation
 
 - The current `profiles.role` enum is generic and does not model cadre. Add a non-authoritative cadre/designation field only after agreeing its source, allowed vocabulary and verification process.
-- Current `facilities.facility_type` accepts `aam_shc`, `phc`, `chc`, `district_hospital`, `sub_centre`, `other`; it does not distinguish `aam_phc`. A migration and importer/test update are required before using that type.
+- Part 2C.3 adds `aam_phc` as a distinct facility type in the development migration and staging validator. This is schema vocabulary only; it does not establish that a given facility is operational or grant access.
 - Jan Aushadhi must not be inserted into `public.facilities` as a public AAM/CGMSC facility. Design a separate PMBJK/Kendra registry only if the scope is approved.
 - Current application roles do not include Medical Officer / facility head as a distinct delegated approver. Do not silently give that authority to `supervisor`; design and test a separate capability/approval model only after local SOP validation.
 - Current state machine allows a supervisor to verify a report. It does not encode the full clinical review chain. Escalation destination and closure criteria need local confirmation.
 - Existing inventory state machine is a recommendation/hand-off tracker, not a stock ledger. A full batch-level ledger requires explicit stock receipt/issue/adjustment semantics and reconciliation rules.
-- Current RLS supervisor SELECT policy may include assigned-facility drafts. The PR notes this as an open policy question; resolve it with a privacy decision and regression tests before any live pilot.
+- Part 2C.3 tightens the development RLS SELECT policy: workers retain access to their own drafts; assigned supervisors and scoped administrators do not see unsubmitted drafts. CI must verify this negative access case before the change is considered validated.
 - No facility/user records or Edge Functions are deployed in connected Supabase; no real multi-user workflow has been demonstrated.
 
 ## 10. Decisions and validation questions for field discovery
