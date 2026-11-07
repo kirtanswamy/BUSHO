@@ -90,6 +90,10 @@ values
   ('20000000-0000-4000-8000-000000000002', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
    'ORS-PKT', 'ORS packets', 'packets', true);
 
+update public.inventory_items
+set medicine_catalogue_entry_id = '30000000-0000-4000-8000-000000000002'
+where id = '20000000-0000-4000-8000-000000000001';
+
 -- Worker A can read only their assigned facility and their own worker record.
 begin;
 set local role authenticated;
@@ -102,7 +106,14 @@ begin
   if v_count <> 1 then raise exception 'Worker A facility scope leak: expected 1, got %', v_count; end if;
   select count(*) into v_count from public.workers;
   if v_count <> 1 then raise exception 'Worker A worker scope leak: expected 1, got %', v_count; end if;
-end $$;
+  select count(*) into v_count from public.medicine_catalogue_entries
+  where id = '30000000-0000-4000-8000-000000000002';
+  if v_count <> 1 then raise exception 'Authenticated worker should read the reference catalogue'; end if;
+  select count(*) into v_count from public.inventory_items ii
+  join public.medicine_catalogue_entries me on me.id = ii.medicine_catalogue_entry_id
+  where ii.id = '20000000-0000-4000-8000-000000000001';
+  if v_count <> 1 then raise exception 'Facility inventory item should link to its reviewed reference entry'; end if;
+end $;
 
 insert into public.reports
   (facility_id, worker_id, reporting_date, original_text, language_code, status, summary)
