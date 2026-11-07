@@ -8,6 +8,7 @@ import { validateMedicineCatalogue } from '../scripts/validate-medicine-catalogu
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sample = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-sample.json'), 'utf8'));
 const shcTranscription = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-shc-aam-source-transcription.json'), 'utf8'));
+const phcTranscription = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-phc-aam-source-transcription.json'), 'utf8'));
 
 test('medicine source sample passes provenance and row-structure validation', () => {
   const result = validateMedicineCatalogue(sample);
@@ -82,4 +83,18 @@ test('SHC-AAM source transcription covers all 106 numbered rows with printed-pag
   );
   assert.ok(shcTranscription.entries.every(entry => entry.facilityLevel === 'shc_aam'));
   assert.ok(shcTranscription.entries.every(entry => !entry.normalizedName && !entry.dosageForm && !entry.strength && !entry.stockUnit));
+});
+
+test('PHC-AAM/UPHC source transcription covers all 172 numbered rows with printed-page provenance', () => {
+  const result = validateMedicineCatalogue(phcTranscription);
+  assert.equal(result.ok, true);
+  assert.equal(result.summary.source_entries, 172);
+  assert.deepEqual(result.errors, []);
+  assert.equal(phcTranscription.transcriptionStatus, 'transcribed_from_pdf_text_unreviewed');
+  assert.deepEqual(
+    phcTranscription.entries.map(entry => entry.sourceItemNumber),
+    Array.from({ length: 172 }, (_, index) => index + 1)
+  );
+  assert.ok(phcTranscription.entries.every(entry => entry.facilityLevel === 'phc_aam'));
+  assert.ok(phcTranscription.entries.every(entry => !entry.normalizedName && !entry.dosageForm && !entry.strength && !entry.stockUnit));
 });
