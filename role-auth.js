@@ -54,6 +54,7 @@
         : 'Signed in · ' + label;
     }
     document.getElementById('demo-title')?.focus();
+    window.dispatchEvent(new CustomEvent('busho:authenticated', { detail: { profile } }));
   }
 
   function showLogin() {
@@ -63,6 +64,7 @@
     }
     if (login) login.classList.remove('hidden');
     emailInput?.focus();
+    window.dispatchEvent(new CustomEvent('busho:unauthenticated'));
   }
 
   function accessMessage(reason) {
