@@ -198,6 +198,11 @@
     event.preventDefault();
     if (busy || !client || !profile) return;
     try {
+      if (batchId && pendingRows.length && pendingOffset < pendingRows.length) {
+        setBusy(true, 'Resuming facility staging…');
+        await stagePendingRows();
+        return;
+      }
       const file = field('facility-import-file').files?.[0];
       if (!file) throw new Error('Choose a facility export file first.');
       const rows = await readImportFile(file);
