@@ -42,3 +42,14 @@ test('source item numbers are unique within each sample annexure', () => {
   const keys = sample.entries.map(entry => entry.sourceAnnexure + ':' + entry.sourceItemNumber);
   assert.equal(new Set(keys).size, keys.length);
 });
+
+test('EDL source manifest and sample stay in agreement', () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-source-manifest.json'), 'utf8'));
+  assert.equal(manifest.source.notificationDate, sample.catalogue.notificationDate);
+  assert.equal(manifest.source.url, sample.catalogue.sourceUrl);
+  assert.equal(manifest.currentTranscription.sampleRows, sample.entries.length);
+  assert.equal(manifest.currentTranscription.phcRows, sample.entries.filter(entry => entry.facilityLevel === 'phc_aam').length);
+  assert.equal(manifest.currentTranscription.shcRows, sample.entries.filter(entry => entry.facilityLevel === 'shc_aam').length);
+  assert.equal(manifest.annexures.phc_phc_aam_uphc.lastItem, sample.annexures.phc_phc_aam_uphc.publishedEntryCount);
+  assert.equal(manifest.annexures.shc_aam.lastItem, sample.annexures.shc_aam.publishedEntryCount);
+});
