@@ -1,4 +1,5 @@
-const STORAGE_KEY = 'busho-demo-state-v1';
+const STORAGE_PREFIX = 'busho-worker-state-v1:';
+let activeAuthUserId = null;
 const PORTAL_ROLE = document.querySelector('[data-portal-role]')?.dataset.portalRole || null;
 
 function t(key, vars) {
@@ -12,6 +13,11 @@ function currentLanguage() {
 
 function localizedSample(kind) { return t(`sample.${kind}`); }
 function updateReportInput(value) {
+  if (['submitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
+    state.reportId = null;
+    state.serverStatus = null;
+    state.syncStatus = 'idle';
+  }
   state.rawReport = value;
   reportInput.value = value;
   messageText.textContent = value || t('worker.emptyReport');
@@ -37,12 +43,13 @@ const inventoryDrawer = document.getElementById('inventory-drawer');
 let lastFocusedElement = null;
 
 function initialState() {
-  return { version: 1, view: 'worker', sample: 'routine', rawReport: localizedSample('routine'), extracted: false, confirmed: false, draft: [], replenishment: { status: 'none', medicineId: null, source: null } };
+  return { version: 1, view: 'worker', sample: 'routine', rawReport: localizedSample('routine'), extracted: false, confirmed: false, draft: [], reportId: null, serverStatus: null, syncStatus: 'idle', replenishment: { status: 'none', medicineId: null, source: null } };
 }
 
-function loadState() {
+function loadState(userId) {
+  if (!userId) return initialState();
   try {
-    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || 'null');
+    const stored = JSON.parse(window.localStorage.getItem(STORAGE_PREFIX + userId) || 'null');
     if (!stored || stored.version !== 1 || typeof stored.rawReport !== 'string') return initialState();
     const next = initialState();
     next.view = PORTAL_ROLE === 'supervisor' ? 'supervisor' : 'worker';
@@ -50,6 +57,9 @@ function loadState() {
     next.rawReport = stored.rawReport.slice(0, 4000);
     next.extracted = Boolean(stored.extracted);
     next.confirmed = Boolean(stored.confirmed && stored.extracted);
+    next.reportId = typeof stored.reportId === 'string' && stored.reportId.length <= 80 ? stored.reportId : null;
+    next.serverStatus = typeof stored.serverStatus === 'string' ? stored.serverStatus : null;
+    next.syncStatus = ['idle', 'saving', 'draft_saved', 'submitted', 'error'].includes(stored.syncStatus) ? stored.syncStatus : 'idle';
     next.draft = Array.isArray(stored.draft) ? stored.draft.filter(item => item && typeof item.id === 'string' && typeof item.value === 'string') : [];
     if (next.extracted && (!next.draft.length || !next.draft.some(item => item.id === 'disease-table') || !next.draft.some(item => item.id === 'medicine-table'))) { next.extracted = false; next.confirmed = false; next.draft = []; }
     const replenishment = stored.replenishment || {};
@@ -58,12 +68,27 @@ function loadState() {
   } catch { return initialState(); }
 }
 
-let state = loadState();
+let state = initialState();
 
 function saveState() {
-  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  if (!activeAuthUserId) return;
+  try { window.localStorage.setItem(STORAGE_PREFIX + activeAuthUserId, JSON.stringify(state)); }
   catch { showToast(t('worker.toast.save')); }
 }
+
+document.addEventListener('busho:authenticated', event => {
+  const userId = event.detail?.profile?.id;
+  if (!userId) return;
+  activeAuthUserId = userId;
+  state = loadState(userId);
+  renderAll();
+});
+
+document.addEventListener('busho:unauthenticated', () => {
+  activeAuthUserId = null;
+  state = initialState();
+  renderAll();
+});
 
 function escapeHtml(value) { return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char])); }
 function showToast(message) { document.getElementById('toast-text').textContent = message; toast.classList.add('show'); window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 3200); }
@@ -80,6 +105,11 @@ function extractionWords(lang) { return ({
 }[lang] || {}); }
 
 function setSample(type) {
+  if (['submitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
+    state.reportId = null;
+    state.serverStatus = null;
+    state.syncStatus = 'idle';
+  }
   state.sample = type === 'ambiguous' ? 'ambiguous' : 'routine'; state.rawReport = localizedSample(state.sample); state.extracted = false; state.confirmed = false; state.draft = [];
   reportInput.value = state.rawReport; messageText.textContent = state.rawReport; renderAll(); saveState(); showToast(t(`worker.toast.${state.sample}`));
 }
@@ -191,7 +221,71 @@ function renderDraftStatus() {
 }
 
 function validationForDraft() { return state.draft.filter(item => item.confidence === 'review' && (!item.value.trim() || item.id === 'symptoms' && item.value === t('draft.symptomsUnclear') || item.id !== 'symptoms' && item.id !== 'clinical-status' && item.value === t('draft.quantityUnclear'))); }
-function confirmReport() { if (!state.extracted) return showToast(t('worker.toast.extractFirst')); const invalid = validationForDraft(); extractionList.querySelectorAll('.field-edit').forEach(input => input.classList.remove('invalid')); if (invalid.length) { feedback.textContent = `${t('draft.needsClarify')}: ${invalid.map(item => item.label).join(', ')}.`; invalid.forEach(item => document.getElementById(`field-${item.id}`)?.classList.add('invalid')); document.getElementById(`field-${invalid[0].id}`)?.focus(); showToast(t('worker.toast.validate')); return; } state.confirmed = true; renderAll(); saveState(); document.getElementById('post-confirm')?.classList.remove('hidden'); showToast(t('worker.toast.confirm')); }
+async function confirmReport() {
+  if (!state.extracted) return showToast(t('worker.toast.extractFirst'));
+  const invalid = validationForDraft();
+  extractionList.querySelectorAll('.field-edit').forEach(input => input.classList.remove('invalid'));
+  if (invalid.length) {
+    feedback.textContent = `${t('draft.needsClarify')}: ${invalid.map(item => item.label).join(', ')}.`;
+    invalid.forEach(item => document.getElementById(`field-${item.id}`)?.classList.add('invalid'));
+    document.getElementById(`field-${invalid[0].id}`)?.focus();
+    showToast(t('worker.toast.validate'));
+    return;
+  }
+
+  const button = document.getElementById('confirm-btn');
+  const persistence = window.BUSHO_REPORT_PERSISTENCE;
+  const clientFactory = window.BUSHO_SUPABASE_CLIENT;
+  const config = window.BUSHO_SUPABASE_CONFIG;
+  if (!activeAuthUserId || !persistence || !clientFactory || !config) {
+    feedback.textContent = 'Sign in with an approved BUSHO worker account before submitting this report.';
+    showToast('Secure report submission is unavailable. Your draft has not been submitted.');
+    return;
+  }
+
+  button.disabled = true;
+  button.setAttribute('aria-busy', 'true');
+  state.syncStatus = 'saving';
+  feedback.textContent = 'Saving your report securely…';
+  saveState();
+
+  try {
+    const client = clientFactory.createClient(config);
+    await client.requireActiveProfile(['worker']);
+    const result = await persistence.persistConfirmedReport({
+      client,
+      reportId: state.reportId,
+      originalText: state.rawReport,
+      languageCode: currentLanguage(),
+      draft: state.draft,
+      onDraftCreated: async reportId => {
+        state.reportId = reportId;
+        state.syncStatus = 'draft_saved';
+        saveState();
+      }
+    });
+    state.reportId = result.report.id;
+    state.serverStatus = result.report.status;
+    state.syncStatus = 'submitted';
+    state.confirmed = true;
+    renderAll();
+    saveState();
+    document.getElementById('post-confirm')?.classList.remove('hidden');
+    feedback.textContent = 'Report submitted for supervisor review. Reference: ' + state.reportId;
+    showToast('Report submitted successfully for supervisor review.');
+  } catch (cause) {
+    state.confirmed = false;
+    state.syncStatus = state.reportId ? 'draft_saved' : 'error';
+    saveState();
+    feedback.textContent = state.reportId
+      ? 'Submission not confirmed. Your saved draft is preserved; retry to continue. ' + cause.message
+      : 'Report not submitted. No saved report ID was returned. ' + cause.message;
+    showToast('Report not submitted. Please review the message and retry.');
+  } finally {
+    button.disabled = false;
+    button.removeAttribute('aria-busy');
+  }
+}
 function editFields() { if (!state.extracted) return; const first=extractionList.querySelector('.clinical-edit-input'); first?.focus(); first?.select(); if(first) first.scrollIntoView({behavior:'smooth',block:'center'}); else showToast('Use Add condition or Add medicine to enter a missing item.'); }
 function renderDashboard() { const pending = state.confirmed ? 0 : 1; document.getElementById('reports-count').textContent = String(baseReportCount + (state.confirmed ? 1 : 0)); document.getElementById('reports-trend').textContent = t(state.confirmed ? 'supervisor.metric.trend.positive' : 'supervisor.metric.trend.baseline'); document.getElementById('pending-count').textContent = String(pending); document.getElementById('pending-trend').textContent = t(pending ? 'supervisor.metric.trend.warning' : 'supervisor.metric.trend.allReviewed'); document.getElementById('pending-trend').className = `metric-trend ${pending ? 'warning' : 'positive'}`; const badge = document.getElementById('admin-badge'); if (badge) badge.textContent = String(pending); }
 function renderAdminResponse() { const response = document.getElementById('admin-response'); const approve = document.getElementById('approve-replenishment'); if (!state.confirmed) { response.classList.add('hidden'); return; } response.classList.remove('hidden'); const title = document.getElementById('admin-action-title'); const copy = document.getElementById('admin-action-copy'); const status = document.getElementById('admin-action-status'); const medicine = inventory.find(item => item.id === state.replenishment.medicineId); if (state.replenishment.status === 'approved' && medicine) { title.textContent = t('supervisor.responseTitleApproved'); copy.textContent = t('supervisor.responseCopyApproved', { name: t(medicine.nameKey) }); status.textContent = t('supervisor.statusApproved'); approve.disabled = true; approve.textContent = t('supervisor.approvedBtn'); } else if (state.replenishment.status === 'draft' && medicine) { title.textContent = t('supervisor.responseTitleDraft'); copy.textContent = t('supervisor.responseCopyDraft', { name: t(medicine.nameKey), qty: medicine.capacity - medicine.stock, unit: t(medicine.unitKey), source: state.replenishment.source }); status.textContent = t('supervisor.statusPending'); approve.disabled = false; approve.textContent = t('supervisor.approveBtn'); } else { title.textContent = t('supervisor.responseTitle'); copy.textContent = t('supervisor.responseCopy'); status.textContent = t('supervisor.statusAwaiting'); approve.disabled = true; approve.textContent = t('supervisor.approveBtn'); } }
@@ -216,7 +310,7 @@ document.querySelectorAll('.role-btn').forEach(button => {
 });
 document.querySelectorAll('.quick-btn').forEach(button => button.addEventListener('click', () => setSample(button.dataset.sample)));
 document.getElementById('extract-btn').addEventListener('click', makeExtraction); document.getElementById('confirm-btn').addEventListener('click', confirmReport); document.getElementById('edit-btn').addEventListener('click', editFields); document.getElementById('view-inventory').addEventListener('click', openInventory); document.getElementById('close-inventory').addEventListener('click', closeInventory); document.getElementById('approve-replenishment').addEventListener('click', approveReplenishment);
-document.getElementById('reset-demo').addEventListener('click', () => { try { window.localStorage.removeItem(STORAGE_KEY); } catch {} state = initialState(); closeInventory(); renderAll(); showToast(t('footer.reset')); });
+document.getElementById('reset-demo').addEventListener('click', () => { try { if (activeAuthUserId) window.localStorage.removeItem(STORAGE_PREFIX + activeAuthUserId); } catch {} state = initialState(); closeInventory(); renderAll(); showToast(t('footer.reset')); });
 // Voice input using the browser Web Speech API.
 const voiceButton = document.querySelector('.voice-button');
 let recognition = null;
