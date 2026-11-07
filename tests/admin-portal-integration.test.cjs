@@ -21,7 +21,7 @@ test('administrator form supports role, facility, geographic scope and worker co
     assert.match(html, new RegExp('id="' + id + '"'));
   }
   assert.match(html, /data-portal-role="admin"/);
-  assert.match(html, /Role and geographic scope are validated by the server/);
+  assert.match(html, /roles and geographic scope are validated by the server/i);
 });
 
 test('provisioning controller never accepts a browser-selected caller role as authority', () => {
