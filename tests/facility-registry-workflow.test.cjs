@@ -41,7 +41,7 @@ test('facility verification is transactional, scoped, deduplicated and auditable
   const sql = read('supabase/migrations/20261107170000_facility_registry_review_workflow.sql');
   assert.match(sql, /create or replace function app_private\.review_facility_registry_candidate/i);
   assert.match(sql, /An active authorised administrator is required/i);
-  assert.match(sql, /create or replace function public\\.create_facility_registry_import_batch/i);
+  assert.match(sql, /create or replace function public\.create_facility_registry_import_batch/i);
   assert.match(sql, /Candidate is outside the reviewer geographic scope/i);
   assert.match(sql, /Resolve all mapping and data-quality flags/i);
   assert.match(sql, /facilities_external_registry_id_unique/i);
@@ -60,7 +60,7 @@ test('facility batch cannot complete with unstaged or unreviewed source rows', (
 
 test('only the service role can invoke facility staging, review and completion RPCs', () => {
   const sql = read('supabase/migrations/20261107170000_facility_registry_review_workflow.sql');
-  for (const fn of ['stage_facility_registry_candidates','review_facility_registry_candidate','complete_facility_registry_batch']) {
+  for (const fn of ['create_facility_registry_import_batch','stage_facility_registry_candidates','review_facility_registry_candidate','complete_facility_registry_batch']) {
     assert.match(sql, new RegExp('revoke all on function public\\.' + fn + '[\\s\\S]*?from public, anon, authenticated', 'i'));
     assert.match(sql, new RegExp('grant execute on function public\\.' + fn + '[\\s\\S]*?to service_role', 'i'));
   }
