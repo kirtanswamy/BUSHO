@@ -45,7 +45,7 @@ test('medicine source validator rejects guessed normalized fields and incomplete
 
 test('medicine source validator checks exact printed-page mapping and refuses incomplete full-release claims', () => {
   const wrongPage = structuredClone(sample);
-  wrongPage.entries.find(entry => entry.facilityLevel === 'phc_aam' && entry.sourceItemNumber === 66).sourcePage = 49;
+  wrongPage.entries.find(entry => entry.facilityLevel === 'phc_aam' && entry.sourceItemNumber === 66).sourcePage = 50;
   assert.ok(validateMedicineCatalogue(wrongPage).errors.some(error => error.code === 'source_page_item_mismatch'));
 
   const claimedComplete = structuredClone(sample);
