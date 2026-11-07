@@ -510,3 +510,67 @@ test('platform administrator can request provisioning options and create state-l
   const provisionCall = calls.find(call => call.url.includes('/functions/v1/provision-user'));
   assert.equal(provisionCall.options.headers.Authorization, 'Bearer platform-token');
 });
+
+test('facility registry client requires an active administrator and calls the server-only Edge Function', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'admin-token',
+    refresh_token: 'admin-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'admin-user' }
+  }));
+  const calls = [];
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    storage,
+    now: () => 1_800_000_000_000,
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      if (url.includes('/rest/v1/profiles?')) {
+        return jsonResponse([{ id: 'admin-user', role: 'state_admin', status: 'active' }]);
+      }
+      if (url.includes('/functions/v1/facility-registry')) {
+        return jsonResponse({ ok: true, result: { staged: 2 } });
+      }
+      throw new Error('Unexpected request: ' + url);
+    }
+  });
+  const result = await client.manageFacilityRegistry({
+    action: 'stage_candidates',
+    batchId: 'batch-id',
+    candidates: [{ external_registry_id: 'X1' }, { external_registry_id: 'X2' }]
+  });
+  assert.equal(result.result.staged, 2);
+  const call = calls.find(item => item.url.includes('/functions/v1/facility-registry'));
+  assert.equal(call.options.headers.Authorization, 'Bearer admin-token');
+  assert.equal(call.options.headers.apikey, 'sb_publishable_demo_key');
+  assert.equal(call.options.headers['Content-Type'], 'application/json');
+  assert.doesNotMatch(JSON.stringify(call.options.headers), /service_role|secret_key/i);
+});
+
+test('facility registry client rejects worker profiles before making privileged calls', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'worker-token',
+    refresh_token: 'worker-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'worker-user' }
+  }));
+  const calls = [];
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    storage,
+    now: () => 1_800_000_000_000,
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      if (url.includes('/rest/v1/profiles?')) {
+        return jsonResponse([{ id: 'worker-user', role: 'worker', status: 'active' }]);
+      }
+      throw new Error('Unexpected privileged request: ' + url);
+    }
+  });
+  await assert.rejects(() => client.manageFacilityRegistry({ action: 'create_batch' }), /not authorised|not authorized/i);
+  assert.equal(calls.some(item => item.url.includes('/functions/v1/facility-registry')), false);
+});
