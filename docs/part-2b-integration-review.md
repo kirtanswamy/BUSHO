@@ -187,3 +187,16 @@ The worker-side submit path is now connected to the persistence boundary:
 3. Source and verify Chhattisgarh AAM/HWC facility records, including source date, LGD linkage, duplicates and facility verification status; do not derive facility rows from district/block names alone.
 4. Provision an authorised platform administrator through a separately approved secure process, then test admin → district/state admin → worker/supervisor invitation.
 5. Run the two-facility/two-worker/two-supervisor isolation test before any production rollout.
+
+## Part 2B.6 — facility registry source review and staging importer — 2026-11-07
+
+- Reviewed MoHFW AAM portal, CGMSC/DPDMIS public facility list, NHSRC NQAS facility counts, ABDM/HFR public registry context and the OGD/National Health Portal hospital directory.
+- MoHFW's published operational AAM roster is dated 12-Aug-2024 and its state/district operational report is dated 31-Jul-2024. The page's later 2026 update date does not refresh the downloadable roster.
+- DPDMIS is an important state-level reference source, but its visible public list contains mixed facility categories and ambiguous location labels, and the visible page does not establish a current facility-to-LGD crosswalk or reliable snapshot date.
+- NHSRC's NQAS report (updated through 31-Mar-2026) supplies certification counts, not a complete operational roster. HFR public aggregate figures likewise do not supply the required facility-level Chhattisgarh export. OGD's National Health Portal hospital directory has old update lineage.
+- Added `scripts/validate-facility-import.mjs`, a no-dependency CSV parser and staging validator against the LGD directory. It requires stable source IDs, official facility type, district/block LGD codes, authority, source date and HTTPS source URL. It flags stale snapshots, duplicates and block-parent ambiguity.
+- The importer never writes to Supabase. Staged rows are explicitly `needs_review`, non-synthetic and `safe_to_assign=false`; only an authorised human verification process can make a row assignable.
+- Added `tests/facility-import.test.mjs` covering CSV quoting/BOM/CRLF, malformed input, duplicate headers, LGD checks, duplicates, stale source and ambiguous mapping.
+- Current live `public.facilities` row count remains zero. No facility import or account provisioning was performed.
+- **CI:** previous checkpoint run `42366873135` is green for the administrator security work. Facility importer code/tests are newer and require their own CI result.
+- Next gate: obtain a dated authoritative facility export from Chhattisgarh DHS/NHM/CGMSC; reconcile source IDs with HFR/DPDMIS where possible; then conduct a reviewed import. No guessed facility rows or self-assigned locations.
