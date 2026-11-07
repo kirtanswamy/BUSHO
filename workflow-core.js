@@ -37,27 +37,26 @@
       returned_for_clarification: { roles: ['supervisor', 'storekeeper'], action: 'indent_returned', needsNote: true }
     },
     supervisor_approved: {
-      submitted_to_dpdmis: { roles: ['supervisor', 'storekeeper'], action: 'dpdmis_submission_recorded', needsReference: true },
+      submitted_to_dpdmis: { roles: ['supervisor'], action: 'dpdmis_submission_recorded', needsReference: true },
       returned_for_clarification: { roles: ['supervisor', 'storekeeper'], action: 'indent_returned', needsNote: true }
     },
     returned_for_clarification: {
       recommended_to_facility_store: { roles: ['supervisor'], action: 'indent_revised', needsNote: true }
     },
     submitted_to_dpdmis: {
-      allocated: { roles: ['supervisor', 'storekeeper'], action: 'allocation_reference_recorded', needsReference: true },
-      dispatched: { roles: ['supervisor', 'storekeeper'], action: 'dispatch_reference_recorded', needsReference: true },
+      allocated: { roles: ['storekeeper'], action: 'allocation_reference_recorded', needsReference: true },
       returned_for_clarification: { roles: ['supervisor', 'storekeeper'], action: 'indent_returned', needsNote: true }
     },
     allocated: {
-      dispatched: { roles: ['supervisor', 'storekeeper'], action: 'dispatch_reference_recorded', needsReference: true }
+      dispatched: { roles: ['storekeeper'], action: 'dispatch_reference_recorded', needsReference: true }
     },
     dispatched: {
-      partially_received: { roles: ['supervisor', 'storekeeper'], action: 'partial_receipt_recorded', needsReference: true, receives: true },
-      received: { roles: ['supervisor', 'storekeeper'], action: 'receipt_completed', needsReference: true, receives: true }
+      partially_received: { roles: ['storekeeper'], action: 'partial_receipt_recorded', needsReference: true, receives: true },
+      received: { roles: ['storekeeper'], action: 'receipt_completed', needsReference: true, receives: true }
     },
     partially_received: {
-      partially_received: { roles: ['supervisor', 'storekeeper'], action: 'partial_receipt_recorded', needsReference: true, receives: true },
-      received: { roles: ['supervisor', 'storekeeper'], action: 'receipt_completed', needsReference: true, receives: true }
+      partially_received: { roles: ['storekeeper'], action: 'partial_receipt_recorded', needsReference: true, receives: true },
+      received: { roles: ['storekeeper'], action: 'receipt_completed', needsReference: true, receives: true }
     }
   };
 
