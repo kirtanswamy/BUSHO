@@ -103,7 +103,7 @@ test('report field edits and review-note changes are captured in the append-only
   const sql = loadMigration();
   assert.match(sql, /new\.summary is distinct from old\.summary/i);
   assert.match(sql, /report_fields_updated/i);
-  assert.match(sql, /after insert or update of status,\s*summary,\s*review_note,\s*worker_response_note,[\s\S]*?on public\.reports/i);
+  assert.match(sql, /after update of status,\s*summary,\s*review_note,\s*worker_response_note,[\s\S]*?on public\.reports/i);
 });
 
 test('indent reviewer attribution and recorded external references cannot be silently rewritten', () => {
@@ -136,7 +136,7 @@ test('default privileges do not expose future public tables or functions to brow
   assert.match(sql, /revoke all on tables from anon, authenticated, service_role/i);
   assert.match(sql, /revoke all on sequences from anon, authenticated, service_role/i);
   assert.match(sql, /revoke all on functions from anon, authenticated, service_role/i);
-  assert.match(sql, /alter default privileges for role postgres\\s+revoke execute on functions from public/i);
+  assert.match(sql, /alter default privileges for role postgres\s+revoke execute on functions from public/i);
 });
 test('workers can track only replenishment requests created from their own reports', () => {
   const sql = loadMigration();
