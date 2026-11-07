@@ -20,17 +20,18 @@
     "expectedSourceRows": 278,
     "phcAnnexureRows": 172,
     "shcAnnexureRows": 106,
-    "transcriptionFlaggedRows": 17,
+    "transcriptionFlaggedRows": 18,
     "flagCounts": {
       "source_spelling_or_ocr_check": 6,
+      "pdf_visual_text_correction": 1,
       "possible_truncated_unit_or_ocr": 2,
       "source_truncated_text": 1,
       "programme_reference_not_sku": 8
     },
     "mandatoryHumanReviewRows": 278,
     "structuralErrorCount": 0,
-    "renderedPdfCheckedRows": 18,
-    "remainingRowsWithoutTargetedRowEvidence": 260,
+    "renderedPdfCheckedRows": 19,
+    "remainingRowsWithoutTargetedRowEvidence": 259,
     "crossAnnexureDiscrepancies": 1
   },
   "policy": {
@@ -341,19 +342,26 @@
       "annexure": "phc_phc_aam_uphc",
       "item": 17,
       "printedPage": 47,
-      "sourceDescription": "Levocetirizine Tablet 5mg Levocetrizine Oral liquid 2.5 mg/5 ml (Paediatric Use)",
-      "transcriptionFlags": [],
-      "reviewStatus": "pending_source_reconciliation",
-      "sourcePdfChecked": false,
+      "sourceDescription": "Levocetirizine Tablet 5mg Levocetirizine Oral liquid 2.5 mg/5 ml (Paediatric Use)",
+      "transcriptionFlags": [
+        "pdf_visual_text_correction"
+      ],
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 49, printed page 47, row 17 visibly reads “Levocetirizine Tablet 5mg Levocetirizine Oral liquid 2.5 mg/5 ml (Paediatric Use)”. The prior transcription copied the PDF text-layer/OCR spelling “Levocetrizine”; corrected to the rendered source text. No normalized medicine mapping is implied.",
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourcePdfVisualFinding": "Rendered PDF physical page 49, printed page 47, row 17 visibly reads “Levocetirizine Tablet 5mg Levocetirizine Oral liquid 2.5 mg/5 ml (Paediatric Use)”. The prior transcription copied the PDF text-layer/OCR spelling “Levocetrizine”; corrected to the rendered source text. No normalized medicine mapping is implied.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 47, item 17.",
+      "sourceTextLayerFinding": "Text-layer extraction reads “Levocetrizine”; rendered page visibly reads “Levocetirizine”. Visual source takes precedence for verbatim transcription; OCR discrepancy logged."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -5169,11 +5177,11 @@
     }
   ],
   "sourceTextLayerReview": {
-    "checkedRows": 17,
-    "method": "PDF text-layer comparison and targeted rendered-page visual inspection for 18 rows. This is not pharmacist/CGMSC approval.",
+    "checkedRows": 18,
+    "method": "PDF text-layer comparison plus targeted rendered-page visual inspection for 19 rows. Visual inspection identified and corrected one OCR spelling discrepancy. This is not pharmacist/CGMSC approval.",
     "limitations": [
-      "The PDF text layer can itself contain OCR/transcription errors or omit characters.",
-      "Rendered visual inspection has targeted 18 rows; 260 rows still need individual row-level comparison.",
+      "The PDF text layer can contain OCR/transcription errors or omit characters; row 17 demonstrates this.",
+      "Rendered visual inspection has targeted 19 rows; 259 rows still need individual row-level comparison.",
       "No clinical or procurement interpretation is approved."
     ],
     "observedInconsistency": "PHC-AAM/UPHC Annexure 4 item 172 text layer says 'Medroxprogesterone'; SHC-AAM Annexure 5 item 81 says 'Medroxyprogesterone'. Preserve both source strings pending authorised review."
