@@ -125,7 +125,7 @@
     if (report.status !== 'supervisor_verified') {
       throw new Error('A supervisor-verified report is required before creating a facility indent recommendation.');
     }
-    requireRole(input.actorRole, ['supervisor', 'storekeeper']);
+    requireRole(input.actorRole, ['supervisor']);
     if (!item || typeof item !== 'object') throw new Error('A stock item is required.');
     const requestedQty = Number(item.requestedQty);
     const onHand = Number(item.onHand);
@@ -172,6 +172,21 @@
     assertRecord(next, 'Indent');
     const from = next.status;
     const to = input.to;
+    // A retry of the same recorded receipt reference and quantity is an
+    // idempotent no-op. It is accepted only for the storekeeper role and
+    // never appends another event or receipt ledger entry.
+    if (to === from && ['partially_received', 'received'].includes(from)) {
+      requireRole(input.actorRole, ['storekeeper']);
+      const reference = typeof input.reference === 'string' ? input.reference.trim() : '';
+      const quantity = Number(input.receivedQty);
+      const replay = (next.receiptReferences || []).find(item =>
+        item.reference === reference && Number(item.quantity) === quantity
+      );
+      if (!reference || !Number.isSafeInteger(quantity) || quantity <= 0 || !replay) {
+        throw new Error('Only an exact previously recorded receipt can be retried.');
+      }
+      return next;
+    }
     const rule = INDENT_TRANSITIONS[from] && INDENT_TRANSITIONS[from][to];
     if (!rule) throw new Error('Indent transition ' + String(from) + ' → ' + String(to) + ' is not available.');
     requireRole(input.actorRole, rule.roles);
