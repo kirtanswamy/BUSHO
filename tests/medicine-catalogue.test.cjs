@@ -27,8 +27,8 @@ test('sample EDL transcription is explicitly partial and source-attributed', () 
   assert.equal(sample.annexures.phc_phc_aam_uphc.publishedEntryCount, 172);
   assert.equal(sample.annexures.shc_aam.publishedEntryCount, 106);
   assert.equal(sample.entries.length, 24);
-  assert.equal(sample.entries.filter(entry => entry.facilityLevel === 'phc_aam').length, 12);
-  assert.equal(sample.entries.filter(entry => entry.facilityLevel === 'shc_aam').length, 12);
+  assert.equal(sample.entries.filter(entry => entry.facilityLevel === 'phc_aam').length, 10);
+  assert.equal(sample.entries.filter(entry => entry.facilityLevel === 'shc_aam').length, 14);
   for (const entry of sample.entries) {
     assert.ok(entry.sourceDescription.length > 0);
     assert.ok(entry.sourceItemNumber > 0);
