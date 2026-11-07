@@ -10,6 +10,8 @@
   const previous = document.getElementById('facility-page-prev');
   const next = document.getElementById('facility-page-next');
   const complete = document.getElementById('facility-batch-complete');
+  const existingBatch = document.getElementById('facility-existing-batch');
+  const loadBatchButton = document.getElementById('facility-load-batch');
 
   let client = null;
   let profile = null;
@@ -103,6 +105,23 @@
     pendingOffset = 0;
     setBusy(false);
     await loadBatch(0);
+  }
+
+  async function loadRecentBatches() {
+    if (!client || !existingBatch) return;
+    const result = await client.manageFacilityRegistry({ action: 'list_batches' });
+    existingBatch.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = result.batches?.length ? 'Select a previous import batch' : 'No previous import batches';
+    existingBatch.append(placeholder);
+    (result.batches || []).forEach(batch => {
+      const option = document.createElement('option');
+      option.value = batch.id;
+      option.textContent = batch.source_authority + ' · ' + batch.source_date + ' · ' +
+        batch.verified_rows + '/' + batch.expected_rows + ' verified · ' + batch.status;
+      existingBatch.append(option);
+    });
   }
 
   async function loadBatch(page = currentPage) {
@@ -219,6 +238,8 @@
       pendingRows = rows;
       pendingOffset = 0;
       setStatus('Import batch created. Staging ' + rows.length + ' candidates…');
+      await loadRecentBatches();
+      existingBatch.value = batchId;
       await stagePendingRows();
     } catch (error) {
       setBusy(false, pendingRows.length ? 'Resume staging remaining candidates' : 'Validate and stage facility candidates');
@@ -226,6 +247,12 @@
     }
   });
 
+  loadBatchButton.addEventListener('click', async () => {
+    if (!client || !existingBatch.value || busy) return;
+    batchId = existingBatch.value;
+    try { await loadBatch(0); setStatus('Loaded saved facility import batch.', 'success'); }
+    catch (error) { setStatus(error.message || 'Could not load this batch.', 'error'); }
+  });
   previous.addEventListener('click', () => loadBatch(currentPage - 1).catch(error => setStatus(error.message,'error')));
   next.addEventListener('click', () => loadBatch(currentPage + 1).catch(error => setStatus(error.message,'error')));
   complete.addEventListener('click', async () => {
@@ -241,13 +268,16 @@
     } finally { busy = false; }
   });
 
-  document.addEventListener('busho:admin-ready', event => {
+  document.addEventListener('busho:admin-ready', async event => {
     client = event.detail?.client || null;
     profile = event.detail?.profile || null;
+    try { await loadRecentBatches(); }
+    catch (error) { setStatus(error.message || 'Could not load recent import batches.', 'error'); }
   });
   document.addEventListener('busho:admin-cleared', () => {
     client = null; profile = null; batchId = null; pendingRows = []; pendingOffset = 0;
     reviewPanel.classList.add('hidden');
+    existingBatch?.replaceChildren();
     setStatus('');
   });
 })();
