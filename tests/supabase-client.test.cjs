@@ -250,3 +250,75 @@ test('worker can update only the report draft fields through the authenticated R
   });
   assert.ok(request.url.includes('reports?id=eq.report-1'));
 });
+
+test('supervisor inbox query uses the authenticated profile and embeds report items, events, worker and facility', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'supervisor-token',
+    refresh_token: 'supervisor-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'auth-supervisor-1' }
+  }));
+  const calls = [];
+  const fetch = async (url, options) => {
+    calls.push({ url, options });
+    if (url.includes('/rest/v1/profiles?')) {
+      return jsonResponse([{ id: 'auth-supervisor-1', role: 'supervisor', status: 'active' }]);
+    }
+    if (url.includes('/rest/v1/reports?')) {
+      return jsonResponse([{
+        id: 'report-1',
+        status: 'submitted',
+        report_items: [{ id: 'item-1', display_label: 'Fever' }],
+        report_events: [{ id: 'event-1', action: 'report_submitted' }],
+        workers: { display_name: 'Worker A' },
+        facilities: { name: 'Facility A' }
+      }]);
+    }
+    throw new Error('Unexpected request: ' + url);
+  };
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    fetch,
+    storage,
+    now: () => 1_800_000_000_000
+  });
+  const rows = await client.listSupervisorReports();
+  assert.equal(rows[0].report_items[0].display_label, 'Fever');
+  assert.equal(rows[0].report_events[0].action, 'report_submitted');
+  assert.equal(rows[0].workers.display_name, 'Worker A');
+  assert.equal(rows[0].facilities.name, 'Facility A');
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].options.headers.Authorization, 'Bearer supervisor-token');
+  assert.ok(calls[1].url.includes('report_items(*)'));
+  assert.ok(calls[1].url.includes('report_events(*)'));
+  assert.ok(calls[1].url.includes('workers(display_name'));
+  assert.ok(calls[1].url.includes('facilities(name'));
+});
+
+test('worker profile cannot call the supervisor inbox query', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'worker-token',
+    refresh_token: 'worker-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'auth-worker-1' }
+  }));
+  const calls = [];
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    fetch: async url => {
+      calls.push(url);
+      if (url.includes('/rest/v1/profiles?')) {
+        return jsonResponse([{ id: 'auth-worker-1', role: 'worker', status: 'active' }]);
+      }
+      throw new Error('The report inbox must not be queried by a worker.');
+    },
+    storage,
+    now: () => 1_800_000_000_000
+  });
+  await assert.rejects(client.listSupervisorReports(), /not available to the worker role/i);
+  assert.equal(calls.length, 1);
+});
