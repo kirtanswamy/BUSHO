@@ -522,3 +522,13 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 8. PR #5 remains draft/open; merge only after gates above and owner review.
 
 No live Supabase changes, real user provisioning, operational data entry, production deployment or PR merge.
+
+
+## Part 2G.3 — demo workflow authorization parity — 2026-11-08
+
+- Cross-checked the pure JavaScript demo state machine against the final PostgreSQL transition trigger and found role drift: the demo had allowed supervisors to allocate, dispatch and receive, and had allowed storekeepers to submit DPDMIS references. The database correctly requires supervisor approval/submission and storekeeper allocation/dispatch/receipt.
+- Updated `workflow-core.js` transition table to match database authorization: supervisor-only approval and DPDMIS submission; storekeeper-only allocation, dispatch and receipt; clarification returns remain available to assigned supervisor/storekeeper. Removed the invalid direct submitted-to-dispatched path.
+- Rewrote the operational workflow test to assert both permitted and denied role transitions. Corrected partial/final receipt test actors to storekeeper.
+- Added four controller tests for inventory evidence rendering, role gate, invalid timestamps and read errors; initial test harness was adjusted to model the HTML's server-rendered sign-in empty state.
+- Stock accounting design gate documented in `docs/stock-accounting-design.md`; current UI remains evidence-only pending local SOP/authority decisions.
+- Latest workflow/test commits `4bb766f`, `0480662`, `be21f7b`; CI for final head pending.
