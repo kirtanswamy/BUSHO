@@ -465,3 +465,5 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Added a direct test inside the storekeeper RLS transaction: repeat the exact final receipt update, then assert exactly two receipt movements and two receipt events remain.
 - Latest migration commit `3590261`; latest test commit `40ad6d4`. CI not yet returned for these commits.
 - No live Supabase migration, production deployment or real operational data change.
+
+- CI run `42400122621` passed Node 18/22/24 but failed the PostgreSQL contract because the new retry assertion was inserted in a fixture transaction before the normal Balod request had been created/received; it therefore saw zero movements/events. The database was correctly enforcing transaction isolation. Moved the retry assertion into the existing storekeeper transaction immediately after the actual partial and final receipt operations, before the transaction closes. Latest contract commit `8cda6d1`; re-fetched file to confirm the assertion is inside the real receipt flow. CI pending.
