@@ -283,3 +283,15 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Known source JSON schema debt: `sampleOnly: true` is semantically misleading for the full 278-row transcriptions. It currently functions as a safety lock. Replace it only with a separately tested explicit completeness/import-approval model after auditing every consumer and test.
 - No Supabase migration, live catalogue insert, facility import, account provisioning, Edge Function deployment or production release was performed.
 - **Next:** complete row-by-row rendered-PDF comparison, starting with all 15 flagged rows and then the remaining rows/footnotes; capture the original PDF SHA-256; do not normalize or ingest until a named authorised pharmacist/CGMSC reviewer signs off.
+
+
+## Part 2D.2 — official PDF text-layer comparison — 2026-11-07
+
+- Re-opened the official 59-page DPDMIS EDL 2025 PDF and compared the 15 machine-flagged source rows against the PDF's extracted text layer.
+- Recorded row-specific text-layer findings and evidence pointers in `data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json`. The 15 rows remain pending rendered-page reconciliation; all 278 rows still have `sourcePdfChecked: false`.
+- Confirmed the PDF text layer itself contains the PHC Annexure 4 item 36 truncation `200 mg/5 m`; this cannot be repaired from text extraction. The rendered page must be inspected to determine whether the final `l` is visible in the source.
+- Confirmed the text layer itself spells PHC Annexure 4 item 12 as `Asprin`, and Annexure 4 item 102 as `Gama Benzene Hexachloride`, among other flagged strings. Preserve source strings; do not silently autocorrect.
+- Found a cross-annexure source inconsistency: Annexure 4 item 172 says `Medroxprogesterone`, while Annexure 5 item 81 says `Medroxyprogesterone`. Both remain verbatim and require visual plus authorised pharmacist/CGMSC review.
+- Programme-guideline rows (Annexure 4 items 52, 53, 58, 135; Annexure 5 items 27, 28, 32, 87) are reference instructions, not medicine SKUs. Keep their source rows but do not map them to inventory catalogue products.
+- **Important boundary:** this was PDF text-layer comparison only. The web PDF screenshot endpoint returned cache-miss errors and direct PDF download was unavailable in the execution environment. No rendered page was visually inspected; no row has been marked source-PDF checked. No clinical review, normalization or import is approved.
+- Next: obtain a local/original PDF copy or user-provided copy so pages 48–57 can be rendered and visually inspected. Then record PDF SHA-256 and complete visual checks. Do not claim visual reconciliation before that.
