@@ -336,3 +336,73 @@ end $$;
 commit;
 
 select 'BUSHO PostgreSQL RLS contract passed' as result;
+
+-- Facility registry staging, scoped human verification and audited promotion.
+begin;
+set local role service_role;
+do $facility_registry_contract$
+declare
+  v_batch_id uuid;
+  v_candidate_id uuid;
+  v_result jsonb;
+  v_facility_id uuid;
+  v_count integer;
+  v_blocked boolean := false;
+begin
+  insert into public.facility_registry_import_batches
+    (source_authority, source_date, source_url, imported_by, expected_rows)
+  values
+    ('Synthetic CI facility source', current_date, 'https://test.gov.in/facilities',
+     '44444444-4444-4444-8444-444444444444', 1)
+  returning id into v_batch_id;
+
+  v_result := public.stage_facility_registry_candidates(
+    v_batch_id,
+    '44444444-4444-4444-8444-444444444444',
+    '[{"external_registry_id":"CI-FAC-001","name":"Synthetic CI PHC Candidate","state_lgd_code":"22","district_lgd_code":"377","block_lgd_code":null,"facility_type":"phc","source_row":2}]'::jsonb
+  );
+  if (v_result->>'staged')::integer <> 1 then
+    raise exception 'Facility staging did not accept exactly one candidate: %', v_result;
+  end if;
+
+  select id into v_candidate_id from public.facility_registry_candidates
+  where batch_id = v_batch_id and external_registry_id = 'CI-FAC-001';
+
+  v_result := public.review_facility_registry_candidate(
+    v_candidate_id,
+    '44444444-4444-4444-8444-444444444444',
+    'verify',
+    'Verified against the synthetic CI facility source fixture.'
+  );
+  v_facility_id := (v_result->>'facilityId')::uuid;
+  if v_facility_id is null then raise exception 'Facility verification did not create a facility ID'; end if;
+
+  select count(*) into v_count from public.facilities
+  where id = v_facility_id and verification_status = 'verified'
+    and is_synthetic = false and external_registry_id = 'CI-FAC-001';
+  if v_count <> 1 then raise exception 'Verified facility was not promoted with correct provenance'; end if;
+
+  perform public.complete_facility_registry_batch(v_batch_id,'44444444-4444-4444-8444-444444444444');
+  select count(*) into v_count from public.facility_registry_import_batches
+  where id = v_batch_id and status = 'completed' and verified_rows = 1;
+  if v_count <> 1 then raise exception 'Facility import batch did not complete with verified count'; end if;
+
+  insert into public.facility_registry_import_batches
+    (source_authority, source_date, source_url, imported_by, expected_rows)
+  values
+    ('Synthetic CI facility source', current_date, 'https://test.gov.in/facilities',
+     '55555555-5555-4555-8555-555555555555', 1)
+  returning id into v_batch_id;
+
+  begin
+    perform public.stage_facility_registry_candidates(
+      v_batch_id,
+      '55555555-5555-4555-8555-555555555555',
+      '[{"external_registry_id":"CI-FAC-OUTSIDE","name":"Outside District Candidate","state_lgd_code":"22","district_lgd_code":"646","block_lgd_code":null,"facility_type":"phc","source_row":2}]'::jsonb
+    );
+  exception when insufficient_privilege then
+    v_blocked := true;
+  end;
+  if not v_blocked then raise exception 'District admin staged a facility outside their assigned district'; end if;
+end $facility_registry_contract$;
+commit;
