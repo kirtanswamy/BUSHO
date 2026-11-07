@@ -415,13 +415,6 @@ begin
 end;
 $$;
 
-revoke all on function app_private.stage_facility_registry_candidates(uuid,uuid,jsonb) from public, anon, authenticated;
-grant execute on function app_private.stage_facility_registry_candidates(uuid,uuid,jsonb) to service_role;
-revoke all on function app_private.complete_facility_registry_batch(uuid,uuid) from public, anon, authenticated;
-grant execute on function app_private.complete_facility_registry_batch(uuid,uuid) to service_role;
-revoke all on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) from public, anon, authenticated;
-grant execute on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) to service_role;
-
 create or replace function app_private.complete_facility_registry_batch(
   p_batch_id uuid,
   p_actor_id uuid
@@ -475,159 +468,19 @@ begin
 end;
 $$;
 
-create or replace function app_private.review_facility_registry_candidate(
-  p_candidate_id uuid,
-  p_reviewer_id uuid,
-  p_decision text,
-  p_review_note text
-)
-returns jsonb
-language plpgsql
-security definer
-set search_path = pg_catalog, public, app_private
-as $$
-declare
-  v_profile public.profiles%rowtype;
-  v_candidate public.facility_registry_candidates%rowtype;
-  v_batch public.facility_registry_import_batches%rowtype;
-  v_scope record;
-  v_facility_id uuid;
-  v_state_name text;
-  v_district_name text;
-  v_now timestamptz := now();
-begin
-  if p_candidate_id is null or p_reviewer_id is null then
-    raise exception using errcode = '22023', message = 'Candidate and reviewer IDs are required.';
-  end if;
-  if p_decision not in ('verify','reject') then
-    raise exception using errcode = '22023', message = 'Decision must be verify or reject.';
-  end if;
-  if length(btrim(coalesce(p_review_note,''))) < 8 or length(p_review_note) > 1000 then
-    raise exception using errcode = '22023', message = 'A review note between 8 and 1000 characters is required.';
-  end if;
-
-  select * into v_profile from public.profiles where id = p_reviewer_id for share;
-  if not found or v_profile.status <> 'active' or v_profile.role not in ('platform_admin','state_admin','district_admin') then
-    raise exception using errcode = '42501', message = 'An active authorised administrator is required.';
-  end if;
-
-  select * into v_candidate from public.facility_registry_candidates
-  where id = p_candidate_id for update;
-  if not found then
-    raise exception using errcode = 'P0002', message = 'Facility registry candidate was not found.';
-  end if;
-  select * into v_batch from public.facility_registry_import_batches
-  where id = v_candidate.batch_id for update;
-  if not found or v_batch.status not in ('reviewing','staging') then
-    raise exception using errcode = '55000', message = 'This import batch is not open for review.';
-  end if;
-  if v_candidate.verification_status <> 'needs_review' then
-    raise exception using errcode = '55000', message = 'This candidate has already been reviewed.';
-  end if;
-
-  if v_profile.role <> 'platform_admin' then
-    select * into v_scope
-    from public.user_scope_assignments s
-    where s.user_id = p_reviewer_id
-      and s.is_active = true
-      and s.valid_from <= v_now
-      and (s.valid_until is null or s.valid_until > v_now)
-      and s.state_lgd_code = v_candidate.state_lgd_code
-      and (
-        (v_profile.role = 'state_admin' and s.scope_level = 'state' and s.scope_role = 'state_admin')
-        or
-        (v_profile.role = 'district_admin' and s.scope_level = 'district'
-          and s.scope_role = 'district_admin' and s.district_lgd_code = v_candidate.district_lgd_code)
-      )
-    limit 1;
-    if not found then
-      raise exception using errcode = '42501', message = 'Candidate is outside the reviewer geographic scope.';
-    end if;
-  end if;
-
-  if p_decision = 'verify' then
-    if cardinality(v_candidate.review_flags) > 0 then
-      raise exception using errcode = '55000', message = 'Resolve all mapping and data-quality flags before verification.';
-    end if;
-    if v_candidate.state_lgd_code <> '22' then
-      raise exception using errcode = '23514', message = 'Only Chhattisgarh facilities can be promoted by this workflow.';
-    end if;
-    if exists (
-      select 1 from public.facilities f
-      where f.external_registry_id = v_candidate.external_registry_id
-    ) then
-      raise exception using errcode = '23505', message = 'This external registry ID is already assigned to a facility.';
-    end if;
-    if exists (
-      select 1 from public.facilities f
-      where f.state_lgd_code = v_candidate.state_lgd_code
-        and f.district_lgd_code = v_candidate.district_lgd_code
-        and lower(regexp_replace(btrim(f.name), '\s+', ' ', 'g')) =
-            lower(regexp_replace(btrim(v_candidate.name), '\s+', ' ', 'g'))
-    ) then
-      raise exception using errcode = '23505', message = 'A facility with the same normalised name already exists in this district; reconcile identities before verification.';
-    end if;
-
-    select name into v_state_name from public.states where lgd_code = v_candidate.state_lgd_code;
-    select name into v_district_name from public.districts where lgd_code = v_candidate.district_lgd_code;
-    if v_state_name is null or v_district_name is null then
-      raise exception using errcode = '23503', message = 'Facility geography could not be resolved.';
-    end if;
-
-    insert into public.facilities (
-      name, district, state, state_lgd_code, district_lgd_code, block_lgd_code,
-      facility_type, registry_source, registry_source_date, external_registry_id,
-      verification_status, is_synthetic, is_active
-    ) values (
-      v_candidate.name, v_district_name, v_state_name, v_candidate.state_lgd_code,
-      v_candidate.district_lgd_code, v_candidate.block_lgd_code,
-      v_candidate.facility_type, v_batch.source_authority, v_batch.source_date::text,
-      v_candidate.external_registry_id, 'verified', false, true
-    ) returning id into v_facility_id;
-
-    update public.facility_registry_candidates
-    set verification_status = 'verified', review_note = btrim(p_review_note),
-        reviewed_by = p_reviewer_id, reviewed_at = v_now, facility_id = v_facility_id
-    where id = p_candidate_id;
-  else
-    update public.facility_registry_candidates
-    set verification_status = 'rejected', review_note = btrim(p_review_note),
-        reviewed_by = p_reviewer_id, reviewed_at = v_now
-    where id = p_candidate_id;
-  end if;
-
-  update public.facility_registry_import_batches b
-  set verified_rows = (select count(*) from public.facility_registry_candidates c where c.batch_id = b.id and c.verification_status = 'verified'),
-      rejected_rows = (select count(*) from public.facility_registry_candidates c where c.batch_id = b.id and c.verification_status = 'rejected'),
-      status = case when b.status = 'staging' then 'reviewing' else b.status end
-  where b.id = v_batch.id;
-
-  if p_decision = 'verify' then
-    insert into public.audit_logs (actor_worker_id, action, entity_type, entity_id, metadata)
-    values (null, 'facility_registry_candidate_verified', 'facility', v_facility_id,
-      jsonb_build_object('candidate_id', p_candidate_id, 'batch_id', v_batch.id,
-        'reviewer_id', p_reviewer_id, 'external_registry_id', v_candidate.external_registry_id,
-        'source_authority', v_batch.source_authority, 'source_date', v_batch.source_date,
-        'review_note', btrim(p_review_note)));
-  else
-    insert into public.audit_logs (actor_worker_id, action, entity_type, entity_id, metadata)
-    values (null, 'facility_registry_candidate_rejected', 'facility_registry_candidate', p_candidate_id,
-      jsonb_build_object('batch_id', v_batch.id, 'reviewer_id', p_reviewer_id,
-        'external_registry_id', v_candidate.external_registry_id, 'review_note', btrim(p_review_note)));
-  end if;
-
-  return jsonb_build_object(
-    'candidateId', p_candidate_id,
-    'decision', p_decision,
-    'facilityId', v_facility_id,
-    'batchId', v_batch.id
-  );
-end;
-$$;
 
 revoke all on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) from public, anon, authenticated;
 grant execute on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) to service_role;
 
+
+revoke all on function app_private.create_facility_registry_import_batch(uuid,text,date,text,integer) from public, anon, authenticated;
+grant execute on function app_private.create_facility_registry_import_batch(uuid,text,date,text,integer) to service_role;
+revoke all on function app_private.stage_facility_registry_candidates(uuid,uuid,jsonb) from public, anon, authenticated;
+grant execute on function app_private.stage_facility_registry_candidates(uuid,uuid,jsonb) to service_role;
+revoke all on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) from public, anon, authenticated;
+grant execute on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) to service_role;
+revoke all on function app_private.complete_facility_registry_batch(uuid,uuid) from public, anon, authenticated;
+grant execute on function app_private.complete_facility_registry_batch(uuid,uuid) to service_role;
 
 -- Public RPC wrappers are executable only by the service role. The implementation
 -- remains in app_private and cannot be called by browser-authenticated users.
