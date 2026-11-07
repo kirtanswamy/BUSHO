@@ -101,7 +101,19 @@
       if (!['draft', 'correction_requested'].includes(report.status)) {
         throw new Error('This report is no longer editable. Refresh its current status before continuing.');
       }
+      if (typeof client.updateReportDraft !== 'function') {
+        throw new Error('The BUSHO client cannot update a returned draft. Refresh the application.');
+      }
+      report = await client.updateReportDraft(report.id, {
+        originalText,
+        languageCode: options.languageCode || 'en',
+        reportingDate: options.reportingDate,
+        summary
+      });
     } else {
+      if (typeof options.onDraftCreated !== 'function') {
+        throw new Error('A local draft-ID persistence callback is required before creating a report.');
+      }
       report = await client.createReportDraft({
         originalText,
         languageCode: options.languageCode || 'en',
@@ -109,10 +121,9 @@
         summary
       });
       if (!report || !report.id) throw new Error('BUSHO did not return a report ID. The report was not submitted.');
-      // The caller must persist this ID locally before any subsequent network operation.
-      if (typeof options.onDraftCreated === 'function') {
-        await options.onDraftCreated(report.id);
-      }
+      // Persist the ID locally before any subsequent network operation so retries
+      // replace the same draft instead of creating duplicate reports.
+      await options.onDraftCreated(report.id);
     }
 
     if (typeof client.replaceReportItems !== 'function') {\n      throw new Error('The BUSHO client does not support safe report-item replacement. Refresh the application.');\n    }\n    await client.replaceReportItems(report.id, items);
