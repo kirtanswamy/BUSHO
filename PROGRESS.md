@@ -624,3 +624,15 @@ No live Supabase migration, operational account creation, real facility/medicine
 ### Part 2H.4 next
 - Build deterministic REST contract integration tests for worker report draft → structured items → submit acknowledgement and supervisor review/correction. Assert authorization headers, server-controlled facility IDs, idempotent retries, and truthful failure states.
 - Then run browser-level multi-user E2E only after an approved non-production Supabase environment and synthetic accounts/facility assignments are available.
+
+
+## Part 2H.4 — worker submission and supervisor review REST integration — 2026-11-08
+
+- Added `tests/report-submission-rest-integration.test.cjs`, exercising the real `supabase-client.js` and `report-persistence.js` together against deterministic mocked Supabase Auth/REST endpoints.
+- Worker flow test covers password authentication, server-controlled profile lookup, worker record lookup, draft creation using the worker's assigned facility and worker ID, structured report item persistence with review-required/source-phrase metadata, server acknowledgement failure, local report-ID checkpoint, safe retry of the same draft, replacement of the same item set, and final submitted acknowledgement. It asserts exactly one report was created and the retry did not duplicate the report.
+- Supervisor flow test covers authenticated supervisor role lookup, mandatory reason for correction request (no PATCH is sent without it), and authorized correction status + review note PATCH with the supervisor bearer token.
+- CI run `42409856667` passed Node 18/22/24 and PostgreSQL 17 database contract. Node matrix: 168 tests, 168 passed, zero failed.
+- This is application/REST contract integration with deterministic fixtures; database RLS remains separately exercised by PostgreSQL CI. It is not a real browser session or live Supabase integration test.
+
+### Remaining Part 2H.5 release-validation gate
+- True multi-user browser E2E still needs a separately approved non-production Supabase environment, synthetic accounts, verified test facility assignments and an available Vercel preview deployment quota. Do not create these in the live project or use real health worker/patient information.
