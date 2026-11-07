@@ -41,6 +41,7 @@ test('facility verification is transactional, scoped, deduplicated and auditable
   const sql = read('supabase/migrations/20261107170000_facility_registry_review_workflow.sql');
   assert.match(sql, /create or replace function app_private\.review_facility_registry_candidate/i);
   assert.match(sql, /An active authorised administrator is required/i);
+  assert.match(sql, /create or replace function public\\.create_facility_registry_import_batch/i);
   assert.match(sql, /Candidate is outside the reviewer geographic scope/i);
   assert.match(sql, /Resolve all mapping and data-quality flags/i);
   assert.match(sql, /facilities_external_registry_id_unique/i);
