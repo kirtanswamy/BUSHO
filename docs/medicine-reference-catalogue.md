@@ -31,6 +31,12 @@ The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, 
 - `data/medicine-catalogue/chhattisgarh-edl-2025-shc-aam-source-transcription.json`: all 106 numbered Annexure 5 rows transcribed from PDF text, with source descriptions, category, item number and printed footer page. This remains explicitly unreviewed and is not approved for live ingestion.
 - `data/medicine-catalogue/chhattisgarh-edl-2025-phc-aam-source-transcription.json`: all 172 numbered Annexure 4 rows transcribed from PDF text under the same unreviewed status. Together, both files cover all 278 numbered EDL rows, but neither is approved for live ingestion or normalized inventory mapping.
 - `scripts/validate-medicine-catalogue.mjs` checks source metadata, annexure/facility-level consistency, row uniqueness, printed source-page bounds and verbatim-only staging. It intentionally refuses guessed normalized stock units or dosage fields and always marks live import unsafe.
+- `scripts/audit-medicine-source-transcriptions.mjs` audits the two source files together for row-count/sequence/page mapping, duplicate rows, premature normalization and likely OCR/spelling anomalies. It creates a review report only; every row remains mandatory for human reconciliation.
+
+Run the structural audit with:
+
+`node scripts/audit-medicine-source-transcriptions.mjs data/medicine-catalogue/chhattisgarh-edl-2025-phc-aam-source-transcription.json data/medicine-catalogue/chhattisgarh-edl-2025-shc-aam-source-transcription.json /tmp/edl-source-audit.json`
+
   - A deliberately small sample transcription (10 PHC-AAM/UPHC rows and 14 SHC-AAM rows) from the published annexures.
   - Every row carries source annexure, source item number, page, category and original description.
   - `sampleOnly: true`; this is not the complete 172-row or 106-row annexure and must never be presented as a complete medicine list.
