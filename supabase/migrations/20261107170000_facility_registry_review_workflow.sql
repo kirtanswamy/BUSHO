@@ -173,7 +173,90 @@ begin
       or coalesce(x->>'state_lgd_code','') <> '22'
       or coalesce(x->>'district_lgd_code','') = ''
       or coalesce(x->>'facility_type','') not in ('aam_shc','phc','chc','district_hospital','sub_centre','other')
-      or coalesce(x->>'source_row','') !~ '^[0-9]+
+      or case
+        when length(coalesce(x->>'source_row','')) between 1 and 5
+          and coalesce(x->>'source_row','') ~ '^[0-9]+$'
+        then (x->>'source_row')::integer < 2
+          or (x->>'source_row')::integer > v_batch.expected_rows + 1
+        else true
+      end
+  ) then
+    raise exception using errcode = '22023', message = 'One or more candidate records contain invalid required fields.';
+  end if;
+
+  if v_profile.role = 'state_admin' and exists (
+    select 1 from jsonb_array_elements(p_candidates) x
+    where not exists (
+      select 1 from public.user_scope_assignments s
+      where s.user_id = p_actor_id and s.is_active
+        and s.scope_level = 'state' and s.scope_role = 'state_admin'
+        and s.state_lgd_code = x->>'state_lgd_code'
+        and s.valid_from <= now() and (s.valid_until is null or s.valid_until > now())
+    )
+  ) then
+    raise exception using errcode = '42501', message = 'One or more candidates are outside the administrator state scope.';
+  end if;
+  if v_profile.role = 'district_admin' and exists (
+    select 1 from jsonb_array_elements(p_candidates) x
+    where not exists (
+      select 1 from public.user_scope_assignments s
+      where s.user_id = p_actor_id and s.is_active
+        and s.scope_level = 'district' and s.scope_role = 'district_admin'
+        and s.state_lgd_code = x->>'state_lgd_code'
+        and s.district_lgd_code = x->>'district_lgd_code'
+        and s.valid_from <= now() and (s.valid_until is null or s.valid_until > now())
+    )
+  ) then
+    raise exception using errcode = '42501', message = 'One or more candidates are outside the administrator district scope.';
+  end if;
+
+  if exists (
+    select 1 from jsonb_array_elements(p_candidates) x
+    left join public.districts d on d.lgd_code = x->>'district_lgd_code'
+      and d.state_lgd_code = x->>'state_lgd_code'
+    where d.lgd_code is null
+  ) then
+    raise exception using errcode = '23503', message = 'One or more candidate districts are not valid Chhattisgarh LGD records.';
+  end if;
+  if exists (
+    select 1 from jsonb_array_elements(p_candidates) x
+    where coalesce(x->>'block_lgd_code','') <> ''
+      and not exists (
+        select 1 from public.blocks b
+        where b.lgd_code = x->>'block_lgd_code'
+          and b.state_lgd_code = x->>'state_lgd_code'
+          and (b.district_lgd_code = x->>'district_lgd_code' or b.mapping_review_required = true)
+      )
+  ) then
+    raise exception using errcode = '23503', message = 'One or more block mappings are ambiguous or invalid.';
+  end if;
+
+  insert into public.facility_registry_candidates (
+    batch_id, external_registry_id, name, state_lgd_code, district_lgd_code,
+    block_lgd_code, facility_type, source_row, review_flags
+  )
+  select p_batch_id, btrim(x->>'external_registry_id'), btrim(x->>'name'),
+    x->>'state_lgd_code', x->>'district_lgd_code',
+    nullif(x->>'block_lgd_code',''), x->>'facility_type',
+    (x->>'source_row')::integer,
+    array_remove(array[
+      case when v_batch.source_date < current_date - 365 then 'stale_source_snapshot' end,
+      case when exists (select 1 from public.blocks b where b.lgd_code = x->>'block_lgd_code' and b.mapping_review_required) then 'block_parent_mapping_requires_review' end,
+      case when exists (select 1 from public.blocks b where b.lgd_code = x->>'block_lgd_code' and not b.is_selectable) then 'block_not_selectable' end
+    ]::text[], null)
+  from jsonb_array_elements(p_candidates) x;
+
+  get diagnostics v_inserted = row_count;
+  update public.facility_registry_import_batches
+  set received_rows = received_rows + v_inserted,
+      status = 'reviewing'
+  where id = p_batch_id;
+
+  return jsonb_build_object('batchId',p_batch_id,'staged',v_inserted);
+end;
+$$;
+
+create or replace function app_private.review_facility_registry_candidate(
   p_candidate_id uuid,
   p_reviewer_id uuid,
   p_decision text,
