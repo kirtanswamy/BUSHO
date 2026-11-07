@@ -203,6 +203,75 @@ update public.reports
 set summary = '{"source":"voice","fever_count":4,"reviewed":true}'
 where original_text = 'worker_report_created synthetic aggregate only';
 
+do $supervisor_report_audit_check$
+declare v_count integer;
+begin
+  select count(*) into v_count from public.report_events re
+  join public.reports r on r.id = re.report_id
+  where r.original_text = 'worker_report_created synthetic aggregate only'
+    and re.action = 'report_fields_updated';
+  if v_count <> 2 then raise exception 'Expected worker and supervisor field-edit audit events, got %', v_count; end if;
+end $supervisor_report_audit_check$;
+
+insert into public.replenishment_requests
+  (facility_id, inventory_item_id, requested_quantity, status, created_by_user_id,
+   source_report_id, on_hand_quantity, unit, note, data_mode)
+select
+  r.facility_id,
+  '20000000-0000-4000-8000-000000000001',
+  20,
+  'recommended_to_facility_store',
+  '33333333-3333-4333-8333-333333333333',
+  r.id,
+  5,
+  'packets',
+  'Synthetic replenishment recommendation',
+  'synthetic_demo'
+from public.reports r
+where r.original_text = 'worker_report_created synthetic aggregate only';
+
+update public.replenishment_requests
+set status = 'supervisor_approved'
+where note = 'Synthetic replenishment recommendation';
+
+update public.replenishment_requests
+set status = 'submitted_to_dpdmis', dpdmis_reference = 'DPDMIS-TEST-001'
+where note = 'Synthetic replenishment recommendation';
+
+do $$
+declare
+  v_reviewer uuid;
+  v_created uuid;
+  v_status text;
+begin
+  select reviewed_by_user_id, created_by_user_id, status
+  into v_reviewer, v_created, v_status
+  from public.replenishment_requests
+  where note = 'Synthetic replenishment recommendation';
+  if v_reviewer <> auth.uid() then raise exception 'Supervisor approval attribution was not recorded'; end if;
+  if v_created <> auth.uid() then raise exception 'Indent creator attribution was not recorded'; end if;
+  if v_status <> 'submitted_to_dpdmis' then raise exception 'Unexpected indent status: %', v_status; end if;
+end $$;
+
+-- An assigned supervisor can never rewrite a submitted external-system reference.
+do $$
+declare v_blocked boolean := false;
+begin
+  begin
+    update public.replenishment_requests
+    set dpdmis_reference = 'DPDMIS-OVERWRITTEN'
+    where note = 'Synthetic replenishment recommendation';
+  exception when others then
+    v_blocked := true;
+  end;
+  if not v_blocked then raise exception 'A recorded DPDMIS reference was mutable'; end if;
+end $$;
+commit;
+
+-- Worker A can track the indent generated from their own reviewed report.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '11111111-1111-4111-8111-111111111111', true);
 do $$
 declare v_count integer; v_status text;
 begin
