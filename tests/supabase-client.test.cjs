@@ -177,3 +177,39 @@ test('sign-out clears the browser session even when the remote logout request fa
   await client.signOut();
   assert.equal(storage.has('busho-auth-session-v1'), false);
 });
+
+test('report item replacement deletes the prior editable set before inserting the new set', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'worker-token',
+    refresh_token: 'worker-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'auth-worker-1' }
+  }));
+  const calls = [];
+  const fetch = async (url, options) => {
+    calls.push({ url, options });
+    if (options.method === 'DELETE') return jsonResponse(null, 204);
+    if (options.method === 'POST') return jsonResponse([{ id: 'item-1', report_id: 'report-1' }]);
+    throw new Error('Unexpected request: ' + options.method + ' ' + url);
+  };
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    fetch,
+    storage,
+    now: () => 1_800_000_000_000
+  });
+  const result = await client.replaceReportItems('report-1', [{
+    item_type: 'symptom_trend',
+    display_label: 'Fever',
+    quantity: 3,
+    unit: 'patients',
+    requires_review: true
+  }]);
+  assert.deepEqual(calls.map(call => call.options.method), ['DELETE', 'POST']);
+  assert.ok(calls[0].url.includes('report_items?report_id=eq.report-1'));
+  assert.ok(calls[1].url.includes('report_items'));
+  assert.equal(JSON.parse(calls[1].options.body)[0].display_label, 'Fever');
+  assert.equal(result[0].report_id, 'report-1');
+});
