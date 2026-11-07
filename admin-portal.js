@@ -200,7 +200,7 @@
       displayName: document.getElementById('provision-name').value,
       preferredLanguage: document.getElementById('provision-language').value,
       role,
-      facilityIds,
+      facilityIds: ['worker','supervisor'].includes(role) ? facilityIds : [],
       consentConfirmed: role === 'worker' && consent.checked
     };
     if (role === 'district_admin') {
