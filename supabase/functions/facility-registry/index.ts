@@ -165,10 +165,13 @@ const handler = withSupabase({ auth: 'user' }, async (req, ctx) => {
       const batch = throwOnError(await admin.from('facility_registry_import_batches')
         .select('*').eq('id', batchId).eq('imported_by', actorId).maybeSingle(), 'Unable to load import batch');
       if (!batch) return reply({ error: 'Import batch not found.' }, 404, origin);
-      const candidates = throwOnError(await admin.from('facility_registry_candidates')
-        .select('id,external_registry_id,name,state_lgd_code,district_lgd_code,block_lgd_code,facility_type,source_row,review_flags,verification_status,review_note,reviewed_by,reviewed_at,facility_id')
-        .eq('batch_id', batchId).order('source_row', { ascending: true }).limit(10000), 'Unable to load facility candidates');
-      return reply({ ok: true, batch, candidates: candidates || [] }, 200, origin);
+      const page = Math.max(0, Math.min(99, Number.isInteger(Number(input.page)) ? Number(input.page) : 0));
+      const from = page * 100;
+      const result = await admin.from('facility_registry_candidates')
+        .select('id,external_registry_id,name,state_lgd_code,district_lgd_code,block_lgd_code,facility_type,source_row,review_flags,verification_status,review_note,reviewed_by,reviewed_at,facility_id', { count: 'exact' })
+        .eq('batch_id', batchId).order('source_row', { ascending: true }).range(from, from + 99);
+      const candidates = throwOnError(result, 'Unable to load facility candidates');
+      return reply({ ok: true, batch, candidates: candidates || [], page, total: result.count || 0, pageSize: 100 }, 200, origin);
     }
 
     if (action === 'review_candidate') {
