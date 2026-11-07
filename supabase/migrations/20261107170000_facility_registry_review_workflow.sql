@@ -134,7 +134,7 @@ begin
   if p_candidate_id is null or p_reviewer_id is null then
     raise exception using errcode = '22023', message = 'Candidate and reviewer IDs are required.';
   end if;
-  if p_decision not in ('verify','reject') then
+  if p_decision is null or p_decision not in ('verify','reject') then
     raise exception using errcode = '22023', message = 'Decision must be verify or reject.';
   end if;
   if length(btrim(coalesce(p_review_note,''))) < 8 or length(p_review_note) > 1000 then
@@ -375,6 +375,23 @@ begin
   if not found then raise exception using errcode = 'P0002', message = 'Import batch was not found.'; end if;
   if v_batch.received_rows <> v_batch.expected_rows then
     raise exception using errcode = '55000', message = 'All declared source rows must be staged before completion.';
+  end if;
+  if v_profile.role <> 'platform_admin' and exists (
+    select 1 from public.facility_registry_candidates c
+    where c.batch_id = p_batch_id and not exists (
+      select 1 from public.user_scope_assignments s
+      where s.user_id = p_actor_id and s.is_active
+        and s.state_lgd_code = c.state_lgd_code
+        and s.valid_from <= now() and (s.valid_until is null or s.valid_until > now())
+        and (
+          (v_profile.role = 'state_admin' and s.scope_level = 'state' and s.scope_role = 'state_admin')
+          or
+          (v_profile.role = 'district_admin' and s.scope_level = 'district'
+            and s.scope_role = 'district_admin' and s.district_lgd_code = c.district_lgd_code)
+        )
+    )
+  ) then
+    raise exception using errcode = '42501', message = 'Import batch contains candidates outside your active geographic scope.';
   end if;
   select count(*) into v_pending from public.facility_registry_candidates
   where batch_id = p_batch_id and verification_status = 'needs_review';
