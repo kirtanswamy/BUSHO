@@ -467,3 +467,5 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - No live Supabase migration, production deployment or real operational data change.
 
 - CI run `42400122621` passed Node 18/22/24 but failed the PostgreSQL contract because the new retry assertion was inserted in a fixture transaction before the normal Balod request had been created/received; it therefore saw zero movements/events. The database was correctly enforcing transaction isolation. Moved the retry assertion into the existing storekeeper transaction immediately after the actual partial and final receipt operations, before the transaction closes. Latest contract commit `8cda6d1`; re-fetched file to confirm the assertion is inside the real receipt flow. CI pending.
+
+- CI run `42400418038` passed Node 18/22/24 but PostgreSQL failed at the later storekeeper scope assertion (expected one Balod request, got two). The negative approval fixture had not been rolled back. Added and re-fetched an explicit `ROLLBACK` immediately after the negative test, before the normal Balod recommendation is created. Latest test commit `d4b6ba0`; CI for this exact head not yet returned.
