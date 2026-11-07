@@ -169,3 +169,28 @@ test('review validator rejects changed source text, missing PDF check and mismat
   assert.ok(result.errors.some(error => error.code === 'review_timestamp_required'));
   assert.ok(result.errors.some(error => error.code === 'candidate_facility_applicability_mismatch'));
 });
+
+
+test('rendered EDL review queue covers all 278 rows without authorizing clinical use', () => {
+  const queue = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json'), 'utf8'));
+  assert.equal(queue.entries.length, 278);
+  assert.ok(queue.entries.every(entry => entry.sourcePdfChecked === true));
+  assert.ok(queue.entries.every(entry => entry.sourceTextLayerChecked === true));
+  assert.ok(queue.entries.every(entry => entry.reviewStatus === 'pending_authorised_review'));
+  assert.ok(queue.entries.every(entry => entry.reviewer === null && entry.reviewedAt === null));
+  assert.equal(queue.summary.renderedPdfCheckedRows, 278);
+  assert.equal(queue.summary.sourceTextMatchedRows, 278);
+  assert.equal(queue.summary.sourceTextMismatchRows, 0);
+  assert.equal(queue.entries.filter(entry => entry.candidateItems.length > 0).length, 0);
+  assert.equal(queue.import_policy.safe_to_import_to_live, false);
+  assert.equal(queue.import_policy.safe_for_stock_or_prescribing, false);
+});
+
+test('source annotation register preserves highlights and caveats without normalizing them', () => {
+  const annotations = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-source-annotations.json'), 'utf8'));
+  assert.equal(annotations.highlightedSpans.length, 7);
+  assert.ok(annotations.sourceNotes.length >= 20);
+  assert.deepEqual(annotations.asteriskMarkedRows.phc_phc_aam_uphc, [11, 29, 33, 42, 50, 51, 61, 141]);
+  assert.deepEqual(annotations.asteriskMarkedRows.shc_aam, [14, 15]);
+  assert.ok(annotations.provenanceLimitations.length >= 3);
+});
