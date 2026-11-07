@@ -233,3 +233,13 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - **Live environment unchanged:** no migration applied to connected Supabase, no Edge Function deployed, no accounts or facilities created. `public.facilities` remains empty. Production domain remains on `main`.
 - **Data gate:** no authoritative current Chhattisgarh facility export has been received. The UI accepts a dated source export, but no import should be started with the older AAM snapshot or an unverified DPDMIS name list. Use the source assessment in `docs/facility-registry-source-review.md`.
 - **Next:** get a green CI run on the latest branch head; have the state provide a dated DHS/NHM/CGMSC export with stable IDs and LGD codes; run the staging validator; review mapping flags; only then schedule a separately approved live schema migration and deploy the Edge Function with exact production/preview origins.
+
+
+## Part 2C.2 — role, responsibility and permission blueprint (implementation checkpoint)
+
+- Added `docs/role-responsibility-permission-blueprint.md` as the product/engineering contract for the Chhattisgarh reference implementation.
+- Separates Auth identity, generic application role, cadre/designation, facility assignment, geographic scope and task capability. This avoids incorrectly turning CHO/ANM/MPW/ASHA/Pharmacist/MO into interchangeable permission roles.
+- Documents evidence labels (source-confirmed, implemented in code, validate locally, future approval required), the responsibility matrix, server-side access rules, report/stock hand-offs, synthetic/reference data classification and a narrow Dhamtari reference slice.
+- Explicitly keeps Jan Aushadhi separate from AAM/CGMSC facilities and stock. Calls out that current schema lacks AAM-PHC distinction and a delegated MO/facility-head capability; these are gaps, not permissions to infer.
+- Captures local validation questions and implementation sequence 2C.3 → 2D → 2E → 2F → 2G → 2H. No connected Supabase schema, users, data or deployment changed.
+- This is a documentation checkpoint; it does not assert field validation or live workflow readiness. The next coding step is 2C.3 policy/schema alignment, preceded by tests and a review of current RLS draft visibility.
