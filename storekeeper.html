@@ -24,10 +24,15 @@
 <div id="storekeeper-summary" class="storekeeper-summary" aria-live="polite"></div>
 <div class="module-card"><div class="module-card-head"><div><h2>Replenishment requests</h2><p>All records are fetched through authenticated database policies.</p></div><button class="btn btn-quiet" id="storekeeper-refresh" type="button">Refresh</button></div><div id="storekeeper-message" aria-live="polite"></div></div>
 <div id="storekeeper-requests" aria-live="polite"><p class="empty-state">Sign in to load requests.</p></div>
+<section class="module-card" aria-labelledby="inventory-reconciliation-title">
+  <div class="module-card-head"><div><h2 id="inventory-reconciliation-title">Inventory reconciliation</h2><p>Facility-scoped observations and inbound receipt ledger, shown separately.</p></div><button class="btn btn-quiet" id="inventory-reconciliation-refresh" type="button">Refresh inventory</button></div>
+  <div id="inventory-reconciliation-message" aria-live="polite"></div>
+  <div id="inventory-reconciliation-list"><p class="empty-state">Sign in to load inventory evidence.</p></div>
+</section>
 <p class="muted-copy">BUSHO records external references supplied by authorised staff. It does not place orders, dispatch medicines or connect to DPDMIS automatically. Stock movements shown here are receipt records, not independently verified physical stock balances.</p>
 </main>
 </section>
-<script src="supabase-config.js?v=1"></script><script src="supabase-client.js?v=9"></script>
+<script src="supabase-config.js?v=1"></script><script src="supabase-client.js?v=10"></script>
 <script src="portal-auth-policy.js?v=1"></script><script src="role-auth.js?v=8"></script>
-<script src="storekeeper-portal.js?v=1"></script>
+<script src="storekeeper-portal.js?v=2"></script>
 </body></html>
