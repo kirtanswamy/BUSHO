@@ -500,3 +500,5 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Updated `20261107233000_busho_inventory_movement_ledger.sql` to explicitly revoke all table privileges from PUBLIC, anon and authenticated, then grant authenticated SELECT only. The receipt trigger remains SECURITY DEFINER; service_role receives explicit CRUD only when that role exists in the target environment.
 - Existing PostgreSQL contract already attempts to mutate an inbound movement and expects rejection. This should now fail closed at the privilege boundary.
 - Migration commit `e2031d4`; CI pending. No live migration or production change.
+
+- Follow-up CI `42404846423` showed the immutability assertion itself was running as the privileged test owner, not as `authenticated`; the UPDATE therefore succeeded because the test was not exercising the intended role. Moved UPDATE/DELETE attempts into a dedicated transaction with `SET LOCAL ROLE authenticated`, while preserving the read-only owner audit separately. Latest test commits `bda18ee` then `56b32d5` (removed redundant COMMIT after ROLLBACK). CI pending.
