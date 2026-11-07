@@ -145,6 +145,7 @@ India and Chhattisgarh have existing health-information and medicine-supply init
 | Worker report submission adapter, server-backed history and correction resumption | Real two-worker / two-supervisor, two-facility end-to-end validation |
 | Supervisor inbox, report detail, review decisions and append-only event timeline | Live supervisor workflow demonstration with provisioned accounts |
 | Administrator provisioning policy, invitation service code and gated admin workspace | Deployment and live verification of the `provision-user` Edge Function |
+| Facility registry staging, batch review, scoped verification and audit RPCs in the development migration | Live schema migration, deployed `facility-registry` Edge Function and a current official Chhattisgarh facility export |
 | Dated PMBJK reference snapshots kept separate from AAM / CGMSC | Live Kendra locations and external government API integrations |
 | Mock, rule-based extraction with human correction | Production AI inference or clinical validation |
 | Browser-native voice input and six interface languages | Native-speaker validation and a BUSHO-operated transcription service |
