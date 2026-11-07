@@ -544,3 +544,18 @@ No live Supabase changes, real user provisioning, operational data entry, produc
 - Created Vercel preview deployment for commit `fd45ef3`: READY. HTTP smoke check returned 200 for landing, worker, supervisor, storekeeper and admin pages; the storekeeper page's script/style assets all returned 200. This deployment predates the last pure-state-machine retry adjustment and final asset cache-key edits, so a fresh preview is required for the final head.
 - Added `docs/stock-accounting-design.md` describing the candidate ledger invariant, required event provenance and controls, and explicit local authority decisions required before balance calculations. No unapproved stock ledger schema or live balance engine was invented.
 - No live Supabase migration, operational account provisioning, production deployment, or PR merge.
+
+
+## Part 2G.5 — final engineering checkpoint — 2026-11-08
+
+- CI run `42407415114` for documentation head `389e142` passed all four jobs: Node 18, Node 22, Node 24 and PostgreSQL 17 database contract. The added workflow-core authorization parity, receipt replay no-op, storekeeper inventory controller tests and prior RLS/migration assertions are green.
+- Preview `busho-1bdlll948-saturn-789b.vercel.app` for `fd45ef3` was READY and its landing, worker, supervisor, storekeeper and admin HTML pages returned HTTP 200; assets checked for the storekeeper page also returned 200. It predates the last asset-cache-busting and pure state-machine retry commits.
+- Attempt to create a preview for current branch head `389e142` was rejected by Vercel with HTTP 402: free API deployments limit exceeded (retry after 24 hours). No plan/billing setting changed. The existing preview is not represented as the latest build.
+- Latest engineering work is committed on the feature branch. The final PR documentation commit will trigger another CI run.
+
+### Non-engineering / owner-gated blockers that cannot be fabricated
+1. **Live Auth test identities and browser workflow:** create approved synthetic worker, supervisor and storekeeper accounts with separate facility scopes in a non-production Supabase environment. No test credentials were provided and no live users were created. CI exercises DB RLS with synthetic auth identities; it is not a browser session test.
+2. **Facility registry:** obtain a dated official Chhattisgarh DHS/NHM/CGMSC facility master and local verification of LGD/facility mappings. Existing candidate data is not assignable.
+3. **EDL clinical/catalogue review:** an authorized pharmacist/CGMSC reviewer must complete and sign the 278-row review template. Engineering cannot self-certify clinical content.
+4. **Stock accounting SOP:** obtain competent-authority decisions listed in `docs/stock-accounting-design.md` before implementing opening balances, outbound issues, transfers, adjustments or a balance engine.
+5. **Live migration/release:** require owner approval, migration rehearsal, backup/rollback plan, approved data, real user provisioning, security review and monitoring. Live Supabase and production remain untouched; PR #5 remains draft/open.
