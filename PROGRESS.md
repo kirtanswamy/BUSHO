@@ -254,3 +254,15 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - No cadre field or new cadre-based permissions were added: CHO/ANM/MPW/ASHA/pharmacist/MO remain descriptive workforce designations pending local validation, not authorisation roles.
 - **Status:** implementation committed; the latest branch commit has not yet produced a visible CI run at the time of this note. Do not call this migration validated until Node 18/22/24, PostgreSQL 17 contract and smoke checks pass.
 - **Live environment unchanged:** no connected Supabase migration, user, facility, report, Edge Function deployment or production release was changed.
+
+
+## Part 2D — versioned medicine reference catalogue (foundation checkpoint)
+
+- Located the official Chhattisgarh Health & Family Welfare Department **Essential Drug List 2025**, notified 12-Nov-2025 and published through DPDMIS. Annexure 4 covers PHC/PHC-AAM/UPHC (172 numbered entries, printed pages 47–52); Annexure 5 covers SHC-AAM (106 numbered entries, pages 53–56).
+- Added `supabase/migrations/20261107200000_medicine_reference_catalogue.sql`: versioned source releases, verbatim source entries, explicit facility-level scope, source page/row provenance, nullable normalized fields, and optional reference link from existing facility-specific inventory items.
+- Catalogue tables are authenticated read-only to browser roles; trusted service-side ingestion is required for writes. Reference entries do not imply stock, dispensing, procurement, clinical recommendation or actual facility applicability.
+- Added `data/medicine-catalogue/chhattisgarh-edl-2025-sample.json`: 12 PHC-AAM/UPHC and 12 SHC-AAM rows, with original row/page/category/descriptions. `sampleOnly: true` makes the incomplete status explicit; full annexures have not been transcribed.
+- Added catalogue schema/sample tests and PostgreSQL contract fixtures verifying reference reads and optional inventory-item linking. CI now applies the catalogue migration after the previous migrations.
+- **Verification pending:** latest CI run for the new migration and PostgreSQL contract has not yet been observed. Do not describe the migration as CI-verified until the matrix and PostgreSQL 17 job pass.
+- **Live environment unchanged:** no connected Supabase migration, medicine rows, inventory rows, stock balances, facility mappings, DPDMIS transactions, Edge Function deployment or production release.
+- Next substage: complete the exact 172/106 source transcription, reconcile every row and footnote against the PDF, then obtain pharmacist/CGMSC review before normalizing formulations, units, local item codes or facility applicability.
