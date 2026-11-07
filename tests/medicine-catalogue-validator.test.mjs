@@ -127,10 +127,11 @@ test('review validator requires source evidence and organization-confirmed revie
       printedPage: source.sourcePage,
       sourceDescription: source.sourceDescription,
       sourcePdfChecked: true,
+      reviewedAt: '2026-11-07T12:00:00Z',
       reviewStatus: 'reference_mapping_approved',
       rowInterpretation: 'single_item',
       evidenceNote: 'Compared against the rendered source page and reviewed by the authorized pharmacist.',
-      candidateItems: [{ normalizedName: 'Example item', dosageForm: 'gas', strength: 'source states oxygen gas', stockUnit: 'cylinder', facilityApplicability: 'phc_aam' }]
+      candidateItems: [{ normalizedName: 'TEST FIXTURE ONLY', dosageForm: 'test-only', strength: 'test-only', stockUnit: 'test-only', facilityApplicability: 'phc_aam' }]
     }]
   };
   const result = validateMedicineReviewBatch(batch, [phcTranscription, shcTranscription]);
@@ -159,5 +160,6 @@ test('review validator rejects changed source text, missing PDF check and mismat
   assert.ok(result.errors.some(error => error.code === 'reviewer_authority_not_confirmed'));
   assert.ok(result.errors.some(error => error.code === 'source_description_mismatch'));
   assert.ok(result.errors.some(error => error.code === 'rendered_pdf_check_required'));
+  assert.ok(result.errors.some(error => error.code === 'review_timestamp_required'));
   assert.ok(result.errors.some(error => error.code === 'candidate_facility_applicability_mismatch'));
 });
