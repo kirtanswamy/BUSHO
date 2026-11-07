@@ -24,7 +24,7 @@ test('PostgreSQL integration contract exercises worker, supervisor, admin and st
   const sql = read('tests/postgres-rls-contract.sql');
   for (const value of [
     'worker_report_created',
-    'worker_report_submitted',
+    'submitted',
     'supervisor_verified',
     'report_fields_updated',
     'recommended_to_facility_store',
