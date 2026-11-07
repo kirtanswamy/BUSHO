@@ -101,9 +101,9 @@ test('Chhattisgarh administrative and PMBJK reference data retain dated provenan
 
 test('report field edits and review-note changes are captured in the append-only timeline', () => {
   const sql = loadMigration();
-  assert.match(sql, /new\\.summary is distinct from old\\.summary/i);
+  assert.match(sql, /new\.summary is distinct from old\.summary/i);
   assert.match(sql, /report_fields_updated/i);
-  assert.match(sql, /after insert or update of status,\\s*summary,\\s*review_note,\\s*worker_response_note on public\\.reports/i);
+  assert.match(sql, /after insert or update of status,\s*summary,\s*review_note,\s*worker_response_note on public\.reports/i);
 });
 
 test('indent reviewer attribution and recorded external references cannot be silently rewritten', () => {
@@ -121,18 +121,18 @@ test('indent reviewer attribution and recorded external references cannot be sil
     'dispatch_reference',
     'data_mode'
   ]) {
-    assert.match(guard, new RegExp('old\\\\.' + field + ' is distinct from new\\\\.' + field + '|new\\\\.' + field + ' is distinct from old\\\\.' + field, 'i'), field + ' must be immutable after it is recorded');
+    assert.match(guard, new RegExp('old\\.' + field + ' is distinct from new\\.' + field + '|new\\.' + field + ' is distinct from old\\.' + field, 'i'), field + ' must be immutable after it is recorded');
   }
   const grantsStart = sql.indexOf('revoke all privileges on all tables in schema public');
   const grantsEnd = sql.indexOf('-- 7. Row-level policies', grantsStart);
   const grants = sql.slice(grantsStart, grantsEnd);
-  assert.doesNotMatch(grants, /grant update \\([^)]*reviewed_by_user_id/i);
-  assert.doesNotMatch(grants, /grant update \\([^)]*reviewed_at_user/i);
+  assert.doesNotMatch(grants, /grant update \([^)]*reviewed_by_user_id/i);
+  assert.doesNotMatch(grants, /grant update \([^)]*reviewed_at_user/i);
 });
 
 test('default privileges do not expose future public tables or functions to browser roles', () => {
   const sql = loadMigration();
-  assert.match(sql, /alter default privileges for role postgres in schema public[\\s\\S]*?revoke select, insert, update, delete on tables from anon, authenticated/i);
+  assert.match(sql, /alter default privileges for role postgres in schema public[\s\S]*?revoke select, insert, update, delete on tables from anon, authenticated/i);
   assert.match(sql, /alter default privileges for role postgres in schema public[\\s\\S]*?revoke execute on functions from anon, authenticated, public/i);
   assert.match(sql, /alter default privileges for role postgres in schema public[\\s\\S]*?revoke usage, select on sequences from anon, authenticated/i);
 });
