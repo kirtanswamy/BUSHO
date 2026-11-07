@@ -66,3 +66,19 @@ The database has RLS and workflow guards. The application must rely on those ser
 - Canonical branch: `feature/chhattisgarh-operational-workflow`
 - Existing draft PR: #5 (keep draft and unmerged while this milestone is in progress).
 - No code or database mutations have been made as part of this review itself.
+
+## Part 2B.1 implementation checkpoint — 2026-11-07
+
+The first integration-boundary code has now been committed on the canonical feature branch:
+
+- `report-persistence.js` maps the existing worker extraction tables into the actual database contract:
+  - condition rows → `symptom_trend`
+  - medicine rows → `stock_observation`
+  - uncertain/worker-entered values remain `requires_review = true`; extraction confidence is not fabricated.
+  - source phrases and extraction context are preserved in `value_text`; the original narrative remains in `reports.original_text`.
+- `supabase-client.js` now has `updateReportDraft` and `replaceReportItems`.
+- `replaceReportItems` uses delete-then-insert while the report remains an editable draft/correction. The live RLS policy explicitly limits worker item deletion/insertion to their own report in `draft` or `correction_requested`; this was checked read-only against the live project.
+- The persistence coordinator requires a callback to save the returned report ID before item writes, resumes an existing report ID rather than creating a duplicate, updates the source narrative on correction, and does not return success unless the server confirms submission.
+- Added unit tests for database mapping, validation, ordering, saved-ID checkpoint, correction resume, safe item replacement and failure paths.
+
+**Important:** This is the tested persistence boundary, not yet a completed portal integration. The worker UI still needs to call it and show truthful pending/success/error states. Supervisor UI integration and live multi-user verification remain later parts. GitHub Actions/Vercel checks for the latest commit have not yet been confirmed green at this checkpoint.
