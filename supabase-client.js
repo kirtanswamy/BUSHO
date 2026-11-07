@@ -487,7 +487,11 @@
         'replenishment_requests?id=eq.' + encodeURIComponent(input.id),
         { method: 'PATCH', body: payload, prefer: 'return=representation' }
       );
-      return Array.isArray(rows) ? (rows[0] || null) : rows;
+      const updated = Array.isArray(rows) ? (rows[0] || null) : rows;
+      if (!updated) {
+        throw new Error('The request was not updated. It may be outside your facility scope or the workflow transition may not be permitted.');
+      }
+      return updated;
     }
 
     async function listProvisioningOptions() {
