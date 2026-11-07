@@ -56,6 +56,10 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107060000_busho_database_query_tuning.sql
+      - name: Apply BUSHO supervisor report-item correction migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107051839_busho_supervisor_report_item_corrections.sql
       - name: Verify worker, supervisor, admin and stock workflows under RLS
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
