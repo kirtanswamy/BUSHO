@@ -25,7 +25,18 @@ create index if not exists inventory_movements_request_created_idx
   on public.inventory_movements(replenishment_request_id, created_at);
 
 alter table public.inventory_movements enable row level security;
+-- The ledger is append-only and populated only by the SECURITY DEFINER receipt
+-- trigger. Explicitly revoke browser write privileges even if a legacy
+-- bootstrap/default grant would otherwise expose them.
+revoke all on public.inventory_movements from public, anon, authenticated;
 grant select on public.inventory_movements to authenticated;
+do $grant_service_role$
+begin
+  if exists (select 1 from pg_roles where rolname = 'service_role') then
+    grant select, insert, update, delete on public.inventory_movements to service_role;
+  end if;
+end;
+$grant_service_role$;
 
 create policy inventory_movements_scoped_select on public.inventory_movements
   for select to authenticated
