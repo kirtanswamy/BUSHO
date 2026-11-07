@@ -6,7 +6,8 @@ insert into auth.users (id, raw_user_meta_data) values
   ('22222222-2222-4222-8222-222222222222', '{"full_name":"Synthetic Worker B"}'),
   ('33333333-3333-4333-8333-333333333333', '{"full_name":"Synthetic Supervisor"}'),
   ('44444444-4444-4444-8444-444444444444', '{"full_name":"Synthetic State Admin"}'),
-  ('55555555-5555-4555-8555-555555555555', '{"full_name":"Synthetic District Admin"}');
+  ('55555555-5555-4555-8555-555555555555', '{"full_name":"Synthetic District Admin"}'),
+  ('66666666-6666-4666-8666-666666666666', '{"full_name":"Synthetic Supervisor B"}');
 
 update public.profiles
 set role = case id
@@ -15,6 +16,7 @@ set role = case id
   when '33333333-3333-4333-8333-333333333333' then 'supervisor'
   when '44444444-4444-4444-8444-444444444444' then 'state_admin'
   when '55555555-5555-4555-8555-555555555555' then 'district_admin'
+  when '66666666-6666-4666-8666-666666666666' then 'supervisor'
 end,
 status = 'active'
 where id in (
@@ -22,7 +24,8 @@ where id in (
   '22222222-2222-4222-8222-222222222222',
   '33333333-3333-4333-8333-333333333333',
   '44444444-4444-4444-8444-444444444444',
-  '55555555-5555-4555-8555-555555555555'
+  '55555555-5555-4555-8555-555555555555',
+  '66666666-6666-4666-8666-666666666666'
 );
 
 insert into public.facilities
@@ -63,7 +66,8 @@ insert into public.user_scope_assignments
 values
   ('33333333-3333-4333-8333-333333333333', 'block', '22', '377', '3625', 'supervisor'),
   ('44444444-4444-4444-8444-444444444444', 'state', '22', null, null, 'state_admin'),
-  ('55555555-5555-4555-8555-555555555555', 'district', '22', '377', null, 'district_admin');
+  ('55555555-5555-4555-8555-555555555555', 'district', '22', '377', null, 'district_admin'),
+  ('66666666-6666-4666-8666-666666666666', 'block', '22', '646', '3629', 'supervisor');
 
 insert into public.medicine_catalogue_releases
   (id, catalogue_code, catalogue_name, state_lgd_code, source_authority, source_date,
@@ -352,6 +356,49 @@ begin
   select count(*) into v_count from public.replenishment_requests;
   if v_count <> 0 then raise exception 'Worker B can see another worker facility indent'; end if;
 end $$;
+commit;
+
+-- Supervisor B is assigned only to Balod. They can review Worker B's report,
+-- but cannot see or mutate Worker A's Dhamtari report.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '66666666-6666-4666-8666-666666666666', true);
+do $supervisor_b_scope_check$
+declare
+  v_count integer;
+  v_updated integer;
+begin
+  select count(*) into v_count from public.reports;
+  if v_count <> 1 then
+    raise exception 'Supervisor B report scope leak: expected 1, got %', v_count;
+  end if;
+  select count(*) into v_count from public.reports
+  where original_text = 'worker_report_created synthetic second facility';
+  if v_count <> 1 then
+    raise exception 'Supervisor B must see Worker B report only; got %', v_count;
+  end if;
+  select count(*) into v_count from public.reports
+  where original_text = 'worker_report_created synthetic aggregate only';
+  if v_count <> 0 then
+    raise exception 'Supervisor B can read Worker A report from another facility';
+  end if;
+
+  update public.reports
+  set status = 'supervisor_verified'
+  where original_text = 'worker_report_created synthetic aggregate only';
+  get diagnostics v_updated = row_count;
+  if v_updated <> 0 then
+    raise exception 'Supervisor B unexpectedly updated Worker A report';
+  end if;
+
+  update public.reports
+  set status = 'supervisor_verified', review_note = 'Worker B report reviewed in synthetic CI test'
+  where original_text = 'worker_report_created synthetic second facility';
+  get diagnostics v_updated = row_count;
+  if v_updated <> 1 then
+    raise exception 'Supervisor B could not verify the report in their assigned facility';
+  end if;
+end $supervisor_b_scope_check$;
 commit;
 
 -- District admin sees Dhamtari only; state admin sees both facilities.
