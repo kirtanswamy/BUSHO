@@ -53,6 +53,9 @@ test('valid facility candidate is staged as needs_review, never auto-verified', 
   assert.equal(result.records[0].verification_status, 'needs_review');
   assert.equal(result.records[0].is_synthetic, false);
   assert.equal(result.records[0].is_active, true);
+  assert.equal(result.records[0].safe_to_assign, false);
+  assert.equal(result.import_policy.mode, 'staging_only');
+  assert.equal(result.import_policy.safe_to_assign, false);
   assert.equal(result.provenance.source_url, options.sourceUrl);
 });
 
