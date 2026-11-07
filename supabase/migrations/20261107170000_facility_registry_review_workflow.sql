@@ -252,6 +252,12 @@ begin
       status = 'reviewing'
   where id = p_batch_id;
 
+  insert into public.audit_logs (actor_worker_id,action,entity_type,entity_id,metadata)
+  values (null,'facility_registry_candidates_staged','facility_registry_import_batch',p_batch_id,
+    jsonb_build_object('actor_id',p_actor_id,'staged_rows',v_inserted,
+      'source_row_min',(select min((x->>'source_row')::integer) from jsonb_array_elements(p_candidates) x),
+      'source_row_max',(select max((x->>'source_row')::integer) from jsonb_array_elements(p_candidates) x)));
+
   return jsonb_build_object('batchId',p_batch_id,'staged',v_inserted);
 end;
 $$;
@@ -464,6 +470,10 @@ begin
   update public.facility_registry_import_batches
   set status = 'completed', completed_at = now()
   where id = p_batch_id;
+  insert into public.audit_logs (actor_worker_id,action,entity_type,entity_id,metadata)
+  values (null,'facility_registry_batch_completed','facility_registry_import_batch',p_batch_id,
+    jsonb_build_object('actor_id',p_actor_id,'verified_rows',v_batch.verified_rows,
+      'rejected_rows',v_batch.rejected_rows,'received_rows',v_batch.received_rows));
   return jsonb_build_object('batchId',p_batch_id,'status','completed');
 end;
 $$;
