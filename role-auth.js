@@ -6,7 +6,9 @@
   const portalKind = page.dataset.portalRole;
   const allowedRoles = portalKind === 'worker'
     ? ['worker']
-    : ['supervisor', 'district_admin', 'state_admin'];
+    : portalKind === 'admin'
+      ? ['platform_admin', 'state_admin', 'district_admin']
+      : ['supervisor', 'district_admin', 'state_admin'];
 
   const login = document.getElementById('portal-login');
   const app = document.getElementById('portal-app');
@@ -48,7 +50,7 @@
       app.setAttribute('aria-hidden', 'false');
     }
     if (sessionLabel) {
-      const label = portalKind === 'worker' ? 'Health worker workspace' : 'Operations workspace';
+      const label = portalKind === 'worker' ? 'Health worker workspace' : portalKind === 'admin' ? 'Administrator workspace' : 'Operations workspace';
       sessionLabel.textContent = profile.display_name
         ? 'Signed in as ' + profile.display_name + ' · ' + label
         : 'Signed in · ' + label;
