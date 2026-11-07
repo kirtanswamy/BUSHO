@@ -164,6 +164,6 @@ test('workers can edit structured report items on drafts and reports returned fo
     assert.ok(start >= 0, policy + ' policy must exist');
     const next = sql.indexOf('create policy ', start + 15);
     const body = sql.slice(start, next < 0 ? sql.length : next);
-    assert.match(body, /r\\.status in \\(\'draft\',\'correction_requested\'\\)/i, policy + ' must allow returned corrections');
+    assert.ok(body.includes("r.status in ('draft','correction_requested')"), policy + ' must allow returned corrections');
   }
 });
