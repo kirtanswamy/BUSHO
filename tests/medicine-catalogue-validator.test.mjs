@@ -38,3 +38,14 @@ test('medicine source validator rejects guessed normalized fields and incomplete
   falselyComplete.sampleOnly = false;
   assert.ok(validateMedicineCatalogue(falselyComplete).errors.some(error => error.code === 'sample_status_missing'));
 });
+
+test('medicine source validator checks exact printed-page mapping and refuses incomplete full-release claims', () => {
+  const wrongPage = structuredClone(sample);
+  wrongPage.entries.find(entry => entry.facilityLevel === 'phc_aam' && entry.sourceItemNumber === 66).sourcePage = 50;
+  assert.ok(validateMedicineCatalogue(wrongPage).errors.some(error => error.code === 'source_page_item_mismatch'));
+
+  const claimedComplete = structuredClone(sample);
+  claimedComplete.sampleOnly = false;
+  const result = validateMedicineCatalogue(claimedComplete);
+  assert.ok(result.errors.some(error => error.code === 'annexure_sequence_incomplete'));
+});
