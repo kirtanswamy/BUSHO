@@ -154,7 +154,7 @@ test('hierarchical admins can read records in their assigned scope without recei
 });
 
 test('role alignment migration keeps worker drafts private from supervisors and adds AAM-PHC taxonomy', () => {
-  const sql = loadMigration();
+  const sql = fs.readFileSync(path.join(migrationDir, '20261107190000_busho_role_policy_alignment.sql'), 'utf8');
   assert.match(sql, /status <> 'draft'[\s\S]*?has_facility_access/i);
   assert.match(sql, /'aam_phc'/i);
 });
