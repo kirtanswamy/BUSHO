@@ -195,3 +195,38 @@ test('reconciles a retry when the server already submitted the saved report', as
   assert.equal(result.alreadySubmitted, true);
   assert.equal(result.report.status, 'submitted');
 });
+
+test('rehydrates a returned report into editable worker extraction tables without losing source phrases', () => {
+  const stored = [
+    {
+      item_type: 'symptom_trend',
+      display_label: 'Fever',
+      quantity: 4,
+      unit: 'patients',
+      value_text: JSON.stringify({ source_phrase: '4 people with fever', count_status: 'Supervisor asked to verify count' }),
+      requires_review: true
+    },
+    {
+      item_type: 'stock_observation',
+      display_label: 'ORS',
+      quantity: 12,
+      unit: 'packets',
+      value_text: JSON.stringify({ mentioned_as: 'ORS packets', source_phrase: '12 ORS packets left', stock_status: 'Supervisor asked to verify stock', possible_spelling_correction: false }),
+      requires_review: true
+    }
+  ];
+  const draft = persistence.fromDatabaseItems(stored, '4 people with fever; 12 ORS packets left');
+  assert.equal(draft.length, 3);
+  assert.equal(draft[0].id, 'disease-table');
+  assert.equal(draft[0].rows[0].patients, '4');
+  assert.equal(draft[0].rows[0].countStatus, 'Supervisor asked to verify count');
+  assert.equal(draft[0].rows[0].sourcePhrase, '4 people with fever');
+  assert.equal(draft[1].id, 'medicine-table');
+  assert.equal(draft[1].rows[0].quantity, '12');
+  assert.equal(draft[1].rows[0].unit, 'packets');
+  assert.equal(draft[1].rows[0].mentionedAs, 'ORS packets');
+  assert.equal(draft[1].rows[0].sourcePhrase, '12 ORS packets left');
+  assert.equal(draft[2].value, '4 people with fever; 12 ORS packets left');
+  assert.equal(draft[0].confidence, 'review');
+  assert.equal(draft[1].confidence, 'review');
+});
