@@ -153,6 +153,7 @@ try {
   console.log('\n[role portals]');
   const workerPage = await rawGet('/worker.html');
   const supervisorPage = await rawGet('/supervisor.html');
+  const adminPage = await rawGet('/admin.html');
   check(workerPage.status === 200 && workerPage.body.includes('data-portal-role=\"worker\"'), 'health worker portal route is served with worker role');
   check(supervisorPage.status === 200 && supervisorPage.body.includes('data-portal-role=\"supervisor\"'), 'supervisor portal route is served with supervisor role');
   check(!workerPage.body.includes('@busho.demo') && workerPage.body.includes('your registered email'), 'worker portal does not expose synthetic login credentials');
@@ -166,8 +167,8 @@ try {
   check(supervisorPage.body.includes('data-module="overview"') && supervisorPage.body.includes('supervisor-operations.js'), 'supervisor overview mounts the authenticated live operations workspace');
 
   console.log('\n[assets]');
-  const pages = [index.body, workerPage.body, supervisorPage.body];
-  const allPageBodies = [index.body, workerPage.body, supervisorPage.body];
+  const pages = [index.body, workerPage.body, supervisorPage.body, adminPage.body];
+  const allPageBodies = [index.body, workerPage.body, supervisorPage.body, adminPage.body];
   const allRefs = [...new Set(allPageBodies.flatMap(localRefs))];
   for (const ref of allRefs) {
     const r = await rawGet(ref);
