@@ -462,7 +462,7 @@
 
     async function listMyReplenishments() {
       return restRequest(
-        'replenishment_requests?select=*,replenishment_events(*),inventory_movements(*)&order=created_at.desc'
+        'replenishment_requests?select=*,inventory_items(name,unit),replenishment_events(*),inventory_movements(*)&order=created_at.desc'
       );
     }
 
