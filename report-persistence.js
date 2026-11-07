@@ -98,6 +98,14 @@
     if (options.reportId) {
       report = await client.getReport(options.reportId);
       if (!report) throw new Error('The saved report draft could not be found. No new report was created.');
+      if (['submitted', 'resubmitted', 'supervisor_verified', 'closed'].includes(report.status)) {
+        return {
+          report,
+          itemCount: Array.isArray(report.report_items) ? report.report_items.length : items.length,
+          summary,
+          alreadySubmitted: true
+        };
+      }
       if (!['draft', 'correction_requested'].includes(report.status)) {
         throw new Error('This report is no longer editable. Refresh its current status before continuing.');
       }
