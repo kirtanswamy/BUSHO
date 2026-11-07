@@ -64,6 +64,69 @@ revoke all privileges on public.facility_registry_candidates from anon, authenti
 grant all privileges on public.facility_registry_import_batches to service_role;
 grant all privileges on public.facility_registry_candidates to service_role;
 
+create or replace function app_private.create_facility_registry_import_batch(
+  p_actor_id uuid,
+  p_source_authority text,
+  p_source_date date,
+  p_source_url text,
+  p_expected_rows integer
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = pg_catalog, public, app_private
+as $
+declare
+  v_profile public.profiles%rowtype;
+  v_batch public.facility_registry_import_batches%rowtype;
+begin
+  if p_actor_id is null
+    or length(btrim(coalesce(p_source_authority,''))) not between 3 and 160
+    or p_source_date is null or p_source_date > current_date
+    or coalesce(p_source_url,'') !~* '^https://'
+    or p_expected_rows is null or p_expected_rows not between 1 and 10000 then
+    raise exception using errcode = '22023', message = 'Facility import source metadata or expected row count is invalid.';
+  end if;
+
+  select * into v_profile from public.profiles where id = p_actor_id for share;
+  if not found or v_profile.status <> 'active' or v_profile.role not in ('platform_admin','state_admin','district_admin') then
+    raise exception using errcode = '42501', message = 'An active authorised administrator is required.';
+  end if;
+  if v_profile.role = 'state_admin' and not exists (
+    select 1 from public.user_scope_assignments s
+    where s.user_id = p_actor_id and s.is_active and s.scope_level = 'state'
+      and s.scope_role = 'state_admin' and s.state_lgd_code = '22'
+      and s.valid_from <= now() and (s.valid_until is null or s.valid_until > now())
+  ) then
+    raise exception using errcode = '42501', message = 'An active Chhattisgarh state scope is required.';
+  end if;
+  if v_profile.role = 'district_admin' and not exists (
+    select 1 from public.user_scope_assignments s
+    where s.user_id = p_actor_id and s.is_active and s.scope_level = 'district'
+      and s.scope_role = 'district_admin' and s.state_lgd_code = '22'
+      and s.valid_from <= now() and (s.valid_until is null or s.valid_until > now())
+  ) then
+    raise exception using errcode = '42501', message = 'An active Chhattisgarh district scope is required.';
+  end if;
+
+  insert into public.facility_registry_import_batches
+    (source_authority,source_date,source_url,imported_by,expected_rows)
+  values (btrim(p_source_authority),p_source_date,btrim(p_source_url),p_actor_id,p_expected_rows)
+  returning * into v_batch;
+
+  insert into public.audit_logs (actor_worker_id,action,entity_type,entity_id,metadata)
+  values (null,'facility_registry_batch_created','facility_registry_import_batch',v_batch.id,
+    jsonb_build_object('actor_id',p_actor_id,'expected_rows',p_expected_rows,
+      'source_authority',btrim(p_source_authority),'source_date',p_source_date));
+
+  return jsonb_build_object('id',v_batch.id,'source_authority',v_batch.source_authority,
+    'source_date',v_batch.source_date,'source_url',v_batch.source_url,'status',v_batch.status,
+    'expected_rows',v_batch.expected_rows,'received_rows',v_batch.received_rows,
+    'verified_rows',v_batch.verified_rows,'rejected_rows',v_batch.rejected_rows,
+    'created_at',v_batch.created_at);
+end;
+$;
+
 create or replace function app_private.stage_facility_registry_candidates(
   p_batch_id uuid,
   p_actor_id uuid,
@@ -561,6 +624,19 @@ grant execute on function app_private.review_facility_registry_candidate(uuid,uu
 
 -- Public RPC wrappers are executable only by the service role. The implementation
 -- remains in app_private and cannot be called by browser-authenticated users.
+create or replace function public.create_facility_registry_import_batch(
+  p_actor_id uuid, p_source_authority text, p_source_date date, p_source_url text, p_expected_rows integer
+)
+returns jsonb
+language sql
+security definer
+set search_path = pg_catalog, public, app_private
+as $
+  select app_private.create_facility_registry_import_batch(
+    p_actor_id,p_source_authority,p_source_date,p_source_url,p_expected_rows
+  );
+$;
+
 create or replace function public.stage_facility_registry_candidates(
   p_batch_id uuid, p_actor_id uuid, p_candidates jsonb
 )
@@ -594,6 +670,8 @@ as $$
   select app_private.complete_facility_registry_batch(p_batch_id,p_actor_id);
 $$;
 
+revoke all on function public.create_facility_registry_import_batch(uuid,text,date,text,integer) from public, anon, authenticated;
+grant execute on function public.create_facility_registry_import_batch(uuid,text,date,text,integer) to service_role;
 revoke all on function public.stage_facility_registry_candidates(uuid,uuid,jsonb) from public, anon, authenticated;
 grant execute on function public.stage_facility_registry_candidates(uuid,uuid,jsonb) to service_role;
 revoke all on function public.review_facility_registry_candidate(uuid,uuid,text,text) from public, anon, authenticated;
