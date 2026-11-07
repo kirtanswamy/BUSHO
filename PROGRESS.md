@@ -344,3 +344,5 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Added `data/medicine-catalogue/chhattisgarh-edl-2025-source-annotations.json` with seven highlighted source spans, 23 source notes/conditions and the complete asterisk-marked row list from both annexures.
 - Added tests requiring the review queue to contain 278 visually/text-checked rows, with every row still pending authorised review, no reviewer assigned, no candidate normalized items, and live/stock/prescribing import gates closed.
 - Added tests for highlighted-span and source-note preservation.
+
+- Follow-up test-schema check: the review queue exposes its safety gates under `policy.safeToImportToLive` / `policy.safeForStockOrPrescribing` (not `import_policy`). The new assertions were aligned to the actual queue schema in commit `9150dc9`; latest-head CI must confirm them.
