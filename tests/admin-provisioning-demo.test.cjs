@@ -42,13 +42,19 @@ function element(id, tagName = 'div') {
       children.splice(0, children.length, ...items);
       if (tagName === 'select') this.value = items[0]?.value || '';
     },
-    querySelectorAll() { return []; },
+    querySelectorAll(selector) {
+      if (id === 'facility-options' && selector.startsWith('input[type="checkbox"]')) {
+        const inputs = children.flatMap(child => child.children || []).filter(child => child.type === 'checkbox');
+        return selector.includes(':checked') ? inputs.filter(input => input.checked) : inputs;
+      }
+      return [];
+    },
     querySelector() { return null; },
     reset() { this.wasReset = true; }
   };
 }
 
-function harness() {
+function harness(directory = { facilities: [], districts: [] }) {
   const ids = [
     'provision-role','facility-section','facility-options','facility-help',
     'district-section','provision-district','consent-section','provision-consent',
@@ -89,7 +95,7 @@ function harness() {
           return {
             async listProvisioningOptions() {
               calls.listOptions += 1;
-              return { facilities: [], districts: [] };
+              return directory;
             },
             async provisionUser(input) {
               calls.provision.push(input);
@@ -122,6 +128,48 @@ test('admin provisioning UI blocks facility-based invitations when verified faci
   await app.elements.get('provision-form').emit('submit');
   assert.equal(app.calls.provision.length, 0);
   assert.match(app.elements.get('provision-status').textContent, /No verified facility is available/i);
+});
+
+test('admin provisioning UI submits a worker invitation only with one verified facility and consent', async () => {
+  const facilityId = '11111111-1111-4111-8111-111111111111';
+  const app = harness({
+    facilities: [{
+      id: facilityId,
+      name: 'Synthetic Verified PHC',
+      state_lgd_code: '22',
+      district_lgd_code: '377',
+      block_lgd_code: '12345'
+    }],
+    districts: [{ lgd_code: '377', name: 'Synthetic District' }]
+  });
+  await app.document.dispatchEvent({ type: 'busho:authenticated',
+    detail: { profile: { id: 'synthetic-admin', role: 'platform_admin', status: 'active', display_name: 'Synthetic Admin' } }
+  });
+
+  const workerOption = app.elements.get('provision-role').children.find(option => option.value === 'worker');
+  assert.equal(workerOption.disabled, false);
+  app.elements.get('provision-role').value = 'worker';
+  const facilityCheckbox = app.elements.get('facility-options').children
+    .flatMap(label => label.children || []).find(child => child.type === 'checkbox');
+  assert.ok(facilityCheckbox);
+  facilityCheckbox.checked = true;
+
+  app.elements.get('provision-name').value = 'Synthetic Worker';
+  app.elements.get('provision-email').value = 'worker.synthetic@example.test';
+  app.elements.get('provision-language').value = 'hi';
+  app.elements.get('provision-consent').checked = true;
+  await app.elements.get('provision-form').emit('submit');
+
+  assert.equal(app.calls.provision.length, 1);
+  assert.deepEqual(JSON.parse(JSON.stringify(app.calls.provision[0])), {
+    email: 'worker.synthetic@example.test',
+    displayName: 'Synthetic Worker',
+    preferredLanguage: 'hi',
+    role: 'worker',
+    facilityIds: [facilityId],
+    consentConfirmed: true
+  });
+  assert.match(app.elements.get('provision-status').textContent, /Invitation created/i);
 });
 
 test('admin provisioning UI does not invent district options when directory is empty', async () => {
