@@ -101,6 +101,9 @@ test('supervisor controller renders scoped records and review controls without h
   assert.match(doc.modules.get('reports').innerHTML, /Awaiting review/);
   assert.match(doc.modules.get('reports').innerHTML, /data-open-report="report-1"/);
   assert.equal(controller.getState().reports.length, 1);
+  controller.selectReport('report-1');
+  assert.match(doc.modules.get('reports').innerHTML, /data-review-form/);
+  assert.match(doc.modules.get('reports').innerHTML, /supervisor_verified/);
 });
 
 test('non-supervisor scoped administrators see reports but receive no review controls', async () => {
