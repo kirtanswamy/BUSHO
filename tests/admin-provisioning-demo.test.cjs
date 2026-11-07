@@ -113,7 +113,11 @@ test('admin provisioning UI blocks facility-based invitations when verified faci
   assert.equal(app.calls.listOptions, 1);
   assert.match(app.elements.get('facility-readiness').textContent, /0 verified facilities/i);
   assert.match(app.elements.get('facility-help').textContent, /No assignable facilities/i);
-  assert.equal(app.elements.get('provision-role').value, 'worker');
+  const workerOption = app.elements.get('provision-role').children.find(option => option.value === 'worker');
+  assert.equal(workerOption.disabled, true, 'worker role must be disabled without verified facilities');
+  // Simulate a stale or manipulated form value to assert the submit handler
+  // independently refuses the invitation even if the disabled option is forced.
+  app.elements.get('provision-role').value = 'worker';
 
   await app.elements.get('provision-form').emit('submit');
   assert.equal(app.calls.provision.length, 0);
