@@ -176,7 +176,7 @@ The worker-side submit path is now connected to the persistence boundary:
 
 ### Tests and release boundary
 - Added admin portal integration tests, platform-admin provisioning client tests and static Edge Function security-contract tests. Smoke tests now serve and audit `admin.html` and all local assets.
-- CI run `42366667375` passed Node 18/22/24 and PostgreSQL 17 database-contract checks for the admin workspace and request parser. README follow-up runs `42366704102` / `42366708441` have Node checks green; their database-contract jobs were still completing when this checkpoint was written. The Edge Function security-contract test was added after those runs and needs a fresh CI pass.
+- CI run `42366805845` passed on commit `3ad63f8a106451363ba9e309ce00867d5dd15137`: Node 18/22/24 all green, 117 tests passed with zero failures, smoke checks green, and PostgreSQL 17 database-contract green. The initial CORS assertion mismatch was corrected before this run.
 - Supabase currently has zero Auth users, profiles, facilities, workers, assignments, reports and audit records. The project has zero deployed Edge Functions. The provisioning service has not been deployed or invoked.
 - Because there are no verified facility records, the admin UI disables worker/supervisor invitations rather than inventing facilities. No live invitation or account was created.
 - Vercel preview remains affected by the team build-rate-limit failure. Production domain remains on `main`; this development branch is still PR #5 draft.
