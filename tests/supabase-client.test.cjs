@@ -291,6 +291,7 @@ test('supervisor inbox query uses the authenticated profile and embeds report it
   assert.equal(rows[0].facilities.name, 'Facility A');
   assert.equal(calls.length, 2);
   assert.equal(calls[1].options.headers.Authorization, 'Bearer supervisor-token');
+  assert.ok(calls[1].url.includes('status=in.(submitted,resubmitted,supervisor_verified,correction_requested,escalated,rejected,closed)'));
   assert.ok(calls[1].url.includes('report_items(*)'));
   assert.ok(calls[1].url.includes('report_events(*)'));
   assert.ok(calls[1].url.includes('workers(display_name'));
