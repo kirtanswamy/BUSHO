@@ -195,15 +195,15 @@ values
   ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
    '10000000-0000-4000-8000-000000000002',
    current_date, 'worker_report_created synthetic second facility', 'en', 'draft', '{"source":"manual"}');
-update public.reports
-set status = 'submitted'
-where original_text = 'worker_report_created synthetic second facility';
-
 insert into public.report_items
   (report_id, item_type, item_code, display_label, quantity, unit, value_text, requires_review)
 select id, 'stock_observation', 'ORS', 'ORS packets', 8, 'packets',
        'Synthetic second-facility stock observation', true
 from public.reports
+where original_text = 'worker_report_created synthetic second facility';
+
+update public.reports
+set status = 'submitted'
 where original_text = 'worker_report_created synthetic second facility';
 
 do $
