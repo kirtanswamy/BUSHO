@@ -9,28 +9,28 @@ Production branch: unchanged
 
 ## Current state
 
-- The work is isolated on a feature branch. No merge to `main` has been performed.
-- Three foundational implementation commits are present, followed by CI/test hardening commits.
-- The report/indent state machine exists in `workflow-core.js`.
-- A sourced Chhattisgarh geography and PMBJK dataset exists in `data/chhattisgarh-directory.json`.
-- Supabase project `BUSHO` is connected to the feature branch. The live project has 23 public tables, RLS policies, Chhattisgarh geography and dated PMBJK reference snapshots.
-- Worker report submission is connected to Supabase Auth + the authenticated REST client and persists reports/items/events server-side. The browser-local per-user draft is recovery-only and is cleared after confirmed submission.
-- Supervisor report inbox, detail review, verify/return/escalate/reject/close actions, facility activity summaries and audit timeline are now being connected to the same Supabase report records. Latest implementation is awaiting CI verification.
-- Live project still has zero operational facilities, workers, Auth users and report records. Real multi-user workflow cannot be demonstrated until an authorised provisioning process creates the records and assignments.
-- No production health system, live government integration, procurement system or clinically validated workflow is claimed.
+- All work remains isolated on `feature/chhattisgarh-operational-workflow`; PR #5 is open as a draft and no merge to `main` has occurred.
+- The worker report workflow now persists authenticated reports, report items and events to Supabase. Per-user browser storage is recovery-only.
+- Worker report history, assigned-facility context and correction resumption are implemented in the feature branch; live use remains blocked because there are no provisioned users or operational facilities.
+- The supervisor workspace now reads the RLS-scoped server records and supports report review actions and audit timelines. Automated checks passed; live multi-user validation is still blocked on authorised provisioning.
+- Administrator-controlled provisioning and facility-registry review/staging workflows exist in the development branch. The provisioning and facility-registry Edge Functions have not been deployed to the connected Supabase project.
+- The Chhattisgarh EDL 2025 source catalogue has 278 verbatim rows with rendered-page/text reconciliation, a separate source-annotation register, review queue and pharmacist hand-off worksheet. All 278 rows remain pending authorised pharmacist/CGMSC review; normalization and live import remain disabled.
+- Connected Supabase still has zero operational Auth users, profiles, facilities, workers, assignments, reports and audit records. Do not create live users or operational data without an approved provisioning decision.
+- CI run `42395089510` passed Node 18/22/24 and PostgreSQL 17 database-contract/RLS checks for the EDL review-queue code/tests. Documentation-only commits followed; the latest README/progress documentation commits have no new CI run. The Vercel status on the latest README commit reports the team's build-rate limit, not a code result.
+- Production remains attached to `main`. No live Supabase migration, live catalogue import, Edge Function deployment or production release has been performed.
 
 ## Milestone tracker
 
 | Part | Scope | Status | Exit criteria |
 |---|---|---|---|
-| 0 | Repository, data-flow, role and product audit | Complete | Existing role portals, shared browser store, dashboard placeholders, auth and deployment limits documented |
-| 1 | Operational workflow foundation | Complete | CI green on Node 18/22/24; report permissions and corrections; indent approval; DPDMIS reference states; receipt guards; audit events |
-| 2 | Persistent backend and role security | Foundation complete; provisioning pending | Connected Supabase project; RLS/column grants; server-controlled roles; authenticated report persistence; live multi-user test still blocked on authorised account/facility provisioning |
-| 3 | Health worker portal | Submission connected; history/context pending | Worker can review extracted fields and submit to Supabase; next: server-backed history, supervisor return notes, resubmission and assigned-facility context |
-| 4 | Supervisor portal | First live inbox/review UI implemented; CI pending | RLS-scoped inbox, report detail, structured observations, database audit timeline, verify/return/escalate/reject/close; next: verify CI and run authenticated end-to-end workflow |
-| 5 | Inventory fulfilment | Not started | Indent → external system reference → allocation → dispatch/challan → partial/full receipt → stock ledger reconciliation |
-| 6 | Statewide coverage data | Partially sourced | 33 districts + LGD block master present; reconcile one duplicate parent mapping; import verified AAM register and sourced PMBJK locations/counts |
-| 7 | End-to-end demo/release | Not started | Worker-to-supervisor-to-store-to-receipt walkthrough, automated and manual browser tests, responsive audit, screenshots, preview deployment |
+| 0 | Repository, data-flow, role and product audit | Complete | Existing product, data-flow, roles and deployment boundaries documented |
+| 1 | Operational workflow foundation | Complete | Workflow transitions, explicit approval, external references, receipt guards and audit events covered by tests |
+| 2 | Persistent backend and role security | Foundation implemented; live provisioning and multi-user validation pending | Supabase Auth, RLS, column grants, authenticated report persistence and server-controlled role model; authorised users/facilities still required |
+| 3 | Health worker portal | Submission, server-backed history, facility context and correction resumption implemented; live E2E pending | Provisioned worker account and facility assignment; authenticated submit/reload/correction/resubmit verified |
+| 4 | Supervisor portal | RLS-scoped inbox and review workspace implemented; live E2E pending | Provisioned supervisor and worker identities; cross-facility isolation and review lifecycle verified against live approved test environment |
+| 5 | Inventory fulfilment | Workflow state-machine foundation exists; operational inventory/fulfilment UI and live hand-offs pending | Approved inventory source, role workflow, external DPDMIS references, allocation/dispatch/partial receipt and reconciliation |
+| 6 | Statewide coverage data | Geography and dated PMBJK snapshots sourced; assignable facility registry blocked | Resolve duplicate LGD parent mapping with live LGD; obtain dated authoritative Chhattisgarh facility master and complete human verification |
+| 7 | End-to-end demo/release | Not ready | Approved test identities and facilities, full worker-to-supervisor-to-store workflow, manual browser/security tests, preview and separate release approval |
 
 ## Implementation details already committed
 
