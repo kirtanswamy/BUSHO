@@ -464,6 +464,28 @@ set status = 'submitted_to_dpdmis', dpdmis_reference = 'DPDMIS-TEST-BALOD-001'
 where note = 'Synthetic Balod replenishment recommendation';
 commit;
 
+-- A supervisor may approve and submit the recommendation, but may not
+-- perform storekeeper allocation, dispatch or receipt transitions.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '66666666-6666-4666-8666-666666666666', true);
+do $supervisor_separation_check$
+declare
+  v_blocked boolean := false;
+begin
+  begin
+    update public.replenishment_requests
+    set status = 'allocated', allocation_reference = 'SUPERVISOR-MUST-NOT-ALLOCATE'
+    where note = 'Synthetic Balod replenishment recommendation';
+  exception when others then
+    v_blocked := true;
+  end;
+  if not v_blocked then
+    raise exception 'Supervisor was able to perform storekeeper-only allocation';
+  end if;
+end $supervisor_separation_check$;
+commit;
+
 -- Balod storekeeper sees only the Balod request and can record supply-chain
 -- allocation, dispatch and two receipts. Cross-facility mutation is blocked.
 begin;
@@ -499,6 +521,17 @@ begin
   where note = 'Synthetic Balod replenishment recommendation';
   get diagnostics v_updated = row_count;
   if v_updated <> 1 then raise exception 'Storekeeper could not record dispatch'; end if;
+
+  -- An over-receipt must be rejected without changing the request.
+  begin
+    update public.replenishment_requests
+    set status = 'received', received_quantity = 11,
+        receipt_reference = 'GRN-OVER-RECEIPT-001'
+    where note = 'Synthetic Balod replenishment recommendation';
+    raise exception 'Over-receipt unexpectedly succeeded';
+  exception when others then
+    if sqlerrm = 'Over-receipt unexpectedly succeeded' then raise; end if;
+  end;
 
   update public.replenishment_requests
   set status = 'partially_received', received_quantity = 4,
