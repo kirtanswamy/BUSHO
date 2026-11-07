@@ -152,3 +152,18 @@ test('hierarchical admins can read records in their assigned scope without recei
   assert.match(sql, /replenishment_requests_scoped_select[\s\S]*?district_admin[\s\S]*?state_admin/i);
   assert.match(sql, /reports_supervisor_update[\s\S]*?current_profile_role\(\) = 'supervisor'/i);
 });
+
+test('workers can edit structured report items on drafts and reports returned for correction only', () => {
+  const sql = loadMigration();
+  for (const policy of [
+    'report_items_worker_insert',
+    'report_items_worker_update',
+    'report_items_worker_delete'
+  ]) {
+    const start = sql.indexOf('create policy ' + policy);
+    assert.ok(start >= 0, policy + ' policy must exist');
+    const next = sql.indexOf('create policy ', start + 15);
+    const body = sql.slice(start, next < 0 ? sql.length : next);
+    assert.match(body, /r\\.status in \\(\'draft\',\'correction_requested\'\\)/i, policy + ' must allow returned corrections');
+  }
+});

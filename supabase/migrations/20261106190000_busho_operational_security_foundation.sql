@@ -1247,26 +1247,26 @@ create policy report_items_worker_insert on public.report_items
   with check (exists (
     select 1 from public.reports r
     where r.id = report_id and r.worker_id = app_private.auth_worker_id()
-      and r.status = 'draft'
+      and r.status in ('draft','correction_requested')
   ));
 create policy report_items_worker_update on public.report_items
   for update to authenticated
   using (exists (
     select 1 from public.reports r
     where r.id = report_id and r.worker_id = app_private.auth_worker_id()
-      and r.status = 'draft'
+      and r.status in ('draft','correction_requested')
   ))
   with check (exists (
     select 1 from public.reports r
     where r.id = report_id and r.worker_id = app_private.auth_worker_id()
-      and r.status = 'draft'
+      and r.status in ('draft','correction_requested')
   ));
 create policy report_items_worker_delete on public.report_items
   for delete to authenticated
   using (exists (
     select 1 from public.reports r
     where r.id = report_id and r.worker_id = app_private.auth_worker_id()
-      and r.status = 'draft'
+      and r.status in ('draft','correction_requested')
   ));
 
 create policy report_events_scoped_select on public.report_events
