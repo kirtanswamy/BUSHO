@@ -188,6 +188,39 @@
       return result;
     }
 
+    async function setSessionFromUrlHash(hash) {
+      const params = new URLSearchParams(String(hash || '').replace(/^#/, ''));
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+      const type = params.get('type');
+      if (!accessToken || !refreshToken || type !== 'invite') {
+        throw new Error('This invitation link is missing, expired or not intended for account setup. Ask an administrator to send a new invitation.');
+      }
+      const user = await authRequest('user', { method: 'GET', accessToken });
+      if (!user || !user.id) throw new Error('Supabase could not verify the invitation session.');
+      const session = writeSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expires_in: Number(params.get('expires_in') || 3600),
+        token_type: params.get('token_type') || 'bearer',
+        user
+      });
+      return { session, type };
+    }
+
+    async function updatePassword(password) {
+      const value = String(password || '');
+      if (value.length < 12 || value.length > 128) {
+        throw new Error('Choose a password between 12 and 128 characters.');
+      }
+      const session = await getValidSession();
+      return authRequest('user', {
+        method: 'PUT',
+        accessToken: session.access_token,
+        body: { password: value }
+      });
+    }
+
     async function signOut() {
       const session = readSession();
       try {
@@ -469,6 +502,8 @@
     return Object.freeze({
       signInWithPassword,
       signUpWithPassword,
+      setSessionFromUrlHash,
+      updatePassword,
       signOut,
       getSession: () => readSession(),
       getMyProfile,
