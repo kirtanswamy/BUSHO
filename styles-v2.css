@@ -647,7 +647,7 @@ html, body { overflow-x: hidden; }
 .signin-heading { max-width: 760px; margin: 0 auto 34px; text-align: center; }
 .signin-heading h1 { margin: 8px 0 10px; }
 .signin-heading > p:last-child { color: var(--muted); }
-.signin-role-grid { max-width: 900px; margin: auto; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 22px; }
+.signin-role-grid { max-width: 1180px; margin: auto; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; }
 .signin-role-card { padding: 30px; border: 1px solid #e0e5ed; border-top: 3px solid var(--blue); border-radius: 16px; background: #fff; box-shadow: 0 12px 34px rgba(23,36,58,.06); }
 .signin-role-card h2 { margin: 8px 0; font-size: 23px; }
 .signin-role-card > p:not(.card-overline) { min-height: 54px; color: var(--muted); }
@@ -733,6 +733,7 @@ html, body { overflow-x: hidden; }
 .portal-app .field-edit { max-width: 100%; }
 
 @media (max-width: 1050px) {
+  .signin-role-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .portal-app { grid-template-columns: 218px minmax(0,1fr); }
   .portal-app > .demo-section { padding: 24px 22px 60px; }
   .supervisor-portal-body .portal-app .metric-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
