@@ -14,8 +14,8 @@ Official source:
 - [DPDMIS public reporting system](https://dpdmis.in/DPDMISStock/Public_HomeDrug.aspx)
 
 The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, PHCs, Health and Wellness Centres and Sub Health Centres. The PDF has separate annexures:
-- Annexure 4: PHC, PHC-AAM and UPHC, printed pages 47–52, 172 numbered source entries.
-- Annexure 5: SHC-AAM, printed pages 53–56, 106 numbered source entries.
+- Annexure 4: PHC, PHC-AAM and UPHC, printed pages 48–53, 172 numbered source entries.
+- Annexure 5: SHC-AAM, printed pages 54–57, 106 numbered source entries.
 
 **Important:** the published EDL is a facility-level reference list. It is not an inventory balance, proof of current stock, procurement authorization, prescription or clinical protocol. Some entries refer to current national programme guidelines instead of specifying individual products. Several rows contain multiple formulations and caveats. Those details must be preserved rather than silently simplified.
 
@@ -23,12 +23,12 @@ The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, 
 
 - `supabase/migrations/20261107200000_medicine_reference_catalogue.sql`
   - Versioned catalogue release table with source authority, publication/source dates, URL and lifecycle status.
-  - Catalogue entry table preserving annexure, facility level, original row number, source page, source category and verbatim source description.
+  - Catalogue entry table preserving annexure, facility level, original row number, printed source page, source category and verbatim source description.
   - Normalized medicine name, dosage form, strength and stock unit remain nullable; parsing state defaults to `source_text_only`.
   - Existing facility-specific `inventory_items` can optionally link to a reviewed catalogue entry. The reference catalogue is not itself a stock ledger.
   - Authenticated users receive read-only access; writes are reserved for trusted service-side import/review.
 - `data/medicine-catalogue/chhattisgarh-edl-2025-sample.json`
-- `scripts/validate-medicine-catalogue.mjs` checks source metadata, annexure/facility-level consistency, row uniqueness, source page bounds and verbatim-only staging. It intentionally refuses guessed normalized stock units or dosage fields and always marks live import unsafe.
+- `scripts/validate-medicine-catalogue.mjs` checks source metadata, annexure/facility-level consistency, row uniqueness, printed source-page bounds and verbatim-only staging. It intentionally refuses guessed normalized stock units or dosage fields and always marks live import unsafe.
   - A deliberately small sample transcription (10 PHC-AAM/UPHC rows and 14 SHC-AAM rows) from the published annexures.
   - Every row carries source annexure, source item number, page, category and original description.
   - `sampleOnly: true`; this is not the complete 172-row or 106-row annexure and must never be presented as a complete medicine list.
