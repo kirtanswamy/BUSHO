@@ -306,3 +306,6 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Confirmed a genuine source-document inconsistency: Annexure 4 item 172 prints `Medroxprogesterone`, while Annexure 5 item 81 prints `Medroxyprogesterone`. Preserve both verbatim and escalate for authorised review.
 - 16 rows have targeted visual evidence; 262 still need individual row-level comparison. All 278 remain non-importable and not clinically approved.
 - No Supabase migration, live catalogue insert, facility import, account provisioning, Edge Function deployment or production release was performed.
+
+
+- **Validation follow-up:** the first CI run after correcting the page map exposed stale hard-coded ranges in `scripts/validate-medicine-catalogue.mjs` and the validator test fixture. Updated the validator to use the verified footer pages and changed the wrong-page regression fixture so it still tests a genuinely incorrect value. A fresh CI run is required before this correction is considered validated.
