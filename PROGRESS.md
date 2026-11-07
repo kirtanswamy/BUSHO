@@ -434,3 +434,14 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Verified CI run `42397499407` passed all four jobs (Node 18, 22, 24 and PostgreSQL database contract) on commit `1d59846`, including both new migrations and the complete synthetic RLS/stock workflow contract. This is the first confirmed green DB contract for the storekeeper/receipt-ledger work.
 - Latest role selector SHA: `0823ca0edb1d3561639c7b0154039c0ca5553c66`; CSS SHA: `3a2211e3ebbf5318fa54394783031a65556f0d28`. CI for the latest UI commits is pending.
 - No live Supabase migration, real user provisioning, or production deployment performed.
+
+
+## Part 2F.4 — supervisor-to-storekeeper handoff — 2026-11-07
+
+- Added a dedicated Supply handoff module to the authenticated supervisor portal, with navigation entry, refresh, scoped request list and explicit empty/error states.
+- The module shows source report, facility, item, requested quantity, approval attribution, DPDMIS reference, allocation/dispatch references and receipt progress.
+- Supervisor-only actions: approve a recommendation (database records reviewer identity/time) and record the actual DPDMIS submission reference after external submission. District/state admins can inspect scoped records but the UI does not expose supervisor-only actions to them.
+- After every action, the UI reloads the authenticated server list; it does not optimistically claim a successful handoff. Storekeeper sees the request through its existing assigned-facility RLS query only after the supervisor records `submitted_to_dpdmis`.
+- Existing PostgreSQL contract covers approval attribution, external DPDMIS reference immutability, assigned facility access and storekeeper-only allocation/dispatch/receipt transitions. New supervisor handoff UI still needs CI and browser E2E verification.
+- No schema changes, live DB writes/migrations, user provisioning or production deployment.
+- Supervisor page SHA `51683e7b4d6cb385fe6af3734ff28c79d6d99245`; handoff controller SHA `1dcc6038b0e725fa051db70518e45e20f0808615`.
