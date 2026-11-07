@@ -3,8 +3,14 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const ANNEXURES = {
-  'Annexure 4': { key: 'phc_phc_aam_uphc', level: 'phc_aam', minPage: 47, maxPage: 52 },
-  'Annexure 5': { key: 'shc_aam', level: 'shc_aam', minPage: 53, maxPage: 56 }
+  'Annexure 4': {
+    key: 'phc_phc_aam_uphc', level: 'phc_aam', minPage: 47, maxPage: 52,
+    pageForItem: n => n <= 25 ? 47 : n <= 55 ? 48 : n <= 84 ? 49 : n <= 118 ? 50 : n <= 150 ? 51 : 52
+  },
+  'Annexure 5': {
+    key: 'shc_aam', level: 'shc_aam', minPage: 53, maxPage: 56,
+    pageForItem: n => n <= 19 ? 53 : n <= 47 ? 54 : n <= 85 ? 55 : 56
+  }
 };
 
 export function validateMedicineCatalogue(input) {
@@ -34,6 +40,8 @@ export function validateMedicineCatalogue(input) {
       || (meta && entry.sourceItemNumber > meta.publishedEntryCount)) errors.push({ row, code: 'invalid_source_item_number' });
     if (!Number.isInteger(entry.sourcePage) || entry.sourcePage < annexure.minPage || entry.sourcePage > annexure.maxPage) {
       errors.push({ row, code: 'source_page_out_of_range' });
+    } else if (Number.isInteger(entry.sourceItemNumber) && entry.sourcePage !== annexure.pageForItem(entry.sourceItemNumber)) {
+      errors.push({ row, code: 'source_page_item_mismatch', expectedPage: annexure.pageForItem(entry.sourceItemNumber) });
     }
     if (!String(entry.sourceDescription || '').trim() || String(entry.sourceDescription).length > 2000) {
       errors.push({ row, code: 'invalid_source_description' });
@@ -51,7 +59,21 @@ export function validateMedicineCatalogue(input) {
     if (count < Number(meta.publishedEntryCount || 0)) warnings.push(key + ': ' + count + ' of ' + meta.publishedEntryCount + ' source entries transcribed; incomplete catalogue.');
     if (count > Number(meta.publishedEntryCount || 0)) errors.push({ row: null, code: 'annexure_entry_count_exceeded', annexure: key });
   }
-  if (input.sampleOnly !== true) errors.push({ row: null, code: 'sample_status_missing', message: 'Set sampleOnly=true until the complete annexures are transcribed and reconciled.' });
+  if (input.sampleOnly !== true) {
+    errors.push({ row: null, code: 'sample_status_missing', message: 'Set sampleOnly=true until the complete annexures are transcribed and reconciled.' });
+  }
+  if (input.sampleOnly === false) {
+    for (const [key, meta] of Object.entries(input.annexures || {})) {
+      const annexure = Object.values(ANNEXURES).find(item => item.key === key);
+      if (!annexure) continue;
+      const actual = entries.filter(entry => entry.sourceAnnexure === (key === 'phc_phc_aam_uphc' ? 'Annexure 4' : 'Annexure 5'))
+        .map(entry => entry.sourceItemNumber).sort((a, b) => a - b);
+      const expected = Number(meta.publishedEntryCount || 0);
+      if (actual.length !== expected || actual.some((number, index) => number !== index + 1)) {
+        errors.push({ row: null, code: 'annexure_sequence_incomplete', annexure: key, expectedRows: expected, actualRows: actual.length });
+      }
+    }
+  }
 
   return {
     ok: errors.length === 0,
