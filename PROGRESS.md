@@ -327,3 +327,13 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 
 - Visual inspection of PHC Annexure 4 item 17 (printed page 47, physical PDF page 49) found the rendered source reads `Levocetirizine` twice. The PDF text layer and prior transcription had `Levocetrizine` in the second occurrence. Corrected the source transcription to the rendered page and recorded the discrepancy.
 - Targeted rendered-page evidence now covers 19 rows; 259 rows remain without individual targeted visual evidence. This is not pharmacist/CGMSC approval.
+
+
+## Part 2D.6 — complete rendered-page source reconciliation — 2026-11-07
+
+- Rendered and visually inspected all 10 annexure pages at high resolution; all 278 numbered entries are mapped to the correct annexure, row number, printed page and physical PDF page.
+- Completed page-scoped text comparison of all 278 source descriptions against the corresponding PDF page. 278/278 matched after correcting the OCR spelling in PHC item 17 to the rendered Levocetirizine.
+- Preserved visible source truncations in PHC items 36/37 and SHC item 22, plus the genuine source spelling difference between PHC item 172 and SHC item 81.
+- Recorded highlighted source spans and source notes separately; no asterisk meaning is inferred where the PDF provides no legend.
+- Review queue now records rendered-PDF and text-layer checks for all 278 rows. All remain pending authorised pharmacist/CGMSC review; no normalized medicine mappings or live catalogue imports are approved.
+- No connected Supabase migration, live insert, facility import, account provisioning, Edge Function deployment or production release occurred.
