@@ -28,6 +28,7 @@ The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, 
   - Existing facility-specific `inventory_items` can optionally link to a reviewed catalogue entry. The reference catalogue is not itself a stock ledger.
   - Authenticated users receive read-only access; writes are reserved for trusted service-side import/review.
 - `data/medicine-catalogue/chhattisgarh-edl-2025-sample.json`
+- `scripts/validate-medicine-catalogue.mjs` checks source metadata, annexure/facility-level consistency, row uniqueness, source page bounds and verbatim-only staging. It intentionally refuses guessed normalized stock units or dosage fields and always marks live import unsafe.
   - A deliberately small sample transcription (12 PHC-AAM/UPHC rows and 12 SHC-AAM rows) from the published annexures.
   - Every row carries source annexure, source item number, page, category and original description.
   - `sampleOnly: true`; this is not the complete 172-row or 106-row annexure and must never be presented as a complete medicine list.
