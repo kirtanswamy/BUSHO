@@ -413,5 +413,13 @@ begin
   where action = 'facility_registry_candidate_verified'
     and entity_id = (select id from public.facilities where external_registry_id = 'CI-FAC-001');
   if v_count <> 1 then raise exception 'Verified facility promotion did not create an audit event'; end if;
+  select count(*) into v_count from public.audit_logs
+  where action = 'facility_registry_candidates_staged'
+    and metadata->>'actor_id' = '44444444-4444-4444-8444-444444444444';
+  if v_count <> 1 then raise exception 'Facility staging did not create an audit event'; end if;
+  select count(*) into v_count from public.audit_logs
+  where action = 'facility_registry_batch_completed'
+    and metadata->>'actor_id' = '44444444-4444-4444-8444-444444444444';
+  if v_count <> 1 then raise exception 'Facility batch completion did not create an audit event'; end if;
 end $facility_registry_promotion_check$;
 commit;
