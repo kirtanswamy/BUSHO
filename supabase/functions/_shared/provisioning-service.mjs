@@ -114,14 +114,17 @@ export async function provisionUser({
     };
   } catch (error) {
     if (createdUserId) {
-      try {
-        await repository.suspendProfile(createdUserId);
-        await repository.rollbackAssignments(createdUserId);
-        await authAdmin.deleteUser(createdUserId);
-      } catch (rollbackError) {
+      const rollback = await Promise.allSettled([
+        repository.suspendProfile(createdUserId),
+        repository.rollbackAssignments(createdUserId)
+      ]);
+      let deleteFailed = false;
+      try { await authAdmin.deleteUser(createdUserId); }
+      catch { deleteFailed = true; }
+      if (rollback.some(result => result.status === 'rejected') || deleteFailed) {
         throw new ProvisioningError(
           500,
-          'Provisioning failed and automatic rollback was incomplete. The account was suspended where possible; a platform administrator must reconcile it.',
+          'Provisioning failed and automatic rollback was incomplete. A platform administrator must reconcile the suspended account and its assignments.',
           'provisioning_rollback_incomplete'
         );
       }
