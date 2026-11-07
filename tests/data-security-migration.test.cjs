@@ -136,3 +136,18 @@ test('default privileges do not expose future public tables or functions to brow
   assert.match(sql, /alter default privileges for role postgres in schema public[\\s\\S]*?revoke execute on functions from anon, authenticated, public/i);
   assert.match(sql, /alter default privileges for role postgres in schema public[\\s\\S]*?revoke usage, select on sequences from anon, authenticated/i);
 });
+
+test('workers can track only replenishment requests created from their own reports', () => {
+  const sql = loadMigration();
+  assert.match(sql, /create policy replenishment_requests_worker_select on public\\.replenishment_requests/i);
+  assert.match(sql, /r\\.id = source_report_id and r\\.worker_id = app_private\\.auth_worker_id\\(\\)/i);
+  assert.match(sql, /app_private\\.has_facility_access\\(facility_id, array\\['worker'\\]::text\\[\\]\\)/i);
+});
+
+test('hierarchical admins can read records in their assigned scope without receiving supervisor write permissions', () => {
+  const sql = loadMigration();
+  assert.match(sql, /workers_scoped_select[\\s\\S]*?district_admin[\\s\\S]*?state_admin/i);
+  assert.match(sql, /reports_scoped_select[\\s\\S]*?district_admin[\\s\\S]*?state_admin/i);
+  assert.match(sql, /replenishment_requests_scoped_select[\\s\\S]*?district_admin[\\s\\S]*?state_admin/i);
+  assert.match(sql, /reports_supervisor_update[\\s\\S]*?current_profile_role\\(\\) = 'supervisor'/i);
+});
