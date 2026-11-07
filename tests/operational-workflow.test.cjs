@@ -42,6 +42,9 @@ test('verified report can create a facility indent recommendation, but not a pur
     id: 'ors', name: 'ORS packets', requestedQty: 30, onHand: 20, unit: 'packets'
   }, { actorRole: 'supervisor', actorLabel: 'Demo Supervisor' }), /verified/i);
   const verified = { ...report, status: 'supervisor_verified' };
+  assert.throws(() => workflow.createIndent(verified, {
+    id: 'ors', name: 'ORS packets', requestedQty: 30, onHand: 20, unit: 'packets'
+  }, { actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper' }), /not allowed/i);
   const indent = workflow.createIndent(verified, {
     id: 'ors', name: 'ORS packets', requestedQty: 30, onHand: 20, unit: 'packets'
   }, { actorRole: 'supervisor', actorLabel: 'Demo Supervisor', at: '2026-11-06T10:04:00.000Z' });
@@ -104,6 +107,15 @@ test('supervisor approval/submission and storekeeper allocation/dispatch/receipt
   assert.equal(received.receivedQty, 30);
   assert.equal(received.status, 'received');
   assert.equal(received.purchaseOrderCreated, false);
+  const replay = workflow.transitionIndent(received, {
+    to: 'received', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
+    reference: 'DEMO-GRN-001', receivedQty: 30, at: '2026-11-06T10:07:30.000Z'
+  });
+  assert.deepEqual(replay, received, 'an exact receipt retry must be a no-op');
+  assert.throws(() => workflow.transitionIndent(received, {
+    to: 'received', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
+    reference: 'DEMO-GRN-OTHER', receivedQty: 30
+  }), /exact previously recorded receipt/i);
 });
 
 test('indent can be partially received and then closed only when the balance is fulfilled', () => {
