@@ -794,40 +794,63 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $$
+as $
 declare
   v_action text;
   v_from text;
   v_to text;
+  v_fields text[] := array[]::text[];
+  v_status_changed boolean := false;
+  v_note text;
 begin
   if tg_op = 'INSERT' then
     v_action := 'report_created';
     v_from := null;
     v_to := new.status;
+    v_fields := array['created'];
   else
-    if new.status is not distinct from old.status then return new; end if;
-    v_action := 'status_transition';
+    v_status_changed := new.status is distinct from old.status;
+    if v_status_changed then v_fields := array_append(v_fields, 'status'); end if;
+    if new.summary is distinct from old.summary then v_fields := array_append(v_fields, 'summary'); end if;
+    if new.review_note is distinct from old.review_note then v_fields := array_append(v_fields, 'review_note'); end if;
+    if new.worker_response_note is distinct from old.worker_response_note then v_fields := array_append(v_fields, 'worker_response_note'); end if;
+    if new.original_text is distinct from old.original_text then v_fields := array_append(v_fields, 'original_text'); end if;
+    if new.language_code is distinct from old.language_code then v_fields := array_append(v_fields, 'language_code'); end if;
+    if new.reporting_date is distinct from old.reporting_date then v_fields := array_append(v_fields, 'reporting_date'); end if;
+    if cardinality(v_fields) = 0 then return new; end if;
+
+    v_action := case when v_status_changed then 'status_transition' else 'report_fields_updated' end;
     v_from := old.status;
     v_to := new.status;
+    if new.review_note is distinct from old.review_note then
+      v_note := new.review_note;
+    elsif new.worker_response_note is distinct from old.worker_response_note then
+      v_note := new.worker_response_note;
+    end if;
   end if;
 
   insert into public.report_events
     (report_id, actor_user_id, actor_role, action, status_from, status_to, note, metadata)
   values (
     new.id, auth.uid(), app_private.current_profile_role(), v_action,
-    v_from, v_to,
-    case when tg_op = 'UPDATE' then coalesce(new.review_note, new.worker_response_note) else null end,
-    jsonb_build_object('reporting_date', new.reporting_date, 'facility_id', new.facility_id)
+    v_from, v_to, v_note,
+    jsonb_build_object(
+      'reporting_date', new.reporting_date,
+      'facility_id', new.facility_id,
+      'fields_changed', to_jsonb(v_fields)
+    )
   );
   return new;
 end;
-$$;
+$;
 
 drop trigger if exists busho_report_event_created on public.reports;
 create trigger busho_report_event_created after insert on public.reports
 for each row execute function app_private.record_report_event();
 drop trigger if exists busho_report_event_status on public.reports;
-create trigger busho_report_event_status after update of status on public.reports
+create trigger busho_report_event_status
+after update of status, summary, review_note, worker_response_note, original_text, language_code, reporting_date
+on public.reports
 for each row execute function app_private.record_report_event();
 
 create or replace function app_private.guard_replenishment_transition()
@@ -865,8 +888,44 @@ begin
      or new.inventory_item_id is distinct from old.inventory_item_id
      or new.requested_quantity is distinct from old.requested_quantity
      or new.created_at is distinct from old.created_at
-     or new.source_report_id is distinct from old.source_report_id then
-    raise exception 'Indent ownership, item, requested quantity and source report are immutable';
+     or new.source_report_id is distinct from old.source_report_id
+     or new.created_by_user_id is distinct from old.created_by_user_id
+     or new.reviewed_by_user_id is distinct from old.reviewed_by_user_id
+     or new.reviewed_at_user is distinct from old.reviewed_at_user
+     or new.data_mode is distinct from old.data_mode then
+    raise exception 'Indent ownership, item, creator, reviewer, requested quantity, source report and data mode are immutable';
+  end if;
+
+  if old.dpdmis_reference is not null and new.dpdmis_reference is distinct from old.dpdmis_reference then
+    raise exception 'A recorded DPDMIS reference cannot be changed';
+  end if;
+  if old.allocation_reference is not null and new.allocation_reference is distinct from old.allocation_reference then
+    raise exception 'A recorded allocation reference cannot be changed';
+  end if;
+  if old.dispatch_reference is not null and new.dispatch_reference is distinct from old.dispatch_reference then
+    raise exception 'A recorded dispatch reference cannot be changed';
+  end if;
+
+  if new.dpdmis_reference is distinct from old.dpdmis_reference
+     and not (old.status = 'supervisor_approved' and new.status = 'submitted_to_dpdmis') then
+    raise exception 'DPDMIS reference can only be recorded during submission';
+  end if;
+  if new.allocation_reference is distinct from old.allocation_reference
+     and not (old.status = 'submitted_to_dpdmis' and new.status = 'allocated') then
+    raise exception 'Allocation reference can only be recorded during allocation';
+  end if;
+  if new.dispatch_reference is distinct from old.dispatch_reference
+     and not (old.status in ('submitted_to_dpdmis','allocated') and new.status = 'dispatched') then
+    raise exception 'Dispatch reference can only be recorded during dispatch';
+  end if;
+  if new.receipt_reference is distinct from old.receipt_reference
+     and not (
+       old.status in ('dispatched','partially_received')
+       and new.status in ('partially_received','received')
+       and new.received_quantity > old.received_quantity
+       and nullif(btrim(new.receipt_reference), '') is not null
+     ) then
+    raise exception 'Receipt references can only be recorded with a receipt quantity update';
   end if;
 
   if v_role not in ('supervisor','storekeeper')
@@ -1008,6 +1067,18 @@ for each row execute function app_private.prevent_event_mutation();
 -- 6. Restrict exposed-schema grants, then enable authenticated scoped access
 -- ---------------------------------------------------------------------------
 revoke all privileges on all tables in schema public from anon, authenticated;
+
+-- Lock down objects created by future migrations too. PUBLIC function EXECUTE
+-- is a separate global default and must be revoked without a schema qualifier.
+alter default privileges for role postgres in schema public
+  revoke all on tables from anon, authenticated, service_role;
+alter default privileges for role postgres in schema public
+  revoke all on sequences from anon, authenticated, service_role;
+alter default privileges for role postgres in schema public
+  revoke all on functions from anon, authenticated, service_role;
+alter default privileges for role postgres
+  revoke execute on functions from public;
+
 grant usage on schema public to authenticated;
 grant usage on schema app_private to authenticated;
 
@@ -1042,7 +1113,7 @@ grant insert (inventory_item_id, quantity, observed_at, observed_by, source, bat
   on public.inventory_snapshots to authenticated;
 grant insert (facility_id, inventory_item_id, requested_quantity, status, created_by_user_id, source_report_id, on_hand_quantity, unit, note, data_mode)
   on public.replenishment_requests to authenticated;
-grant update (status, reviewed_by_user_id, reviewed_at_user, note, dpdmis_reference,
+grant update (status, note, dpdmis_reference,
               allocation_reference, dispatch_reference, receipt_reference, received_quantity)
   on public.replenishment_requests to authenticated;
 
@@ -1113,7 +1184,7 @@ create policy workers_scoped_select on public.workers
   for select to authenticated
   using (
     auth_user_id = (select auth.uid())
-    or app_private.has_facility_access(facility_id, array['supervisor','storekeeper']::text[])
+    or app_private.has_facility_access(facility_id, array['supervisor','storekeeper','district_admin','state_admin']::text[])
   );
 create policy workers_self_insert on public.workers
   for insert to authenticated
@@ -1133,7 +1204,7 @@ create policy reports_scoped_select on public.reports
   for select to authenticated
   using (
     worker_id = app_private.auth_worker_id()
-    or app_private.has_facility_access(facility_id, array['supervisor']::text[])
+    or app_private.has_facility_access(facility_id, array['supervisor','district_admin','state_admin']::text[])
   );
 create policy reports_worker_insert on public.reports
   for insert to authenticated
@@ -1230,7 +1301,7 @@ create policy inventory_snapshots_worker_insert on public.inventory_snapshots
 
 create policy replenishment_requests_scoped_select on public.replenishment_requests
   for select to authenticated
-  using (app_private.has_facility_access(facility_id, array['supervisor','storekeeper']::text[]));
+  using (app_private.has_facility_access(facility_id, array['supervisor','storekeeper','district_admin','state_admin']::text[]));
 create policy replenishment_requests_supervisor_insert on public.replenishment_requests
   for insert to authenticated
   with check (
@@ -1245,6 +1316,20 @@ create policy replenishment_requests_assigned_update on public.replenishment_req
   )
   with check (
     app_private.has_facility_access(facility_id, array['supervisor','storekeeper']::text[])
+  );
+
+create policy replenishment_requests_worker_select on public.replenishment_requests
+  for select to authenticated
+  using (
+    app_private.current_profile_role() = 'worker'
+    and app_private.has_facility_access(facility_id, array['worker']::text[])
+    and source_report_id is not null
+    and exists (
+      select 1 from public.reports r
+      where r.id = source_report_id
+        and r.facility_id = public.replenishment_requests.facility_id
+        and r.worker_id = app_private.auth_worker_id()
+    )
   );
 
 create policy replenishment_events_scoped_select on public.replenishment_events
@@ -1262,7 +1347,7 @@ create policy audit_logs_scoped_select on public.audit_logs
       where w.id = actor_worker_id
         and (
           w.auth_user_id = (select auth.uid())
-          or app_private.has_facility_access(w.facility_id, array['supervisor','storekeeper']::text[])
+          or app_private.has_facility_access(w.facility_id, array['supervisor','storekeeper','district_admin','state_admin']::text[])
         )
     )
   );
