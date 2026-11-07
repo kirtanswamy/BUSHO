@@ -4,12 +4,12 @@ import { resolve } from 'node:path';
 
 const ANNEXURES = {
   phc_phc_aam_uphc: {
-    label: 'Annexure 4', level: 'phc_aam', minPage: 47, maxPage: 52,
-    pageForItem: n => n <= 25 ? 47 : n <= 55 ? 48 : n <= 84 ? 49 : n <= 118 ? 50 : n <= 150 ? 51 : 52
+    label: 'Annexure 4', level: 'phc_aam', minPage: 48, maxPage: 53,
+    pageForItem: n => n <= 25 ? 48 : n <= 55 ? 49 : n <= 84 ? 50 : n <= 118 ? 51 : n <= 150 ? 52 : 53
   },
   shc_aam: {
-    label: 'Annexure 5', level: 'shc_aam', minPage: 53, maxPage: 56,
-    pageForItem: n => n <= 19 ? 53 : n <= 47 ? 54 : n <= 85 ? 55 : 56
+    label: 'Annexure 5', level: 'shc_aam', minPage: 54, maxPage: 57,
+    pageForItem: n => n <= 19 ? 54 : n <= 47 ? 55 : n <= 85 ? 56 : 57
   }
 };
 
