@@ -17,6 +17,10 @@ function harness(listInventory = async () => []) {
     handlers: {},
     addEventListener(type, fn) { this.handlers[type] = fn; }
   });
+  // Model the server-rendered empty state already present in storekeeper.html.
+  elements.set('inventory-reconciliation-list', Object.assign(makeElement('inventory-reconciliation-list'), {
+    innerHTML: '<p class="empty-state">Sign in to load inventory evidence.</p>'
+  }));
   const document = {
     querySelector(selector) { return selector === '[data-portal-role="storekeeper"]' ? {} : null; },
     getElementById(id) {
