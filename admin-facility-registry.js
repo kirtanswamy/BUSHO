@@ -64,6 +64,7 @@
     return rows.map((values, index) => {
       const item = {};
       headers.forEach((header, i) => { item[header] = String(values[i] ?? '').trim(); });
+      item.facility_type = String(item.facility_type || '').toLowerCase();
       item.source_row = index + 2;
       item.state_lgd_code = '22';
       return item;
