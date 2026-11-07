@@ -504,4 +504,33 @@ if (voiceButton) {
 reportInput.addEventListener('input', () => updateReportInput(reportInput.value));
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && !inventoryDrawer.classList.contains('hidden')) closeInventory(); if (event.key === 'Tab' && !inventoryDrawer.classList.contains('hidden')) { const focusable = [...inventoryDrawer.querySelectorAll('button:not([disabled]), [href], input, select, textarea')]; if (!focusable.length) return; if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1).focus(); } else if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0].focus(); } } });
 if (window.BUSHO_I18N && window.BUSHO_I18N.onLanguageChange) window.BUSHO_I18N.onLanguageChange(() => { if (!state.extracted) state.rawReport = localizedSample(state.sample); renderAll(); renderInventory(); });
+function openExistingWorkerReport(report) {
+  const adapter = window.BUSHO_REPORT_PERSISTENCE;
+  if (!activeAuthUserId || !adapter || !report || !report.id) {
+    throw new Error('Sign in to the worker portal before opening a saved report.');
+  }
+  if (!['draft', 'correction_requested'].includes(report.status)) {
+    throw new Error('Only a draft or a report returned for correction can be edited.');
+  }
+  const narrative = String(report.original_text || '');
+  if (!narrative.trim()) throw new Error('This report has no original field narrative to resume.');
+  state.rawReport = narrative;
+  state.draft = adapter.fromDatabaseItems(report.report_items || [], narrative);
+  state.extracted = true;
+  state.confirmed = false;
+  state.reportId = report.id;
+  state.serverStatus = report.status;
+  state.syncStatus = 'draft_saved';
+  state.replenishment = { status: 'none', medicineId: null, source: null };
+  reportInput.value = narrative;
+  messageText.textContent = narrative;
+  renderAll();
+  saveState();
+  document.querySelector('[data-portal-view="new-report"]')?.click();
+  showToast(report.status === 'correction_requested'
+    ? 'Returned report reopened. Review the supervisor note and update the fields.'
+    : 'Saved draft reopened. Review the fields before submitting.');
+}
+window.BUSHO_WORKER_REPORT_EDITOR = Object.freeze({ openReport: openExistingWorkerReport });
+
 renderInventory(); renderAll();
