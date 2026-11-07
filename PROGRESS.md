@@ -445,3 +445,5 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Existing PostgreSQL contract covers approval attribution, external DPDMIS reference immutability, assigned facility access and storekeeper-only allocation/dispatch/receipt transitions. New supervisor handoff UI still needs CI and browser E2E verification.
 - No schema changes, live DB writes/migrations, user provisioning or production deployment.
 - Supervisor page SHA `51683e7b4d6cb385fe6af3734ff28c79d6d99245`; handoff controller SHA `1dcc6038b0e725fa051db70518e45e20f0808615`.
+
+- Part 2F.5 test hardening: added an isolated PostgreSQL negative test proving an assigned storekeeper cannot approve a supervisor recommendation. The fixture is created by the assigned Balod supervisor, attempted by the assigned Balod storekeeper, and rolled back so it does not affect later row-count assertions. Test commit: `0c9c8ce`. CI run not yet returned for this commit.
