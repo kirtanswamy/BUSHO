@@ -272,7 +272,7 @@
       doc.removeEventListener('input', handleInput);
     }
 
-    return Object.freeze({ start, stop, load, getState: () => ({ reports: reports.slice(), worker, selectedId, filter, query, busy, error }) });
+    return Object.freeze({ start, stop, load, resumeReport, getState: () => ({ reports: reports.slice(), worker, selectedId, filter, query, busy, error }) });
   }
 
   return Object.freeze({ createController, escapeHtml, statusLabel, summarize, itemView, formatDate });
