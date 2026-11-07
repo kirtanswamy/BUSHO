@@ -516,6 +516,21 @@
       return parseResponse(response);
     }
 
+    async function manageFacilityRegistry(input) {
+      await requireActiveProfile(['platform_admin','district_admin','state_admin']);
+      const session = await getValidSession();
+      const response = await fetchImpl(baseUrl + '/functions/v1/facility-registry', {
+        method: 'POST',
+        headers: {
+          apikey: publishableKey,
+          Authorization: 'Bearer ' + session.access_token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(input || {})
+      });
+      return parseResponse(response);
+    }
+
     async function listDirectory() {
       const [states, districts, blocks] = await Promise.all([
         restRequest('states?select=*&order=name.asc'),
@@ -552,6 +567,7 @@
       transitionReplenishmentRequest,
       listProvisioningOptions,
       provisionUser,
+      manageFacilityRegistry,
       listDirectory
     });
   }
