@@ -75,7 +75,7 @@ returns jsonb
 language plpgsql
 security definer
 set search_path = pg_catalog, public, app_private
-as $
+as $$
 declare
   v_profile public.profiles%rowtype;
   v_batch public.facility_registry_import_batches%rowtype;
@@ -125,7 +125,7 @@ begin
     'verified_rows',v_batch.verified_rows,'rejected_rows',v_batch.rejected_rows,
     'created_at',v_batch.created_at);
 end;
-$;
+$$;
 
 create or replace function app_private.stage_facility_registry_candidates(
   p_batch_id uuid,
@@ -631,11 +631,11 @@ returns jsonb
 language sql
 security definer
 set search_path = pg_catalog, public, app_private
-as $
+as $$
   select app_private.create_facility_registry_import_batch(
     p_actor_id,p_source_authority,p_source_date,p_source_url,p_expected_rows
   );
-$;
+$$;
 
 create or replace function public.stage_facility_registry_candidates(
   p_batch_id uuid, p_actor_id uuid, p_candidates jsonb
