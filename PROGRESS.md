@@ -295,3 +295,14 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - **Evidence boundary:** the official DPDMIS PDF URL was opened as a web document, but PDF page screenshots/text extraction did not return usable page content in this session, and direct download failed. No rendered page was visually inspected. The queue still has all 278 rows marked `sourcePdfChecked: false`; no row has a PDF verification claim.
 - No clinical review, normalization, facility applicability approval, live import or procurement use is approved.
 - Next: obtain the official PDF locally or as a user-provided attachment, render printed pages 48–57, compare all rows and footnotes, capture SHA-256, then obtain authorised pharmacist/CGMSC review.
+
+
+## Part 2D.3 — uploaded PDF visual spot-check and page provenance correction — 2026-11-07
+
+- User supplied the 59-page `EDL_2025.pdf`; SHA-256 recorded as `6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e`.
+- Visually inspected the annexure pages and targeted all 15 machine-flagged rows plus SHC Annexure 5 item 81 (16 rows total). Row-level visual notes and evidence hash are in the review queue. These checks are not pharmacist/CGMSC approval.
+- **Important audit correction:** the earlier source-page map was systematically one page too high. Actual printed footer ranges are Annexure 4 pages 47–52 and Annexure 5 pages 53–56. Updated both source-transcription files, the 24-row sample, review queue, audit script and catalogue documentation.
+- Confirmed Annexure 4 item 36 visibly ends `200 mg/5 m`; do not infer the missing `l`. Confirmed Annexure 4 item 12 visibly prints `Asprin`, Annexure 4 items 102/106/118 retain their printed spellings, and programme-reference rows are not medicine SKUs.
+- Confirmed a genuine source-document inconsistency: Annexure 4 item 172 prints `Medroxprogesterone`, while Annexure 5 item 81 prints `Medroxyprogesterone`. Preserve both verbatim and escalate for authorised review.
+- 16 rows have targeted visual evidence; 262 still need individual row-level comparison. All 278 remain non-importable and not clinically approved.
+- No Supabase migration, live catalogue insert, facility import, account provisioning, Edge Function deployment or production release was performed.
