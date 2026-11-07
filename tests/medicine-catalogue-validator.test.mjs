@@ -7,6 +7,7 @@ import { validateMedicineCatalogue } from '../scripts/validate-medicine-catalogu
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sample = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-sample.json'), 'utf8'));
+const shcTranscription = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-shc-aam-source-transcription.json'), 'utf8'));
 
 test('medicine source sample passes provenance and row-structure validation', () => {
   const result = validateMedicineCatalogue(sample);
@@ -65,4 +66,20 @@ test('verified source page manifest covers every numbered entry exactly once', (
   assert.equal(manifest.currentTranscription.complete, false);
   assert.equal(manifest.currentTranscription.phcRows, 10);
   assert.equal(manifest.currentTranscription.shcRows, 14);
+});
+
+test('SHC-AAM source transcription covers all 106 numbered rows with printed-page provenance', () => {
+  const result = validateMedicineCatalogue(shcTranscription);
+  assert.equal(result.ok, true);
+  assert.equal(result.summary.source_entries, 106);
+  assert.deepEqual(result.errors, []);
+  assert.equal(shcTranscription.transcriptionStatus, 'transcribed_from_pdf_text_unreviewed');
+  assert.equal(shcTranscription.entries[0].sourceItemNumber, 1);
+  assert.equal(shcTranscription.entries.at(-1).sourceItemNumber, 106);
+  assert.deepEqual(
+    shcTranscription.entries.map(entry => entry.sourceItemNumber),
+    Array.from({ length: 106 }, (_, index) => index + 1)
+  );
+  assert.ok(shcTranscription.entries.every(entry => entry.facilityLevel === 'shc_aam'));
+  assert.ok(shcTranscription.entries.every(entry => !entry.normalizedName && !entry.dosageForm && !entry.strength && !entry.stockUnit));
 });
