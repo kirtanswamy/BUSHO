@@ -72,6 +72,14 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107200000_medicine_reference_catalogue.sql
+      - name: Apply BUSHO storekeeper separation migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107230000_busho_storekeeper_separation.sql
+      - name: Apply BUSHO inventory movement ledger migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107233000_busho_inventory_movement_ledger.sql
       - name: Verify worker, supervisor, admin and stock workflows under RLS
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
