@@ -45,7 +45,9 @@ test('facility verification is transactional, scoped, deduplicated and auditable
   assert.match(sql, /Candidate is outside the reviewer geographic scope/i);
   assert.match(sql, /Resolve all mapping and data-quality flags/i);
   assert.match(sql, /facilities_external_registry_id_unique/i);
+  assert.match(sql, /facility_registry_candidates_staged/i);
   assert.match(sql, /facility_registry_candidate_verified/i);
+  assert.match(sql, /facility_registry_batch_completed/i);
   assert.match(sql, /facility_registry_candidate_rejected/i);
   assert.match(sql, /verification_status = 'verified'/i);
 });
