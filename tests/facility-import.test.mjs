@@ -59,6 +59,14 @@ test('valid facility candidate is staged as needs_review, never auto-verified', 
   assert.equal(result.provenance.source_url, options.sourceUrl);
 });
 
+test('AAM-PHC is accepted as a distinct facility type and remains staging-only', () => {
+  const result = validateFacilityRows([row({ facility_type: 'aam_phc' })], options);
+  assert.equal(result.ok, true);
+  assert.equal(result.records[0].facility_type, 'aam_phc');
+  assert.equal(result.records[0].verification_status, 'needs_review');
+  assert.equal(result.records[0].safe_to_assign, false);
+});
+
 test('facility candidates with unknown district, unknown block or mismatched block parent are rejected', () => {
   const unknownDistrict = validateFacilityRows([row({ district_lgd_code: '999999' })], options);
   assert.equal(unknownDistrict.ok, false);
