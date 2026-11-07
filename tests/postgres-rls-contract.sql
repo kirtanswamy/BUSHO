@@ -82,6 +82,13 @@ values
    '10000000-0000-4000-8000-000000000001',
    current_date, 'worker_report_created synthetic aggregate only', 'en', 'draft', '{"source":"voice"}');
 
+insert into public.report_items
+  (report_id, item_type, item_code, display_label, quantity, unit, value_text, confidence, requires_review)
+select id, 'symptom_trend', 'FEVER', 'Fever cases', 4, 'patients',
+       'Four aggregate fever mentions', 0.90, true
+from public.reports
+where original_text = 'worker_report_created synthetic aggregate only';
+
 update public.reports
 set summary = '{"source":"voice","fever_count":4}'
 where original_text = 'worker_report_created synthetic aggregate only';
@@ -156,11 +163,41 @@ update public.reports
 set status = 'supervisor_verified', review_note = 'Aggregate counts reviewed in synthetic CI test'
 where original_text = 'worker_report_created synthetic aggregate only';
 
-update public.reports
-set summary = '{"source":"voice","fever_count":4,"reviewed":true}'
-where original_text = 'worker_report_created synthetic aggregate only';
+update public.report_items
+set quantity = 5,
+    display_label = 'Fever cases (supervisor checked)',
+    requires_review = false
+where report_id = (
+  select id from public.reports
+  where original_text = 'worker_report_created synthetic aggregate only'
+)
+and item_code = 'FEVER';
 
-do $$
+do $
+declare
+  v_quantity numeric;
+  v_events integer;
+begin
+  select ri.quantity into v_quantity
+  from public.report_items ri
+  join public.reports r on r.id = ri.report_id
+  where r.original_text = 'worker_report_created synthetic aggregate only'
+    and ri.item_code = 'FEVER';
+  if v_quantity <> 5 then
+    raise exception 'Assigned supervisor could not correct the structured report quantity: %', v_quantity;
+  end if;
+
+  select count(*) into v_events
+  from public.report_events re
+  join public.reports r on r.id = re.report_id
+  where r.original_text = 'worker_report_created synthetic aggregate only'
+    and re.action = 'report_item_corrected';
+  if v_events <> 1 then
+    raise exception 'Expected one append-only structured-field correction event, got %', v_events;
+  end if;
+end $;
+
+do $
 declare v_count integer;
 begin
   select count(*) into v_count from public.report_events re
