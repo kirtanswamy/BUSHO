@@ -65,6 +65,24 @@ values
   ('44444444-4444-4444-8444-444444444444', 'state', '22', null, null, 'state_admin'),
   ('55555555-5555-4555-8555-555555555555', 'district', '22', '377', null, 'district_admin');
 
+insert into public.medicine_catalogue_releases
+  (id, catalogue_code, catalogue_name, state_lgd_code, source_authority, source_date,
+   publication_date, source_url, source_document_title, version_label, status)
+values
+  ('30000000-0000-4000-8000-000000000001', 'CG-EDL', 'Chhattisgarh Essential Drug List',
+   '22', 'Department of Health and Family Welfare, Government of Chhattisgarh',
+   '2025-11-12', '2025-11-12',
+   'https://dpdmis.in/faconline/Common/Document/EDL_2025.pdf',
+   'Essential Drug List - 2025', '2025', 'reference_only');
+
+insert into public.medicine_catalogue_entries
+  (id, release_id, source_annexure, facility_level, source_item_number, source_page,
+   therapeutic_category_source, source_description)
+values
+  ('30000000-0000-4000-8000-000000000002',
+   '30000000-0000-4000-8000-000000000001',
+   'shc_aam', 'shc_aam', 69, 55, 'Gastrointestinal medicines', 'Oral rehydration salts (ORS)');
+
 insert into public.inventory_items (id, facility_id, item_code, name, unit, is_active)
 values
   ('20000000-0000-4000-8000-000000000001', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
