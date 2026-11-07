@@ -337,6 +337,13 @@
       return Array.isArray(rows) ? (rows[0] || null) : rows;
     }
 
+    async function listSupervisorReports() {
+      await requireActiveProfile(['supervisor']);
+      return restRequest(
+        'reports?select=*,report_items(*),report_events(*),workers(display_name,preferred_language),facilities(name,district,block_lgd_code)&order=created_at.desc'
+      );
+    }
+
     async function reviewReport(input) {
       input = input || {};
       await requireActiveProfile(['supervisor']);
@@ -472,6 +479,7 @@
       replaceReportItems,
       submitReport,
       reviewReport,
+      listSupervisorReports,
       listReportEvents,
       listInventory,
       createStockObservation,
