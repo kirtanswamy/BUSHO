@@ -597,3 +597,17 @@ No live Supabase migration, operational account creation, real facility/medicine
 1. Add equivalent integration coverage for administrator provisioning UI + server policy using mocked server responses, including scope-denial and unverified-facility cases.
 2. Add end-to-end worker report submission and supervisor review controller integration against deterministic Supabase REST fixtures, preserving the live RLS contract tests.
 3. Once approved non-production Auth identities/facilities exist, run true multi-user browser E2E and record evidence before release review.
+
+
+## Part 2H.2 — authenticated portal and admin provisioning demo tests — 2026-11-08
+
+- Added `tests/authenticated-portal-demo.test.cjs`: executes the actual `supabase-client.js`, `portal-auth-policy.js` and `role-auth.js` together in an isolated browser-like VM. It covers synthetic password sign-in, profile lookup, correct worker/supervisor/storekeeper role access, authenticated event, workspace visibility, password clearing, sign-out and unauthenticated event; wrong-role, pending and missing profiles are denied.
+- Added `tests/admin-provisioning-demo.test.cjs`: executes the actual administrator provisioning controller with an empty verified facility/district directory. It verifies worker invitations are disabled and defensively blocked on submit, and that a state admin receives no invented district/facility options or selectable unassignable roles.
+- Harness failures exposed incomplete DOM test doubles and an incorrect assumption about the platform-admin default role; fixed the test harness/expectations without weakening application policy.
+- CI run `42409286439` passed all four jobs: Node 18, Node 22, Node 24 and PostgreSQL 17 database contract.
+- This is deterministic application integration coverage with synthetic Auth/REST fixtures, not a live multi-user browser test. It does not provision users or alter Supabase.
+
+### Next Part 2H.3
+- Add positive-path admin provisioning controller test with a verified facility fixture, including required worker consent and exactly-one-facility behavior.
+- Add REST-contract integration tests for worker report draft → item persistence → submission and supervisor review/correction, using deterministic mocked HTTP responses while preserving database RLS tests.
+- After approval of a non-production Supabase environment and synthetic test accounts/facilities, run real browser E2E and record screenshots/log evidence.
