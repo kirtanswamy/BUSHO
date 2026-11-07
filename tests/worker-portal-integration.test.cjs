@@ -14,8 +14,8 @@ test('worker report state is isolated by authenticated user ID', () => {
   assert.match(app, /busho:authenticated/);
   assert.match(app, /busho:unauthenticated/);
   const auth = read('role-auth.js');
-  assert.match(auth, /document\\.dispatchEvent\\(new CustomEvent\\('busho:authenticated'/);
-  assert.match(auth, /document\\.dispatchEvent\\(new CustomEvent\\('busho:unauthenticated'/);
+  assert.match(auth, /document\.dispatchEvent\(new CustomEvent\('busho:authenticated'/);
+  assert.match(auth, /document\.dispatchEvent\(new CustomEvent\('busho:unauthenticated'/);
   assert.doesNotMatch(app, /busho-demo-state-v1/);
 });
 
