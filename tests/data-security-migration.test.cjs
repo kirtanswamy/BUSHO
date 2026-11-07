@@ -153,6 +153,12 @@ test('hierarchical admins can read records in their assigned scope without recei
   assert.match(sql, /reports_supervisor_update[\s\S]*?current_profile_role\(\) = 'supervisor'/i);
 });
 
+test('role alignment migration keeps worker drafts private from supervisors and adds AAM-PHC taxonomy', () => {
+  const sql = loadMigration();
+  assert.match(sql, /status <> 'draft'[\s\S]*?has_facility_access/i);
+  assert.match(sql, /'aam_phc'/i);
+});
+
 test('workers can edit structured report items on drafts and reports returned for correction only', () => {
   const sql = loadMigration();
   for (const policy of [
