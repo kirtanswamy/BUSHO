@@ -36,7 +36,7 @@ test('medicine source validator rejects guessed normalized fields and incomplete
 
   const falselyComplete = structuredClone(sample);
   falselyComplete.sampleOnly = false;
-  assert.ok(validateMedicineCatalogue(falselyComplete).errors.some(error => error.code === 'sample_status_missing'));
+  assert.ok(validateMedicineCatalogue(falselyComplete).errors.some(error => error.code === 'annexure_sequence_incomplete'));
 });
 
 test('medicine source validator checks exact printed-page mapping and refuses incomplete full-release claims', () => {
@@ -48,4 +48,21 @@ test('medicine source validator checks exact printed-page mapping and refuses in
   claimedComplete.sampleOnly = false;
   const result = validateMedicineCatalogue(claimedComplete);
   assert.ok(result.errors.some(error => error.code === 'annexure_sequence_incomplete'));
+});
+
+test('verified source page manifest covers every numbered entry exactly once', () => {
+  const manifest = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-source-manifest.json'), 'utf8'));
+  for (const [key, meta] of Object.entries(manifest.annexures)) {
+    let next = meta.firstItem;
+    for (const range of meta.printedPageRanges) {
+      assert.equal(range.firstItem, next);
+      assert.ok(range.lastItem >= range.firstItem);
+      next = range.lastItem + 1;
+    }
+    assert.equal(next - 1, meta.lastItem);
+    assert.equal(meta.lastItem, key === 'phc_phc_aam_uphc' ? 172 : 106);
+  }
+  assert.equal(manifest.currentTranscription.complete, false);
+  assert.equal(manifest.currentTranscription.phcRows, 10);
+  assert.equal(manifest.currentTranscription.shcRows, 14);
 });
