@@ -42,5 +42,6 @@ test('CI runs the real migration against PostgreSQL 17 before declaring database
   assert.match(workflow, /database-contract:/i);
   assert.match(workflow, /postgres:17/i);
   assert.match(workflow, /20261106190000_busho_operational_security_foundation\.sql/i);
+  assert.match(workflow, /20261107060000_busho_database_query_tuning\.sql/i);
   assert.match(workflow, /postgres-rls-contract\.sql/i);
 });
