@@ -107,7 +107,7 @@ Production branch: unchanged
 - `63fb528` — fix: require supervisor approval before DPDMIS submission
 - `784b60d` — test: provide receipt reference when checking quantity guard
 
-Previously verified CI checkpoint: run `42364188879` passed Node 18/22/24 and PostgreSQL 17 RLS/database-contract checks for the worker integration. It does not verify the later supervisor workspace. Latest supervisor changes are awaiting a fresh CI run; Vercel preview is currently rate-limited.
+Latest verified CI run `42365474633` passed Node 18/22/24 (90 tests, 0 failures, smoke checks green) and PostgreSQL 17 migration/RLS database-contract. Vercel preview remains rate-limited by the team build plan.
 
 ## Immediate next actions
 
@@ -173,7 +173,7 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Disabled the supervisor's browser-local synthetic notification/report bridge. The worker's separate workflow is not changed by this guard.
 - Added responsive report detail/review styling and removed the supervisor page's demo reset action.
 - Added `tests/supervisor-operations.test.cjs`, `tests/supervisor-portal-integration.test.cjs` and supervisor inbox client tests.
-- **Current verification:** this checkpoint has not yet completed a fresh GitHub Actions run. Vercel currently reports a build-rate-limit failure for the feature branch preview; production remains untouched. Do not call this milestone green until the latest CI result is inspected.
+- **Verification:** CI run `42365474633` passed Node 18/22/24, all 90 Node tests and the PostgreSQL 17 migration/RLS database-contract job. The Vercel preview remains rate-limited by the team plan; production remains untouched.
 - **Known limitation:** no Auth users/facilities/workers/assignments/reports exist in the live project, so no live supervisor screen or real review transition has yet been demonstrated. The automated tests use controlled fixtures.
 - **Next:** run CI, fix all test failures, then build worker report history/assigned facility context and a secure administrator provisioning workflow. Only after provisioning should a two-account/two-facility end-to-end test be attempted.
 
@@ -188,6 +188,6 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Worker dashboard summary, facility context and profile sections now derive from the authenticated worker record and that account's report history. Missing worker/facility records show an explicit provisioning state.
 - Removed synthetic worker login identity and the worker page's unsafe demo-reset action. Local recovery drafts remain per-account and are removed after server submission.
 - Added `tests/worker-history.test.cjs`, worker history query tests, rehydration tests and portal integration assertions.
-- **Verification:** this worker-history checkpoint is awaiting a fresh CI run. The preceding CI run `42364871547` passed all 81 Node tests but failed two smoke checks because the smoke test still expected demo credentials and a hard-coded supervisor dashboard. Those smoke assertions were updated. Run `42365023889` then failed one remaining stale supervisor email-placeholder assertion, which has now been removed. The PostgreSQL 17 database-contract job passed on run `42364871547`; latest worker-history changes are not yet verified.
+- **Verification:** CI run `42365474633` passed the full current checkpoint: Node 18/22/24, 90 tests with zero failures, smoke checks green, and PostgreSQL 17 migration/RLS database-contract green. Earlier smoke failures were stale expectations for demo credentials/static dashboards and were corrected.
 - **Live environment limitation:** the Supabase project still has no Auth users, worker records, facilities, assignments or reports. No real multi-account user journey has been demonstrated.
 - **Next:** get the current CI green, then build controlled administrator provisioning and execute a two-facility cross-scope test with explicitly authorised test accounts.
