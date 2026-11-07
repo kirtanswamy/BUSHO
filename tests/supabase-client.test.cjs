@@ -213,3 +213,40 @@ test('report item replacement deletes the prior editable set before inserting th
   assert.equal(JSON.parse(calls[1].options.body)[0].display_label, 'Fever');
   assert.equal(result[0].report_id, 'report-1');
 });
+
+test('worker can update only the report draft fields through the authenticated REST client', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'worker-token',
+    refresh_token: 'worker-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'auth-worker-1' }
+  }));
+  let request;
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    fetch: async (url, options) => {
+      request = { url, options };
+      return jsonResponse([{ id: 'report-1', status: 'correction_requested' }]);
+    },
+    storage,
+    now: () => 1_800_000_000_000
+  });
+  const updated = await client.updateReportDraft('report-1', {
+    originalText: 'Updated aggregate field report',
+    languageCode: 'hi',
+    reportingDate: '2026-11-07',
+    summary: { extraction_version: 1, review_required: true }
+  });
+  assert.equal(updated.status, 'correction_requested');
+  assert.equal(request.options.method, 'PATCH');
+  const body = JSON.parse(request.options.body);
+  assert.deepEqual(body, {
+    original_text: 'Updated aggregate field report',
+    language_code: 'hi',
+    summary: { extraction_version: 1, review_required: true },
+    reporting_date: '2026-11-07'
+  });
+  assert.ok(request.url.includes('reports?id=eq.report-1'));
+});
