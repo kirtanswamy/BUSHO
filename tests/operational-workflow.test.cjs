@@ -138,6 +138,10 @@ test('indent can be partially received and then closed only when the balance is 
   });
   assert.equal(complete.receivedQty, 30);
   assert.equal(complete.status, 'received');
+  assert.throws(() => workflow.transitionIndent(complete, {
+    to: 'received', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
+    reference: 'DEMO-GRN-002A', receivedQty: 12
+  }), /exact previously recorded receipt/i);
 });
 
 test('block-scoped summary excludes records from other LGD blocks and draft-only reports', () => {
