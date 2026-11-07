@@ -532,3 +532,15 @@ No live Supabase changes, real user provisioning, operational data entry, produc
 - Added four controller tests for inventory evidence rendering, role gate, invalid timestamps and read errors; initial test harness was adjusted to model the HTML's server-rendered sign-in empty state.
 - Stock accounting design gate documented in `docs/stock-accounting-design.md`; current UI remains evidence-only pending local SOP/authority decisions.
 - Latest workflow/test commits `4bb766f`, `0480662`, `be21f7b`; CI for final head pending.
+
+
+## Part 2G.4 — authorization parity, idempotency and preview smoke — 2026-11-08
+
+- Aligned `workflow-core.js` with database authority: indent recommendation creation is supervisor-only; supervisor approves and records DPDMIS submission; storekeeper records allocation, dispatch and receipts. Removed direct submitted-to-dispatched transition. Added a safe exact receipt retry no-op for storekeeper only, matching an already recorded reference + quantity; no duplicate event is appended.
+- Added tests that storekeepers cannot create recommendations, supervisors cannot allocate/dispatch/receive, storekeepers can perform fulfilment, over-receipt is rejected, and exact receipt replay is idempotent. Corrected partial/final receipt test actors to storekeeper.
+- Added four focused Storekeeper inventory UI controller tests covering safe HTML escaping, scoped role gate, invalid timestamps and read errors. CI run `42405853347` passed all Node 18/22/24 and PostgreSQL 17 jobs after fixing the test harness to model the HTML server-rendered sign-in state.
+- CI run `42406238309` passed all four jobs for role separation and inventory tests. A later CI run for the additional pure-state-machine idempotency tests is `42407315798`; Node 18/22/24 passed, PostgreSQL contract was still running at this note.
+- Found and corrected stale asset query versions in worker, supervisor and admin HTML: browser cache keys now point to current Supabase client, role-auth, app, and admin scripts.
+- Created Vercel preview deployment for commit `fd45ef3`: READY. HTTP smoke check returned 200 for landing, worker, supervisor, storekeeper and admin pages; the storekeeper page's script/style assets all returned 200. This deployment predates the last pure-state-machine retry adjustment and final asset cache-key edits, so a fresh preview is required for the final head.
+- Added `docs/stock-accounting-design.md` describing the candidate ledger invariant, required event provenance and controls, and explicit local authority decisions required before balance calculations. No unapproved stock ledger schema or live balance engine was invented.
+- No live Supabase migration, operational account provisioning, production deployment, or PR merge.
