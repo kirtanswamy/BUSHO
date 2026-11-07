@@ -42,7 +42,7 @@ function makeElement(id, initial = {}) {
     setAttribute(name, value) { this.attributes[name] = String(value); },
     getAttribute(name) { return this.attributes[name] ?? null; },
     querySelector(selector) {
-      if (selector === '[type="submit"]') return submit;
+      if (selector === '[type="submit"]') return this.submitElement || null;
       return null;
     }
   };
@@ -60,6 +60,7 @@ function makePortal(portalRole, account) {
   const logout = makeElement('portal-logout');
   const session = makeElement('session-label');
   const submit = makeElement('submit', { textContent: 'Sign in' });
+  form.submitElement = submit;
   const focusTarget = makeElement('demo-title');
   for (const el of [login, app, form, email, password, error, logout, session, focusTarget]) elements.set(el.id, el);
 
