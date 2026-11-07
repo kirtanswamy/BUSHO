@@ -35,7 +35,7 @@ export function validateMedicineCatalogue(input) {
     if (!annexure) { errors.push({ row, code: 'unknown_annexure' }); continue; }
     if (entry.facilityLevel !== annexure.level) errors.push({ row, code: 'annexure_facility_level_mismatch' });
     if (entry.sourceAnnexureLabel !== annexure.label) errors.push({ row, code: 'annexure_label_mismatch' });
-    const meta = input.annexures?.[annexure.key];
+    const meta = input.annexures?.[entry.sourceAnnexure];
     if (!meta || meta.facilityLevel !== annexure.level) errors.push({ row, code: 'annexure_metadata_missing' });
     if (!Number.isInteger(entry.sourceItemNumber) || entry.sourceItemNumber < 1
       || (meta && entry.sourceItemNumber > meta.publishedEntryCount)) errors.push({ row, code: 'invalid_source_item_number' });
