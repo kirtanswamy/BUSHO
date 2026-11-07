@@ -473,3 +473,14 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - CI run `42400643712` passed Node 18/22/24 but PostgreSQL failed at the exact receipt replay with "This indent transition is not allowed". The retry guard already required exact same status, cumulative quantity and receipt reference after assigned facility-role authorization, but also unnecessarily restricted it to the storekeeper role. Removed only that extra role restriction: either assigned supervisor or assigned storekeeper may replay an exact unchanged receipt; any changed field still follows the existing transition guard. Migration fix commit `1e9b778`; CI pending.
 
 - CI run `42401141797` passed Node 18/22/24 but PostgreSQL failed at the storekeeper workflow because the database transition guard allowed an assigned supervisor to execute storekeeper-only allocation/dispatch/receipt transitions. This exposed a real authorization gap, not merely a test issue. Fixed the guard so allocation, dispatch and receipt explicitly require `v_role = 'storekeeper'`; supervisor recommendation/approval/submission remain supervisor-only, and exact no-op receipt retry still passes through facility authorization. Migration commit `99c2740`; CI pending.
+
+
+## Part 2G.1 — evidence-based inventory reconciliation view — 2026-11-08
+
+- Added a storekeeper-only Inventory reconciliation section to `storekeeper.html` and a dedicated controller `storekeeper-inventory-reconciliation.js`.
+- Uses existing authenticated `listInventory()` query, which retrieves facility-RLS-scoped active inventory items with their observations and inbound movement ledger. No new table or schema migration was introduced.
+- For each item, the view separately displays latest dated observation, observation source/freshness, inbound receipt movement count/total, receipt references and recent observation history. It marks synthetic evidence where present.
+- Explicitly does not compute or label a current balance: the current model has no verified opening-balance baseline and no complete outbound movement ledger. It also does not claim physical verification.
+- Existing live Supabase schema inspection confirmed `inventory_items` and `inventory_snapshots` are empty, RLS-enabled tables; live project has no `inventory_movements` table yet because branch migrations have not been applied. No live DB changes.
+- HTML commit `0b0bb07`, controller `9f85932`, script include `c34fbb8`. New feature still needs CI/browser E2E verification.
+- PostgreSQL CI on diagnostic commit `8ae995a` still failed at the storekeeper contract. Diagnostic notices show allocation, dispatch, partial receipt, final receipt and exact retry were all reached before the exception; the failure is in the later cross-facility update attempt. Reworked that assertion to accept either RLS zero-row filtering or a trigger rejection, while verifying the Dhamtari request remains unchanged. Latest test commit `6878072`; CI pending.
