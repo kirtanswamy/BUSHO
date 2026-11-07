@@ -41,6 +41,7 @@ function makeElement(id, initial = {}) {
     },
     setAttribute(name, value) { this.attributes[name] = String(value); },
     getAttribute(name) { return this.attributes[name] ?? null; },
+    focus() { this.focused = true; },
     querySelector(selector) {
       if (selector === '[type="submit"]') return this.submitElement || null;
       return null;
