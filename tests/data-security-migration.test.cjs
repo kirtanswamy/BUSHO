@@ -167,3 +167,41 @@ test('workers can edit structured report items on drafts and reports returned fo
     assert.ok(body.includes("r.status in ('draft','correction_requested')"), policy + ' must allow returned corrections');
   }
 });
+
+
+test('workers can track replenishment requests created from their own reports', () => {
+  const sql = loadMigration();
+  assert.match(sql, /create policy replenishment_requests_worker_source_report_select/i);
+  const policy = sql.match(/create policy replenishment_requests_worker_source_report_select[\s\S]*?;/i)?.[0] || '';
+  assert.match(policy, /for select to authenticated/i);
+  assert.match(policy, /current_profile_role\(\)\s*=\s*'worker'/i);
+  assert.match(policy, /source_report_id/i);
+  assert.match(policy, /r\.worker_id\s*=\s*app_private\.auth_worker_id\(\)/i);
+});
+
+test('supervisors can correct report items only while reviewing an assigned report', () => {
+  const sql = loadMigration();
+  assert.match(sql, /create policy report_items_supervisor_update/i);
+  const policy = sql.match(/create policy report_items_supervisor_update[\s\S]*?;/i)?.[0] || '';
+  assert.match(policy, /for update to authenticated/i);
+  assert.match(policy, /has_facility_access\(r\.facility_id,\s*array\['supervisor'\]/i);
+  assert.match(policy, /r\.status\s+in\s*\('submitted','resubmitted'\)/i);
+  assert.match(policy, /with check/i);
+});
+
+test('structured report corrections create append-only audit events without copying field values', () => {
+  const sql = loadMigration();
+  assert.match(sql, /create or replace function app_private\.record_report_item_correction/i);
+  assert.match(sql, /create trigger busho_report_item_correction_event after update on public\.report_items/i);
+  assert.match(sql, /report_item_corrected/i);
+  assert.match(sql, /changed_fields/i);
+  assert.match(sql, /report_events_no_update_delete/i);
+  const fn = sql.match(/create or replace function app_private\.record_report_item_correction[\s\S]*?\$\$;/i)?.[0] || '';
+  assert.doesNotMatch(fn, /new\.(?:display_label|quantity|unit|value_text)\s*,/i);
+});
+
+test('future public tables and functions do not inherit broad API access by default', () => {
+  const sql = loadMigration();
+  assert.match(sql, /alter default privileges for role postgres in schema public[\s\S]*?revoke select, insert, update, delete on tables from anon, authenticated/i);
+  assert.match(sql, /alter default privileges for role postgres in schema public[\s\S]*?revoke execute on functions from public, anon, authenticated/i);
+});
