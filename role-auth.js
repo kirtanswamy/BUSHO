@@ -76,9 +76,9 @@
     if (reason === 'account_not_active') {
       return 'Your BUSHO account is awaiting administrator approval. You cannot access operational records yet.';
     }
-    return portalKind === 'worker'
-      ? 'This account is not assigned the Health Worker role.'
-      : 'This account does not have an authorised operations role.';
+    if (portalKind === 'worker') return 'This account is not assigned the Health Worker role.';
+    if (portalKind === 'admin') return 'This account does not have an authorised administrator role.';
+    return 'This account does not have an authorised operations role.';
   }
 
   async function validateProfile(profile) {
