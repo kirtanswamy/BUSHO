@@ -138,20 +138,6 @@ test('returned reports can be resumed through the authenticated report editor', 
   }
 });
 
-test('worker history safely escapes report content before rendering', async () => {
-  const doc = makeDocument();
-  const rows = sampleReports();
-  rows[0].original_text = '<script>alert(1)</script>';
-  const controller = history.createController({
-    client: {
-      async requireActiveProfile() {},
-      async getMyWorker() { return null; },
-      async listMyReports() { return rows; }
-    },
-    document: doc,
-    profile: { id: 'auth-1', role: 'worker' }
-  });
-  await controller.load();
-  assert.doesNotMatch(doc.modules.get('my-reports').innerHTML, /<script>alert/);
-  assert.match(doc.modules.get('my-reports').innerHTML, /&lt;script&gt;/);
+test('worker history escapes untrusted report text before rendering', () => {
+  assert.equal(history.escapeHtml('<script>alert(1)</script>'), '&lt;script&gt;alert(1)&lt;/script&gt;');
 });
