@@ -106,9 +106,9 @@ function harness() {
 
 test('admin provisioning UI blocks facility-based invitations when verified facilities are absent', async () => {
   const app = harness();
-  await app.document.dispatchEvent(new CustomEvent('busho:authenticated', {
+  await app.document.dispatchEvent({ type: 'busho:authenticated',
     detail: { profile: { id: 'synthetic-admin', role: 'platform_admin', status: 'active', display_name: 'Synthetic Admin' } }
-  }));
+  });
 
   assert.equal(app.calls.listOptions, 1);
   assert.match(app.elements.get('facility-readiness').textContent, /0 verified facilities/i);
@@ -122,9 +122,9 @@ test('admin provisioning UI blocks facility-based invitations when verified faci
 
 test('admin provisioning UI does not invent district options when directory is empty', async () => {
   const app = harness();
-  await app.document.dispatchEvent(new CustomEvent('busho:authenticated', {
+  await app.document.dispatchEvent({ type: 'busho:authenticated',
     detail: { profile: { id: 'synthetic-state-admin', role: 'state_admin', status: 'active' } }
-  }));
+  });
 
   const districtOptions = app.elements.get('provision-district').children;
   assert.equal(districtOptions.length, 1, 'only the empty placeholder should be rendered');
