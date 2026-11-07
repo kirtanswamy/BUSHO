@@ -115,7 +115,7 @@
       }
     }
 
-    if (items.length) await client.saveReportItems(report.id, items);
+    if (typeof client.replaceReportItems !== 'function') {\n      throw new Error('The BUSHO client does not support safe report-item replacement. Refresh the application.');\n    }\n    await client.replaceReportItems(report.id, items);
     const submitted = await client.submitReport(report.id);
     if (!submitted || !submitted.id) {
       throw new Error('The report draft was saved, but submission was not confirmed. Keep its ID and retry safely.');
