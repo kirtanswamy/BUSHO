@@ -465,31 +465,6 @@ begin
   end if;
 end $storekeeper_cannot_approve$;
 
--- The assigned storekeeper may replay the exact final receipt after a lost
--- response. It must be a no-op, not a second movement or event.
-update public.replenishment_requests
-set status = 'received', received_quantity = 10,
-    receipt_reference = 'GRN-TEST-BALOD-FINAL-001'
-where note = 'Synthetic Balod replenishment recommendation';
-do $early_receipt_retry_check$
-declare
-  v_movements integer;
-  v_receipts integer;
-begin
-  select count(*) into v_movements
-  from public.inventory_movements im
-  join public.replenishment_requests rr on rr.id = im.replenishment_request_id
-  where rr.note = 'Synthetic Balod replenishment recommendation';
-  select count(*) into v_receipts
-  from public.replenishment_events re
-  join public.replenishment_requests rr on rr.id = re.replenishment_request_id
-  where rr.note = 'Synthetic Balod replenishment recommendation'
-    and re.action = 'receipt_recorded';
-  if v_movements <> 2 or v_receipts <> 2 then
-    raise exception 'Exact receipt retry duplicated ledger entries: movements %, receipt events %', v_movements, v_receipts;
-  end if;
-end $early_receipt_retry_check$;
-rollback;
 
 -- Supervisor B creates a Balod replenishment recommendation from their verified report.
 begin;
@@ -640,6 +615,31 @@ begin
   where note = 'Synthetic Balod replenishment recommendation';
   get diagnostics v_updated = row_count;
   if v_updated <> 1 then raise exception 'Storekeeper could not close full receipt'; end if;
+
+  -- Replay the exact final receipt under the same authenticated storekeeper
+  -- transaction; it must not append another movement or receipt event.
+  update public.replenishment_requests
+  set status = 'received', received_quantity = 10,
+      receipt_reference = 'GRN-TEST-BALOD-FINAL-001'
+  where note = 'Synthetic Balod replenishment recommendation';
+  do $receipt_retry_in_scope_check$
+  declare
+    v_movements integer;
+    v_receipts integer;
+  begin
+    select count(*) into v_movements
+    from public.inventory_movements im
+    join public.replenishment_requests rr on rr.id = im.replenishment_request_id
+    where rr.note = 'Synthetic Balod replenishment recommendation';
+    select count(*) into v_receipts
+    from public.replenishment_events re
+    join public.replenishment_requests rr on rr.id = re.replenishment_request_id
+    where rr.note = 'Synthetic Balod replenishment recommendation'
+      and re.action = 'receipt_recorded';
+    if v_movements <> 2 or v_receipts <> 2 then
+      raise exception 'Exact receipt retry duplicated ledger entries: movements %, receipt events %', v_movements, v_receipts;
+    end if;
+  end $receipt_retry_in_scope_check$;
 
   update public.replenishment_requests
   set status = 'received', received_quantity = 10,
