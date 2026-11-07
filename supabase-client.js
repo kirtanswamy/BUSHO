@@ -231,7 +231,10 @@
     }
 
     async function listMyReports() {
-      return restRequest('reports?select=*,report_items(*),report_events(*)&order=created_at.desc');
+      await requireActiveProfile(['worker']);
+      return restRequest(
+        'reports?select=*,report_items(*),report_events(*),facilities(name,district,block_lgd_code)&order=created_at.desc'
+      );
     }
 
     async function getReport(reportId) {
