@@ -72,8 +72,14 @@ let state = initialState();
 
 function saveState() {
   if (!activeAuthUserId) return;
-  try { window.localStorage.setItem(STORAGE_PREFIX + activeAuthUserId, JSON.stringify(state)); }
-  catch { showToast(t('worker.toast.save')); }
+  const key = STORAGE_PREFIX + activeAuthUserId;
+  try {
+    if (['submitted', 'resubmitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
+      window.localStorage.removeItem(key);
+      return;
+    }
+    window.localStorage.setItem(key, JSON.stringify(state));
+  } catch { showToast(t('worker.toast.save')); }
 }
 
 document.addEventListener('busho:authenticated', event => {
