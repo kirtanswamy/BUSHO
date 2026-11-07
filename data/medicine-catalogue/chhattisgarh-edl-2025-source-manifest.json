@@ -18,32 +18,32 @@
         {
           "firstItem": 1,
           "lastItem": 25,
-          "page": 47
+          "page": 48
         },
         {
           "firstItem": 26,
           "lastItem": 55,
-          "page": 48
+          "page": 49
         },
         {
           "firstItem": 56,
           "lastItem": 84,
-          "page": 49
+          "page": 50
         },
         {
           "firstItem": 85,
           "lastItem": 118,
-          "page": 50
+          "page": 51
         },
         {
           "firstItem": 119,
           "lastItem": 150,
-          "page": 51
+          "page": 52
         },
         {
           "firstItem": 151,
           "lastItem": 172,
-          "page": 52
+          "page": 53
         }
       ]
     },
@@ -56,22 +56,22 @@
         {
           "firstItem": 1,
           "lastItem": 19,
-          "page": 53
+          "page": 54
         },
         {
           "firstItem": 20,
           "lastItem": 47,
-          "page": 54
+          "page": 55
         },
         {
           "firstItem": 48,
           "lastItem": 85,
-          "page": 55
+          "page": 56
         },
         {
           "firstItem": 86,
           "lastItem": 106,
-          "page": 56
+          "page": 57
         }
       ]
     }
@@ -86,6 +86,7 @@
     "Annexure numbering is confirmed by the contents page and section headings in the official PDF: Annexure 4 is PHC/PHC-AAM/UPHC; Annexure 5 is SHC-AAM.",
     "The 172 and 106 counts are numbered source rows, not counts of normalized SKUs or dosage forms.",
     "Printed page ranges are reconciled against the official PDF page footers and row boundaries.",
-    "A different EDL document found in search uses a different annexure numbering scheme; it is not the source used for this dataset."
+    "A different EDL document found in search uses a different annexure numbering scheme; it is not the source used for this dataset.",
+    "Page references use the page footer printed on each annexure sheet. The contents index points one page earlier than the printed page labels; page mapping is therefore +1 relative to the index entry."
   ]
 }
