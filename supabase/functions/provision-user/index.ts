@@ -33,16 +33,58 @@ function throwOnError(result, message) {
   return result?.data;
 }
 
+async function readJsonBody(request) {
+  const reader = request.body?.getReader();
+  if (!reader) throw new ProvisioningError(400, 'A JSON request body is required.', 'invalid_body');
+  const chunks = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > 12_000) {
+        await reader.cancel();
+        throw new ProvisioningError(413, 'Request body is too large.', 'body_too_large');
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  try {
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    throw new ProvisioningError(400, 'A valid JSON body is required.', 'invalid_body');
+  }
+}
+
 const authenticatedHandler = withSupabase({ auth: 'user' }, async (req, ctx) => {
   const origin = req.headers.get('origin');
   if (req.method !== 'POST') return jsonResponse({ error: 'Method not allowed.' }, 405, origin);
 
+  const contentType = req.headers.get('content-type') || '';
+  if (!contentType.toLowerCase().includes('application/json')) {
+    return jsonResponse({ error: 'Content-Type must be application/json.' }, 415, origin);
+  }
   const contentLength = Number(req.headers.get('content-length') || 0);
-  if (contentLength > 12_000) return jsonResponse({ error: 'Request body is too large.' }, 413, origin);
+  if (contentLength > 12_000) return jsonResponse({ error: 'Request body is too large.', code: 'body_too_large' }, 413, origin);
 
   let input;
-  try { input = await req.json(); }
-  catch { return jsonResponse({ error: 'A valid JSON body is required.' }, 400, origin); }
+  try { input = await readJsonBody(req); }
+  catch (error) {
+    const status = error instanceof ProvisioningError ? error.status : 400;
+    return jsonResponse({
+      error: error instanceof ProvisioningError ? error.message : 'A valid JSON body is required.',
+      code: error.code || 'invalid_body'
+    }, status, origin);
+  }
 
   const callerId = ctx.userClaims?.id;
   if (!callerId || !ctx.supabaseAdmin) {
