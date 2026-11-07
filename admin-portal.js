@@ -175,6 +175,7 @@
       document.getElementById('admin-role-chip').textContent =
         (profile.display_name || 'Administrator') + ' · ' + profile.role.replaceAll('_',' ');
       await loadOptions();
+      document.dispatchEvent(new CustomEvent('busho:admin-ready', { detail: { client, profile } }));
     } catch (error) {
       showStatus(error.message || 'Unable to initialise provisioning.', 'error');
     }
@@ -232,6 +233,7 @@
   document.addEventListener('busho:unauthenticated', () => {
     client = null;
     profile = null;
+    document.dispatchEvent(new CustomEvent('busho:admin-cleared'));
     facilities = [];
     districts = [];
     facilityOptions.replaceChildren();
