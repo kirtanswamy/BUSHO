@@ -38,6 +38,20 @@ test('worker portal loads the persistence adapter before the app and auth gate',
   assert.ok(persistence >= 0 && persistence < app && app < auth);
 });
 
+test('worker history loads after auth and can resume a returned report through the editor', () => {
+  const html = read('worker.html');
+  const app = html.indexOf('app-v2.js');
+  const auth = html.indexOf('role-auth.js');
+  const history = html.indexOf('worker-history.js');
+  const portal = html.indexOf('worker-portal.js');
+  assert.ok(app >= 0 && auth > app && history > auth && portal > history);
+  const editor = read('app-v2.js');
+  assert.match(editor, /BUSHO_WORKER_REPORT_EDITOR/);
+  assert.match(editor, /fromDatabaseItems\(report\.report_items/);
+  const client = read('supabase-client.js');
+  assert.match(client, /async function listMyReports\(\)[\s\S]*requireActiveProfile\(\['worker'\]\)/);
+});
+
 test('worker portal no longer seeds synthetic activity or enables the local cross-role bridge by default', () => {
   const html = read('worker.html');
   const enhancements = read('portal-enhancements.js');
