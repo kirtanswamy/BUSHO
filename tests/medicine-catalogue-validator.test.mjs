@@ -105,6 +105,8 @@ test('transcription audit covers all 278 source rows and flags possible OCR issu
   assert.equal(report.ok, true);
   assert.equal(report.summary.total_source_rows, 278);
   assert.equal(report.summary.mandatory_human_review_rows, 278);
+  assert.ok(report.entries.every(entry => entry.review_status === 'pending_source_reconciliation'));
+  assert.ok(report.entries.every(entry => entry.source_pdf_checked === false && entry.reviewer_name === null && entry.candidate_items.length === 0));
   assert.equal(report.import_policy.safe_to_import_to_live, false);
   assert.equal(report.import_policy.safe_for_stock_or_prescribing, false);
   const phcRow36 = report.entries.find(entry => entry.annexure === 'phc_phc_aam_uphc' && entry.item === 36);
