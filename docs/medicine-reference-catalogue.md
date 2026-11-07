@@ -100,3 +100,8 @@ Run the structural audit with:
 The EDL itself describes alignment with IPHS/NHSRC EML, NLEM, WHO EML, STGs and state facility consultations. It also explains tier-wise U/P/S/T stratification and buffer-stock planning. BUSHO does not recreate those policy decisions; it preserves the published reference and leaves local applicability and stock workflow with the authorised system and personnel.
 
 This document is an engineering data-governance note, not a clinical or procurement SOP.
+
+
+## 9. PDF text-layer comparison checkpoint
+
+The 15 machine-flagged rows have been compared against the official DPDMIS PDF's extracted text layer and row-level findings recorded in the review queue. This comparison confirms what the PDF text extraction contains; it is **not** a visual inspection of the rendered page. All 278 rows remain `sourcePdfChecked: false`. The text layer itself contains the apparent truncation in Annexure 4 item 36 and a spelling difference between Annexure 4 item 172 (`Medroxprogesterone`) and Annexure 5 item 81 (`Medroxyprogesterone`). Preserve source strings pending visual and authorised pharmacist/CGMSC review. Programme-guideline rows are not SKU records and must not be normalized as inventory products.
