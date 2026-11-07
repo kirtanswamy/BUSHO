@@ -30,6 +30,10 @@
     else if (action === 'preferences') document.getElementById('lang-select')?.focus();
   }));
 
+  // The supervisor workspace uses the authenticated database event feed, never the
+  // browser-local synthetic cross-role demo bridge.
+  if (role === 'supervisor') return;
+
   // In-app notifications are browser-local and remain available while this browser
   // profile is offline. Cross-tab storage events keep the two demo roles in sync.
   const NOTICE_KEY = 'busho-demo-notifications-v1';
