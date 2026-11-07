@@ -23,3 +23,36 @@ jobs:
         run: npm ci
       - name: Check
         run: npm run check
+
+  database-contract:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: busho_test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - name: Bootstrap Supabase-compatible legacy schema
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-bootstrap.sql
+      - name: Apply BUSHO operational security migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261106190000_busho_operational_security_foundation.sql
+      - name: Verify worker, supervisor, admin and stock workflows under RLS
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-rls-contract.sql
