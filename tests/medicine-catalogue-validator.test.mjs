@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { validateMedicineCatalogue } from '../scripts/validate-medicine-catalogue.mjs';
+import { auditMedicineTranscriptions } from '../scripts/audit-medicine-source-transcriptions.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sample = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-sample.json'), 'utf8'));
@@ -97,4 +98,17 @@ test('PHC-AAM/UPHC source transcription covers all 172 numbered rows with printe
   );
   assert.ok(phcTranscription.entries.every(entry => entry.facilityLevel === 'phc_aam'));
   assert.ok(phcTranscription.entries.every(entry => !entry.normalizedName && !entry.dosageForm && !entry.strength && !entry.stockUnit));
+});
+
+test('transcription audit covers all 278 source rows and flags possible OCR issues without normalizing', () => {
+  const report = auditMedicineTranscriptions([phcTranscription, shcTranscription]);
+  assert.equal(report.ok, true);
+  assert.equal(report.summary.total_source_rows, 278);
+  assert.equal(report.summary.mandatory_human_review_rows, 278);
+  assert.equal(report.import_policy.safe_to_import_to_live, false);
+  assert.equal(report.import_policy.safe_for_stock_or_prescribing, false);
+  const phcRow36 = report.entries.find(entry => entry.annexure === 'phc_phc_aam_uphc' && entry.item === 36);
+  assert.ok(phcRow36.transcription_flags.includes('possible_truncated_unit_or_ocr'));
+  const phcRow12 = report.entries.find(entry => entry.annexure === 'phc_phc_aam_uphc' && entry.item === 12);
+  assert.ok(phcRow12.transcription_flags.includes('source_spelling_or_ocr_check'));
 });
