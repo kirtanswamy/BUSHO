@@ -1,6 +1,6 @@
 # BUSHO Development Progress
 
-Last updated: 2026-11-06
+Last updated: 2026-11-07
 Working branch: `feature/chhattisgarh-operational-workflow`
 Base branch: `main`
 Production branch: unchanged
@@ -107,16 +107,16 @@ Production branch: unchanged
 - `63fb528` — fix: require supervisor approval before DPDMIS submission
 - `784b60d` — test: provide receipt reference when checking quantity guard
 
-Latest pull-request CI run: `42265557716` (success) on commit `61ffc9f`, across Node 18, 22 and 24. GitHub also reports Vercel deployment status success for the PR head. Earlier red runs were test-first failures; the final matrix passes.
+Previously verified CI checkpoint: run `42364188879` passed Node 18/22/24 and PostgreSQL 17 RLS/database-contract checks for the worker integration. It does not verify the later supervisor workspace. Latest supervisor changes are awaiting a fresh CI run; Vercel preview is currently rate-limited.
 
 ## Immediate next actions
 
-1. Begin Part 2: design the persistent data model and RLS/role-access rules; Supabase connection is still required before applying migrations or obtaining live project credentials.
-2. Build tested API/data adapters so worker and supervisor screens read/write one shared workflow source, not duplicated browser-local rows.
-3. Integrate report submission, supervisor verify/return/escalate, indent approval, external DPDMIS references, dispatch and receipt into the portals.
-4. Add tests for each screen-to-store hand-off before implementing the related UI.
-5. Add block selector/search using sourced LGD codes; every unseeded block must visibly remain empty.
-6. Test the complete Dhamtari synthetic scenario end to end before expanding sample activity.
+1. Verify the latest supervisor workspace CI; fix every failure before calling Part 2B.3 green.
+2. Build worker server-backed report history, assigned-facility context, review notes and resubmission status.
+3. Design and implement administrator-controlled provisioning; no self-assigned roles, no self-selected facility scope, and no live account creation without authorisation.
+4. After authorised test identities and facilities are provisioned, run a two-worker/two-facility/two-supervisor end-to-end RLS isolation test.
+5. Connect inventory and replenishment only after the report workflow is proven; preserve explicit DPDMIS hand-off references and do not claim external API integration.
+6. Refresh the preview when Vercel build capacity permits; keep production on `main` until release criteria pass.
 
 ## Resume prompt for a new chat
 
