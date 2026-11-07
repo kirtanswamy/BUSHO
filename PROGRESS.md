@@ -348,3 +348,11 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Follow-up test-schema check: the review queue exposes its safety gates under `policy.safeToImportToLive` / `policy.safeForStockOrPrescribing` (not `import_policy`). The new assertions were aligned to the actual queue schema in commit `9150dc9`; latest-head CI must confirm them.
 
 - **Latest-head CI:** run `42395089510` passed after the 278-row review queue, annotation register and regression tests were added. Node 18, Node 22, Node 24 and PostgreSQL 17 database-contract/RLS verification all succeeded.
+
+
+## Part 2D.8 — authorised reviewer hand-off package — 2026-11-07
+
+- Prepared `docs/edl-authorised-review-protocol.md` with reviewer authority requirements, row-level procedure, known source discrepancies, programme-reference handling, asterisk/highlight cautions and explicit non-authorization boundaries.
+- Prepared `data/medicine-catalogue/chhattisgarh-edl-2025-pharmacist-review-template.csv` containing all 278 source rows, source page provenance, flags, highlighted spans, source notes and blank reviewer/mapping decision fields.
+- Engineering-side source reconciliation is complete. The remaining gate is named, organization-authorized pharmacist/CGMSC review and recorded decisions. Do not normalize, import, or enable stock/prescribing use until that review and a separate release decision are complete.
+- No connected Supabase migration, live catalogue insert, facility import, account provisioning, Edge Function deployment or production release was performed.
