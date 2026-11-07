@@ -82,3 +82,27 @@ The first integration-boundary code has now been committed on the canonical feat
 - Added unit tests for database mapping, validation, ordering, saved-ID checkpoint, correction resume, safe item replacement and failure paths.
 
 **Important:** This is the tested persistence boundary, not yet a completed portal integration. The worker UI still needs to call it and show truthful pending/success/error states. Supervisor UI integration and live multi-user verification remain later parts. GitHub Actions/Vercel checks for the latest commit have not yet been confirmed green at this checkpoint.
+
+## Part 2B.2 — worker portal connected to report persistence
+
+The worker-side submit path is now connected to the persistence boundary:
+
+- The worker page loads `report-persistence.js` before `app-v2.js`.
+- `role-auth.js` emits authenticated/unauthenticated lifecycle events on `document`; the worker app loads and saves draft state under an Auth-user-specific local key, rather than the old shared demo key.
+- Confirmation now calls the authenticated Supabase client, revalidates the worker profile, creates or resumes the same report draft, checkpoints the server report ID locally before writing structured items, and only shows success after server confirmation.
+- A failed item write or submit preserves the same draft ID for retry. If the previous submit succeeded but the response was lost, a retry fetches the existing report and reconciles its server status instead of creating another report.
+- The local recovery draft is removed after server submission; report narrative and extracted values are not retained in local storage after success.
+- Logout is disabled while submission is in flight, and the submission callback checks that the same authenticated account is still active before writing the recovery checkpoint.
+- The old worker-to-supervisor localStorage synthetic report bridge is disabled by default. Hard-coded worker activity counts/rows and the fictional Rampur facility label were removed from the worker portal.
+- Worker confirmation/privacy copy was updated to say the report is submitted for supervisor review and to instruct workers not to enter patient-identifying information.
+
+### Verification status
+- CI run `42363981095` passed all three Node versions (18, 22, 24) and the PostgreSQL 17 database-contract job, including applying the migrations and running the RLS workflow contract. This run covered the worker integration code before the final language-copy-only commits.
+- The Vercel preview deployment for the later language-copy commit reported success. This is a preview, not production.
+- A fresh full CI run for the latest documentation/copy commit is still required before this part is marked complete.
+
+### Remaining blockers
+- The live Supabase project still has no Auth users, worker rows, facility rows or facility assignments. Therefore the UI code cannot yet be demonstrated with a real authorised worker account.
+- Supervisor inbox/review UI remains synthetic and is not yet reading reports from Supabase.
+- Worker report history, assigned-facility context, real notifications and facility-scoped metrics are not yet wired to server data.
+- No admin provisioning workflow exists yet. Do not self-assign roles or seed live users/facilities without an approved provisioning process.
