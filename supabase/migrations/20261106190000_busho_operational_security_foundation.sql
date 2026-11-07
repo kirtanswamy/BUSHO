@@ -853,6 +853,43 @@ after update of status, summary, review_note, worker_response_note, original_tex
 on public.reports
 for each row execute function app_private.record_report_event();
 
+-- Record structured-field corrections as metadata only. Do not duplicate field
+-- values or source text in the append-only report timeline.
+create or replace function app_private.record_report_item_correction()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  v_fields text[] := array[]::text[];
+begin
+  if new.item_type is distinct from old.item_type then v_fields := array_append(v_fields, 'item_type'); end if;
+  if new.item_code is distinct from old.item_code then v_fields := array_append(v_fields, 'item_code'); end if;
+  if new.display_label is distinct from old.display_label then v_fields := array_append(v_fields, 'display_label'); end if;
+  if new.quantity is distinct from old.quantity then v_fields := array_append(v_fields, 'quantity'); end if;
+  if new.unit is distinct from old.unit then v_fields := array_append(v_fields, 'unit'); end if;
+  if new.value_text is distinct from old.value_text then v_fields := array_append(v_fields, 'value_text'); end if;
+  if new.confidence is distinct from old.confidence then v_fields := array_append(v_fields, 'confidence'); end if;
+  if new.requires_review is distinct from old.requires_review then v_fields := array_append(v_fields, 'requires_review'); end if;
+  if cardinality(v_fields) = 0 then return new; end if;
+
+  insert into public.report_events
+    (report_id, actor_user_id, actor_role, action, status_from, status_to, note, metadata)
+  values (
+    new.report_id, auth.uid(), app_private.current_profile_role(),
+    'report_item_corrected', null, null, null,
+    jsonb_build_object('report_item_id', new.id, 'changed_fields', to_jsonb(v_fields))
+  );
+  return new;
+end;
+$;
+
+drop trigger if exists busho_report_item_correction_event on public.report_items;
+create trigger busho_report_item_correction_event
+after update on public.report_items
+for each row execute function app_private.record_report_item_correction();
+
 create or replace function app_private.guard_replenishment_transition()
 returns trigger
 language plpgsql
@@ -1267,6 +1304,23 @@ create policy report_items_worker_delete on public.report_items
     select 1 from public.reports r
     where r.id = report_id and r.worker_id = app_private.auth_worker_id()
       and r.status in ('draft','correction_requested')
+  ));
+
+create policy report_items_supervisor_update on public.report_items
+  for update to authenticated
+  using (exists (
+    select 1 from public.reports r
+    where r.id = report_id
+      and r.status in ('submitted','resubmitted')
+      and app_private.current_profile_role() = 'supervisor'
+      and app_private.has_facility_access(r.facility_id, array['supervisor']::text[])
+  ))
+  with check (exists (
+    select 1 from public.reports r
+    where r.id = report_id
+      and r.status in ('submitted','resubmitted')
+      and app_private.current_profile_role() = 'supervisor'
+      and app_private.has_facility_access(r.facility_id, array['supervisor']::text[])
   ));
 
 create policy report_events_scoped_select on public.report_events
