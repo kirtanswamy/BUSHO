@@ -447,3 +447,12 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Supervisor page SHA `51683e7b4d6cb385fe6af3734ff28c79d6d99245`; handoff controller SHA `1dcc6038b0e725fa051db70518e45e20f0808615`.
 
 - Part 2F.5 test hardening: added an isolated PostgreSQL negative test proving an assigned storekeeper cannot approve a supervisor recommendation. The fixture is created by the assigned Balod supervisor, attempted by the assigned Balod storekeeper, and rolled back so it does not affect later row-count assertions. Test commit: `0c9c8ce`. CI run not yet returned for this commit.
+
+
+## Part 2F.5 — role-boundary and receipt-retry contract hardening — 2026-11-07
+
+- CI run `42399718046` passed Node 18/22/24 but failed the PostgreSQL contract at the new storekeeper-negative test: it attempted to create a replenishment request from Supervisor B's report before that report was supervisor-verified. The database correctly rejected the insert. This was a test ordering/fixture defect, not a production authorization defect.
+- Moved the rollback-isolated storekeeper-cannot-approve test to after Supervisor B's report verification and before the normal Balod recommendation fixture. Re-fetched the file and confirmed it is after the verified-report marker and before the regular request creation.
+- Added a PostgreSQL idempotency assertion: replaying the final receipt update with the same cumulative quantity and receipt reference must leave the inventory movement count at two and receipt-event count at two. This directly tests retry safety at the database boundary.
+- Test commit: `f17a63e`. CI for this latest head not yet returned.
+- No schema changes, live Supabase migrations, real data writes or production deployment.
