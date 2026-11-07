@@ -364,3 +364,49 @@ test('worker report history is role-gated and includes the related facility disp
   assert.ok(calls[1].url.includes('facilities(name,district,block_lgd_code)'));
   assert.equal(calls[1].options.headers.Authorization, 'Bearer worker-token');
 });
+
+test('invitation acceptance stores a verified session and lets the invitee set a strong password', async () => {
+  const storage = makeStorage();
+  const calls = [];
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    storage,
+    now: () => 1_800_000_000_000,
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      if (url.endsWith('/auth/v1/user') && options.method === 'GET') {
+        return jsonResponse({ id: 'invited-user-1', email: 'worker@example.org' });
+      }
+      if (url.endsWith('/auth/v1/user') && options.method === 'PUT') {
+        return jsonResponse({ id: 'invited-user-1', email: 'worker@example.org', updated_at: '2026-11-07T12:00:00Z' });
+      }
+      throw new Error('Unexpected request: ' + url + ' ' + options.method);
+    }
+  });
+  const accepted = await client.setSessionFromUrlHash(
+    '#access_token=invite-access&refresh_token=invite-refresh&expires_in=3600&type=invite'
+  );
+  assert.equal(accepted.session.user.id, 'invited-user-1');
+  assert.equal(client.getSession().refresh_token, 'invite-refresh');
+  const updated = await client.updatePassword('a-long-secure-password-2026');
+  assert.equal(updated.id, 'invited-user-1');
+  assert.equal(calls[0].options.headers.Authorization, 'Bearer invite-access');
+  assert.equal(calls[1].options.method, 'PUT');
+  assert.equal(calls[1].options.headers.Authorization, 'Bearer invite-access');
+  assert.deepEqual(JSON.parse(calls[1].options.body), { password: 'a-long-secure-password-2026' });
+});
+
+test('invitation acceptance rejects non-invite links and weak passwords', async () => {
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    storage: makeStorage(),
+    fetch: async () => { throw new Error('No network request should occur.'); }
+  });
+  await assert.rejects(
+    client.setSessionFromUrlHash('#access_token=a&refresh_token=b&type=recovery'),
+    /not intended for account setup/i
+  );
+  await assert.rejects(client.updatePassword('short'), /between 12 and 128 characters/i);
+});
