@@ -8,7 +8,7 @@
   const EXTRACTION_VERSION = 1;
 
   function parseOptionalQuantity(value, label) {
-    if (value === '' || value === null || value === undefined) return null;
+    if (value === null || value === undefined || String(value).trim() === '') return null;
     const quantity = Number(value);
     if (!Number.isFinite(quantity) || quantity < 0) {
       throw new Error(label + ' must be a non-negative number.');
