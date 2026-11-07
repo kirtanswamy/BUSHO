@@ -87,6 +87,21 @@
     "The 172 and 106 counts are numbered source rows, not counts of normalized SKUs or dosage forms.",
     "Printed page ranges are reconciled against the official PDF page footers and row boundaries.",
     "A different EDL document found in search uses a different annexure numbering scheme; it is not the source used for this dataset.",
-    "Page references use the page footer printed on each annexure sheet. The contents index points one page earlier than the printed page labels; page mapping is therefore +1 relative to the index entry."
-  ]
+    "Page references use the page footer printed on each annexure sheet. The contents index points one page earlier than the printed page labels; page mapping is therefore +1 relative to the index entry.",
+    "A separate 106-row SHC-AAM transcription file covers every numbered source row, but remains unreviewed against the rendered PDF and is not an operational medicine catalogue."
+  ],
+  "annexureTranscriptions": {
+    "phc_phc_aam_uphc": {
+      "rows": 10,
+      "expectedRows": 172,
+      "status": "partial_sample",
+      "humanReconciled": false
+    },
+    "shc_aam": {
+      "rows": 106,
+      "expectedRows": 106,
+      "status": "source_text_transcribed_unreviewed",
+      "humanReconciled": false
+    }
+  }
 }
