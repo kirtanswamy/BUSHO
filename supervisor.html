@@ -80,6 +80,7 @@
   <button class="sidebar-link" data-portal-view="facilities"><span>⌂</span> Facilities</button>
   <button class="sidebar-link" data-portal-view="workers"><span>♙</span> Health Workers</button>
   <button class="sidebar-link" data-portal-view="approvals"><span>✓</span> Approvals <b class="sidebar-count">0</b></button>
+  <button class="sidebar-link" data-portal-view="supply-handoff"><span>⇄</span> Supply handoff</button>
   <p class="sidebar-label">ADMINISTRATION</p>
   <button class="sidebar-link" data-portal-view="activity"><span>◷</span> Activity Log</button>
   <button class="sidebar-link" data-portal-view="settings"><span>⚙</span> Settings</button>
@@ -115,6 +116,13 @@
             <section class="portal-module" data-module="facilities"><div class="module-heading"><div><p class="section-kicker">COVERAGE</p><h2>Facilities</h2></div></div></section>
             <section class="portal-module" data-module="workers"><div class="module-heading"><div><p class="section-kicker">TEAM ACTIVITY</p><h2>Health workers</h2></div></div></section>
             <section class="portal-module" data-module="approvals"><div class="module-heading"><div><p class="section-kicker">ADMINISTRATIVE CONTROL</p><h2>Approvals</h2></div></div></section>
+            <section class="portal-module" data-module="supply-handoff">
+              <div class="module-heading"><div><p class="section-kicker">FACILITY SUPPLY OPERATIONS</p><h2>Supervisor → storekeeper handoff</h2><p>Review replenishment recommendations, approve them and record the external DPDMIS submission reference.</p></div><button class="btn btn-quiet" id="supply-handoff-refresh" type="button">Refresh</button></div>
+              <div id="supply-handoff-message" aria-live="polite"></div>
+              <div id="supply-handoff-summary" class="storekeeper-summary"></div>
+              <div id="supply-handoff-list"><p class="empty-state">Loading facility-scoped replenishment requests…</p></div>
+              <p class="muted-copy">Approval is a BUSHO workflow decision. DPDMIS submission remains an external action performed outside BUSHO; enter its reference only after that action has actually occurred.</p>
+            </section>
             <section class="portal-module" data-module="activity"><div class="module-heading"><div><p class="section-kicker">AUDIT TRAIL</p><h2>Activity log</h2></div></div></section>
             <section class="portal-module" data-module="settings"><div class="module-heading"><div><p class="section-kicker">PREFERENCES</p><h2>Settings</h2></div></div></section>
             <div class="portal-module" data-module="overview-content">
@@ -417,5 +425,6 @@
     <script src="portal-redesign.js?v=2"></script>
     <script src="supervisor-operations.js?v=3"></script>
     <script src="supervisor-portal.js?v=1"></script>
+    <script src="supervisor-supply-handoff.js?v=1"></script>
   </body>
 </html>
