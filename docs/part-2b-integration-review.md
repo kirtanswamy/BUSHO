@@ -200,3 +200,27 @@ The worker-side submit path is now connected to the persistence boundary:
 - Current live `public.facilities` row count remains zero. No facility import or account provisioning was performed.
 - **CI:** run `42367099252` passed with the facility importer and tests included: Node 18/22/24, 124 tests with zero failures, smoke checks and PostgreSQL 17 database-contract. Latest branch head `19d49b9c4f98b0cd4ef3a578d5c02f4e7bdf909a` also passed run `42367190160` across Node 18/22/24 and PostgreSQL 17.
 - Next gate: obtain a dated authoritative facility export from Chhattisgarh DHS/NHM/CGMSC; reconcile source IDs with HFR/DPDMIS where possible; then conduct a reviewed import. No guessed facility rows or self-assigned locations.
+
+## Part 2C.1 — facility registry onboarding — 2026-11-07
+
+### Database and security
+- Added `20261107170000_facility_registry_review_workflow.sql`.
+- Import batches record authority, source date, HTTPS URL, importer, declared row count and verified/rejected counts.
+- Candidate records preserve external registry ID, facility name/type, Chhattisgarh state/district/block LGD codes, source row and server-derived review flags.
+- Both staging tables have RLS enabled and browser roles have no direct table privileges. Service-role-only public RPC wrappers invoke private security-definer functions.
+- Batch creation and its audit event are atomic. Staging checks the active admin profile/scope, exact Chhattisgarh district and block parent relationships, row count and maximum chunk size.
+- Stale source snapshots and ambiguous/non-selectable block mappings are flagged by the database, not trusted from client input.
+- Verification is transactional and creates a facility only when the candidate has no unresolved flags, the reviewer is active and in-scope, the source registry ID is not already present, and no normalised name collision exists. The new facility is active, `verification_status=verified`, `is_synthetic=false`, and retains source provenance.
+- Reject decisions and verify decisions are auditable. A batch cannot complete while rows are missing or candidates remain unreviewed.
+
+### Edge Function and admin UI
+- Added `supabase/functions/facility-registry/index.ts`: authenticated caller re-check, admin role and active-scope validation, CORS allowlist, 1 MB request limit, 250-row staging chunks, recent-batch list, paginated candidate list, review and completion actions.
+- Added `manageFacilityRegistry` to the browser client; no service-role key is included in browser assets.
+- Admin workspace accepts raw CSV or the validator's staging JSON, records source authority/date/URL, resumes owned batches after refresh, paginates the candidate queue and requires a human evidence note before verify/reject.
+- Candidates with server review flags cannot be verified in the UI; the reviewer must reconcile the source mapping or use a newer source snapshot.
+
+### Tests and release boundary
+- PostgreSQL 17 CI contract now applies the facility registry migration and exercises batch creation, staging, verification, facility promotion, audit event and district-scope denial with synthetic CI identities.
+- CI run `42368834377` passed on commit `5fe32e4c848c7729e11236a5bbd811d8293ba031`: Node 18/22/24, 135 tests with zero failures, smoke checks and PostgreSQL 17 database contract. Batch-recovery and grant-cleanup follow-ups need a fresh CI result.
+- Live Supabase schema has not been migrated; no Edge Function deployed; no Auth users/facilities created. Production remains on `main`.
+- No current authoritative Chhattisgarh facility export has been received. Do not seed from stale AAM lists or ambiguous DPDMIS names. The importer is staging/review only and should be run only against a current dated government export.
