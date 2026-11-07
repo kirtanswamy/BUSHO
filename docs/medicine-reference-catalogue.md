@@ -13,9 +13,9 @@ Official source:
 - [DPDMIS facility store portal and manuals](https://dpdmis.in/faconline/)
 - [DPDMIS public reporting system](https://dpdmis.in/DPDMISStock/Public_HomeDrug.aspx)
 
-The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, PHCs, Health and Wellness Centres and Sub Health Centres. The PDF has separate annexures. The contents index cites the section starts as pages 47 and 53, but the printed footer on the first actual annexure sheets reads 48 and 54 respectively. BUSHO stores the **printed footer page** as source provenance, not the contents-index reference.
-- Annexure 4: PHC, PHC-AAM and UPHC, printed pages 48–53, 172 numbered source entries.
-- Annexure 5: SHC-AAM, printed pages 54–57, 106 numbered source entries.
+The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, PHCs, Health and Wellness Centres and Sub Health Centres. The PDF has separate annexures. The contents index and printed footers agree: Annexure 4 begins on printed page 47 and Annexure 5 on printed page 53. BUSHO stores the **printed footer page** as source provenance, not the PDF's 1-based physical page index.
+- Annexure 4: PHC, PHC-AAM and UPHC, printed pages 47–52, 172 numbered source entries.
+- Annexure 5: SHC-AAM, printed pages 53–56, 106 numbered source entries.
 
 **Important:** the published EDL is a facility-level reference list. It is not an inventory balance, proof of current stock, procurement authorization, prescription or clinical protocol. Some entries refer to current national programme guidelines instead of specifying individual products. Several rows contain multiple formulations and caveats. Those details must be preserved rather than silently simplified.
 
@@ -78,7 +78,7 @@ Run the structural audit with:
 
 ## 8. Reconciliation checkpoint — 2026-11-07
 
-- The official 59-page PDF was opened from the DPDMIS source URL. The notification page identifies the Department of Health and Family Welfare, Government of Chhattisgarh, and date 12-Nov-2025. Annexure 4 starts on printed page 48 and Annexure 5 on printed page 54.
+- The official 59-page PDF was opened from the DPDMIS source URL. The notification page identifies the Department of Health and Family Welfare, Government of Chhattisgarh, and date 12-Nov-2025. Annexure 4 starts on printed page 47 and Annexure 5 on printed page 53.
 - Structural audit of the repository transcriptions: 172 Annexure 4 rows + 106 Annexure 5 rows = 278; contiguous row numbers; expected printed-page mapping; no structural errors.
 - Targeted machine flags: 15 rows (1 possible truncated unit/OCR, 6 spelling/OCR, 8 programme-guideline references). The exact row list is in the review queue.
 - **Not completed:** visual/page-by-page reconciliation of every row against the rendered PDF, PDF checksum capture, two-person review, pharmacist/CGMSC review, normalized mapping and live import. Do not represent the structural audit as clinical or source accuracy approval.
@@ -89,7 +89,7 @@ Run the structural audit with:
 - The 172-row PHC-AAM/UPHC and 106-row SHC-AAM annexures have been transcribed from PDF text, but none of the 278 rows has completed rendered-PDF human reconciliation.
 - No District Hospital, Civil Hospital, CHC or UPHC-only catalogue has been loaded.
 - The structural audit has confirmed row counts, contiguous numbering, annexure taxonomy and expected printed-page mapping for all 278 rows. It flagged 15 rows for targeted review: 1 possible truncated unit/OCR issue, 6 spelling/OCR checks and 8 programme-guideline references. This is a machine-assisted triage result, not proof that the remaining rows are correct.
-- A row-by-row review queue is maintained at `data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json`; all rows remain `pending_source_reconciliation`, `sourcePdfChecked: false`, and non-importable.
+- A row-by-row review queue is maintained at `data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json`; 16 targeted rows have rendered-page evidence and remain pending authorised review; the other 262 rows still require targeted row-level comparison. All rows remain non-importable.
 - No normalized ingredient/formulation/unit mapping has been approved.
 - No facility has been mapped to the EDL or to inventory items.
 - No actual stock, expiry, procurement, DPDMIS API or government transaction has been imported or simulated in the live project.
@@ -104,9 +104,18 @@ This document is an engineering data-governance note, not a clinical or procurem
 
 ## 9. PDF text-layer comparison checkpoint
 
-The 15 machine-flagged rows have been compared against the official DPDMIS PDF's extracted text layer and row-level findings recorded in the review queue. This comparison confirms what the PDF text extraction contains; it is **not** a visual inspection of the rendered page. All 278 rows remain `sourcePdfChecked: false`. The text layer itself contains the apparent truncation in Annexure 4 item 36 and a spelling difference between Annexure 4 item 172 (`Medroxprogesterone`) and Annexure 5 item 81 (`Medroxyprogesterone`). Preserve source strings pending visual and authorised pharmacist/CGMSC review. Programme-guideline rows are not SKU records and must not be normalized as inventory products.
+The uploaded 59-page PDF was rendered and visually inspected for all 15 machine-flagged rows plus Annexure 5 item 81 to verify the cross-annexure spelling difference. The PDF SHA-256 is recorded in the review queue. Annexure 4 item 36 visibly ends `200 mg/5 m`; preserve the source exactly and seek an official erratum/authorised interpretation. Annexure 4 item 172 visibly says `Medroxprogesterone`, while Annexure 5 item 81 says `Medroxyprogesterone`; this is a source-document inconsistency, not merely a transcription discrepancy. All 16 targeted rows remain pending authorised review; programme-guideline rows are not inventory SKUs.
 
 
 ## 10. Evidence boundary for the current review pass
 
-The current 278-row audit validates the repository transcription structure and compares entries across the two stored JSON transcriptions. It does not verify the transcription against the official PDF. In particular, the PHC Annexure 4 item 36 source string is truncated in the repository file, and the PHC Annexure 4 item 172 / SHC Annexure 5 item 81 descriptions differ by spelling. These are unresolved review items, not corrected facts. All queue entries remain `sourcePdfChecked: false`. The official PDF must be supplied or retrieved in a form that permits rendered-page inspection before any visual verification is recorded.
+The initial audit contained a systematic +1 error in its printed-page map. The uploaded PDF confirmed Annexure 4 pages 47–52 and Annexure 5 pages 53–56. Both full source transcriptions, the 24-row sample, review queue and audit script have been corrected to use the printed footer pages. The PDF SHA-256 and 16 targeted visual checks are recorded in the queue. This is not two-person or pharmacist/CGMSC approval; 262 rows still require targeted row-level comparison.
+
+
+## 11. Uploaded PDF visual-review checkpoint
+
+- Inspected the uploaded 59-page `EDL_2025.pdf`; SHA-256: `6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e`.
+- Corrected a systematic +1 error in prior page provenance: Annexure 4 uses printed footer pages 47–52 (physical PDF pages 49–54); Annexure 5 uses printed footer pages 53–56 (physical PDF pages 55–58).
+- Updated both full source transcriptions, the 24-row sample, review queue and audit script to match printed footer pages.
+- Visually checked 15 machine-flagged rows plus SHC Annexure 5 item 81 (16 rows total). No source spelling was silently corrected. Item 36's truncated `200 mg/5 m` is visibly present in the PDF. Annexure 4 item 172 and Annexure 5 item 81 visibly differ (`Medroxprogesterone` / `Medroxyprogesterone`).
+- All 16 checked rows remain pending authorised reviewer decision. The remaining 262 rows are not yet individually reconciled. No normalized medicine mapping, live import, stock use or prescribing use is approved.
