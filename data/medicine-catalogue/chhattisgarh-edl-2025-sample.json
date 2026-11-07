@@ -49,7 +49,7 @@
       "facilityLevel": "phc_aam",
       "sourceAnnexure": "Annexure 4",
       "sourceItemNumber": 12,
-      "sourcePage": 48,
+      "sourcePage": 47,
       "therapeuticCategorySource": "Analgesics, antipyretics, non-steroidal anti-inflammatory medicines, medicines used to treat gout and disease modifying agents used in rheumatoid disorders",
       "sourceDescription": "Asprin (Acetylsalicylic acid) Tablet 150 mg Asprin (Acetylsalicylic acid) Tablet 75 mg (Not to be used in suspected dengue patients and other clinical conditions without prescription)"
     },
@@ -57,7 +57,7 @@
       "facilityLevel": "phc_aam",
       "sourceAnnexure": "Annexure 4",
       "sourceItemNumber": 16,
-      "sourcePage": 48,
+      "sourcePage": 47,
       "therapeuticCategorySource": "Analgesics, antipyretics, non-steroidal anti-inflammatory medicines, medicines used to treat gout and disease modifying agents used in rheumatoid disorders",
       "sourceDescription": "Paracetamol Tablet 500 mg, Paracetamol Tablet 100 mg Paracetamol Syrup 125 mg/5 ml Paracetamol Suppository 100 mg"
     },
@@ -65,7 +65,7 @@
       "facilityLevel": "phc_aam",
       "sourceAnnexure": "Annexure 4",
       "sourceItemNumber": 38,
-      "sourcePage": 49,
+      "sourcePage": 48,
       "therapeuticCategorySource": "Anti-bacterial",
       "sourceDescription": "Amoxicillin Capsule 250 mg Amoxicillin Capsule 500 mg Amoxicillin Oral liquid 250 mg/5 ml"
     },
@@ -73,7 +73,7 @@
       "facilityLevel": "phc_aam",
       "sourceAnnexure": "Annexure 4",
       "sourceItemNumber": 66,
-      "sourcePage": 50,
+      "sourcePage": 49,
       "therapeuticCategorySource": "Anti-anemia medicines",
       "sourceDescription": "Ferrous Salt (A) + Folic Acid (B): As per Anemia Mukt Bharat Abhiyan Children 06-59 months: Each ml of Iron and Folic Acid syrup containing 20 mg elemental Iron+ 100 mcg of Folic Acid. Children 05-9 years: Tablet 45 mg Elemental Iron (A) + 400 mcg (B) [Pink Color] Adolescent (10-19 Year): Tablet 60 mg Elemental Iron (A) + 500 mcg (B) [Blue Color] Adult: Tablet 60 mg Elemental Iron (A) + 500 mcg (B) [ Red color]"
     },
@@ -81,7 +81,7 @@
       "facilityLevel": "phc_aam",
       "sourceAnnexure": "Annexure 4",
       "sourceItemNumber": 77,
-      "sourcePage": 50,
+      "sourcePage": 49,
       "therapeuticCategorySource": "Anti-hypertensive medicine",
       "sourceDescription": "Amlodipine Tablet 2.5 mg Amlodipine Tablet 5 mg"
     },
@@ -89,7 +89,7 @@
       "facilityLevel": "phc_aam",
       "sourceAnnexure": "Annexure 4",
       "sourceItemNumber": 120,
-      "sourcePage": 52,
+      "sourcePage": 51,
       "therapeuticCategorySource": "Gastrointestinal medicines",
       "sourceDescription": "Oral rehydration salts (ORS)"
     },
@@ -97,7 +97,7 @@
       "facilityLevel": "phc_aam",
       "sourceAnnexure": "Annexure 4",
       "sourceItemNumber": 129,
-      "sourcePage": 52,
+      "sourcePage": 51,
       "therapeuticCategorySource": "Medicines used in diabetes mellitus",
       "sourceDescription": "Metformin Tablet 500 mg Metformin SR Tablet 500 mg"
     },
@@ -105,7 +105,7 @@
       "facilityLevel": "phc_aam",
       "sourceAnnexure": "Annexure 4",
       "sourceItemNumber": 151,
-      "sourcePage": 53,
+      "sourcePage": 52,
       "therapeuticCategorySource": "Solutions correcting water, electrolyte disturbances and acid-base disturbances",
       "sourceDescription": "Ringer lactate Injection"
     },
@@ -193,7 +193,7 @@
       "facilityLevel": "shc_aam",
       "sourceAnnexure": "Annexure 5",
       "sourceItemNumber": 43,
-      "sourcePage": 55,
+      "sourcePage": 54,
       "therapeuticCategorySource": "Anti-hypertensive medicines",
       "sourceDescription": "Amlodipine Tablet 2.5 mg Amlodipine Tablet 5 mg"
     },
@@ -201,7 +201,7 @@
       "facilityLevel": "shc_aam",
       "sourceAnnexure": "Annexure 5",
       "sourceItemNumber": 69,
-      "sourcePage": 56,
+      "sourcePage": 55,
       "therapeuticCategorySource": "Gastrointestinal medicines",
       "sourceDescription": "Oral rehydration salts (ORS)"
     },
@@ -209,7 +209,7 @@
       "facilityLevel": "shc_aam",
       "sourceAnnexure": "Annexure 5",
       "sourceItemNumber": 84,
-      "sourcePage": 56,
+      "sourcePage": 55,
       "therapeuticCategorySource": "Medicines used in Diabetes Mellitus",
       "sourceDescription": "Metformin Tablet 500 mg Metformin SR Tablet 500 mg"
     },
@@ -217,7 +217,7 @@
       "facilityLevel": "shc_aam",
       "sourceAnnexure": "Annexure 5",
       "sourceItemNumber": 95,
-      "sourcePage": 57,
+      "sourcePage": 56,
       "therapeuticCategorySource": "Solutions correcting water, electrolyte disturbances and acid-base disturbances",
       "sourceDescription": "Ringer lactate Injection"
     }
