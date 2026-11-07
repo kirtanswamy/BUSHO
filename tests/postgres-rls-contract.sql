@@ -788,7 +788,6 @@ begin
   end;
 end $inventory_movement_immutable_check$;
 rollback;
-commit;
 
 -- Workers cannot browse the facility inventory movement ledger.
 begin;
