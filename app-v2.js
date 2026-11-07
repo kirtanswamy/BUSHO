@@ -81,6 +81,7 @@ function persistState() {
 }
 
 function saveState() {
+  if (!activeAuthUserId) return;
   try { persistState(); }
   catch { showToast(t('worker.toast.save')); }
 }
