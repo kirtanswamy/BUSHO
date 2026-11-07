@@ -490,6 +490,32 @@
       return Array.isArray(rows) ? (rows[0] || null) : rows;
     }
 
+    async function listProvisioningOptions() {
+      const profile = await requireActiveProfile(['district_admin','state_admin']);
+      const facilities = await restRequest(
+        'facilities?select=id,name,district_lgd_code,block_lgd_code&state_lgd_code=eq.22&is_active=eq.true&is_synthetic=eq.false&verification_status=eq.verified&order=name.asc'
+      );
+      const districts = profile.role === 'state_admin'
+        ? await restRequest('districts?select=lgd_code,name,state_lgd_code&state_lgd_code=eq.22&order=name.asc')
+        : [];
+      return { facilities: Array.isArray(facilities) ? facilities : [], districts: Array.isArray(districts) ? districts : [] };
+    }
+
+    async function provisionUser(input) {
+      await requireActiveProfile(['district_admin','state_admin']);
+      const session = await getValidSession();
+      const response = await fetchImpl(baseUrl + '/functions/v1/provision-user', {
+        method: 'POST',
+        headers: {
+          apikey: publishableKey,
+          Authorization: 'Bearer ' + session.access_token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(input || {})
+      });
+      return parseResponse(response);
+    }
+
     async function listDirectory() {
       const [states, districts, blocks] = await Promise.all([
         restRequest('states?select=*&order=name.asc'),
@@ -524,6 +550,8 @@
       createReplenishmentRequest,
       listMyReplenishments,
       transitionReplenishmentRequest,
+      listProvisioningOptions,
+      provisionUser,
       listDirectory
     });
   }
