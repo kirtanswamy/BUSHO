@@ -127,7 +127,7 @@ The worker-side submit path is now connected to the persistence boundary:
 ### Tests and verification
 - Added supervisor operations helper tests and controller integration tests.
 - Added Supabase client tests for the role-gated embedded inbox query and worker denial.
-- **Pending:** fresh CI for the latest checkpoint. Vercel preview status currently reports a team build-rate-limit failure; this is not a successful preview and production has not been changed.
+- CI run `42365474633` passed the current worker/supervisor checkpoint: Node 18/22/24, all 90 Node tests, smoke checks, and PostgreSQL 17 migration/RLS contract. Vercel preview still reports a team build-rate-limit failure; production has not been changed.
 - No live accounts, facilities, reports or synthetic production records were created. A real authenticated workflow remains blocked on approved provisioning.
 
 ### Next engineering steps
@@ -152,6 +152,6 @@ The worker-side submit path is now connected to the persistence boundary:
 ### Verification update
 - CI run `42364871547`: all 81 Node tests passed; smoke checks failed on two stale assertions expecting demo credentials and hard-coded dashboard markup. PostgreSQL 17 migration/RLS contract passed.
 - CI run `42365023889`: smoke check reduced to one stale supervisor email placeholder assertion; that placeholder has now been removed.
-- Worker history and correction-resumption changes are newer than those runs and still require a fresh green CI run.
+- CI run `42365474633` passed after the worker history and correction-resumption changes: Node 18/22/24, 90 tests, smoke checks and PostgreSQL 17 RLS/database-contract.
 - Vercel preview remains rate-limited by the team build plan; production domain and data remain untouched.
 - No Auth users, facilities, workers, assignments or reports were created in the live Supabase project.
