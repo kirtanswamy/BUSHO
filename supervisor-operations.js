@@ -83,6 +83,7 @@
     const client = options.client;
     const doc = options.document;
     const onState = typeof options.onState === 'function' ? options.onState : () => {};
+    const role = options.role || 'supervisor';
     let reports = [];
     let selectedId = null;
     let filter = 'all';
@@ -158,7 +159,7 @@
         facilityCounts.set(name, (facilityCounts.get(name) || 0) + 1);
       }
       return `
-        <div class="module-heading"><div><p class="section-kicker">SUPERVISOR OPERATIONS</p><h2>Operational overview</h2><p>Live reports visible within your approved facility scope.</p></div><span class="scope-label">RLS-scoped records</span></div>
+        <div class="module-heading"><div><p class="section-kicker">SUPERVISOR OPERATIONS</p><h2>Operational overview</h2><p>Live reports visible within your approved facility scope.</p></div><span class="scope-label">${escapeHtml(role.replaceAll('_',' '))} · RLS-scoped</span></div>
         <div class="supervisor-kpi-grid">
           ${kpi('Reports in scope', summary.total, 'Records visible to this account')}
           ${kpi('Awaiting review', summary.awaitingReview, 'Submitted, resubmitted or escalated')}
@@ -209,7 +210,7 @@
     function renderDetail(report) {
       const items = Array.isArray(report.report_items) ? report.report_items : [];
       const events = Array.isArray(report.report_events) ? report.report_events.slice().sort((a,b) => new Date(a.created_at)-new Date(b.created_at)) : [];
-      const actions = reviewActions(report.status);
+      const actions = role === 'supervisor' ? reviewActions(report.status) : [];
       return `
         <article class="module-card report-detail" id="supervisor-report-detail">
           <div class="module-card-head"><div><p class="card-overline">REPORT DETAIL</p><h3>${escapeHtml(report.facilities?.name || 'Assigned facility')}</h3><p>Reference: <code>${escapeHtml(report.id)}</code></p></div><b class="status-pill">${escapeHtml(statusLabel(report.status))}</b></div>
