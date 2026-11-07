@@ -3,12 +3,12 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const ANNEXURES = {
-  'Annexure 4': {
-    key: 'phc_phc_aam_uphc', level: 'phc_aam', minPage: 47, maxPage: 52,
+  phc_phc_aam_uphc: {
+    label: 'Annexure 4', level: 'phc_aam', minPage: 47, maxPage: 52,
     pageForItem: n => n <= 25 ? 47 : n <= 55 ? 48 : n <= 84 ? 49 : n <= 118 ? 50 : n <= 150 ? 51 : 52
   },
-  'Annexure 5': {
-    key: 'shc_aam', level: 'shc_aam', minPage: 53, maxPage: 56,
+  shc_aam: {
+    label: 'Annexure 5', level: 'shc_aam', minPage: 53, maxPage: 56,
     pageForItem: n => n <= 19 ? 53 : n <= 47 ? 54 : n <= 85 ? 55 : 56
   }
 };
@@ -64,9 +64,9 @@ export function validateMedicineCatalogue(input) {
   }
   if (input.sampleOnly === false) {
     for (const [key, meta] of Object.entries(input.annexures || {})) {
-      const annexure = Object.values(ANNEXURES).find(item => item.key === key);
+      const annexure = ANNEXURES[key];
       if (!annexure) continue;
-      const actual = entries.filter(entry => entry.sourceAnnexure === (key === 'phc_phc_aam_uphc' ? 'Annexure 4' : 'Annexure 5'))
+      const actual = entries.filter(entry => entry.sourceAnnexure === key)
         .map(entry => entry.sourceItemNumber).sort((a, b) => a - b);
       const expected = Number(meta.publishedEntryCount || 0);
       if (actual.length !== expected || actual.some((number, index) => number !== index + 1)) {
