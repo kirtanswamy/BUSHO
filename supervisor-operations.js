@@ -372,7 +372,12 @@
       doc.removeEventListener('input', handleInput);
     }
 
-    return Object.freeze({ start, stop, load, getState: () => ({ reports: reports.slice(), selectedId, filter, query, busy, error }) });
+    function selectReport(id) {
+      selectedId = reports.some(report => report.id === id) ? id : null;
+      renderShell();
+    }
+
+    return Object.freeze({ start, stop, load, selectReport, getState: () => ({ reports: reports.slice(), selectedId, filter, query, busy, error }) });
   }
 
   return Object.freeze({ createController, escapeHtml, statusLabel, reviewActions, summarizeReports, itemDescription, formatDate });
