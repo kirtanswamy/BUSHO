@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { validateMedicineCatalogue } from '../scripts/validate-medicine-catalogue.mjs';
 import { auditMedicineTranscriptions } from '../scripts/audit-medicine-source-transcriptions.mjs';
+import { validateMedicineReviewBatch } from '../scripts/validate-medicine-review-decisions.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sample = JSON.parse(readFileSync(join(root, 'data/medicine-catalogue/chhattisgarh-edl-2025-sample.json'), 'utf8'));
@@ -113,4 +114,50 @@ test('transcription audit covers all 278 source rows and flags possible OCR issu
   assert.ok(phcRow36.transcription_flags.includes('possible_truncated_unit_or_ocr'));
   const phcRow12 = report.entries.find(entry => entry.annexure === 'phc_phc_aam_uphc' && entry.item === 12);
   assert.ok(phcRow12.transcription_flags.includes('source_spelling_or_ocr_check'));
+});
+
+test('review validator requires source evidence and organization-confirmed reviewer authority', () => {
+  const source = phcTranscription.entries.find(entry => entry.sourceItemNumber === 1);
+  const batch = {
+    schemaVersion: 1,
+    reviewer: { name: 'Example Reviewer', designation: 'Pharmacist', organization: 'Example review organization', authorityConfirmedByOrganization: true },
+    entries: [{
+      annexure: 'phc_phc_aam_uphc',
+      item: 1,
+      printedPage: source.sourcePage,
+      sourceDescription: source.sourceDescription,
+      sourcePdfChecked: true,
+      reviewStatus: 'reference_mapping_approved',
+      rowInterpretation: 'single_item',
+      evidenceNote: 'Compared against the rendered source page and reviewed by the authorized pharmacist.',
+      candidateItems: [{ normalizedName: 'Example item', dosageForm: 'gas', strength: 'source states oxygen gas', stockUnit: 'cylinder', facilityApplicability: 'phc_aam' }]
+    }]
+  };
+  const result = validateMedicineReviewBatch(batch, [phcTranscription, shcTranscription]);
+  assert.equal(result.ok, true);
+  assert.equal(result.import_policy.live_import_allowed, false);
+});
+
+test('review validator rejects changed source text, missing PDF check and mismatched facility mapping', () => {
+  const source = shcTranscription.entries.find(entry => entry.sourceItemNumber === 1);
+  const batch = {
+    schemaVersion: 1,
+    reviewer: { name: 'Example Reviewer', designation: 'Pharmacist', organization: 'Example organization', authorityConfirmedByOrganization: false },
+    entries: [{
+      annexure: 'shc_aam',
+      item: 1,
+      printedPage: source.sourcePage,
+      sourceDescription: source.sourceDescription + ' edited',
+      sourcePdfChecked: false,
+      reviewStatus: 'reference_mapping_approved',
+      rowInterpretation: 'single_item',
+      evidenceNote: 'A review note long enough to satisfy the minimum evidence length.',
+      candidateItems: [{ normalizedName: 'Oxygen', dosageForm: 'gas', strength: 'as source', stockUnit: 'cylinder', facilityApplicability: 'phc_aam' }]
+    }]
+  };
+  const result = validateMedicineReviewBatch(batch, [phcTranscription, shcTranscription]);
+  assert.ok(result.errors.some(error => error.code === 'reviewer_authority_not_confirmed'));
+  assert.ok(result.errors.some(error => error.code === 'source_description_mismatch'));
+  assert.ok(result.errors.some(error => error.code === 'rendered_pdf_check_required'));
+  assert.ok(result.errors.some(error => error.code === 'candidate_facility_applicability_mismatch'));
 });
