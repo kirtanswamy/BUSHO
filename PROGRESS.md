@@ -411,3 +411,12 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Updated CI to apply the storekeeper separation and inventory movement migrations before running the PostgreSQL RLS contract. This is necessary for CI to test the schema actually introduced by this branch.
 - No live Supabase migrations, operational rows or production deployments. UI and migration CI verification pending.
 - Current file SHAs: storekeeper HTML `acaad14edff07a326a736c0c7862c3c2ef7178f3`, controller `d3263c83e08e24d81adcbb252bc32304511ec8fc`, role auth `ee26a82db3aac7010c3fb13c1970e8fea9181729`, client `416a8d553ab029156092e385f72e9b5e0c0ef0c7`, CI workflow `1510d5b0eaf87140f54dbec3f45153fcd2c7dce4`.
+
+
+## Part 2F.2 — receipt reconciliation and provenance view — 2026-11-07
+
+- Expanded each storekeeper request with the latest receipt reference, received-to-date and outstanding quantities, linked source report ID and data classification.
+- Expanded the receipt movement ledger with explicit column headings and a sum of movement deltas alongside the cumulative receipt quantity on the request. The two totals are displayed for human reconciliation; they are not represented as independently verified physical stock.
+- Expanded the request event history with action, state transition, timestamp and external reference.
+- UI still depends on database RLS and trigger validation. No local-only fallback or synthetic request generation was added.
+- Controller SHA: `29386896a721e5f6c62a768ee7e1d4fbde61e72d`. PostgreSQL CI run for the preceding head was observed in progress; latest head verification still pending.
