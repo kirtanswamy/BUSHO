@@ -133,4 +133,7 @@ test('admin provisioning UI does not invent district options when directory is e
   const districtOptions = app.elements.get('provision-district').children;
   assert.equal(districtOptions.length, 1, 'only the empty placeholder should be rendered');
   assert.equal(districtOptions[0].value, '');
+  for (const role of app.elements.get('provision-role').children) {
+    assert.equal(role.disabled, true, 'no role requiring a missing facility or district may be selectable');
+  }
 });
