@@ -61,7 +61,7 @@
       const input = document.createElement('input');
       input.type = 'checkbox';
       input.value = facility.id;
-      input.addEventListener('change', updateRoleSections);
+      input.addEventListener('change', event => updateRoleSections(event));
       const copy = document.createElement('span');
       const name = document.createElement('strong');
       name.textContent = facility.name || 'Unnamed verified facility';
@@ -89,7 +89,7 @@
     });
   }
 
-  function updateRoleSections() {
+  function updateRoleSections(event) {
     const role = roleSelect.value;
     const facilityRole = role === 'worker' || role === 'supervisor';
     const districtRole = role === 'district_admin';
@@ -99,14 +99,18 @@
     consentSection.classList.toggle('hidden', role !== 'worker');
     consent.required = role === 'worker';
 
-    const selected = selectedFacilityIds();
+    let selected = selectedFacilityIds();
+    if (role === 'worker' && selected.length > 1) {
+      const keep = event?.target?.matches?.('input[type="checkbox"]') && event.target.checked
+        ? event.target
+        : facilityOptions.querySelector('input[type="checkbox"]:checked');
+      facilityOptions.querySelectorAll('input[type="checkbox"]').forEach(input => {
+        if (input !== keep) input.checked = false;
+      });
+      selected = selectedFacilityIds();
+    }
     facilityOptions.querySelectorAll('input[type="checkbox"]').forEach(input => {
       input.disabled = role === 'worker' && selected.length === 1 && !input.checked;
-      if (role === 'worker' && input.checked) {
-        facilityOptions.querySelectorAll('input[type="checkbox"]').forEach(other => {
-          if (other !== input) other.checked = false;
-        });
-      }
     });
     if (stateRole) showStatus('State scope will be assigned to Chhattisgarh (LGD 22).');
     else if (role !== 'worker' && role !== 'supervisor' && !districtRole) showStatus('');
