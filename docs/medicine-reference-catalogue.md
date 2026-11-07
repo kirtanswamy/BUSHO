@@ -131,3 +131,14 @@ The initial audit contained a systematic +1 error in its printed-page map. The u
 - The rendered PDF printed page 47 (physical PDF page 49), row 17 reads `Levocetirizine Tablet 5mg Levocetirizine Oral liquid 2.5 mg/5 ml (Paediatric Use)`.
 - The PDF text layer/transcription had `Levocetrizine` for the second occurrence. Corrected the source transcription to match the rendered PDF and logged the OCR discrepancy in the review queue.
 - This is a verbatim transcription correction only; no clinical interpretation or normalization is approved.
+
+
+## 12. Full rendered-page reconciliation — 2026-11-07
+
+- All ten annexure pages were rendered at high resolution and visually inspected: Annexure 4 physical PDF pages 49–54 (printed footer pages 47–52); Annexure 5 physical PDF pages 55–58 (printed footer pages 53–56).
+- All 278 numbered source rows have a row-level review-queue record tied to annexure, item number, printed page, physical PDF page and uploaded PDF SHA-256.
+- A page-scoped text comparison matched 278/278 rows after the visual correction to PHC Annexure 4 item 17 (Levocetirizine); no remaining row-description mismatches were found.
+- Source text remains verbatim, including visibly truncated source rows PHC 36/37 and SHC 22. The source-document spelling difference PHC 172 / SHC 81 is retained.
+- Highlighted source text is not discarded: PHC items 13, 58, 66 and 119; SHC items 4, 32 and 35 have highlighted spans recorded separately in the source-annotations file.
+- Asterisk markers are preserved. No complete general asterisk legend was identified in the annexure pages reviewed; specific accompanying text is retained as written, including Schedule X, double-lock storage, controlled-medicine and emergency-purpose notes.
+- All 278 rows are marked source-PDF checked but remain pending authorised pharmacist/CGMSC review. This is source transcription verification, not clinical approval or normalized SKU mapping.
