@@ -70,6 +70,15 @@ export function auditMedicineTranscriptions(documents) {
         printed_page: entry.sourcePage,
         source_description: entry.sourceDescription,
         transcription_flags: flags,
+        review_status: 'pending_source_reconciliation',
+        source_pdf_checked: false,
+        reviewer_name: null,
+        reviewed_at: null,
+        row_interpretation: null,
+        candidate_items: [],
+        facility_applicability: null,
+        local_dpdmis_item_code: null,
+        review_evidence: null,
         mandatory_human_review: true,
         normalized_fields_allowed: false
       });
