@@ -258,7 +258,7 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 
 ## Part 2D — versioned medicine reference catalogue (foundation checkpoint)
 
-- Located the official Chhattisgarh Health & Family Welfare Department **Essential Drug List 2025**, notified 12-Nov-2025 and published through DPDMIS. Annexure 4 covers PHC/PHC-AAM/UPHC (172 numbered entries, printed pages 47–52); Annexure 5 covers SHC-AAM (106 numbered entries, pages 53–56).
+- Located the official Chhattisgarh Health & Family Welfare Department **Essential Drug List 2025**, notified 12-Nov-2025 and published through DPDMIS. Annexure 4 covers PHC/PHC-AAM/UPHC (172 numbered entries, printed pages 48–53); Annexure 5 covers SHC-AAM (106 numbered entries, pages 54–57).
 - Added `supabase/migrations/20261107200000_medicine_reference_catalogue.sql`: versioned source releases, verbatim source entries, explicit facility-level scope, source page/row provenance, nullable normalized fields, and optional reference link from existing facility-specific inventory items.
 - Catalogue tables are authenticated read-only to browser roles; trusted service-side ingestion is required for writes. Reference entries do not imply stock, dispensing, procurement, clinical recommendation or actual facility applicability.
 - Added `data/medicine-catalogue/chhattisgarh-edl-2025-sample.json`: 10 PHC-AAM/UPHC and 14 SHC-AAM rows, with original row/page/category/descriptions. `sampleOnly: true` makes the incomplete status explicit; full annexures have not been transcribed.
