@@ -860,7 +860,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $report_item_correction$
 declare
   v_fields text[] := array[]::text[];
 begin
@@ -883,11 +883,10 @@ begin
   );
   return new;
 end;
-$;
+$report_item_correction$;
 
 drop trigger if exists busho_report_item_correction_event on public.report_items;
-create trigger busho_report_item_correction_event
-after update on public.report_items
+create trigger busho_report_item_correction_event after update on public.report_items
 for each row execute function app_private.record_report_item_correction();
 
 create or replace function app_private.guard_replenishment_transition()
