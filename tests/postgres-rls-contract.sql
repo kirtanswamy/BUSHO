@@ -377,15 +377,6 @@ begin
   v_facility_id := (v_result->>'facilityId')::uuid;
   if v_facility_id is null then raise exception 'Facility verification did not create a facility ID'; end if;
 
-  select count(*) into v_count from public.facilities
-  where id = v_facility_id and verification_status = 'verified'
-    and is_synthetic = false and external_registry_id = 'CI-FAC-001';
-  if v_count <> 1 then raise exception 'Verified facility was not promoted with correct provenance'; end if;
-
-  select count(*) into v_count from public.audit_logs
-  where action = 'facility_registry_candidate_verified' and entity_id = v_facility_id;
-  if v_count <> 1 then raise exception 'Verified facility promotion did not create an audit event'; end if;
-
   perform public.complete_facility_registry_batch(v_batch_id,'44444444-4444-4444-8444-444444444444');
   select count(*) into v_count from public.facility_registry_import_batches
   where id = v_batch_id and status = 'completed' and verified_rows = 1;
@@ -409,4 +400,18 @@ begin
   end;
   if not v_blocked then raise exception 'District admin staged a facility outside their assigned district'; end if;
 end $facility_registry_contract$;
+reset role;
+do $facility_registry_promotion_check$
+declare
+  v_count integer;
+begin
+  select count(*) into v_count from public.facilities
+  where verification_status = 'verified' and is_synthetic = false
+    and external_registry_id = 'CI-FAC-001';
+  if v_count <> 1 then raise exception 'Verified facility was not promoted with correct provenance'; end if;
+  select count(*) into v_count from public.audit_logs
+  where action = 'facility_registry_candidate_verified'
+    and entity_id = (select id from public.facilities where external_registry_id = 'CI-FAC-001');
+  if v_count <> 1 then raise exception 'Verified facility promotion did not create an audit event'; end if;
+end $facility_registry_promotion_check$;
 commit;
