@@ -160,3 +160,19 @@ test('requires the server to confirm submission before returning success', async
     /submission was not confirmed/
   );
 });
+
+test('requires a durable draft-ID callback before creating a new report', async () => {
+  let created = false;
+  const client = {
+    async createReportDraft() { created = true; return { id: 'orphan-risk' }; }
+  };
+  await assert.rejects(
+    persistence.persistConfirmedReport({
+      client,
+      originalText: 'field update',
+      draft: []
+    }),
+    /draft-ID persistence callback is required/
+  );
+  assert.equal(created, false);
+});
