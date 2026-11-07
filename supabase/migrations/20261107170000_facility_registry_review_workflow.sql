@@ -539,3 +539,46 @@ $$;
 
 revoke all on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) from public, anon, authenticated;
 grant execute on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) to service_role;
+
+
+-- Public RPC wrappers are executable only by the service role. The implementation
+-- remains in app_private and cannot be called by browser-authenticated users.
+create or replace function public.stage_facility_registry_candidates(
+  p_batch_id uuid, p_actor_id uuid, p_candidates jsonb
+)
+returns jsonb
+language sql
+security definer
+set search_path = pg_catalog, public, app_private
+as $$
+  select app_private.stage_facility_registry_candidates(p_batch_id,p_actor_id,p_candidates);
+$$;
+
+create or replace function public.review_facility_registry_candidate(
+  p_candidate_id uuid, p_reviewer_id uuid, p_decision text, p_review_note text
+)
+returns jsonb
+language sql
+security definer
+set search_path = pg_catalog, public, app_private
+as $$
+  select app_private.review_facility_registry_candidate(p_candidate_id,p_reviewer_id,p_decision,p_review_note);
+$$;
+
+create or replace function public.complete_facility_registry_batch(
+  p_batch_id uuid, p_actor_id uuid
+)
+returns jsonb
+language sql
+security definer
+set search_path = pg_catalog, public, app_private
+as $$
+  select app_private.complete_facility_registry_batch(p_batch_id,p_actor_id);
+$$;
+
+revoke all on function public.stage_facility_registry_candidates(uuid,uuid,jsonb) from public, anon, authenticated;
+grant execute on function public.stage_facility_registry_candidates(uuid,uuid,jsonb) to service_role;
+revoke all on function public.review_facility_registry_candidate(uuid,uuid,text,text) from public, anon, authenticated;
+grant execute on function public.review_facility_registry_candidate(uuid,uuid,text,text) to service_role;
+revoke all on function public.complete_facility_registry_batch(uuid,uuid) from public, anon, authenticated;
+grant execute on function public.complete_facility_registry_batch(uuid,uuid) to service_role;
