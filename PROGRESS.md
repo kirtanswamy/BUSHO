@@ -356,3 +356,12 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Prepared `data/medicine-catalogue/chhattisgarh-edl-2025-pharmacist-review-template.csv` containing all 278 source rows, source page provenance, flags, highlighted spans, source notes and blank reviewer/mapping decision fields.
 - Engineering-side source reconciliation is complete. The remaining gate is named, organization-authorized pharmacist/CGMSC review and recorded decisions. Do not normalize, import, or enable stock/prescribing use until that review and a separate release decision are complete.
 - No connected Supabase migration, live catalogue insert, facility import, account provisioning, Edge Function deployment or production release was performed.
+
+
+## Part 2E — synthetic two-supervisor / two-facility RLS test extension — 2026-11-07
+
+- Extended `tests/postgres-rls-contract.sql` with a second synthetic supervisor assigned only to Balod (LGD block 3629), while the existing supervisor remains assigned only to Dhamtari (LGD block 3625).
+- Worker B now creates a synthetic stock-observation report item in their own facility before submitting the report (respecting the worker draft-only item-write policy).
+- New assertions require Supervisor B to see exactly the Balod report and its item, not the Dhamtari report or its item; attempts to update the Dhamtari report must affect zero rows, while the assigned Balod report can be verified.
+- All test identities, facilities, reports and items are confined to the disposable PostgreSQL CI fixture. The connected Supabase project was queried read-only and remains empty of operational users, facilities, assignments and reports. No live accounts, migrations, Edge Functions or production deployments were created.
+- Latest test SQL commit: `08bc5970251ea832f266b0b2f699f62fd97c296c`. CI status for this latest commit is not yet confirmed; the GitHub connector's commit-run lookup returned no PR-triggered run, and Vercel reports only the existing build-rate limit.
