@@ -33,7 +33,8 @@ test('sample EDL transcription is explicitly partial and source-attributed', () 
     assert.ok(entry.sourceDescription.length > 0);
     assert.ok(entry.sourceItemNumber > 0);
     assert.ok(entry.sourcePage > 0);
-    assert.ok(['Annexure 4', 'Annexure 5'].includes(entry.sourceAnnexure));
+    assert.ok(['phc_phc_aam_uphc', 'shc_aam'].includes(entry.sourceAnnexure));
+    assert.ok(['Annexure 4', 'Annexure 5'].includes(entry.sourceAnnexureLabel));
   }
 });
 
