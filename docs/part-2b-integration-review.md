@@ -198,5 +198,5 @@ The worker-side submit path is now connected to the persistence boundary:
 - The importer never writes to Supabase. Staged rows are explicitly `needs_review`, non-synthetic and `safe_to_assign=false`; only an authorised human verification process can make a row assignable.
 - Added `tests/facility-import.test.mjs` covering CSV quoting/BOM/CRLF, malformed input, duplicate headers, LGD checks, duplicates, stale source and ambiguous mapping.
 - Current live `public.facilities` row count remains zero. No facility import or account provisioning was performed.
-- **CI:** previous checkpoint run `42366873135` is green for the administrator security work. Facility importer code/tests are newer and require their own CI result.
+- **CI:** run `42367099252` passed with the facility importer and tests included: Node 18/22/24, 124 tests with zero failures, smoke checks and PostgreSQL 17 database-contract. A later documentation-only update is being checked separately.
 - Next gate: obtain a dated authoritative facility export from Chhattisgarh DHS/NHM/CGMSC; reconcile source IDs with HFR/DPDMIS where possible; then conduct a reviewed import. No guessed facility rows or self-assigned locations.
