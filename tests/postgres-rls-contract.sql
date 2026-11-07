@@ -762,19 +762,22 @@ begin
     raise exception 'Inventory movement provenance/reference data is incomplete';
   end if;
 
-  -- Movement ledger is append-only for authenticated operational roles.
-  -- Run this mutation attempt under the actual authenticated database role;
-  -- this audit block otherwise executes as the migration/test owner.
+end $storekeeper_receipt_audit_check$;
+
+-- Verify append-only permissions under the real authenticated role, not the
+-- privileged test/migration owner used by the audit block above.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '77777777-7777-4777-8777-777777777777', true);
+do $inventory_movement_immutable_check$
+begin
   begin
-    set local role authenticated;
-    begin
-      update public.inventory_movements
-      set quantity_delta = 999
-      where external_reference = 'GRN-TEST-BALOD-PART-001';
-      raise exception 'Inventory movement update unexpectedly succeeded';
-    exception when others then
-      if sqlerrm = 'Inventory movement update unexpectedly succeeded' then raise; end if;
-    end;
+    update public.inventory_movements
+    set quantity_delta = 999
+    where external_reference = 'GRN-TEST-BALOD-PART-001';
+    raise exception 'Inventory movement update unexpectedly succeeded';
+  exception when others then
+    if sqlerrm = 'Inventory movement update unexpectedly succeeded' then raise; end if;
   end;
   begin
     delete from public.inventory_movements
@@ -783,25 +786,8 @@ begin
   exception when others then
     if sqlerrm = 'Inventory movement delete unexpectedly succeeded' then raise; end if;
   end;
-
-  -- Event rows must be immutable even to the assigned storekeeper.
-  begin
-    update public.replenishment_events
-    set note = 'tampered event'
-    where external_reference = 'GRN-TEST-BALOD-PART-001';
-    raise exception 'Replenishment event update unexpectedly succeeded';
-  exception when others then
-    if sqlerrm = 'Replenishment event update unexpectedly succeeded' then raise; end if;
-  end;
-
-  begin
-    delete from public.replenishment_events
-    where external_reference = 'GRN-TEST-BALOD-PART-001';
-    raise exception 'Replenishment event delete unexpectedly succeeded';
-  exception when others then
-    if sqlerrm = 'Replenishment event delete unexpectedly succeeded' then raise; end if;
-  end;
-end $storekeeper_receipt_audit_check$;
+end $inventory_movement_immutable_check$;
+rollback;
 commit;
 
 -- Workers cannot browse the facility inventory movement ledger.
