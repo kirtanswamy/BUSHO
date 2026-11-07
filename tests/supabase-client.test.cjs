@@ -106,6 +106,7 @@ test('REST requests use the signed-in user token and refresh an expired session'
         user: { id: 'user-2' }
       });
     }
+    if (url.includes('/rest/v1/profiles?')) return jsonResponse([{ id: 'user-2', role: 'worker', status: 'active' }]);
     if (url.includes('/rest/v1/reports?')) return jsonResponse([]);
     throw new Error('Unexpected request: ' + url);
   };
@@ -118,8 +119,9 @@ test('REST requests use the signed-in user token and refresh an expired session'
   });
   await client.listMyReports();
   assert.ok(calls[0].url.includes('grant_type=refresh_token'));
-  assert.equal(calls[1].options.headers.Authorization, 'Bearer refreshed-access-token');
-  assert.equal(calls[1].options.headers.apikey, 'sb_publishable_demo_key');
+  assert.ok(calls[1].url.includes('/rest/v1/profiles?'));
+  assert.equal(calls[2].options.headers.Authorization, 'Bearer refreshed-access-token');
+  assert.equal(calls[2].options.headers.apikey, 'sb_publishable_demo_key');
 });
 
 test('worker report creation uses the worker profile and assigned facility, not caller-supplied worker identity', async () => {
@@ -322,4 +324,42 @@ test('worker profile cannot call the supervisor inbox query', async () => {
   });
   await assert.rejects(client.listSupervisorReports(), /not available to the worker role/i);
   assert.equal(calls.length, 1);
+});
+
+test('worker report history is role-gated and includes the related facility display context', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'worker-token',
+    refresh_token: 'worker-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'auth-worker-1' }
+  }));
+  const calls = [];
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      if (url.includes('/rest/v1/profiles?')) {
+        return jsonResponse([{ id: 'auth-worker-1', role: 'worker', status: 'active' }]);
+      }
+      if (url.includes('/rest/v1/reports?')) {
+        return jsonResponse([{
+          id: 'report-1',
+          status: 'correction_requested',
+          facilities: { name: 'Facility A' },
+          report_items: [],
+          report_events: []
+        }]);
+      }
+      throw new Error('Unexpected request: ' + url);
+    },
+    storage,
+    now: () => 1_800_000_000_000
+  });
+  const rows = await client.listMyReports();
+  assert.equal(rows[0].status, 'correction_requested');
+  assert.equal(rows[0].facilities.name, 'Facility A');
+  assert.ok(calls[1].url.includes('facilities(name,district,block_lgd_code)'));
+  assert.equal(calls[1].options.headers.Authorization, 'Bearer worker-token');
 });
