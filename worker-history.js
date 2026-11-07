@@ -225,7 +225,7 @@
       const report = reports.find(row => row.id === id);
       if (!report) return;
       try {
-        const editor = root.BUSHO_WORKER_REPORT_EDITOR;
+        const editor = typeof globalThis !== 'undefined' ? globalThis.BUSHO_WORKER_REPORT_EDITOR : null;
         if (!editor || typeof editor.openReport !== 'function') throw new Error('The report editor is not ready. Refresh the page.');
         editor.openReport(report);
       } catch (cause) {
