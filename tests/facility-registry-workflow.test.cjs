@@ -74,6 +74,7 @@ test('facility registry Edge Function rechecks auth and role, limits chunk sizes
   assert.match(source, /platform_admin','state_admin','district_admin/);
   assert.match(source, /1_000_000/);
   assert.match(source, /input\.candidates\.length > 250/);
+  assert.match(source, /list_batches/);
   assert.match(source, /stage_facility_registry_candidates/);
   assert.match(source, /review_facility_registry_candidate/);
   assert.match(source, /complete_facility_registry_batch/);
