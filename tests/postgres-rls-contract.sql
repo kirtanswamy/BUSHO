@@ -662,15 +662,9 @@ begin
     if sqlerrm = 'Balod storekeeper updated Dhamtari request' then raise; end if;
     -- An authorization/transition rejection is an acceptable fail-closed result.
   end;
-  select count(*) into v_count
-  from public.replenishment_requests
-  where note = 'Synthetic replenishment recommendation'
-    and status = 'submitted_to_dpdmis'
-    and received_quantity = 0
-    and receipt_reference is null;
-  if v_count <> 1 then
-    raise exception 'Cross-facility attempt altered the Dhamtari request';
-  end if;
+  -- The authenticated storekeeper cannot SELECT the other facility's
+  -- row by design. Its unchanged state is asserted later outside this RLS
+  -- transaction, after the role has been reset.
 end $storekeeper_scope_check$;
 -- Replaying the final receipt PATCH with the same cumulative quantity/reference
 -- must be idempotent: it must not append a second movement or receipt event.
@@ -715,6 +709,15 @@ begin
   where note = 'Synthetic Balod replenishment recommendation';
   if v_received <> 10 or v_status <> 'received' then
     raise exception 'Final receipt reconciliation is incorrect: % / %', v_received, v_status;
+  end if;
+  select count(*) into v_count
+  from public.replenishment_requests
+  where note = 'Synthetic replenishment recommendation'
+    and status = 'submitted_to_dpdmis'
+    and received_quantity = 0
+    and receipt_reference is null;
+  if v_count <> 1 then
+    raise exception 'Cross-facility attempt altered the Dhamtari request';
   end if;
   select count(*) into v_count from public.replenishment_events re
   join public.replenishment_requests rr on rr.id = re.replenishment_request_id
