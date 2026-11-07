@@ -70,16 +70,19 @@ function loadState(userId) {
 
 let state = initialState();
 
-function saveState() {
-  if (!activeAuthUserId) return;
+function persistState() {
+  if (!activeAuthUserId) throw new Error('No authenticated BUSHO account is available for draft storage.');
   const key = STORAGE_PREFIX + activeAuthUserId;
-  try {
-    if (['submitted', 'resubmitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
-      window.localStorage.removeItem(key);
-      return;
-    }
-    window.localStorage.setItem(key, JSON.stringify(state));
-  } catch { showToast(t('worker.toast.save')); }
+  if (['submitted', 'resubmitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
+    window.localStorage.removeItem(key);
+    return;
+  }
+  window.localStorage.setItem(key, JSON.stringify(state));
+}
+
+function saveState() {
+  try { persistState(); }
+  catch { showToast(t('worker.toast.save')); }
 }
 
 document.addEventListener('busho:authenticated', event => {
@@ -251,6 +254,7 @@ async function confirmReport() {
 
   button.disabled = true;
   button.setAttribute('aria-busy', 'true');
+  let draftCheckpointSaved = Boolean(state.reportId);
   state.syncStatus = 'saving';
   feedback.textContent = 'Saving your report securely…';
   saveState();
@@ -267,7 +271,8 @@ async function confirmReport() {
       onDraftCreated: async reportId => {
         state.reportId = reportId;
         state.syncStatus = 'draft_saved';
-        saveState();
+        persistState();
+        draftCheckpointSaved = true;
       }
     });
     state.reportId = result.report.id;
@@ -283,9 +288,11 @@ async function confirmReport() {
     state.confirmed = false;
     state.syncStatus = state.reportId ? 'draft_saved' : 'error';
     saveState();
-    feedback.textContent = state.reportId
+    feedback.textContent = state.reportId && draftCheckpointSaved
       ? 'Submission not confirmed. Your saved draft is preserved; retry to continue. ' + cause.message
-      : 'Report not submitted. No saved report ID was returned. ' + cause.message;
+      : state.reportId
+        ? 'A server draft was created, but this browser could not save its recovery checkpoint. Keep this tab open and retry before leaving. ' + cause.message
+        : 'Report not submitted. No saved report ID was returned. ' + cause.message;
     showToast('Report not submitted. Please review the message and retry.');
   } finally {
     button.disabled = false;
