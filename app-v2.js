@@ -16,6 +16,7 @@ function updateReportInput(value) {
   if (['submitted', 'resubmitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
     state.reportId = null;
     state.serverStatus = null;
+    state.reportLanguageCode = null;
     state.syncStatus = 'idle';
   }
   state.rawReport = value;
@@ -43,7 +44,7 @@ const inventoryDrawer = document.getElementById('inventory-drawer');
 let lastFocusedElement = null;
 
 function initialState() {
-  return { version: 1, view: 'worker', sample: 'routine', rawReport: localizedSample('routine'), extracted: false, confirmed: false, draft: [], reportId: null, serverStatus: null, syncStatus: 'idle', replenishment: { status: 'none', medicineId: null, source: null } };
+  return { version: 1, view: 'worker', sample: 'routine', rawReport: localizedSample('routine'), extracted: false, confirmed: false, draft: [], reportId: null, serverStatus: null, reportLanguageCode: null, syncStatus: 'idle', replenishment: { status: 'none', medicineId: null, source: null } };
 }
 
 function loadState(userId) {
@@ -59,6 +60,7 @@ function loadState(userId) {
     next.confirmed = Boolean(stored.confirmed && stored.extracted);
     next.reportId = typeof stored.reportId === 'string' && stored.reportId.length <= 80 ? stored.reportId : null;
     next.serverStatus = typeof stored.serverStatus === 'string' ? stored.serverStatus : null;
+    next.reportLanguageCode = typeof stored.reportLanguageCode === 'string' && /^[a-z]{2}(?:-[A-Z]{2})?$/.test(stored.reportLanguageCode) ? stored.reportLanguageCode : null;
     next.syncStatus = ['idle', 'saving', 'draft_saved', 'submitted', 'error'].includes(stored.syncStatus) ? stored.syncStatus : 'idle';
     next.draft = Array.isArray(stored.draft) ? stored.draft.filter(item => item && typeof item.id === 'string' && typeof item.value === 'string') : [];
     if (next.extracted && (!next.draft.length || !next.draft.some(item => item.id === 'disease-table') || !next.draft.some(item => item.id === 'medicine-table'))) { next.extracted = false; next.confirmed = false; next.draft = []; }
@@ -120,7 +122,7 @@ function setSample(type) {
     state.serverStatus = null;
     state.syncStatus = 'idle';
   }
-  state.sample = type === 'ambiguous' ? 'ambiguous' : 'routine'; state.rawReport = localizedSample(state.sample); state.extracted = false; state.confirmed = false; state.draft = [];
+  state.sample = type === 'ambiguous' ? 'ambiguous' : 'routine'; state.rawReport = localizedSample(state.sample); state.extracted = false; state.confirmed = false; state.draft = []; state.reportLanguageCode = null;
   reportInput.value = state.rawReport; messageText.textContent = state.rawReport; renderAll(); saveState(); showToast(t(`worker.toast.${state.sample}`));
 }
 
@@ -246,6 +248,8 @@ async function confirmReport() {
   const button = document.getElementById('confirm-btn');
   const submittingUserId = activeAuthUserId;
   const submittingState = state;
+  const reportLanguageCode = state.reportLanguageCode || currentLanguage();
+  state.reportLanguageCode = reportLanguageCode;
   const logoutButton = document.getElementById('portal-logout');
   const persistence = window.BUSHO_REPORT_PERSISTENCE;
   const clientFactory = window.BUSHO_SUPABASE_CLIENT;
@@ -271,7 +275,7 @@ async function confirmReport() {
       client,
       reportId: state.reportId,
       originalText: state.rawReport,
-      languageCode: currentLanguage(),
+      languageCode: reportLanguageCode,
       draft: state.draft,
       onDraftCreated: async reportId => {
         if (activeAuthUserId !== submittingUserId || state !== submittingState) {
@@ -520,6 +524,7 @@ function openExistingWorkerReport(report) {
   state.confirmed = false;
   state.reportId = report.id;
   state.serverStatus = report.status;
+  state.reportLanguageCode = report.language_code || currentLanguage();
   state.syncStatus = 'draft_saved';
   state.replenishment = { status: 'none', medicineId: null, source: null };
   reportInput.value = narrative;
