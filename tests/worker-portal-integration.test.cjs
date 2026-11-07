@@ -24,6 +24,7 @@ test('worker confirmation calls the persistence coordinator and waits for server
   assert.match(app, /async function confirmReport\(\)/);
   assert.match(app, /persistence\.persistConfirmedReport\(/);
   assert.match(app, /onDraftCreated: async reportId =>/);
+  assert.match(app, /persistState\(\)/);
   assert.match(app, /state\.serverStatus = result\.report\.status/);
   assert.match(app, /state\.confirmed = true/);
   assert.match(app, /Submission not confirmed/);
