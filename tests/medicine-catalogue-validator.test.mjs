@@ -182,8 +182,8 @@ test('rendered EDL review queue covers all 278 rows without authorizing clinical
   assert.equal(queue.summary.sourceTextMatchedRows, 278);
   assert.equal(queue.summary.sourceTextMismatchRows, 0);
   assert.equal(queue.entries.filter(entry => entry.candidateItems.length > 0).length, 0);
-  assert.equal(queue.import_policy.safe_to_import_to_live, false);
-  assert.equal(queue.import_policy.safe_for_stock_or_prescribing, false);
+  assert.equal(queue.policy.safeToImportToLive, false);
+  assert.equal(queue.policy.safeForStockOrPrescribing, false);
 });
 
 test('source annotation register preserves highlights and caveats without normalizing them', () => {
