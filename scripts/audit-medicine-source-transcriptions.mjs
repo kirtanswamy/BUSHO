@@ -8,7 +8,7 @@ const EXPECTED = {
 };
 
 const TEXT_REVIEW_PATTERNS = [
-  { code: 'possible_truncated_unit_or_ocr', pattern: /\b\d+(?:\.\d+)?\s*(?:mg\/5\s*m\b|mg\/m\b|mcg\/m\b|mg\/ml\s*$/i },
+  { code: 'possible_truncated_unit_or_ocr', pattern: /(?:\b\d+(?:\.\d+)?\s*mg\/5\s*m(?!l)\b|\b\d+(?:\.\d+)?\s*mg\/m(?!l)\b)/i },
   { code: 'source_spelling_or_ocr_check', pattern: /\b(?:Asprin|solvant|paradicholorobenzene|Medroxprogesterone|Drotavarin|Gama Benzene)\b/i },
   { code: 'programme_reference_not_sku', pattern: /\b(?:as per|according to)\s+(?:current\s+)?(?:program|programme|national|NVBDCP)/i }
 ];
@@ -108,11 +108,11 @@ async function main() {
     readFile(resolve(shcPath), 'utf8').then(JSON.parse)
   ]);
   const result = auditMedicineTranscriptions([phc, shc]);
-  await writeFile(resolve(outputPath), JSON.stringify(result, null, 2) + '\\n', 'utf8');
-  process.stdout.write(JSON.stringify(result.summary, null, 2) + '\\n');
+  await writeFile(resolve(outputPath), JSON.stringify(result, null, 2) + '\n', 'utf8');
+  process.stdout.write(JSON.stringify(result.summary, null, 2) + '\n');
   if (!result.ok) process.exitCode = 1;
 }
 
 if (process.argv[1] && import.meta.url === new URL(process.argv[1], 'file:').href) {
-  main().catch(error => { process.stderr.write(error.message + '\\n'); process.exitCode = 1; });
+  main().catch(error => { process.stderr.write(error.message + '\n'); process.exitCode = 1; });
 }
