@@ -9,8 +9,8 @@ test('worker report state is isolated by authenticated user ID', () => {
   const app = read('app-v2.js');
   assert.match(app, /const STORAGE_PREFIX = 'busho-worker-state-v1:'/);
   assert.match(app, /localStorage\.getItem\(STORAGE_PREFIX \+ userId\)/);
-  assert.match(app, /const key = STORAGE_PREFIX \\+ activeAuthUserId/);
-  assert.match(app, /localStorage\\.setItem\\(key/);
+  assert.match(app, /const key = STORAGE_PREFIX \+ activeAuthUserId/);
+  assert.match(app, /localStorage\.setItem\(key/);
   assert.match(app, /busho:authenticated/);
   assert.match(app, /busho:unauthenticated/);
   assert.doesNotMatch(app, /busho-demo-state-v1/);
