@@ -122,18 +122,13 @@ const handler = withSupabase({ auth: 'user' }, async (req, ctx) => {
       if (!Number.isInteger(expectedRows) || expectedRows < 1 || expectedRows > 10000) {
         fail('Expected rows must be an integer between 1 and 10,000.');
       }
-      const data = throwOnError(await admin.from('facility_registry_import_batches').insert({
-        source_authority: sourceAuthority,
-        source_date: sourceDate,
-        source_url: sourceUrl.toString(),
-        imported_by: actorId,
-        expected_rows: expectedRows
-      }).select('id,source_authority,source_date,source_url,status,expected_rows,received_rows,verified_rows,rejected_rows,created_at').single(), 'Unable to create facility import batch');
-      throwOnError(await admin.from('audit_logs').insert({
-        actor_worker_id: null, action: 'facility_registry_batch_created',
-        entity_type: 'facility_registry_import_batch', entity_id: data.id,
-        metadata: { actor_id: actorId, expected_rows: expectedRows, source_authority: sourceAuthority, source_date: sourceDate }
-      }), 'Unable to record facility import audit event');
+      const data = throwOnError(await admin.rpc('create_facility_registry_import_batch', {
+        p_actor_id: actorId,
+        p_source_authority: sourceAuthority,
+        p_source_date: sourceDate,
+        p_source_url: sourceUrl.toString(),
+        p_expected_rows: expectedRows
+      }), 'Unable to create facility import batch');
       return reply({ ok: true, batch: data }, 201, origin);
     }
 
