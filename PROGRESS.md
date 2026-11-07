@@ -384,3 +384,15 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Existing synthetic Balod scenario still covers supervisor approval/submission, storekeeper allocation, dispatch, partial receipt, final receipt, over-receipt rejection, receipt reference provenance and cross-facility isolation.
 - These are CI fixture assertions only. No live Supabase migration or operational records were changed.
 - Latest migration file SHA: `0b0dd840885ff7218e8d28131c124f6b9e5ad9fe`; latest SQL contract file SHA: `fe781341359ca49ac388c042d389d3ee9351a7b2`. CI status for the latest branch head remains unconfirmed.
+
+
+## Part 2E.3 — immutable inbound inventory movement ledger — 2026-11-07
+
+- Identified that replenishment receipts updated only `replenishment_requests.received_quantity`; they did not create a separate stock movement record.
+- Added `inventory_movements`, an append-only inbound-receipt ledger with facility, item, request, positive delta, unit, external goods-receipt reference, data mode, actor and timestamp.
+- Added a database trigger that writes exactly the newly received quantity for each partial/final receipt. Receipt movements do not overwrite `inventory_snapshots` and do not imply DPDMIS integration.
+- Added a request guard requiring the inventory item to be active, belong to the same facility and use the same unit as the request.
+- Authenticated users receive scoped read access only; ledger writes are trigger-owned, not browser-writeable. Added tests for two receipt movements (4 + 6 = 10), provenance, append-only behavior and cross-facility item rejection.
+- Updated `supabase-client.js` to include movement rows in inventory and replenishment reads. The current supervisor screen is still a demo/local-state interface; this change exposes server data but does not claim the fulfilment UI is integrated.
+- No connected Supabase migration or data writes were performed. CI for this latest code has not yet been confirmed.
+- Latest test SQL SHA: `a294dbf5cb8a0c5dd9a8f7fe4f2391d52a05d72f`; movement migration SHA: `c5ea0ce53c6e37d7d8e9b8de4a974e10d0821438`; Supabase client SHA: `c1d6200559435a05bf3a383fa29a74a3a82e6393`.
