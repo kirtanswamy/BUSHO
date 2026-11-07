@@ -90,8 +90,9 @@ test('persists report in order and saves the draft ID before item or submit requ
 test('resumes an existing editable draft without creating a duplicate report', async () => {
   const calls = [];
   const client = {
-    async getReport(id) { calls.push(['get', id]); return { id, status: 'draft' }; },
+    async getReport(id) { calls.push(['get', id]); return { id, status: 'correction_requested' }; },
     async createReportDraft() { throw new Error('must not create a second report'); },
+    async updateReportDraft(id, input) { calls.push(['update', id, input.originalText]); return { id, status: 'correction_requested' }; },
     async replaceReportItems(id, items) { calls.push(['items', id, items.length]); },
     async submitReport(id) { calls.push(['submit', id]); return { id, status: 'submitted' }; }
   };
@@ -101,7 +102,8 @@ test('resumes an existing editable draft without creating a duplicate report', a
     originalText: '4 patients with fever',
     draft: sampleDraft()
   });
-  assert.deepEqual(calls.map(call => call[0]), ['get', 'items', 'submit']);
+  assert.deepEqual(calls.map(call => call[0]), ['get', 'update', 'items', 'submit']);
+  assert.equal(calls[1][2], '4 patients with fever; 12 ORS packets left');
   assert.equal(result.report.id, 'existing-report');
 });
 
