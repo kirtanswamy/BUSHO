@@ -218,8 +218,8 @@
       const result = await client.provisionUser(input);
       const invitation = result.invitation || {};
       form.reset();
-      showStatus('Invitation created for ' + (invitation.email || input.email) + '. The recipient must set a password using the emailed link. Role and scope are now assigned by BUSHO.', 'success');
       updateRoleSections();
+      showStatus('Invitation created for ' + (invitation.email || input.email) + '. The recipient must set a password using the emailed link. Role and scope are now assigned by BUSHO.', 'success');
     } catch (error) {
       showStatus(error.message || 'The invitation could not be completed.', 'error');
     } finally {
