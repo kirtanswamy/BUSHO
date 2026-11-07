@@ -82,6 +82,10 @@ values
    '10000000-0000-4000-8000-000000000001',
    current_date, 'worker_report_created synthetic aggregate only', 'en', 'draft', '{"source":"voice"}');
 
+update public.reports
+set summary = '{"source":"voice","fever_count":4}'
+where original_text = 'worker_report_created synthetic aggregate only';
+
 insert into public.report_items
   (report_id, item_type, item_code, display_label, quantity, unit, value_text, confidence, requires_review)
 select id, 'symptom_trend', 'FEVER', 'Fever cases', 4, 'patients',
@@ -90,56 +94,50 @@ from public.reports
 where original_text = 'worker_report_created synthetic aggregate only';
 
 update public.reports
-set summary = '{"source":"voice","fever_count":4}'
-where original_text = 'worker_report_created synthetic aggregate only';
-
-update public.reports
 set status = 'submitted'
 where original_text = 'worker_report_created synthetic aggregate only';
 
 -- A worker cannot self-verify a submitted report.
-update public.report_items
-set quantity = 5,
-    display_label = 'Fever cases (supervisor checked)',
-    requires_review = false
-where report_id = (
-  select id from public.reports
-  where original_text = 'worker_report_created synthetic aggregate only'
-)
-and item_code = 'FEVER';
+update public.reports
+set status = 'supervisor_verified'
+where original_text = 'worker_report_created synthetic aggregate only';
 
-do $supervisor_correction_check$
+do $$
 declare
-  v_quantity numeric;
+  v_status text;
   v_events integer;
 begin
-  select ri.quantity into v_quantity
-  from public.report_items ri
-  join public.reports r on r.id = ri.report_id
-  where r.original_text = 'worker_report_created synthetic aggregate only'
-    and ri.item_code = 'FEVER';
-  if v_quantity <> 5 then
-    raise exception 'Assigned supervisor could not correct the structured report quantity: %', v_quantity;
-  end if;
+  select status into v_status from public.reports
+  where original_text = 'worker_report_created synthetic aggregate only';
+  if v_status <> 'submitted' then raise exception 'Worker escalated own report unexpectedly: %', v_status; end if;
 
-  select count(*) into v_events
-  from public.report_events re
+  select count(*) into v_events from public.report_events re
   join public.reports r on r.id = re.report_id
-  where r.original_text = 'worker_report_created synthetic aggregate only'
-    and re.action = 'report_item_corrected';
-  if v_events <> 1 then
-    raise exception 'Expected one append-only structured-field correction event, got %', v_events;
-  end if;
-end $supervisor_correction_check$;
+  where r.original_text = 'worker_report_created synthetic aggregate only';
+  if v_events <> 3 then raise exception 'Expected create, field-edit and submit audit events; got %', v_events; end if;
+end $$;
 
+-- Worker stock observation is facility-scoped and attributable to the logged-in worker.
+insert into public.inventory_snapshots
+  (inventory_item_id, quantity, observed_by, source, data_mode)
+values
+  ('20000000-0000-4000-8000-000000000001', 12,
+   '10000000-0000-4000-8000-000000000001', 'worker_report', 'synthetic_demo');
+commit;
+
+-- Worker B creates a report in a different district/facility.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '22222222-2222-4222-8222-222222222222', true);
+insert into public.reports
+  (facility_id, worker_id, reporting_date, original_text, language_code, status, summary)
+values
+  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+   '10000000-0000-4000-8000-000000000002',
+   current_date, 'worker_report_created synthetic second facility', 'en', 'draft', '{"source":"manual"}');
 update public.reports
-set status = 'supervisor_verified', review_note = 'Aggregate counts reviewed in synthetic CI test'
-where original_text = 'worker_report_created synthetic aggregate only';
-
-update public.reports
-set summary = '{"source":"voice","fever_count":4,"reviewed":true}'
-where original_text = 'worker_report_created synthetic aggregate only';
-
+set status = 'submitted'
+where original_text = 'worker_report_created synthetic second facility';
 do $$
 declare v_count integer;
 begin
@@ -159,7 +157,7 @@ begin
   if v_count <> 1 then raise exception 'Block supervisor report scope leak: expected 1, got %', v_count; end if;
   select count(*) into v_count from public.workers;
   if v_count <> 1 then raise exception 'Block supervisor worker scope leak: expected 1, got %', v_count; end if;
-end $$;
+end $;
 
 update public.report_items
 set quantity = 5,
@@ -184,7 +182,6 @@ begin
   if v_quantity <> 5 then
     raise exception 'Assigned supervisor could not correct the structured report quantity: %', v_quantity;
   end if;
-
   select count(*) into v_events
   from public.report_events re
   join public.reports r on r.id = re.report_id
@@ -203,15 +200,15 @@ update public.reports
 set summary = '{"source":"voice","fever_count":4,"reviewed":true}'
 where original_text = 'worker_report_created synthetic aggregate only';
 
-do $supervisor_report_audit_check$
+do $$
 declare v_count integer;
 begin
   select count(*) into v_count from public.report_events re
   join public.reports r on r.id = re.report_id
   where r.original_text = 'worker_report_created synthetic aggregate only'
     and re.action = 'report_fields_updated';
-  if v_count <> 2 then raise exception 'Expected worker and supervisor field-edit audit events, got %', v_count; end if;
-end $supervisor_report_audit_check$;
+  if v_count <> 2 then raise exception 'Expected two field-edit audit events, got %', v_count; end if;
+end $$;
 
 insert into public.replenishment_requests
   (facility_id, inventory_item_id, requested_quantity, status, created_by_user_id,
