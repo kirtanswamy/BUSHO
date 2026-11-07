@@ -321,3 +321,9 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 
 
 - **CI verification:** latest CI run `42394392227` passed on the updated EDL page-map and transcription corrections: Node 18/22/24 checks and PostgreSQL 17 database contract all succeeded. This is CI-only verification; no connected Supabase migration or production deployment occurred.
+
+
+## Part 2D.5 — rendered-page OCR discrepancy correction — 2026-11-07
+
+- Visual inspection of PHC Annexure 4 item 17 (printed page 47, physical PDF page 49) found the rendered source reads `Levocetirizine` twice. The PDF text layer and prior transcription had `Levocetrizine` in the second occurrence. Corrected the source transcription to the rendered page and recorded the discrepancy.
+- Targeted rendered-page evidence now covers 19 rows; 259 rows remain without individual targeted visual evidence. This is not pharmacist/CGMSC approval.
