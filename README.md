@@ -55,7 +55,7 @@ Highlight sample stock risks and prepare supervisor-reviewed drafts.
   </tr>
 </table>
 
-> **Prototype boundary:** BUSHO uses synthetic sample data, mock rule-based extraction, and browser-local storage. It is not a live health system, does not diagnose, does not place medicine orders, and does not connect to government inventory systems.
+ > **Prototype boundary:** BUSHO uses mock rule-based extraction and synthetic demonstration content. Worker reports, report items, review decisions and audit events are designed to persist through authenticated Supabase workflows; browser-local storage is limited to per-user draft recovery. The connected project currently has no operational users, facilities, assignments or reports, so a real multi-user workflow has not yet been demonstrated. BUSHO is not a live health system, does not diagnose, does not place medicine orders, and does not connect to government inventory systems.
 
 ## The gap
 
@@ -88,7 +88,7 @@ This is not a claim that India has no digital health or supply-chain systems. Pu
 - Human confirmation is required before a record is treated as verified.
 - Stock signals are operational prompts, not clinical recommendations.
 - Replenishment is a draft for review—not an automatic order.
-- The demo uses synthetic sample data and browser-local storage. Never enter real patient-identifiable or sensitive health information.
+- Synthetic content is for demonstration only. Authenticated worker drafts and reports use the development Supabase project; local storage is a per-user recovery checkpoint, not a shared operational source of truth. Never enter real patient-identifiable or sensitive health information.
 
 ## Why this workflow matters
 
@@ -176,7 +176,7 @@ Run: `node scripts/validate-medicine-catalogue.mjs data/medicine-catalogue/chhat
 
 ## Medicine reference catalogue
 
-The development branch adds a versioned, source-attributed medicine catalogue foundation. The first source is the Government of Chhattisgarh **Essential Drug List 2025**. The current JSON file is a clearly labelled partial transcription sample (10 PHC-AAM/UPHC rows and 14 SHC-AAM rows), not the complete EDL and not a stock list. Its source page ranges and row counts are recorded in the [verified source manifest (printed footer pages, not contents-index page numbers)](data/medicine-catalogue/chhattisgarh-edl-2025-source-manifest.json). Run the [source transcription audit](scripts/audit-medicine-source-transcriptions.mjs) and the [review decision validator](scripts/validate-medicine-review-decisions.mjs) before considering any EDL row for normalization. See [medicine catalogue data governance](docs/medicine-reference-catalogue.md), [the 24-row starter sample](data/medicine-catalogue/chhattisgarh-edl-2025-sample.json), the [172-row PHC-AAM/UPHC source transcription (unreviewed)](data/medicine-catalogue/chhattisgarh-edl-2025-phc-aam-source-transcription.json), the [106-row SHC-AAM source transcription (unreviewed)](data/medicine-catalogue/chhattisgarh-edl-2025-shc-aam-source-transcription.json), and the [source manifest](data/medicine-catalogue/chhattisgarh-edl-2025-source-manifest.json).
+The development branch adds a versioned, source-attributed medicine catalogue foundation. The first source is the Government of Chhattisgarh **Essential Drug List 2025**. The branch now contains verbatim source transcriptions of all **278 numbered EDL rows**: 172 PHC/PHC-AAM/UPHC entries and 106 SHC-AAM entries. All 10 annexure pages have been visually inspected and page-scoped text checks completed; one OCR spelling discrepancy was corrected to match the rendered PDF. This is source transcription reconciliation only—not pharmacist/CGMSC approval, normalized SKU mapping, a stock list, or permission to use the rows for prescribing or procurement. The original 24-row sample remains a clearly labelled starter sample. See the [medicine catalogue governance and audit status](docs/medicine-reference-catalogue.md), [278-row review queue](data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json), [source annotation register](data/medicine-catalogue/chhattisgarh-edl-2025-source-annotations.json), [authorised pharmacist review protocol](docs/edl-authorised-review-protocol.md), [278-row pharmacist review worksheet](data/medicine-catalogue/chhattisgarh-edl-2025-pharmacist-review-template.csv), the [172-row PHC-AAM/UPHC transcription](data/medicine-catalogue/chhattisgarh-edl-2025-phc-aam-source-transcription.json), the [106-row SHC-AAM transcription](data/medicine-catalogue/chhattisgarh-edl-2025-shc-aam-source-transcription.json), and the [source manifest](data/medicine-catalogue/chhattisgarh-edl-2025-source-manifest.json). The review decision validator must pass an authorised review batch before normalization is considered; live import remains separately disabled.
 
 ## Role and workflow blueprint
 
