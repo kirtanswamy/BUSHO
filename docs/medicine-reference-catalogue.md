@@ -1,6 +1,6 @@
 # BUSHO medicine reference catalogue — Part 2D
 
-**Status:** versioned source catalogue foundation; starter transcription sample only  
+**Status:** versioned source catalogue foundation; complete 278-row source-text transcription present; human reconciliation pending  
 **Prepared:** 2026-11-07  
 **Scope:** Chhattisgarh public-facility EDL 2025, Annexure 4 and Annexure 5
 
@@ -29,7 +29,7 @@ The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, 
   - Authenticated users receive read-only access; writes are reserved for trusted service-side import/review.
 - `data/medicine-catalogue/chhattisgarh-edl-2025-sample.json`
 - `data/medicine-catalogue/chhattisgarh-edl-2025-shc-aam-source-transcription.json`: all 106 numbered Annexure 5 rows transcribed from PDF text, with source descriptions, category, item number and printed footer page. This remains explicitly unreviewed and is not approved for live ingestion.
-- `data/medicine-catalogue/chhattisgarh-edl-2025-phc-aam-source-transcription.json`: all 172 numbered Annexure 4 rows transcribed from PDF text under the same unreviewed status. Together, both files cover all 278 numbered EDL rows, but neither is approved for live ingestion or normalized inventory mapping.
+- `data/medicine-catalogue/chhattisgarh-edl-2025-phc-aam-source-transcription.json`: all 172 numbered Annexure 4 rows transcribed from PDF text. Together with Annexure 5, the files contain all 278 numbered rows. Both remain unreviewed source-text transcriptions and are not approved for live ingestion or normalized inventory mapping.
 - `scripts/validate-medicine-catalogue.mjs` checks source metadata, annexure/facility-level consistency, row uniqueness, printed source-page bounds and verbatim-only staging. It intentionally refuses guessed normalized stock units or dosage fields and always marks live import unsafe.
 - `scripts/audit-medicine-source-transcriptions.mjs` audits the two source files together for row-count/sequence/page mapping, duplicate rows, premature normalization and likely OCR/spelling anomalies. It creates a review queue with blank reviewer, source-PDF-check, row-interpretation, candidate-item, facility-applicability, local DPDMIS code and evidence fields. Every row starts `pending_source_reconciliation`; it never fills normalized medicine data or authorizes import.
 - `scripts/validate-medicine-review-decisions.mjs` validates a completed reviewer batch against the exact transcribed source rows. It requires the rendered-PDF check, reviewer identity/designation/organization, organization-confirmed authority, timestamp, evidence note and source-row match. Mapping approval also requires complete candidate fields and matching facility applicability. A passing batch still cannot be imported to live or used for prescribing/stock decisions.
@@ -76,10 +76,20 @@ Run the structural audit with:
 - Read access is authenticated; browser users cannot directly insert, update or delete catalogue rows.
 - CI verifies the new migration in the PostgreSQL contract database.
 
+## 8. Reconciliation checkpoint — 2026-11-07
+
+- The official 59-page PDF was opened from the DPDMIS source URL. The notification page identifies the Department of Health and Family Welfare, Government of Chhattisgarh, and date 12-Nov-2025. Annexure 4 starts on printed page 48 and Annexure 5 on printed page 54.
+- Structural audit of the repository transcriptions: 172 Annexure 4 rows + 106 Annexure 5 rows = 278; contiguous row numbers; expected printed-page mapping; no structural errors.
+- Targeted machine flags: 15 rows (1 possible truncated unit/OCR, 6 spelling/OCR, 8 programme-guideline references). The exact row list is in the review queue.
+- **Not completed:** visual/page-by-page reconciliation of every row against the rendered PDF, PDF checksum capture, two-person review, pharmacist/CGMSC review, normalized mapping and live import. Do not represent the structural audit as clinical or source accuracy approval.
+- Note: the source JSON currently uses `sampleOnly: true` as a non-importability safety marker despite containing the full numbered annexure transcriptions. This field name is semantically misleading and should be replaced in a separately tested schema migration with explicit `completeTranscription` and `importApproved` fields; do not remove the existing guard until consumers and tests are updated.
+
 ## 6. What is not done yet
 
-- The complete 172-row PHC-AAM/UPHC list and 106-row SHC-AAM list have **not** been transcribed.
+- The 172-row PHC-AAM/UPHC and 106-row SHC-AAM annexures have been transcribed from PDF text, but none of the 278 rows has completed rendered-PDF human reconciliation.
 - No District Hospital, Civil Hospital, CHC or UPHC-only catalogue has been loaded.
+- The structural audit has confirmed row counts, contiguous numbering, annexure taxonomy and expected printed-page mapping for all 278 rows. It flagged 15 rows for targeted review: 1 possible truncated unit/OCR issue, 6 spelling/OCR checks and 8 programme-guideline references. This is a machine-assisted triage result, not proof that the remaining rows are correct.
+- A row-by-row review queue is maintained at `data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json`; all rows remain `pending_source_reconciliation`, `sourcePdfChecked: false`, and non-importable.
 - No normalized ingredient/formulation/unit mapping has been approved.
 - No facility has been mapped to the EDL or to inventory items.
 - No actual stock, expiry, procurement, DPDMIS API or government transaction has been imported or simulated in the live project.
