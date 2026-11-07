@@ -1,13 +1,13 @@
 export const CHHATTISGARH_STATE_LGD_CODE = '22';
 
 export const PROVISIONABLE_ROLES = Object.freeze([
-  'worker', 'supervisor', 'storekeeper', 'district_admin', 'state_admin'
+  'worker', 'supervisor', 'district_admin', 'state_admin'
 ]);
 
 export const PROVISIONING_HIERARCHY = Object.freeze({
   platform_admin: PROVISIONABLE_ROLES,
-  state_admin: ['worker', 'supervisor', 'storekeeper', 'district_admin'],
-  district_admin: ['worker', 'supervisor', 'storekeeper']
+  state_admin: ['worker', 'supervisor', 'district_admin'],
+  district_admin: ['worker', 'supervisor']
 });
 
 const LANGUAGES = new Set(['en', 'hi', 'ta', 'te', 'bn', 'mr']);
@@ -58,7 +58,7 @@ export function validateProvisioningInput(input) {
     throw new ProvisioningError(400, 'Choose a supported BUSHO language.', 'invalid_language');
   }
 
-  if (['worker', 'supervisor', 'storekeeper'].includes(role)) {
+  if (['worker', 'supervisor'].includes(role)) {
     if (scope) throw new ProvisioningError(400, 'Facility-based roles cannot include an administrative scope.', 'unexpected_scope');
     if (facilityIds.length < 1 || facilityIds.length > 20 || facilityIds.some(id => !isUuid(id))) {
       throw new ProvisioningError(400, 'Select between 1 and 20 valid facility records.', 'invalid_facilities');
