@@ -289,6 +289,18 @@
       });
     }
 
+    async function replaceReportItems(reportId, items) {
+      if (!reportId) throw new Error('Report ID is required.');
+      if (!Array.isArray(items)) throw new Error('Report items must be an array.');
+      // A single report's structured fields are replaced as a set. This makes a retry
+      // after a failed submission safe while the report remains an editable draft.
+      await restRequest(
+        'report_items?report_id=eq.' + encodeURIComponent(reportId),
+        { method: 'DELETE' }
+      );
+      return saveReportItems(reportId, items);
+    }
+
     async function submitReport(reportId) {
       const report = await getReport(reportId);
       if (!report) throw new Error('Report was not found in your assigned scope.');
@@ -437,6 +449,7 @@
       getReport,
       createReportDraft,
       saveReportItems,
+      replaceReportItems,
       submitReport,
       reviewReport,
       listReportEvents,
