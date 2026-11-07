@@ -210,7 +210,7 @@ update public.reports
 set status = 'submitted'
 where original_text = 'worker_report_created synthetic second facility';
 
-do $
+do $$
 declare v_count integer;
 begin
   select count(*) into v_count from public.reports;
