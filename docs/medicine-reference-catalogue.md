@@ -146,3 +146,9 @@ The initial audit contained a systematic +1 error in its printed-page map. The u
 
 ### Source annotation register
 The separate `data/medicine-catalogue/chhattisgarh-edl-2025-source-annotations.json` preserves seven highlighted spans, 23 source notes/conditions, and the asterisk-marked row list. Highlights are recorded as formatting only; the meaning of asterisks is not inferred where the source gives no legend. The review queue marks all 278 rows as rendered-PDF and text-layer checked, but every row remains pending authorised pharmacist/CGMSC review.
+
+
+### Authorised review hand-off package
+- Prepared `docs/edl-authorised-review-protocol.md` with row-review procedure, reviewer authority requirements, known source discrepancies, decision states and release boundaries.
+- Prepared `data/medicine-catalogue/chhattisgarh-edl-2025-pharmacist-review-template.csv` with all 278 source rows, printed/physical page references, source flags, highlights, notes and blank reviewer/mapping fields.
+- The package is ready for an authorised pharmacist/CGMSC review. BUSHO engineering does not self-approve clinical or stock mappings.
