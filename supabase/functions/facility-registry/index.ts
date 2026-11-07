@@ -155,6 +155,13 @@ const handler = withSupabase({ auth: 'user' }, async (req, ctx) => {
       return reply({ ok: true, result: data }, 200, origin);
     }
 
+    if (action === 'list_batches') {
+      const batches = throwOnError(await admin.from('facility_registry_import_batches')
+        .select('id,source_authority,source_date,status,expected_rows,received_rows,verified_rows,rejected_rows,created_at,completed_at')
+        .eq('imported_by', actorId).order('created_at', { ascending: false }).limit(25), 'Unable to load recent facility batches');
+      return reply({ ok: true, batches: batches || [] }, 200, origin);
+    }
+
     if (action === 'list_batch') {
       const batchId = requiredString(input.batchId, 'Batch ID', 36);
       const batch = throwOnError(await admin.from('facility_registry_import_batches')
