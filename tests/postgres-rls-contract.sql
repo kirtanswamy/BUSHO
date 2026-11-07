@@ -763,13 +763,18 @@ begin
   end if;
 
   -- Movement ledger is append-only for authenticated operational roles.
+  -- Run this mutation attempt under the actual authenticated database role;
+  -- this audit block otherwise executes as the migration/test owner.
   begin
-    update public.inventory_movements
-    set quantity_delta = 999
-    where external_reference = 'GRN-TEST-BALOD-PART-001';
-    raise exception 'Inventory movement update unexpectedly succeeded';
-  exception when others then
-    if sqlerrm = 'Inventory movement update unexpectedly succeeded' then raise; end if;
+    set local role authenticated;
+    begin
+      update public.inventory_movements
+      set quantity_delta = 999
+      where external_reference = 'GRN-TEST-BALOD-PART-001';
+      raise exception 'Inventory movement update unexpectedly succeeded';
+    exception when others then
+      if sqlerrm = 'Inventory movement update unexpectedly succeeded' then raise; end if;
+    end;
   end;
   begin
     delete from public.inventory_movements
