@@ -49,3 +49,22 @@ test('platform, state and district roles have distinct server-permitted provisio
   assert.match(js, /Only a platform administrator can provision a state administrator/);
   assert.match(js, /Only a state or platform administrator can provision a district administrator/);
 });
+
+test('administrator facility registry workflow requires source provenance, pagination and human review', () => {
+  const html = read('admin.html');
+  const js = read('admin-facility-registry.js');
+  assert.match(html, /facility-import-form/);
+  assert.match(html, /facility-source-authority/);
+  assert.match(html, /facility-source-date/);
+  assert.match(html, /facility-source-url/);
+  assert.match(html, /facility-import-file/);
+  assert.match(js, /create_batch/);
+  assert.match(js, /stage_candidates/);
+  assert.match(js, /review_candidate/);
+  assert.match(js, /complete_batch/);
+  assert.match(js, /Verify and add facility/);
+  assert.match(js, /Reject candidate/);
+  assert.match(js, /minimum 8 characters/);
+  assert.match(js, /facility-page-next/);
+  assert.doesNotMatch(js, /localStorage|sessionStorage/);
+});
