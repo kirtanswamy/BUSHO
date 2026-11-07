@@ -97,6 +97,14 @@ update public.reports
 set status = 'submitted'
 where original_text = 'worker_report_created synthetic aggregate only';
 
+-- A second, unsubmitted draft at the same facility must remain worker-private.
+insert into public.reports
+  (facility_id, worker_id, reporting_date, original_text, language_code, status, summary)
+values
+  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+   '10000000-0000-4000-8000-000000000001',
+   current_date, 'worker_private_draft_not_for_supervisor', 'en', 'draft', '{"source":"manual"}');
+
 -- A worker cannot self-verify a submitted report.
 update public.reports
 set status = 'supervisor_verified'
