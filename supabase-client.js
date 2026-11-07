@@ -340,7 +340,7 @@
     async function listSupervisorReports() {
       await requireActiveProfile(['supervisor','district_admin','state_admin']);
       return restRequest(
-        'reports?select=*,report_items(*),report_events(*),workers(display_name,preferred_language),facilities(name,district,block_lgd_code)&order=created_at.desc'
+        'reports?status=in.(submitted,resubmitted,supervisor_verified,correction_requested,escalated,rejected,closed)&select=*,report_items(*),report_events(*),workers(display_name,preferred_language),facilities(name,district,block_lgd_code)&order=created_at.desc'
       );
     }
 
