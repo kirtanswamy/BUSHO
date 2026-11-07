@@ -50,5 +50,6 @@ test('CI runs the real migration against PostgreSQL 17 before declaring database
   assert.match(workflow, /20261107060000_busho_database_query_tuning\.sql/i);
   assert.match(workflow, /20261107170000_facility_registry_review_workflow\.sql/i);
   assert.match(workflow, /20261107190000_busho_role_policy_alignment\.sql/i);
+  assert.match(workflow, /20261107200000_medicine_reference_catalogue\.sql/i);
   assert.match(workflow, /postgres-rls-contract\.sql/i);
 });
