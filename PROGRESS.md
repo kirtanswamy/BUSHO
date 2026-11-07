@@ -309,3 +309,12 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 
 
 - **Validation follow-up:** the first CI run after correcting the page map exposed stale hard-coded ranges in `scripts/validate-medicine-catalogue.mjs` and the validator test fixture. Updated the validator to use the verified footer pages and changed the wrong-page regression fixture so it still tests a genuinely incorrect value. A fresh CI run is required before this correction is considered validated.
+
+
+## Part 2D.4 — full transcription text consistency and two additional truncations — 2026-11-07
+
+- Automated page-scoped comparison of all 278 source descriptions against the extracted text for the corresponding uploaded PDF page returned 278/278 normalized text matches after source corrections.
+- Two additional transcription issues were found during this pass: PHC Annexure 4 item 37 had been expanded beyond the printed `Diethylcarbama`; SHC Annexure 5 item 22 had been expanded from the printed `80 mg/m` to `80 mg/ml`. Both source transcriptions now preserve the visible source strings verbatim.
+- Updated the audit script to flag the truncated PHC item 37 and SHC item 22; updated tests to assert both conditions.
+- Targeted rendered-page evidence now covers 18 rows; 260 rows remain without individual row-level visual evidence. The 278/278 automated text match is not clinical approval, normalization approval or a substitute for the remaining visual review.
+- All rows remain non-importable. No live Supabase or production changes were made.
