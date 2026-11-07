@@ -424,3 +424,13 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - CI run `42397275850` exposed a pre-existing malformed PostgreSQL test block delimiter at line 213 (`do $` rather than `do $$`). All three Node-version checks passed; both new migrations applied successfully in PostgreSQL; the database contract stopped at this syntax error before executing the assertions. Fixed the delimiter in the contract file. Re-run pending.
 
 - Follow-up CI run `42397363718` repeated the PostgreSQL syntax error because the first delimiter edit did not persist; re-fetched the branch file and verified exactly one malformed `do $` block remained at line 213, then corrected it directly. Latest test-file commit: `2a30dc541ece54d4de71a67c7c7af98f13002511`; fetched the file again and verified zero malformed delimiters. New CI run pending.
+
+
+## Part 2F.3 — storekeeper discoverability and role selection — 2026-11-07
+
+- Added Storekeeper as the third role card in `signin.html`, linking to the dedicated authenticated `storekeeper.html` workspace.
+- Updated the shared sign-in role grid: three columns on wide desktop, two at intermediate widths and one on mobile. This avoids an unbalanced third card and preserves responsive layout.
+- The landing page's general CTA continues to route through the role selector; no privileged portal is exposed directly from the public landing page.
+- Verified CI run `42397499407` passed all four jobs (Node 18, 22, 24 and PostgreSQL database contract) on commit `1d59846`, including both new migrations and the complete synthetic RLS/stock workflow contract. This is the first confirmed green DB contract for the storekeeper/receipt-ledger work.
+- Latest role selector SHA: `0823ca0edb1d3561639c7b0154039c0ca5553c66`; CSS SHA: `3a2211e3ebbf5318fa54394783031a65556f0d28`. CI for the latest UI commits is pending.
+- No live Supabase migration, real user provisioning, or production deployment performed.
