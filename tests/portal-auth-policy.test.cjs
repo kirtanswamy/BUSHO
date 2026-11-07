@@ -38,3 +38,10 @@ test('missing profile and role mismatch are denied without trusting browser-supp
     id: 'worker-1', role: 'worker', status: 'active'
   }, ['supervisor']), { allowed: false, reason: 'wrong_role' });
 });
+test('platform, state and district administrators are admitted only to the dedicated administrator role allowlist', () => {
+  const adminRoles = ['platform_admin','state_admin','district_admin'];
+  for (const role of adminRoles) {
+    assert.equal(policy.evaluateProfile({ id: role, role, status: 'active' }, adminRoles).allowed, true, role);
+    assert.equal(policy.evaluateProfile({ id: role, role, status: 'active' }, ['worker']).allowed, false, role);
+  }
+});
