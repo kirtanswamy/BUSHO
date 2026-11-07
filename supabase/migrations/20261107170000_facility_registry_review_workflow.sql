@@ -469,10 +469,6 @@ end;
 $$;
 
 
-revoke all on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) from public, anon, authenticated;
-grant execute on function app_private.review_facility_registry_candidate(uuid,uuid,text,text) to service_role;
-
-
 revoke all on function app_private.create_facility_registry_import_batch(uuid,text,date,text,integer) from public, anon, authenticated;
 grant execute on function app_private.create_facility_registry_import_batch(uuid,text,date,text,integer) to service_role;
 revoke all on function app_private.stage_facility_registry_candidates(uuid,uuid,jsonb) from public, anon, authenticated;
