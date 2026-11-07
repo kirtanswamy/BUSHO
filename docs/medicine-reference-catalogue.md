@@ -105,3 +105,8 @@ This document is an engineering data-governance note, not a clinical or procurem
 ## 9. PDF text-layer comparison checkpoint
 
 The 15 machine-flagged rows have been compared against the official DPDMIS PDF's extracted text layer and row-level findings recorded in the review queue. This comparison confirms what the PDF text extraction contains; it is **not** a visual inspection of the rendered page. All 278 rows remain `sourcePdfChecked: false`. The text layer itself contains the apparent truncation in Annexure 4 item 36 and a spelling difference between Annexure 4 item 172 (`Medroxprogesterone`) and Annexure 5 item 81 (`Medroxyprogesterone`). Preserve source strings pending visual and authorised pharmacist/CGMSC review. Programme-guideline rows are not SKU records and must not be normalized as inventory products.
+
+
+## 10. Evidence boundary for the current review pass
+
+The current 278-row audit validates the repository transcription structure and compares entries across the two stored JSON transcriptions. It does not verify the transcription against the official PDF. In particular, the PHC Annexure 4 item 36 source string is truncated in the repository file, and the PHC Annexure 4 item 172 / SHC Annexure 5 item 81 descriptions differ by spelling. These are unresolved review items, not corrected facts. All queue entries remain `sourcePdfChecked: false`. The official PDF must be supplied or retrieved in a form that permits rendered-page inspection before any visual verification is recorded.
