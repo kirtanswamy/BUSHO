@@ -88,8 +88,8 @@ Run the structural audit with:
 
 - The 172-row PHC-AAM/UPHC and 106-row SHC-AAM annexures have been transcribed from PDF text. Sixteen targeted rows (the 15 machine-flagged rows plus the cross-annexure comparison row) have rendered-PDF evidence; the other 262 rows still need individual row-level reconciliation.
 - No District Hospital, Civil Hospital, CHC or UPHC-only catalogue has been loaded.
-- The structural audit has confirmed row counts, contiguous numbering, annexure taxonomy and expected printed-page mapping for all 278 rows. It flagged 15 rows for targeted review: 1 possible truncated unit/OCR issue, 6 spelling/OCR checks and 8 programme-guideline references. This is a machine-assisted triage result, not proof that the remaining rows are correct.
-- A row-by-row review queue is maintained at `data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json`; 16 targeted rows have rendered-page evidence and remain pending authorised review; the other 262 rows still require targeted row-level comparison. All rows remain non-importable.
+- The structural audit has confirmed row counts, contiguous numbering, annexure taxonomy and expected printed-page mapping for all 278 rows. It flagged 17 rows for targeted review: 2 possible truncated-unit issues, 1 truncated source-text issue, 6 spelling/OCR checks and 8 programme-guideline references. This is a machine-assisted triage result, not proof that the remaining rows are correct.
+- A row-by-row review queue is maintained at `data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json`; 18 targeted rows have rendered-page evidence and remain pending authorised review; the other 260 rows still require targeted row-level comparison. All rows remain non-importable.
 - No normalized ingredient/formulation/unit mapping has been approved.
 - No facility has been mapped to the EDL or to inventory items.
 - No actual stock, expiry, procurement, DPDMIS API or government transaction has been imported or simulated in the live project.
@@ -104,7 +104,7 @@ This document is an engineering data-governance note, not a clinical or procurem
 
 ## 9. PDF text-layer comparison checkpoint
 
-The uploaded 59-page PDF was rendered and visually inspected for all 15 machine-flagged rows plus Annexure 5 item 81 to verify the cross-annexure spelling difference. The PDF SHA-256 is recorded in the review queue. Annexure 4 item 36 visibly ends `200 mg/5 m`; preserve the source exactly and seek an official erratum/authorised interpretation. Annexure 4 item 172 visibly says `Medroxprogesterone`, while Annexure 5 item 81 says `Medroxyprogesterone`; this is a source-document inconsistency, not merely a transcription discrepancy. All 16 targeted rows remain pending authorised review; programme-guideline rows are not inventory SKUs.
+The uploaded 59-page PDF was rendered and visually inspected for all 17 machine-flagged rows plus Annexure 5 item 81 to verify the cross-annexure spelling difference. The PDF SHA-256 is recorded in the review queue. Annexure 4 item 36 visibly ends `200 mg/5 m`; preserve the source exactly and seek an official erratum/authorised interpretation. Annexure 4 item 172 visibly says `Medroxprogesterone`, while Annexure 5 item 81 says `Medroxyprogesterone`; this is a source-document inconsistency, not merely a transcription discrepancy. All 18 targeted rows remain pending authorised review; programme-guideline rows are not inventory SKUs.
 
 
 ## 10. Evidence boundary for the current review pass
@@ -117,5 +117,11 @@ The initial audit contained a systematic +1 error in its printed-page map. The u
 - Inspected the uploaded 59-page `EDL_2025.pdf`; SHA-256: `6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e`.
 - Corrected a systematic +1 error in prior page provenance: Annexure 4 uses printed footer pages 47–52 (physical PDF pages 49–54); Annexure 5 uses printed footer pages 53–56 (physical PDF pages 55–58).
 - Updated both full source transcriptions, the 24-row sample, review queue and audit script to match printed footer pages.
-- Visually checked 15 machine-flagged rows plus SHC Annexure 5 item 81 (16 rows total). No source spelling was silently corrected. Item 36's truncated `200 mg/5 m` is visibly present in the PDF. Annexure 4 item 172 and Annexure 5 item 81 visibly differ (`Medroxprogesterone` / `Medroxyprogesterone`).
-- All 16 checked rows remain pending authorised reviewer decision. The remaining 262 rows are not yet individually reconciled. No normalized medicine mapping, live import, stock use or prescribing use is approved.
+- Visually checked 17 machine-flagged rows plus SHC Annexure 5 item 81 (18 rows total). No source spelling was silently corrected. Item 36's truncated `200 mg/5 m` is visibly present in the PDF. Annexure 4 item 172 and Annexure 5 item 81 visibly differ (`Medroxprogesterone` / `Medroxyprogesterone`).
+- All 18 checked rows remain pending authorised reviewer decision. The remaining 260 rows are not yet individually reconciled. No normalized medicine mapping, live import, stock use or prescribing use is approved.
+
+
+### Additional source-text truncations found
+- PHC Annexure 4 item 37 visibly ends `Diethylcarbama`; the earlier transcription had incorrectly expanded this into a complete medicine/oral-liquid description. The source transcription now preserves the visible truncated text.
+- SHC Annexure 5 item 22 visibly ends `Gentamicin Injection 80 mg/m`; the earlier transcription had supplied a final `l`. The source transcription now preserves the visible source string.
+- After those corrections, a whitespace/punctuation-normalized comparison matched all 278 stored row descriptions to their corresponding extracted PDF page text. This automated match is a consistency check, not clinical or pharmacist approval.
