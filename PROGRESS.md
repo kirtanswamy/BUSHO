@@ -398,3 +398,16 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Latest test SQL SHA: `a294dbf5cb8a0c5dd9a8f7fe4f2391d52a05d72f`; movement migration SHA: `c5ea0ce53c6e37d7d8e9b8de4a974e10d0821438`; Supabase client SHA: `c1d6200559435a05bf3a383fa29a74a3a82e6393`.
 
 - Added an RLS contract assertion that a worker cannot browse the inventory movement ledger; only facility operational roles and scoped administrators can read it. Latest SQL contract SHA: `68b3bcfb485f1559cb103f801ac8fc1850b895de`.
+
+
+## Part 2F.1 — first server-backed storekeeper workspace — 2026-11-07
+
+- Added `storekeeper.html` and `storekeeper-portal.js`. The portal uses the existing Supabase Auth gate and authenticated profile; only an active `storekeeper` role can enter.
+- Added the explicit storekeeper role allowlist and workspace label to `role-auth.js`. This closes a portal-auth integration gap: without the allowlist branch, a storekeeper would have been rejected by the supervisor portal's default role list.
+- Workspace loads `listMyReplenishments()` (RLS-scoped) and renders request state, item/facility, external references, cumulative receipt quantity, receipt movement history and workflow events.
+- Storekeeper actions are state-gated: allocation only from `submitted_to_dpdmis`, dispatch only from `allocated`, receipt only from `dispatched/partially_received`. Cumulative receipt values are checked in the UI and revalidated by PostgreSQL triggers.
+- Added an explicit client error when a PATCH returns no row, so an RLS-filtered update cannot be shown as successful.
+- Replenishment read query now includes linked inventory item name/unit, event history and movement history.
+- Updated CI to apply the storekeeper separation and inventory movement migrations before running the PostgreSQL RLS contract. This is necessary for CI to test the schema actually introduced by this branch.
+- No live Supabase migrations, operational rows or production deployments. UI and migration CI verification pending.
+- Current file SHAs: storekeeper HTML `acaad14edff07a326a736c0c7862c3c2ef7178f3`, controller `d3263c83e08e24d81adcbb252bc32304511ec8fc`, role auth `ee26a82db3aac7010c3fb13c1970e8fea9181729`, client `416a8d553ab029156092e385f72e9b5e0c0ef0c7`, CI workflow `1510d5b0eaf87140f54dbec3f45153fcd2c7dce4`.
