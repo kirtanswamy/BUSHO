@@ -683,6 +683,21 @@ begin
 end $storekeeper_receipt_audit_check$;
 commit;
 
+-- Workers cannot browse the facility inventory movement ledger.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '22222222-2222-4222-8222-222222222222', true);
+do $worker_inventory_movement_scope$
+declare
+  v_count integer;
+begin
+  select count(*) into v_count from public.inventory_movements;
+  if v_count <> 0 then
+    raise exception 'Worker must not read the facility inventory movement ledger';
+  end if;
+end $worker_inventory_movement_scope$;
+commit;
+
 -- District admin sees Dhamtari only; state admin sees both facilities.
 begin;
 set local role authenticated;
