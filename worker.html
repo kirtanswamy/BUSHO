@@ -26,7 +26,7 @@
         </a>
         <div class="topbar-spacer"></div>
         <div class="topbar-right">
-          <span class="demo-badge">Demo: synthetic data</span>
+          <span class="demo-badge">Secure workspace</span>
           <div class="lang-selector" role="region" aria-label="Language selection" data-i18n-attr="aria-label:ui.languageSelection">
             <label for="lang-select" class="visually-hidden" data-i18n="header.langLabel">Language</label>
             <select id="lang-select" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
@@ -39,9 +39,9 @@
             </select>
           </div>
           <div class="profile-menu-wrap">
-            <button class="profile-trigger" id="profile-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu"><span class="profile-avatar">HW</span><span class="profile-trigger-copy"><strong>Health Worker</strong><small>Demo account</small></span><span class="profile-chevron">⌄</span></button>
+            <button class="profile-trigger" id="profile-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu"><span class="profile-avatar">HW</span><span class="profile-trigger-copy"><strong>Health Worker</strong><small>Signed-in account</small></span><span class="profile-chevron">⌄</span></button>
             <div class="profile-dropdown" id="profile-dropdown" hidden>
-              <div class="profile-dropdown-head"><strong>Health Worker</strong><span>worker@busho.demo</span></div>
+              <div class="profile-dropdown-head"><strong>Health Worker</strong><span>Authenticated BUSHO account</span></div>
               <button type="button" data-profile-action="profile">Account details</button>
               <button type="button" data-profile-action="facility">Assigned facility</button>
               <button type="button" data-profile-action="preferences">Language & preferences</button>
@@ -60,7 +60,7 @@
             <p>Field reporting and confirmation. Sign in with your BUSHO account; access is granted only after your role and facility assignment are approved.</p>
             <form id="portal-login-form" class="portal-login-form">
               <label for="portal-username">Email</label>
-              <input id="portal-username" name="username" type="email" autocomplete="username" required placeholder="name@busho.demo">
+              <input id="portal-username" name="username" type="email" autocomplete="username" required placeholder="your registered email">
               <label for="portal-password">Password</label>
               <input id="portal-password" name="password" type="password" autocomplete="current-password" required>
               <p class="portal-login-error" id="portal-login-error" role="alert" aria-live="polite"></p>
@@ -80,22 +80,22 @@
   <p class="sidebar-label">ACCOUNT</p>
   <button class="sidebar-link" data-portal-view="facility"><span>⌂</span> My Facility</button>
   <button class="sidebar-link" data-portal-view="profile"><span>○</span> My Profile</button>
-  <div class="sidebar-bottom"><span class="demo-sidebar-label">SYNTHETIC DEMO · NOT LIVE</span></div>
+  <div class="sidebar-bottom"><span class="demo-sidebar-label">DATABASE CONTROLLED</span></div>
 </aside>
 
                   <!-- Interactive Demo -->
         <section id="demo" class="demo-section" aria-labelledby="demo-title">
           <div class="container">
-            <div class="portal-session-bar"><span>Signed in to the Health Worker demo workspace</span><button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button></div>
+            <div class="portal-session-bar"><span>Signed in to the Health Worker workspace</span><button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button></div>
             <div class="demo-header">
                 <div class="demo-context" aria-label="Active facility" data-i18n-attr="aria-label:ui.activeFacility">
                 <span class="context-kicker" data-i18n="ui.activeFacility">Active facility</span>
-                <strong data-i18n="ui.facility">Rampur HWC</strong>
-                <span data-i18n="ui.location">Rampur block / Synthetic demo data</span>
+                <strong data-i18n="ui.facility">Assigned facility pending</strong>
+                <span data-i18n="ui.location">Your approved facility assignment will appear here.</span>
               </div>
               <div class="demo-status" aria-live="polite">
                 <span class="status-dot" aria-hidden="true"></span>
-                <span data-i18n="header.demoBadge">Demo: synthetic data</span>
+                <span>Awaiting live account data</span>
               </div>
             </div>
 
