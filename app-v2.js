@@ -117,12 +117,11 @@ function extractionWords(lang) { return ({
 }[lang] || {}); }
 
 function setSample(type) {
-  if (['submitted', 'resubmitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
-    state.reportId = null;
-    state.serverStatus = null;
-    state.syncStatus = 'idle';
-  }
-  state.sample = type === 'ambiguous' ? 'ambiguous' : 'routine'; state.rawReport = localizedSample(state.sample); state.extracted = false; state.confirmed = false; state.draft = []; state.reportLanguageCode = null;
+  state.reportId = null;
+  state.serverStatus = null;
+  state.reportLanguageCode = null;
+  state.syncStatus = 'idle';
+  state.sample = type === 'ambiguous' ? 'ambiguous' : 'routine'; state.rawReport = localizedSample(state.sample); state.extracted = false; state.confirmed = false; state.draft = [];
   reportInput.value = state.rawReport; messageText.textContent = state.rawReport; renderAll(); saveState(); showToast(t(`worker.toast.${state.sample}`));
 }
 
@@ -506,6 +505,18 @@ if (voiceButton) {
   });
 }
 reportInput.addEventListener('input', () => updateReportInput(reportInput.value));
+document.addEventListener('click', event => {
+  if (!event.target.closest('[data-go-view="new-report"]')) return;
+  if (!state.reportId) return;
+  // Starting a new report must never overwrite a saved draft or a returned report.
+  state = initialState();
+  state.rawReport = '';
+  state.reportLanguageCode = null;
+  reportInput.value = '';
+  messageText.textContent = t('worker.emptyReport');
+  renderAll();
+  saveState();
+});
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && !inventoryDrawer.classList.contains('hidden')) closeInventory(); if (event.key === 'Tab' && !inventoryDrawer.classList.contains('hidden')) { const focusable = [...inventoryDrawer.querySelectorAll('button:not([disabled]), [href], input, select, textarea')]; if (!focusable.length) return; if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1).focus(); } else if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0].focus(); } } });
 if (window.BUSHO_I18N && window.BUSHO_I18N.onLanguageChange) window.BUSHO_I18N.onLanguageChange(() => { if (!state.extracted) state.rawReport = localizedSample(state.sample); renderAll(); renderInventory(); });
 function openExistingWorkerReport(report) {
