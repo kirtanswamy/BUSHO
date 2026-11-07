@@ -88,13 +88,14 @@
     "Printed page ranges are reconciled against the official PDF page footers and row boundaries.",
     "A different EDL document found in search uses a different annexure numbering scheme; it is not the source used for this dataset.",
     "Page references use the page footer printed on each annexure sheet. The contents index points one page earlier than the printed page labels; page mapping is therefore +1 relative to the index entry.",
-    "A separate 106-row SHC-AAM transcription file covers every numbered source row, but remains unreviewed against the rendered PDF and is not an operational medicine catalogue."
+    "A separate 106-row SHC-AAM transcription file covers every numbered source row, but remains unreviewed against the rendered PDF and is not an operational medicine catalogue.",
+    "Both AAM annexure source transcriptions now cover all 278 numbered rows: 172 PHC-AAM/UPHC and 106 SHC-AAM. Both remain source-text transcriptions pending human reconciliation against rendered PDF pages and pharmacist/CGMSC review."
   ],
   "annexureTranscriptions": {
     "phc_phc_aam_uphc": {
-      "rows": 10,
+      "rows": 172,
       "expectedRows": 172,
-      "status": "partial_sample",
+      "status": "source_text_transcribed_unreviewed",
       "humanReconciled": false
     },
     "shc_aam": {
