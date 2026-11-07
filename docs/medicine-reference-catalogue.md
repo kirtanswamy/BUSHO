@@ -31,7 +31,7 @@ The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, 
 - `data/medicine-catalogue/chhattisgarh-edl-2025-shc-aam-source-transcription.json`: all 106 numbered Annexure 5 rows transcribed from PDF text, with source descriptions, category, item number and printed footer page. This remains explicitly unreviewed and is not approved for live ingestion.
 - `data/medicine-catalogue/chhattisgarh-edl-2025-phc-aam-source-transcription.json`: all 172 numbered Annexure 4 rows transcribed from PDF text under the same unreviewed status. Together, both files cover all 278 numbered EDL rows, but neither is approved for live ingestion or normalized inventory mapping.
 - `scripts/validate-medicine-catalogue.mjs` checks source metadata, annexure/facility-level consistency, row uniqueness, printed source-page bounds and verbatim-only staging. It intentionally refuses guessed normalized stock units or dosage fields and always marks live import unsafe.
-- `scripts/audit-medicine-source-transcriptions.mjs` audits the two source files together for row-count/sequence/page mapping, duplicate rows, premature normalization and likely OCR/spelling anomalies. It creates a review report only; every row remains mandatory for human reconciliation.
+- `scripts/audit-medicine-source-transcriptions.mjs` audits the two source files together for row-count/sequence/page mapping, duplicate rows, premature normalization and likely OCR/spelling anomalies. It creates a review queue with blank reviewer, source-PDF-check, row-interpretation, candidate-item, facility-applicability, local DPDMIS code and evidence fields. Every row starts `pending_source_reconciliation`; it never fills normalized medicine data or authorizes import.
 
 Run the structural audit with:
 
