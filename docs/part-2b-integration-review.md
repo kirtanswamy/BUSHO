@@ -135,3 +135,23 @@ The worker-side submit path is now connected to the persistence boundary:
 2. Implement server-backed worker report history and facility context, including returned notes and resubmission status.
 3. Implement controlled administrator provisioning with no self-assigned roles or facility scope.
 4. Provision authorised test accounts/facilities only after explicit approval, then test two facilities and two worker/supervisor accounts for cross-scope leakage and the full worker → supervisor → worker cycle.
+
+## Part 2B.4 — worker history and correction resumption — 2026-11-07
+
+- Added a role-gated `listMyReports()` query for the authenticated worker, embedding report items, report events and facility display details.
+- Worker record lookup now includes its approved facility's name, district and block LGD code. No facility is inferred from the block directory.
+- Added a live worker history controller with report summary, status filters, search, refresh, report detail, supervisor feedback and event timeline.
+- Pending view surfaces saved drafts and correction-requested reports with a direct resume action.
+- Added `fromDatabaseItems()` to reconstruct the editable worker tables from persisted records. It preserves original source phrases, count/stock clarification text, units and possible-spelling metadata. Values remain provisional and review-required.
+- Reopening a correction report preserves its report UUID and original language code. The existing persistence adapter updates that record and resubmits it; it does not create a second report.
+- Starting a new report clears the active editor reference so a new narrative cannot accidentally overwrite an older correction. The older draft remains in server history.
+- Facility and profile context now render from the authenticated worker record. If no worker/facility assignment exists, the page explains that provisioning is pending.
+- Removed the worker's synthetic demo login identity and the local reset control that could have orphaned a server draft.
+- Added unit/controller tests for history summaries, empty states, facility context, feedback display, correction resume, source preservation and role-gated queries.
+
+### Verification update
+- CI run `42364871547`: all 81 Node tests passed; smoke checks failed on two stale assertions expecting demo credentials and hard-coded dashboard markup. PostgreSQL 17 migration/RLS contract passed.
+- CI run `42365023889`: smoke check reduced to one stale supervisor email placeholder assertion; that placeholder has now been removed.
+- Worker history and correction-resumption changes are newer than those runs and still require a fresh green CI run.
+- Vercel preview remains rate-limited by the team build plan; production domain and data remain untouched.
+- No Auth users, facilities, workers, assignments or reports were created in the live Supabase project.
