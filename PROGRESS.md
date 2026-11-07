@@ -176,3 +176,18 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - **Current verification:** this checkpoint has not yet completed a fresh GitHub Actions run. Vercel currently reports a build-rate-limit failure for the feature branch preview; production remains untouched. Do not call this milestone green until the latest CI result is inspected.
 - **Known limitation:** no Auth users/facilities/workers/assignments/reports exist in the live project, so no live supervisor screen or real review transition has yet been demonstrated. The automated tests use controlled fixtures.
 - **Next:** run CI, fix all test failures, then build worker report history/assigned facility context and a secure administrator provisioning workflow. Only after provisioning should a two-account/two-facility end-to-end test be attempted.
+
+## Part 2B.4 — worker history, facility context and correction resumption (implementation checkpoint)
+
+- Extended the worker's authenticated report-history query to require an active worker profile and include related facility display context. The database RLS policy remains the ownership boundary.
+- Extended the worker record query to include the approved facility name, district and block LGD code; no facility is inferred from geography.
+- Added `worker-history.js` and `worker-portal.js`: account-scoped report history, live worker summary, pending drafts/returns, report detail, supervisor feedback, audit timeline, search, status filters and refresh.
+- Added `fromDatabaseItems()` to reconstruct the editable condition/medicine tables from persisted report items, preserving source phrases, quantity uncertainty and review notes.
+- Added a safe correction-resume path: worker can reopen only a `draft` or `correction_requested` report. The original report ID and original report language are retained, so resubmission updates the same record instead of creating a duplicate.
+- Starting a new report explicitly clears the current editor's report reference so a new field note cannot accidentally overwrite a returned report. The old server draft remains available in history.
+- Worker dashboard summary, facility context and profile sections now derive from the authenticated worker record and that account's report history. Missing worker/facility records show an explicit provisioning state.
+- Removed synthetic worker login identity and the worker page's unsafe demo-reset action. Local recovery drafts remain per-account and are removed after server submission.
+- Added `tests/worker-history.test.cjs`, worker history query tests, rehydration tests and portal integration assertions.
+- **Verification:** this worker-history checkpoint is awaiting a fresh CI run. The preceding CI run `42364871547` passed all 81 Node tests but failed two smoke checks because the smoke test still expected demo credentials and a hard-coded supervisor dashboard. Those smoke assertions were updated. Run `42365023889` then failed one remaining stale supervisor email-placeholder assertion, which has now been removed. The PostgreSQL 17 database-contract job passed on run `42364871547`; latest worker-history changes are not yet verified.
+- **Live environment limitation:** the Supabase project still has no Auth users, worker records, facilities, assignments or reports. No real multi-account user journey has been demonstrated.
+- **Next:** get the current CI green, then build controlled administrator provisioning and execute a two-facility cross-scope test with explicitly authorised test accounts.
