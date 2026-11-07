@@ -313,9 +313,9 @@
       form.querySelector('.review-feedback').textContent = 'Saving the decision…';
       try {
         await client.reviewReport({ reportId: report.id, decision, note });
-        await load();
+        busy = false;
         selectedId = report.id;
-        renderShell();
+        await load();
       } catch (cause) {
         busy = false;
         form.querySelector('.review-feedback').textContent = cause.message || 'The decision could not be saved.';
