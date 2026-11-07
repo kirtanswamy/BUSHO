@@ -34,6 +34,17 @@ values
   ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'Synthetic Balod HWC', 'Balod', 'Chhattisgarh',
    '22', '646', '3629', 'aam_shc', 'verified', true);
 
+-- The AAM-PHC taxonomy is accepted by the database constraint, but remains
+-- a synthetic CI fixture and is never seeded into a live project.
+begin;
+insert into public.facilities
+  (id, name, district, state, state_lgd_code, district_lgd_code, block_lgd_code,
+   facility_type, verification_status, is_synthetic)
+values
+  ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'Synthetic AAM PHC taxonomy fixture', 'Balod', 'Chhattisgarh',
+   '22', '646', '3629', 'aam_phc', 'verified', true);
+rollback;
+
 insert into public.workers
   (id, facility_id, display_name, whatsapp_number, role, is_active, auth_user_id)
 values
@@ -104,6 +115,14 @@ values
   ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
    '10000000-0000-4000-8000-000000000001',
    current_date, 'worker_private_draft_not_for_supervisor', 'en', 'draft', '{"source":"manual"}');
+
+do $worker_own_draft_check$
+declare v_count integer;
+begin
+  select count(*) into v_count from public.reports
+  where original_text = 'worker_private_draft_not_for_supervisor';
+  if v_count <> 1 then raise exception 'Worker must retain access to their own draft'; end if;
+end $worker_own_draft_check$;
 
 -- A worker cannot self-verify a submitted report.
 update public.reports
