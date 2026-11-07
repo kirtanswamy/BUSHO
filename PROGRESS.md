@@ -456,3 +456,12 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Added a PostgreSQL idempotency assertion: replaying the final receipt update with the same cumulative quantity and receipt reference must leave the inventory movement count at two and receipt-event count at two. This directly tests retry safety at the database boundary.
 - Test commit: `f17a63e`. CI for this latest head not yet returned.
 - No schema changes, live Supabase migrations, real data writes or production deployment.
+
+
+## Part 2F.6 — idempotent receipt retry semantics — 2026-11-07
+
+- CI run `42399916427` passed Node 18/22/24 but the PostgreSQL contract failed at the exact-retry test. The request trigger rejected the repeated unchanged final receipt as an invalid transition. The movement ledger correctly did not duplicate, but the API retry surfaced as failure.
+- Updated the existing replenishment transition guard: after verifying assigned supervisor/storekeeper facility access, an assigned storekeeper may replay an exact receipt state/quantity/reference for an already partially or fully received request. This returns the unchanged row; it does not change quantity/reference and therefore does not fire a new receipt movement. Changed references, changed quantities and other state transitions remain guarded.
+- Added a direct test inside the storekeeper RLS transaction: repeat the exact final receipt update, then assert exactly two receipt movements and two receipt events remain.
+- Latest migration commit `3590261`; latest test commit `40ad6d4`. CI not yet returned for these commits.
+- No live Supabase migration, production deployment or real operational data change.
