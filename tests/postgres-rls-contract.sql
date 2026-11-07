@@ -438,6 +438,33 @@ commit;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '66666666-6666-4666-8666-666666666666', true);
+do $inventory_item_scope_guard$
+declare
+  v_blocked boolean := false;
+begin
+  begin
+    insert into public.replenishment_requests
+      (facility_id, inventory_item_id, requested_quantity, status, source_report_id,
+       on_hand_quantity, unit, note, data_mode)
+    select
+      r.facility_id,
+      '20000000-0000-4000-8000-000000000001',
+      5,
+      'draft',
+      r.id,
+      1,
+      'packets',
+      'Invalid cross-facility inventory item',
+      'synthetic_demo'
+    from public.reports r
+    where r.original_text = 'worker_report_created synthetic second facility';
+  exception when others then
+    v_blocked := true;
+  end;
+  if not v_blocked then
+    raise exception 'Supervisor created replenishment against another facility inventory item';
+  end if;
+end $inventory_item_scope_guard$;
 insert into public.replenishment_requests
   (facility_id, inventory_item_id, requested_quantity, status, source_report_id,
    on_hand_quantity, unit, note, data_mode)
@@ -590,6 +617,51 @@ begin
   if v_count <> 2 then
     raise exception 'Receipt references were not recorded in immutable event history';
   end if;
+
+  select count(*) into v_count
+  from public.inventory_movements
+  where replenishment_request_id = (
+    select id from public.replenishment_requests
+    where note = 'Synthetic Balod replenishment recommendation'
+  );
+  if v_count <> 2 then
+    raise exception 'Each partial/final receipt must create one inventory movement; got %', v_count;
+  end if;
+  select coalesce(sum(quantity_delta),0) into v_received
+  from public.inventory_movements
+  where replenishment_request_id = (
+    select id from public.replenishment_requests
+    where note = 'Synthetic Balod replenishment recommendation'
+  );
+  if v_received <> 10 then
+    raise exception 'Inventory movement ledger total must reconcile to 10 packets; got %', v_received;
+  end if;
+  select count(*) into v_count
+  from public.inventory_movements
+  where external_reference in ('GRN-TEST-BALOD-PART-001','GRN-TEST-BALOD-FINAL-001')
+    and movement_type = 'inbound_receipt'
+    and unit = 'packets'
+    and data_mode = 'synthetic_demo';
+  if v_count <> 2 then
+    raise exception 'Inventory movement provenance/reference data is incomplete';
+  end if;
+
+  -- Movement ledger is append-only for authenticated operational roles.
+  begin
+    update public.inventory_movements
+    set quantity_delta = 999
+    where external_reference = 'GRN-TEST-BALOD-PART-001';
+    raise exception 'Inventory movement update unexpectedly succeeded';
+  exception when others then
+    if sqlerrm = 'Inventory movement update unexpectedly succeeded' then raise; end if;
+  end;
+  begin
+    delete from public.inventory_movements
+    where external_reference = 'GRN-TEST-BALOD-PART-001';
+    raise exception 'Inventory movement delete unexpectedly succeeded';
+  exception when others then
+    if sqlerrm = 'Inventory movement delete unexpectedly succeeded' then raise; end if;
+  end;
 
   -- Event rows must be immutable even to the assigned storekeeper.
   begin
