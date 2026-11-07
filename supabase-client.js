@@ -289,6 +289,25 @@
       });
     }
 
+    async function updateReportDraft(reportId, input) {
+      input = input || {};
+      if (!reportId) throw new Error('Report ID is required.');
+      const payload = {
+        original_text: String(input.originalText || '').trim(),
+        language_code: String(input.languageCode || 'en'),
+        summary: input.summary && typeof input.summary === 'object' ? input.summary : {}
+      };
+      if (!payload.original_text) throw new Error('A field report is required.');
+      if (input.reportingDate) payload.reporting_date = input.reportingDate;
+      const rows = await restRequest(
+        'reports?id=eq.' + encodeURIComponent(reportId),
+        { method: 'PATCH', body: payload, prefer: 'return=representation' }
+      );
+      const updated = Array.isArray(rows) ? (rows[0] || null) : rows;
+      if (!updated) throw new Error('The report draft could not be updated in your assigned scope.');
+      return updated;
+    }
+
     async function replaceReportItems(reportId, items) {
       if (!reportId) throw new Error('Report ID is required.');
       if (!Array.isArray(items)) throw new Error('Report items must be an array.');
@@ -449,6 +468,7 @@
       getReport,
       createReportDraft,
       saveReportItems,
+      updateReportDraft,
       replaceReportItems,
       submitReport,
       reviewReport,
