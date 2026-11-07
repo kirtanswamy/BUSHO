@@ -510,6 +510,16 @@ begin
     raise exception 'Storekeeper should see Balod workflow event history; got %', v_count;
   end if;
 
+  -- Dispatch must not skip the allocation step.
+  begin
+    update public.replenishment_requests
+    set status = 'dispatched', dispatch_reference = 'CHALLAN-BEFORE-ALLOCATION'
+    where note = 'Synthetic Balod replenishment recommendation';
+    raise exception 'Dispatch before allocation unexpectedly succeeded';
+  exception when others then
+    if sqlerrm = 'Dispatch before allocation unexpectedly succeeded' then raise; end if;
+  end;
+
   update public.replenishment_requests
   set status = 'allocated', allocation_reference = 'ALLOC-TEST-BALOD-001'
   where note = 'Synthetic Balod replenishment recommendation';
@@ -580,6 +590,24 @@ begin
   if v_count <> 2 then
     raise exception 'Receipt references were not recorded in immutable event history';
   end if;
+
+  -- Event rows must be immutable even to the assigned storekeeper.
+  begin
+    update public.replenishment_events
+    set note = 'tampered event'
+    where external_reference = 'GRN-TEST-BALOD-PART-001';
+    raise exception 'Replenishment event update unexpectedly succeeded';
+  exception when others then
+    if sqlerrm = 'Replenishment event update unexpectedly succeeded' then raise; end if;
+  end;
+
+  begin
+    delete from public.replenishment_events
+    where external_reference = 'GRN-TEST-BALOD-PART-001';
+    raise exception 'Replenishment event delete unexpectedly succeeded';
+  exception when others then
+    if sqlerrm = 'Replenishment event delete unexpectedly succeeded' then raise; end if;
+  end;
 end $storekeeper_receipt_audit_check$;
 commit;
 
