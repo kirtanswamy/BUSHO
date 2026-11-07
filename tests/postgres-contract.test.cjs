@@ -32,7 +32,9 @@ test('PostgreSQL integration contract exercises worker, supervisor, admin and st
     'submitted_to_dpdmis',
     'DPDMIS-TEST-001',
     'CI-FAC-001',
+    'facility_registry_candidates_staged',
     'facility_registry_candidate_verified',
+    'facility_registry_batch_completed',
     'facility_registry_import_batches'
   ]) assert.ok(sql.toLowerCase().includes(value.toLowerCase()), value);
   assert.match(sql, /set local role authenticated|set role authenticated/i);
