@@ -1376,3 +1376,41 @@ html, body { overflow-x: hidden; }
 .worker-portal-body .extraction-footer{display:none!important}
 .worker-portal-body .verification-bar{margin-top:14px}
 @media(max-width:760px){.clinical-review-hint{width:100%;margin-left:0}.clinical-result-heading{align-items:center}.clinical-add{margin-left:45px}.clinical-table{min-width:540px}}
+
+
+/* Live supervisor operations workspace */
+.live-data-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid #b9e5d1;border-radius:999px;background:#effaf4;color:#176a43;font-size:10px;font-weight:800;letter-spacing:.06em}
+.empty-state{padding:18px 14px;border:1px dashed #d6dfeb;border-radius:12px;background:#f8fafd;color:#65748a;font-size:13px;line-height:1.7}
+.report-inbox-row{width:100%;text-align:left;background:#fff;border:0;border-bottom:1px solid #edf1f6;color:#26364d;font:inherit;cursor:pointer}
+.report-inbox-row:hover{background:#f5f8fe}
+.report-inbox-row>span{min-width:0;overflow-wrap:anywhere}
+.report-inbox-row small,.simple-row small{display:block;margin-top:4px;color:#718097;font-size:10px}
+.report-detail{margin-top:18px;scroll-margin-top:22px}
+.report-meta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+.report-meta-grid>div{padding:12px;border:1px solid #e8edf4;border-radius:10px;background:#f9fbfe;min-width:0}
+.report-meta-grid small{display:block;color:#77869a;font-size:10px;margin-bottom:6px}
+.report-meta-grid strong{font-size:12px;overflow-wrap:anywhere}
+.report-source{padding:15px;border-left:3px solid #5279c8;background:#f5f8fe;border-radius:0 10px 10px 0;margin:14px 0}
+.report-source p,.review-note p{white-space:pre-wrap;overflow-wrap:anywhere;color:#33445d;font-size:13px;line-height:1.8}
+.report-observation{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid #edf1f6}
+.report-observation strong{display:block;color:#253750;font-size:13px}
+.report-observation small{display:block;color:#74839a;font-size:10px;margin-top:5px}
+.report-observation p{color:#63738a;font-size:11px;margin:7px 0 0}
+.report-observation>b{font-size:12px;white-space:nowrap;color:#234e9b}
+.review-note{padding:13px 15px;background:#fff8eb;border:1px solid #f0dfbf;border-radius:10px;margin:15px 0}
+.report-timeline{list-style:none;padding:0;margin:12px 0}
+.report-timeline li{position:relative;padding:0 0 16px 20px;border-left:1px solid #d9e2ef;margin-left:6px}
+.report-timeline li:before{content:"";position:absolute;left:-5px;top:3px;width:9px;height:9px;border-radius:50%;background:#4f73bd}
+.report-timeline li:last-child{border-left-color:transparent}
+.report-timeline strong{display:block;font-size:12px;text-transform:capitalize}
+.report-timeline small{display:block;margin-top:4px;color:#7a8799;font-size:10px}
+.report-timeline p{font-size:11px;color:#56677e;margin:6px 0 0}
+.supervisor-review-form{display:grid;gap:9px;padding:17px;margin-top:18px;border:1px solid #dce5f2;border-radius:12px;background:#f8faff}
+.supervisor-review-form h4{margin:0 0 4px}
+.supervisor-review-form label{font-size:11px;font-weight:700;color:#40536e}
+.supervisor-review-form select,.supervisor-review-form textarea,#supervisor-report-search{width:100%;border:1px solid #d8e1ed;border-radius:9px;background:#fff;padding:11px 12px;color:#23344d;font:inherit;font-size:12px}
+.supervisor-review-form textarea{resize:vertical;line-height:1.6}
+.supervisor-review-form select:focus,.supervisor-review-form textarea:focus,#supervisor-report-search:focus{outline:2px solid #dce7fb;border-color:#6485c5}
+.review-feedback{min-height:18px;margin:0;color:#a33d37;font-size:11px}
+.report-detail-placeholder{margin-top:16px}
+@media(max-width:760px){.report-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.report-inbox-row{grid-template-columns:1fr 1fr}.report-inbox-row>span:nth-child(3),.report-inbox-row>span:nth-child(4){margin-top:7px}.supervisor-review-form{padding:13px}}
