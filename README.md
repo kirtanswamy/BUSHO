@@ -176,7 +176,7 @@ Run: `node scripts/validate-medicine-catalogue.mjs data/medicine-catalogue/chhat
 
 ## Medicine reference catalogue
 
-The development branch adds a versioned, source-attributed medicine catalogue foundation. The first source is the Government of Chhattisgarh **Essential Drug List 2025**. The current JSON file is a clearly labelled partial transcription sample, not the complete EDL and not a stock list. See [medicine catalogue data governance](docs/medicine-reference-catalogue.md) and [the sample source rows](data/medicine-catalogue/chhattisgarh-edl-2025-sample.json).
+The development branch adds a versioned, source-attributed medicine catalogue foundation. The first source is the Government of Chhattisgarh **Essential Drug List 2025**. The current JSON file is a clearly labelled partial transcription sample (10 PHC-AAM/UPHC rows and 14 SHC-AAM rows), not the complete EDL and not a stock list. Its source page ranges and row counts are recorded in the [verified source manifest](data/medicine-catalogue/chhattisgarh-edl-2025-source-manifest.json). See [medicine catalogue data governance](docs/medicine-reference-catalogue.md) and [the sample source rows](data/medicine-catalogue/chhattisgarh-edl-2025-sample.json).
 
 ## Role and workflow blueprint
 
