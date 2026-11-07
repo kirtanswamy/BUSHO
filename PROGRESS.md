@@ -559,3 +559,22 @@ No live Supabase changes, real user provisioning, operational data entry, produc
 3. **EDL clinical/catalogue review:** an authorized pharmacist/CGMSC reviewer must complete and sign the 278-row review template. Engineering cannot self-certify clinical content.
 4. **Stock accounting SOP:** obtain competent-authority decisions listed in `docs/stock-accounting-design.md` before implementing opening balances, outbound issues, transfers, adjustments or a balance engine.
 5. **Live migration/release:** require owner approval, migration rehearsal, backup/rollback plan, approved data, real user provisioning, security review and monitoring. Live Supabase and production remain untouched; PR #5 remains draft/open.
+
+
+## Part 2G.6 — final state-machine retry edge case and green CI — 2026-11-08
+
+- Tightened exact receipt retry semantics one more step: the demo state machine now accepts only a replay of the *latest* recorded receipt reference and its exact quantity, matching the SQL row's current receipt reference. An older partial receipt reference cannot be replayed after a later final receipt.
+- Confirmed indent recommendation creation is supervisor-only in the demo state machine, matching the database INSERT guard.
+- Added tests for storekeeper-denied indent creation, supervisor-denied allocation/dispatch/receipt, storekeeper fulfilment, over-receipt rejection, exact retry no-op, and rejection of a superseded partial receipt retry.
+- Latest code/test CI run `42407616983` passed all four jobs: Node 18, Node 22, Node 24 and PostgreSQL 17 database contract.
+- Latest source head at the time of this note is `ef0e93a`; documentation update follows and will trigger a final CI run.
+
+### Explicitly not completed because external approvals/resources are missing
+- Browser E2E with real authenticated worker/supervisor/storekeeper sessions: no approved non-production Auth test identities or test Supabase branch were supplied/created. The PostgreSQL RLS contract exercises synthetic identities, and controller tests exercise UI behavior, but neither substitutes for live browser sessions.
+- Fresh Vercel preview for final head: Vercel returned HTTP 402 because the free API deployments/day limit was exceeded; the previous READY preview was on an earlier feature commit. Retry after 24 hours or resolve the team's deployment limit. No billing change made.
+- Current authoritative Chhattisgarh facility master and human-reviewed LGD/facility mapping.
+- Signed pharmacist/CGMSC review of all 278 EDL rows.
+- Competent-authority approval of stock accounting SOP and role/approval matrix.
+- Owner-approved live migration, Auth provisioning, monitoring and production release.
+
+No live Supabase migration, operational account creation, real facility/medicine assignment, production deployment or PR merge was performed.
