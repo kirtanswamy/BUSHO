@@ -646,12 +646,31 @@ begin
     end if;
   end $receipt_retry_in_scope_check$;
 
-  update public.replenishment_requests
-  set status = 'received', received_quantity = 10,
-      receipt_reference = 'GRN-OVERWRITE-ATTEMPT'
-  where note = 'Synthetic replenishment recommendation';
-  get diagnostics v_updated = row_count;
-  if v_updated <> 0 then raise exception 'Balod storekeeper updated Dhamtari request'; end if;
+  -- A cross-facility update must fail closed. Depending on which guard
+  -- rejects it first, RLS may affect zero rows or the transition trigger may
+  -- raise. Both are acceptable only if the Dhamtari row remains unchanged.
+  begin
+    update public.replenishment_requests
+    set status = 'received', received_quantity = 10,
+        receipt_reference = 'GRN-OVERWRITE-ATTEMPT'
+    where note = 'Synthetic replenishment recommendation';
+    get diagnostics v_updated = row_count;
+    if v_updated <> 0 then
+      raise exception 'Balod storekeeper updated Dhamtari request';
+    end if;
+  exception when others then
+    if sqlerrm = 'Balod storekeeper updated Dhamtari request' then raise; end if;
+    -- An authorization/transition rejection is an acceptable fail-closed result.
+  end;
+  select count(*) into v_count
+  from public.replenishment_requests
+  where note = 'Synthetic replenishment recommendation'
+    and status = 'submitted_to_dpdmis'
+    and received_quantity = 0
+    and receipt_reference is null;
+  if v_count <> 1 then
+    raise exception 'Cross-facility attempt altered the Dhamtari request';
+  end if;
 end $storekeeper_scope_check$;
 -- Replaying the final receipt PATCH with the same cumulative quantity/reference
 -- must be idempotent: it must not append a second movement or receipt event.
