@@ -974,8 +974,7 @@ begin
   if new.status = old.status
      and new.received_quantity = old.received_quantity
      and new.receipt_reference is not distinct from old.receipt_reference
-     and new.status in ('partially_received','received')
-     and v_role = 'storekeeper' then
+     and new.status in ('partially_received','received') then
     return new;
   end if;
 
