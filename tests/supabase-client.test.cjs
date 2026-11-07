@@ -410,3 +410,60 @@ test('invitation acceptance rejects non-invite links and weak passwords', async 
   );
   await assert.rejects(client.updatePassword('short'), /between 12 and 128 characters/i);
 });
+
+test('administrator provisioning call requires an active state or district admin and sends the user JWT', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'state-admin-token',
+    refresh_token: 'state-admin-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'auth-state-admin' }
+  }));
+  const calls = [];
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    storage,
+    now: () => 1_800_000_000_000,
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      if (url.includes('/rest/v1/profiles?')) {
+        return jsonResponse([{ id: 'auth-state-admin', role: 'state_admin', status: 'active' }]);
+      }
+      if (url.includes('/functions/v1/provision-user')) {
+        return jsonResponse({ ok: true, invitation: { userId: 'new-user', role: 'worker', status: 'invited' } }, 201);
+      }
+      throw new Error('Unexpected request: ' + url);
+    }
+  });
+  const input = { email: 'worker@example.org', displayName: 'Worker A', role: 'worker', facilityIds: ['facility-id'] };
+  const result = await client.provisionUser(input);
+  assert.equal(result.invitation.userId, 'new-user');
+  const call = calls.find(item => item.url.includes('/functions/v1/provision-user'));
+  assert.equal(call.options.headers.Authorization, 'Bearer state-admin-token');
+  assert.equal(call.options.headers.apikey, 'sb_publishable_demo_key');
+  assert.deepEqual(JSON.parse(call.options.body), input);
+});
+
+test('worker role cannot call the administrator provisioning function', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'worker-token',
+    refresh_token: 'worker-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'auth-worker' }
+  }));
+  const calls = [];
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    storage,
+    now: () => 1_800_000_000_000,
+    fetch: async url => {
+      calls.push(url);
+      return jsonResponse([{ id: 'auth-worker', role: 'worker', status: 'active' }]);
+    }
+  });
+  await assert.rejects(client.provisionUser({ role: 'platform_admin' }), /not available to the worker role/i);
+  assert.equal(calls.some(url => url.includes('/functions/v1/provision-user')), false);
+});
