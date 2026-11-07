@@ -55,9 +55,9 @@
       <main id="main-content" role="main" class="portal-page" data-portal-role="worker">
         <section class="portal-login-section" id="portal-login" aria-labelledby="portal-login-title">
           <div class="portal-login-card">
-            <p class="section-kicker">BUSHO SECURE WORKSPACE · DEMO</p>
+            <p class="section-kicker">BUSHO SECURE WORKSPACE</p>
             <h1 id="portal-login-title">Health Worker Portal</h1>
-            <p>Field reporting and confirmation. Sign in with the synthetic credentials below to explore this prototype.</p>
+            <p>Field reporting and confirmation. Sign in with your BUSHO account; access is granted only after your role and facility assignment are approved.</p>
             <form id="portal-login-form" class="portal-login-form">
               <label for="portal-username">Email</label>
               <input id="portal-username" name="username" type="email" autocomplete="username" required placeholder="name@busho.demo">
@@ -66,7 +66,7 @@
               <p class="portal-login-error" id="portal-login-error" role="alert" aria-live="polite"></p>
               <button class="btn btn-primary" type="submit">Sign in to Health Worker Portal</button>
             </form>
-            <div class="demo-credentials"><strong>Synthetic demo credentials</strong><code>worker@busho.demo / worker123</code><span>These credentials are for this local prototype only. This client-side demo gate is not production authentication.</span></div>
+            <div class="demo-credentials"><strong>Health worker access</strong><span>Accounts are provisioned by a BUSHO administrator. New or unassigned accounts remain pending until their role and facility/block scope are approved. This portal uses Supabase Auth and database-controlled access policies.</span></div>
             <a href="index.html" class="portal-back-link">← Back to BUSHO landing page</a>
           </div>
         </section>
@@ -413,9 +413,10 @@
     </div>
 
     <script src="supabase-config.js?v=1"></script>
-    <script src="supabase-client.js?v=1"></script>
+    <script src="supabase-client.js?v=2"></script>
     <script src="app-v2.js?v=15"></script>
-    <script src="role-auth.js?v=1"></script>
+    <script src="portal-auth-policy.js?v=1"></script>
+    <script src="role-auth.js?v=2"></script>
     <script src="portal-navigation.js?v=1"></script>
     <script src="portal-enhancements.js?v=2"></script>
     <script src="portal-redesign.js?v=2"></script>
