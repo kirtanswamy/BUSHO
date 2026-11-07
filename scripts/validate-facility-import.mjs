@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const FACILITY_TYPES = new Set(['aam_shc','phc','chc','district_hospital','sub_centre','other']);
+const FACILITY_TYPES = new Set(['aam_shc','aam_phc','phc','chc','district_hospital','sub_centre','other']);
 const REQUIRED_HEADERS = ['external_registry_id','name','facility_type','district_lgd_code','block_lgd_code'];
 
 export function parseCsv(input) {
