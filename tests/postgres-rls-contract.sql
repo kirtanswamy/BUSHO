@@ -623,6 +623,38 @@ begin
   get diagnostics v_updated = row_count;
   if v_updated <> 0 then raise exception 'Balod storekeeper updated Dhamtari request'; end if;
 end $storekeeper_scope_check$;
+-- Replaying the final receipt PATCH with the same cumulative quantity/reference
+-- must be idempotent: it must not append a second movement or receipt event.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '77777777-7777-4777-8777-777777777777', true);
+update public.replenishment_requests
+set status = 'received', received_quantity = 10,
+    receipt_reference = 'GRN-TEST-BALOD-FINAL-001'
+where note = 'Synthetic Balod replenishment recommendation';
+do $receipt_retry_idempotency$
+declare
+  v_movements integer;
+  v_receipts integer;
+begin
+  select count(*) into v_movements
+  from public.inventory_movements im
+  join public.replenishment_requests rr on rr.id = im.replenishment_request_id
+  where rr.note = 'Synthetic Balod replenishment recommendation';
+  select count(*) into v_receipts
+  from public.replenishment_events re
+  join public.replenishment_requests rr on rr.id = re.replenishment_request_id
+  where rr.note = 'Synthetic Balod replenishment recommendation'
+    and re.action = 'receipt_recorded';
+  if v_movements <> 2 then
+    raise exception 'Retry duplicated receipt movement; expected 2, got %', v_movements;
+  end if;
+  if v_receipts <> 2 then
+    raise exception 'Retry duplicated receipt event; expected 2, got %', v_receipts;
+  end if;
+end $receipt_retry_idempotency$;
+commit;
+
 do $storekeeper_receipt_audit_check$
 declare
   v_count integer;
