@@ -8,7 +8,7 @@ function sampleDraft() {
       id: 'disease-table',
       rows: [
         { name: 'Fever', patients: '4', countStatus: 'Patient count · verify', sourcePhrase: '4 patients with fever' },
-        { name: 'Diarrhoea', patients: '', countStatus: 'Not stated · clarify', sourcePhrase: 'diarrhoea cases reported' }
+        { name: 'Diarrhoea', patients: ' ', countStatus: 'Not stated · clarify', sourcePhrase: 'diarrhoea cases reported' }
       ]
     },
     {
