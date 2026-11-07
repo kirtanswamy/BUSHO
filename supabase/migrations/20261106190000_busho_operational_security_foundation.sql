@@ -794,7 +794,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_action text;
   v_from text;
@@ -842,7 +842,7 @@ begin
   );
   return new;
 end;
-$;
+$$;
 
 drop trigger if exists busho_report_event_created on public.reports;
 create trigger busho_report_event_created after insert on public.reports
