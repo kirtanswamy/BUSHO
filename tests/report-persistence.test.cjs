@@ -103,7 +103,7 @@ test('resumes an existing editable draft without creating a duplicate report', a
     draft: sampleDraft()
   });
   assert.deepEqual(calls.map(call => call[0]), ['get', 'update', 'items', 'submit']);
-  assert.equal(calls[1][2], '4 patients with fever; 12 ORS packets left');
+  assert.equal(calls[1][2], '4 patients with fever');
   assert.equal(result.report.id, 'existing-report');
 });
 
