@@ -579,12 +579,14 @@ begin
     if sqlerrm = 'Dispatch before allocation unexpectedly succeeded' then raise; end if;
   end;
 
+  raise notice 'CHECKPOINT: before allocation';
   update public.replenishment_requests
   set status = 'allocated', allocation_reference = 'ALLOC-TEST-BALOD-001'
   where note = 'Synthetic Balod replenishment recommendation';
   get diagnostics v_updated = row_count;
   if v_updated <> 1 then raise exception 'Storekeeper could not record allocation'; end if;
 
+  raise notice 'CHECKPOINT: before dispatch';
   update public.replenishment_requests
   set status = 'dispatched', dispatch_reference = 'CHALLAN-TEST-BALOD-001'
   where note = 'Synthetic Balod replenishment recommendation';
@@ -602,6 +604,7 @@ begin
     if sqlerrm = 'Over-receipt unexpectedly succeeded' then raise; end if;
   end;
 
+  raise notice 'CHECKPOINT: before partial receipt';
   update public.replenishment_requests
   set status = 'partially_received', received_quantity = 4,
       receipt_reference = 'GRN-TEST-BALOD-PART-001'
@@ -609,6 +612,7 @@ begin
   get diagnostics v_updated = row_count;
   if v_updated <> 1 then raise exception 'Storekeeper could not record partial receipt'; end if;
 
+  raise notice 'CHECKPOINT: before final receipt';
   update public.replenishment_requests
   set status = 'received', received_quantity = 10,
       receipt_reference = 'GRN-TEST-BALOD-FINAL-001'
@@ -616,6 +620,7 @@ begin
   get diagnostics v_updated = row_count;
   if v_updated <> 1 then raise exception 'Storekeeper could not close full receipt'; end if;
 
+  raise notice 'CHECKPOINT: before exact receipt retry';
   -- Replay the exact final receipt under the same authenticated storekeeper
   -- transaction; it must not append another movement or receipt event.
   update public.replenishment_requests
