@@ -7,11 +7,11 @@ const operations = require('../supervisor-operations.js');
 const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
 
 function makeDocument() {
-  const modules = new Map([
+  const modules = new Map(
     ['overview','reports','activity','facilities','workers','trends','inventory','approvals'].map(name => [
       name, { innerHTML: '' }
     ])
-  ]);
+  );
   const selectors = new Map();
   return {
     modules,
@@ -121,7 +121,8 @@ test('non-supervisor scoped administrators see reports but receive no review con
   });
   await controller.load();
   assert.equal(controller.getState().reports.length, 1);
-  assert.equal(operations.reviewActions('submitted').length, 4);
+  controller.selectReport('report-1');
+  assert.doesNotMatch(doc.modules.get('reports').innerHTML, /data-review-form/);
 });
 
 test('supervisor page no longer activates synthetic browser-local supervisor notifications', () => {
