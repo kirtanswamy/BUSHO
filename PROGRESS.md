@@ -502,3 +502,23 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Migration commit `e2031d4`; CI pending. No live migration or production change.
 
 - Follow-up CI `42404846423` showed the immutability assertion itself was running as the privileged test owner, not as `authenticated`; the UPDATE therefore succeeded because the test was not exercising the intended role. Moved UPDATE/DELETE attempts into a dedicated transaction with `SET LOCAL ROLE authenticated`, while preserving the read-only owner audit separately. Latest test commits `bda18ee` then `56b32d5` (removed redundant COMMIT after ROLLBACK). CI pending.
+
+
+## Part 2G.2 — CI green and remaining release gates — 2026-11-08
+
+- CI run `42405025347` for test commit `56b32d5` completed successfully: Node 18, Node 22, Node 24 and PostgreSQL 17 database contract all passed.
+- The PostgreSQL contract now tests cross-facility immutability outside the restricted storekeeper RLS context (the storekeeper cannot see the other facility row, so the unchanged-row assertion is made by the privileged audit after role reset). It separately attempts movement UPDATE and DELETE inside an authenticated transaction, so the append-only permission test exercises the correct role.
+- The inventory ledger migration explicitly revokes browser writes and grants authenticated SELECT only; receipt creation is via SECURITY DEFINER trigger.
+- Latest source/test CI is green. A documentation update follows; CI must be checked again for the final documentation head if it changes workflow-triggered checks.
+
+### Remaining work / gates
+1. Browser E2E: worker → supervisor → storekeeper on separate approved test accounts and facilities; preview URL must be for the current feature head. Current recent Vercel READY preview is on an older commit; no deployment for latest head verified.
+2. Live Supabase migration: requires explicit release approval; current live project has not received branch migrations, has zero operational users/facilities/items, and must not be populated with guessed real records.
+3. Admin provisioning: requires verified facility master and authorized real administrators; no public signup or self-promotion.
+4. Facility registry: obtain dated authoritative Chhattisgarh DHS/NHM/CGMSC roster and human-review candidate mappings; current public sources are insufficient for safe assignment.
+5. Medicine catalogue: pharmacist/CGMSC-authorized human review of all 278 source rows against rendered EDL PDF, footnotes, restrictions, applicability and item coding. Transcription/structure is not clinical approval.
+6. Stock accounting: define authorized opening balances, outbound/adjustment/transfer movements, count variance approvals and stocktake workflow before calculating current stock. Current UI is evidence-only.
+7. Production release: owner approval, migration backup/rollback plan, secret/RLS review, verified E2E, monitoring and release notes; production branch remains unchanged.
+8. PR #5 remains draft/open; merge only after gates above and owner review.
+
+No live Supabase changes, real user provisioning, operational data entry, production deployment or PR merge.
