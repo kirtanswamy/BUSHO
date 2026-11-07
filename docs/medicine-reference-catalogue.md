@@ -86,7 +86,7 @@ Run the structural audit with:
 
 ## 6. What is not done yet
 
-- The 172-row PHC-AAM/UPHC and 106-row SHC-AAM annexures have been transcribed from PDF text, but none of the 278 rows has completed rendered-PDF human reconciliation.
+- The 172-row PHC-AAM/UPHC and 106-row SHC-AAM annexures have been transcribed from PDF text. Sixteen targeted rows (the 15 machine-flagged rows plus the cross-annexure comparison row) have rendered-PDF evidence; the other 262 rows still need individual row-level reconciliation.
 - No District Hospital, Civil Hospital, CHC or UPHC-only catalogue has been loaded.
 - The structural audit has confirmed row counts, contiguous numbering, annexure taxonomy and expected printed-page mapping for all 278 rows. It flagged 15 rows for targeted review: 1 possible truncated unit/OCR issue, 6 spelling/OCR checks and 8 programme-guideline references. This is a machine-assisted triage result, not proof that the remaining rows are correct.
 - A row-by-row review queue is maintained at `data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json`; 16 targeted rows have rendered-page evidence and remain pending authorised review; the other 262 rows still require targeted row-level comparison. All rows remain non-importable.
