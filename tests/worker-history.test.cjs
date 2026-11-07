@@ -131,7 +131,7 @@ test('returned reports can be resumed through the authenticated report editor', 
     await controller.load();
     controller.resumeReport('r-1');
     assert.deepEqual(opened, ['r-1']);
-    assert.throws(() => controller.resumeReport('r-2'), /only a draft or a report returned for correction/i);
+    assert.equal(controller.resumeReport('r-2'), false);
   } finally {
     if (previous === undefined) delete globalThis.BUSHO_WORKER_REPORT_EDITOR;
     else globalThis.BUSHO_WORKER_REPORT_EDITOR = previous;
