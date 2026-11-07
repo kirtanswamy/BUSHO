@@ -194,3 +194,67 @@ test('worker report submission persists to the assigned facility and safely resu
   assert.ok(itemPost.body.every(item => item.requires_review === true));
   assert.equal(JSON.parse(itemPost.body[1].value_text).source_phrase, 'twelve ORS packets left');
 });
+
+test('supervisor correction decision requires a reason and is sent through the authenticated REST client', async () => {
+  const calls = [];
+  const storageValues = new Map();
+  const storage = {
+    getItem(key) { return storageValues.get(key) ?? null; },
+    setItem(key, value) { storageValues.set(key, String(value)); },
+    removeItem(key) { storageValues.delete(key); }
+  };
+  const fetch = async (url, options = {}) => {
+    const method = options.method || 'GET';
+    const body = options.body ? JSON.parse(options.body) : null;
+    calls.push({ url: String(url), method, headers: options.headers || {}, body });
+    if (String(url).includes('/auth/v1/token?grant_type=password')) {
+      return jsonResponse({
+        access_token: 'synthetic-supervisor-access',
+        refresh_token: 'synthetic-supervisor-refresh',
+        expires_in: 3600,
+        user: { id: 'synthetic-supervisor-auth', email: 'supervisor@busho.test' }
+      });
+    }
+    if (String(url).includes('/rest/v1/profiles?')) {
+      return jsonResponse([{
+        id: 'synthetic-supervisor-auth',
+        role: 'supervisor',
+        status: 'active'
+      }]);
+    }
+    if (String(url).includes('/rest/v1/reports') && method === 'PATCH') {
+      return jsonResponse([{
+        id: 'synthetic-report-review-001',
+        status: body.status,
+        review_note: body.review_note
+      }]);
+    }
+    throw new Error('Unexpected supervisor REST request: ' + method + ' ' + url);
+  };
+  const client = createClient({
+    url: 'https://synthetic-busho.supabase.co',
+    publishableKey: 'sb_publishable_synthetic_test_key',
+    fetch,
+    storage,
+    now: () => 1_800_000_000_000
+  });
+  await client.signInWithPassword({ email: 'supervisor@busho.test', password: 'synthetic-password' });
+
+  await assert.rejects(
+    client.reviewReport({ reportId: 'synthetic-report-review-001', decision: 'correction_requested' }),
+    /reason is required/i
+  );
+  assert.equal(calls.filter(call => call.method === 'PATCH').length, 0);
+
+  const result = await client.reviewReport({
+    reportId: 'synthetic-report-review-001',
+    decision: 'correction_requested',
+    note: 'Please confirm the reported count with the source worker.'
+  });
+  assert.equal(result.status, 'correction_requested');
+  const patch = calls.find(call => call.method === 'PATCH');
+  assert.ok(patch);
+  assert.equal(patch.headers.Authorization, 'Bearer synthetic-supervisor-access');
+  assert.equal(patch.body.status, 'correction_requested');
+  assert.equal(patch.body.review_note, 'Please confirm the reported count with the source worker.');
+});
