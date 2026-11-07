@@ -318,3 +318,6 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Updated the audit script to flag the truncated PHC item 37 and SHC item 22; updated tests to assert both conditions.
 - Targeted rendered-page evidence now covers 18 rows; 260 rows remain without individual row-level visual evidence. The 278/278 automated text match is not clinical approval, normalization approval or a substitute for the remaining visual review.
 - All rows remain non-importable. No live Supabase or production changes were made.
+
+
+- **CI verification:** latest CI run `42394392227` passed on the updated EDL page-map and transcription corrections: Node 18/22/24 checks and PostgreSQL 17 database contract all succeeded. This is CI-only verification; no connected Supabase migration or production deployment occurred.
