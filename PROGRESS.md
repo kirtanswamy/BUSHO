@@ -13,9 +13,11 @@ Production branch: unchanged
 - Three foundational implementation commits are present, followed by CI/test hardening commits.
 - The report/indent state machine exists in `workflow-core.js`.
 - A sourced Chhattisgarh geography and PMBJK dataset exists in `data/chhattisgarh-directory.json`.
-- The full website screens have **not** yet been integrated with this workflow engine.
-- The current data store is still browser-local. Cross-device / authenticated shared persistence is **not** implemented.
-- Do not describe this as a production health system, a live government connection, a procurement system, or a clinically validated workflow.
+- Supabase project `BUSHO` is connected to the feature branch. The live project has 23 public tables, RLS policies, Chhattisgarh geography and dated PMBJK reference snapshots.
+- Worker report submission is connected to Supabase Auth + the authenticated REST client and persists reports/items/events server-side. The browser-local per-user draft is recovery-only and is cleared after confirmed submission.
+- Supervisor report inbox, detail review, verify/return/escalate/reject/close actions, facility activity summaries and audit timeline are now being connected to the same Supabase report records. Latest implementation is awaiting CI verification.
+- Live project still has zero operational facilities, workers, Auth users and report records. Real multi-user workflow cannot be demonstrated until an authorised provisioning process creates the records and assignments.
+- No production health system, live government integration, procurement system or clinically validated workflow is claimed.
 
 ## Milestone tracker
 
@@ -23,9 +25,9 @@ Production branch: unchanged
 |---|---|---|---|
 | 0 | Repository, data-flow, role and product audit | Complete | Existing role portals, shared browser store, dashboard placeholders, auth and deployment limits documented |
 | 1 | Operational workflow foundation | Complete | CI green on Node 18/22/24; report permissions and corrections; indent approval; DPDMIS reference states; receipt guards; audit events |
-| 2 | Persistent backend and role security | Blocked / not started | Connected database project; server-side role auth; shared worker/supervisor records; facility scope and audit permissions |
-| 3 | Health worker portal | Not started | Worker can save draft, review extracted fields, submit, see supervisor actions/return reason, resubmit, track stock observations |
-| 4 | Supervisor portal | Not started | Inbox opens record detail; verify/return/escalate; compare recent history; approve indent; view facilities/workers and event trail |
+| 2 | Persistent backend and role security | Foundation complete; provisioning pending | Connected Supabase project; RLS/column grants; server-controlled roles; authenticated report persistence; live multi-user test still blocked on authorised account/facility provisioning |
+| 3 | Health worker portal | Submission connected; history/context pending | Worker can review extracted fields and submit to Supabase; next: server-backed history, supervisor return notes, resubmission and assigned-facility context |
+| 4 | Supervisor portal | First live inbox/review UI implemented; CI pending | RLS-scoped inbox, report detail, structured observations, database audit timeline, verify/return/escalate/reject/close; next: verify CI and run authenticated end-to-end workflow |
 | 5 | Inventory fulfilment | Not started | Indent → external system reference → allocation → dispatch/challan → partial/full receipt → stock ledger reconciliation |
 | 6 | Statewide coverage data | Partially sourced | 33 districts + LGD block master present; reconcile one duplicate parent mapping; import verified AAM register and sourced PMBJK locations/counts |
 | 7 | End-to-end demo/release | Not started | Worker-to-supervisor-to-store-to-receipt walkthrough, automated and manual browser tests, responsive audit, screenshots, preview deployment |
@@ -81,11 +83,12 @@ Production branch: unchanged
 
 ## Known technical constraints / blockers
 
-- `role-auth.js` remains a client-side demo gate and is not production authentication.
-- Current shared worker/supervisor records use browser `localStorage`, so they only sync between tabs/profiles on the same browser origin; this is not a multi-device database.
-- Supabase has been suggested but is not yet confirmed connected to this session. No database migrations or production credentials have been created.
-- Access to the existing Vercel team-scoped BUSHO project returned 403. A single-use access request was generated but requires the project owner to approve it; no team scope has been changed by the agent.
-- The local container cannot resolve GitHub for a clone, so repository edits have been made via GitHub API commits. GitHub Actions is being used for test execution.
+- `role-auth.js` gates portal entry using Supabase Auth and the server-controlled `profiles` row. This is a browser-side UX gate; the actual data boundary is PostgreSQL RLS and column grants.
+- Operational reports, items and events are persisted in Supabase. Worker localStorage is only a per-user recovery checkpoint before submission, not a shared operational source of truth.
+- The live project currently has no Auth users, worker records, facility records or assignments. Do not create live accounts/facilities or insert production demo records without an authorised provisioning decision.
+- Supervisor inbox reads only submitted/reviewed workflow states and is scoped by the database RLS policies. The database policy itself still grants supervisors read access to assigned-facility reports; UI filters are not a substitute for a tighter policy if draft confidentiality requirements change.
+- Vercel preview can be rate-limited by the team plan. A Vercel status of build-rate-limit is infrastructure/plan feedback, not evidence of a code regression. Production domain remains attached to `main`.
+- Repository edits are committed through GitHub API because the local container cannot resolve GitHub; GitHub Actions is the authoritative automated test runner.
 
 ## Review checkpoint
 
@@ -158,3 +161,18 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Detailed review: `docs/part-2b-integration-review.md`.
 
 **Next milestone:** Part 2B.3 — server-backed worker report history and assigned-facility context, followed by supervisor inbox/review. In parallel, design a controlled administrator provisioning flow; never let a user set their own role or facility.
+
+## Part 2B.3 — supervisor operations workspace (implementation checkpoint)
+
+- Added `listSupervisorReports()` to the authenticated Supabase client. It requires a supervisor/district-admin/state-admin profile and fetches reports plus embedded `report_items`, `report_events`, worker display details and facility display details. The query filters out unsubmitted draft states from the supervisor inbox.
+- Verified the live foreign-key relationships and RLS policies for reports, report items, report events, workers and facilities before building the embedded query. The report inbox relies on the existing `reports_scoped_select` policy and child-table scope policies; it does not accept a caller-supplied facility scope as an authorization boundary.
+- Added `supervisor-operations.js` and `supervisor-portal.js`: role-aware live dashboard, RLS-scoped inbox, report detail, original narrative, structured observations, review note, audit timeline, search, filters and refresh.
+- Supervisor decisions are restricted to the existing database transition graph: submitted/resubmitted → verify, request correction, escalate or reject; escalated → verify, request correction or reject; verified → close. The database trigger remains authoritative.
+- District/state admins can view scoped reports but the UI does not expose supervisor review actions to those roles. Worker role is rejected by the client before inbox query.
+- Replaced hard-coded supervisor KPI counts, fictional facilities/workers, synthetic report rows, synthetic trend and activity examples with database-derived counts or honest not-connected/empty states. Inventory and administrative approvals are explicitly not yet connected.
+- Disabled the supervisor's browser-local synthetic notification/report bridge. The worker's separate workflow is not changed by this guard.
+- Added responsive report detail/review styling and removed the supervisor page's demo reset action.
+- Added `tests/supervisor-operations.test.cjs`, `tests/supervisor-portal-integration.test.cjs` and supervisor inbox client tests.
+- **Current verification:** this checkpoint has not yet completed a fresh GitHub Actions run. Vercel currently reports a build-rate-limit failure for the feature branch preview; production remains untouched. Do not call this milestone green until the latest CI result is inspected.
+- **Known limitation:** no Auth users/facilities/workers/assignments/reports exist in the live project, so no live supervisor screen or real review transition has yet been demonstrated. The automated tests use controlled fixtures.
+- **Next:** run CI, fix all test failures, then build worker report history/assigned facility context and a secure administrator provisioning workflow. Only after provisioning should a two-account/two-facility end-to-end test be attempted.
