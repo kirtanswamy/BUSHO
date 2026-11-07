@@ -3,8 +3,8 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const EXPECTED = {
-  phc_phc_aam_uphc: { facilityLevel: 'phc_aam', rows: 172, firstPage: 48, lastPage: 53, pageForItem: n => n <= 25 ? 48 : n <= 55 ? 49 : n <= 84 ? 50 : n <= 118 ? 51 : n <= 150 ? 52 : 53 },
-  shc_aam: { facilityLevel: 'shc_aam', rows: 106, firstPage: 54, lastPage: 57, pageForItem: n => n <= 19 ? 54 : n <= 47 ? 55 : n <= 85 ? 56 : 57 }
+  phc_phc_aam_uphc: { facilityLevel: 'phc_aam', rows: 172, firstPage: 47, lastPage: 52, pageForItem: n => n <= 25 ? 47 : n <= 55 ? 48 : n <= 84 ? 49 : n <= 118 ? 50 : n <= 150 ? 51 : 52 },
+  shc_aam: { facilityLevel: 'shc_aam', rows: 106, firstPage: 53, lastPage: 56, pageForItem: n => n <= 19 ? 53 : n <= 47 ? 54 : n <= 85 ? 55 : 56 }
 };
 
 const TEXT_REVIEW_PATTERNS = [
