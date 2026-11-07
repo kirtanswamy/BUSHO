@@ -8,7 +8,11 @@
     "notificationDate": "2025-11-12",
     "url": "https://dpdmis.in/faconline/Common/Document/EDL_2025.pdf",
     "pdfPages": 59,
-    "sourcePageConvention": "Printed footer page number, not PDF zero-based index or contents page reference."
+    "sourcePageConvention": "Printed footer page number, not PDF zero-based index or contents page reference.",
+    "sha256": "6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e",
+    "sha256Algorithm": "SHA-256",
+    "localCopyFilename": "EDL_2025.pdf",
+    "visualInspectionScope": "Annexure 4 printed pages 47-52 and Annexure 5 printed pages 53-56 rendered from the 59-page uploaded PDF; targeted row-level findings recorded below."
   },
   "status": "structural_transcription_audit_complete_human_reconciliation_pending",
   "summary": {
@@ -23,7 +27,10 @@
       "programme_reference_not_sku": 8
     },
     "mandatoryHumanReviewRows": 278,
-    "structuralErrorCount": 0
+    "structuralErrorCount": 0,
+    "renderedPdfCheckedRows": 16,
+    "remainingRowsWithoutTargetedRowEvidence": 262,
+    "crossAnnexureDiscrepancies": 1
   },
   "policy": {
     "safeToImportToLive": false,
@@ -240,20 +247,22 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 49, printed page 47: the table visibly prints “Asprin” twice (150 mg and 75 mg). Preserve this spelling verbatim; no correction or ingredient normalization approved.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer reproduces 'Asprin' twice in row 12. This is not a transcription mismatch against the extracted text; spelling needs visual-PDF and authorised reviewer decision. Do not silently correct source text.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 48, item 12."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 48, item 12.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 49, printed page 47: the table visibly prints “Asprin” twice (150 mg and 75 mg). Preserve this spelling verbatim; no correction or ingredient normalization approved.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -677,20 +686,22 @@
       "transcriptionFlags": [
         "possible_truncated_unit_or_ocr"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 50, printed page 48: the table visibly ends the oral-liquid concentration as “200 mg/5 m” (no trailing “l” visible). This is present in the source rendering, not just a transcription/OCR issue. Preserve verbatim and refer for official erratum/authorised interpretation; do not infer “ml”.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer also ends the concentration as '200 mg/5 m' for row 36. Text extraction alone cannot determine whether the printed page contains 'ml' or whether the source itself is truncated. Keep unresolved pending rendered-page inspection.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 49, item 36."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 49, item 36.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 50, printed page 48: the table visibly ends the oral-liquid concentration as “200 mg/5 m” (no trailing “l” visible). This is present in the source rendering, not just a transcription/OCR issue. Preserve verbatim and refer for official erratum/authorised interpretation; do not infer “ml”.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -970,20 +981,22 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 50, printed page 48: row is “As per current program guidelines (Adults and Pediatrics)” under Anti-leprosy medicines. It is a programme reference, not a named medicine SKU.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer gives 'As per current program guidelines (Adults and Pediatrics)' for row 52. It is a programme reference, not a medicine SKU; retain as a source row but do not normalize as a stock item.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 49, item 52."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 49, item 52.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 50, printed page 48: row is “As per current program guidelines (Adults and Pediatrics)” under Anti-leprosy medicines. It is a programme reference, not a named medicine SKU.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -993,20 +1006,22 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 50, printed page 48: row is “As per current program guidelines (Adults and Pediatrics)” under Anti-tuberculosis medicines. It is a programme reference, not a named medicine SKU.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer gives 'As per current program guidelines (Adults and Pediatrics)' for row 53. It is a programme reference, not a medicine SKU; retain as a source row but do not normalize as a stock item.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 49, item 53."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 49, item 53.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 50, printed page 48: row is “As per current program guidelines (Adults and Pediatrics)” under Anti-tuberculosis medicines. It is a programme reference, not a named medicine SKU.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -1088,20 +1103,22 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 51, printed page 49: row reads “As per program guidelines (Adults and Pediatrics) - As per NVBDCP Guideline”. It is a programme reference, not a named medicine SKU.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer gives 'As per program guidelines (Adults and Pediatrics)- As per NVBDCP Guideline' for row 58. Programme reference, not a medicine SKU.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 50, item 58."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 50, item 58.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 51, printed page 49: row reads “As per program guidelines (Adults and Pediatrics) - As per NVBDCP Guideline”. It is a programme reference, not a named medicine SKU.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -1885,20 +1902,22 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 52, printed page 50: row visibly reads “Gama Benzene Hexachloride”. Preserve the printed source spelling; no correction or normalization approved.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer reproduces 'Gama Benzene Hexachloride'. Potential source spelling/OCR issue; do not normalize or correct without visual and pharmacist review.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 51, item 102."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 51, item 102.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 52, printed page 50: row visibly reads “Gama Benzene Hexachloride”. Preserve the printed source spelling; no correction or normalization approved.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -1962,20 +1981,22 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 52, printed page 50: row visibly reads “Wax solvant ear drops: benzocaine, chlorbutol, paradicholorobenzene, turpentaine oil”. Preserve the printed source wording; spelling/formulation interpretation requires authorised review.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer reproduces 'Wax solvant ... paradicholorobenzene ... turpentaine oil'. Potential source spelling/OCR issue; preserve verbatim pending visual and pharmacist review.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 51, item 106."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 51, item 106.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 52, printed page 50: row visibly reads “Wax solvant ear drops: benzocaine, chlorbutol, paradicholorobenzene, turpentaine oil”. Preserve the printed source wording; spelling/formulation interpretation requires authorised review.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -2183,20 +2204,22 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 52, printed page 50: row visibly reads “Drotavarin Tablet 500 mg”. Preserve the printed source spelling; no correction or normalization approved.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer reproduces 'Drotavarin Tablet 500 mg'. Potential source spelling/strength issue; preserve verbatim pending visual and pharmacist review.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 51, item 118."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 51, item 118.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 52, printed page 50: row visibly reads “Drotavarin Tablet 500 mg”. Preserve the printed source spelling; no correction or normalization approved.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -2494,20 +2517,22 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 53, printed page 51: row reads “As per current National programme guidelines” under Vaccines. It is a programme reference, not a named medicine SKU.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer gives 'As per current National programme guidelines'. Programme reference, not a medicine SKU.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 52, item 135."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 52, item 135.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 53, printed page 51: row reads “As per current National programme guidelines” under Vaccines. It is a programme reference, not a named medicine SKU.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -3165,20 +3190,22 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 54, printed page 52: row visibly reads “Medroxprogesterone Acetate Injection 150 mg”. This differs from SHC Annexure 5 item 81; preserve both annexure source strings and escalate for authorised review.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer reproduces 'Medroxprogesterone Acetate Injection 150 mg'. Notably, Annexure 5 row 81 spells the corresponding entry 'Medroxyprogesterone'. Treat as a source-level inconsistency requiring visual and pharmacist/CGMSC review; do not harmonize automatically.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 53, item 172."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 53, item 172.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 54, printed page 52: row visibly reads “Medroxprogesterone Acetate Injection 150 mg”. This differs from SHC Annexure 5 item 81; preserve both annexure source strings and escalate for authorised review.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "shc_aam",
@@ -3656,20 +3683,22 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 56, printed page 54: row reads “As per Program Guidelines (Adults and Pediatrics)” under Anti-leprosy medicines. It is a programme reference, not a named medicine SKU.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer gives 'As per Program Guidelines (Adults and Pediatrics)' for row 27. Programme reference, not a medicine SKU.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 55, item 27."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 55, item 27.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 56, printed page 54: row reads “As per Program Guidelines (Adults and Pediatrics)” under Anti-leprosy medicines. It is a programme reference, not a named medicine SKU.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "shc_aam",
@@ -3679,20 +3708,22 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 56, printed page 54: row reads “As per Program Guidelines (Adults and Pediatrics)” under Anti-tuberculosis medicines. It is a programme reference, not a named medicine SKU.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer gives 'As per Program Guidelines (Adults and Pediatrics)' for row 28. Programme reference, not a medicine SKU.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 55, item 28."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 55, item 28.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 56, printed page 54: row reads “As per Program Guidelines (Adults and Pediatrics)” under Anti-tuberculosis medicines. It is a programme reference, not a named medicine SKU.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "shc_aam",
@@ -3756,20 +3787,22 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 56, printed page 54: row reads “As Per Program Guidelines (Adults and Pediatrics) As per NVBDCP Guideline” under Anti-malarial medicines. It is a programme reference, not a named medicine SKU.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer gives 'As Per Program Guidelines (Adults and Pediatrics) As per NVBDCP Guideline' for row 32. Programme reference, not a medicine SKU.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 55, item 32."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 55, item 32.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 56, printed page 54: row reads “As Per Program Guidelines (Adults and Pediatrics) As per NVBDCP Guideline” under Anti-malarial medicines. It is a programme reference, not a named medicine SKU.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "shc_aam",
@@ -4265,20 +4298,22 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 57, printed page 55: row visibly reads “Gama Benzene Hexachloride”. Preserve the printed source spelling; no correction or normalization approved.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer reproduces 'Gama Benzene Hexachloride'. Potential source spelling/OCR issue; preserve verbatim pending visual and pharmacist review.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 56, item 60."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 56, item 60.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 57, printed page 55: row visibly reads “Gama Benzene Hexachloride”. Preserve the printed source spelling; no correction or normalization approved.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "shc_aam",
@@ -4646,17 +4681,19 @@
       "printedPage": 56,
       "sourceDescription": "Medroxyprogesterone Acetate Injection 150 mg",
       "transcriptionFlags": [],
-      "reviewStatus": "pending_source_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 57, printed page 55: row visibly reads “Medroxyprogesterone Acetate Injection 150 mg”. This differs from PHC Annexure 4 item 172; preserve both annexure source strings and escalate for authorised review.",
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourcePdfVisualFinding": "Rendered PDF physical page 57, printed page 55: row visibly reads “Medroxyprogesterone Acetate Injection 150 mg”. This differs from PHC Annexure 4 item 172; preserve both annexure source strings and escalate for authorised review.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "shc_aam",
@@ -4756,20 +4793,22 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_rendered_pdf_reconciliation",
-      "sourcePdfChecked": false,
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 58, printed page 56: row reads “As per Current National Programme Guidelines” under Vaccines. It is a programme reference, not a named medicine SKU.",
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false,
       "sourceTextLayerChecked": true,
       "sourceTextLayerFinding": "Official PDF text layer gives 'As per Current National Programme Guidelines'. Programme reference, not a medicine SKU.",
-      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 57, item 87."
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 57, item 87.",
+      "sourcePdfVisualFinding": "Rendered PDF physical page 58, printed page 56: row reads “As per Current National Programme Guidelines” under Vaccines. It is a programme reference, not a named medicine SKU.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e."
     },
     {
       "annexure": "shc_aam",
