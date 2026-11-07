@@ -382,6 +382,10 @@ begin
     and is_synthetic = false and external_registry_id = 'CI-FAC-001';
   if v_count <> 1 then raise exception 'Verified facility was not promoted with correct provenance'; end if;
 
+  select count(*) into v_count from public.audit_logs
+  where action = 'facility_registry_candidate_verified' and entity_id = v_facility_id;
+  if v_count <> 1 then raise exception 'Verified facility promotion did not create an audit event'; end if;
+
   perform public.complete_facility_registry_batch(v_batch_id,'44444444-4444-4444-8444-444444444444');
   select count(*) into v_count from public.facility_registry_import_batches
   where id = v_batch_id and status = 'completed' and verified_rows = 1;
