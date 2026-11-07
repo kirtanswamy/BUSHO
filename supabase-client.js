@@ -24,7 +24,7 @@
 
     if (!/^https:\/\//i.test(baseUrl)) throw new Error('A valid Supabase HTTPS URL is required.');
     if (!publishableKey.startsWith('sb_publishable_')) {
-      throw new Error('Use the modern sb_publishable_ key. Legacy anon and service-role keys are not accepted.');
+      throw new Error('A publishable key starting with sb_publishable_ is required; legacy anon and service-role keys are not accepted.');
     }
     if (typeof fetchImpl !== 'function') throw new Error('Fetch is unavailable in this browser environment.');
     if (!storage) throw new Error('Session storage is unavailable; BUSHO cannot safely persist an Auth session.');

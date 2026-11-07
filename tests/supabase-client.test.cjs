@@ -145,7 +145,7 @@ test('worker report creation uses the worker profile and assigned facility, not 
     storage,
     now: () => 1_800_000_000_000
   });
-  const [report] = await client.createReportDraft({
+  const report = await client.createReportDraft({
     originalText: 'Synthetic aggregate fever count only',
     languageCode: 'hi',
     workerId: 'attacker-selected-worker'
