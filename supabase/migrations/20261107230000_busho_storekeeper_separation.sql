@@ -64,7 +64,7 @@ begin
     raise exception 'Allocation reference can only be recorded during allocation';
   end if;
   if new.dispatch_reference is distinct from old.dispatch_reference
-     and not (old.status in ('submitted_to_dpdmis','allocated') and new.status = 'dispatched') then
+     and not (old.status = 'allocated' and new.status = 'dispatched') then
     raise exception 'Dispatch reference can only be recorded during dispatch';
   end if;
   if new.receipt_reference is distinct from old.receipt_reference
@@ -105,7 +105,7 @@ begin
     if nullif(btrim(new.allocation_reference), '') is null then
       raise exception 'An allocation reference is required';
     end if;
-  elsif old.status in ('submitted_to_dpdmis','allocated') and new.status = 'dispatched' then
+  elsif old.status = 'allocated' and new.status = 'dispatched' then
     if v_role <> 'storekeeper' then
       raise exception 'Only an assigned storekeeper can record dispatch';
     end if;
