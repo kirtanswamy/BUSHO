@@ -144,7 +144,7 @@ declare
   v_count integer;
   v_inserted integer;
 begin
-  if p_batch_id is null or p_actor_id is null or jsonb_typeof(p_candidates) <> 'array' then
+  if p_batch_id is null or p_actor_id is null or p_candidates is null or jsonb_typeof(p_candidates) <> 'array' then
     raise exception using errcode = '22023', message = 'Batch, actor and a JSON array of candidates are required.';
   end if;
   v_count := jsonb_array_length(p_candidates);
