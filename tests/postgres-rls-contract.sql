@@ -349,12 +349,12 @@ declare
   v_count integer;
   v_blocked boolean := false;
 begin
-  insert into public.facility_registry_import_batches
-    (source_authority, source_date, source_url, imported_by, expected_rows)
-  values
-    ('Synthetic CI facility source', current_date, 'https://test.gov.in/facilities',
-     '44444444-4444-4444-8444-444444444444', 1)
-  returning id into v_batch_id;
+  v_result := public.create_facility_registry_import_batch(
+    '44444444-4444-4444-8444-444444444444',
+    'Synthetic CI facility source', current_date,
+    'https://test.gov.in/facilities', 1
+  );
+  v_batch_id := (v_result->>'id')::uuid;
 
   v_result := public.stage_facility_registry_candidates(
     v_batch_id,
@@ -391,12 +391,12 @@ begin
   where id = v_batch_id and status = 'completed' and verified_rows = 1;
   if v_count <> 1 then raise exception 'Facility import batch did not complete with verified count'; end if;
 
-  insert into public.facility_registry_import_batches
-    (source_authority, source_date, source_url, imported_by, expected_rows)
-  values
-    ('Synthetic CI facility source', current_date, 'https://test.gov.in/facilities',
-     '55555555-5555-4555-8555-555555555555', 1)
-  returning id into v_batch_id;
+  v_result := public.create_facility_registry_import_batch(
+    '55555555-5555-4555-8555-555555555555',
+    'Synthetic CI facility source', current_date,
+    'https://test.gov.in/facilities', 1
+  );
+  v_batch_id := (v_result->>'id')::uuid;
 
   begin
     perform public.stage_facility_registry_candidates(
