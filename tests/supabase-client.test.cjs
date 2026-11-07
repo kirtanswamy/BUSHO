@@ -571,6 +571,6 @@ test('facility registry client rejects worker profiles before making privileged 
       throw new Error('Unexpected privileged request: ' + url);
     }
   });
-  await assert.rejects(() => client.manageFacilityRegistry({ action: 'create_batch' }), /not authorised|not authorized/i);
+  await assert.rejects(() => client.manageFacilityRegistry({ action: 'create_batch' }), /not available to the worker role/i);
   assert.equal(calls.some(item => item.url.includes('/functions/v1/facility-registry')), false);
 });
