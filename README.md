@@ -136,68 +136,36 @@ India and Chhattisgarh have existing health-information and medicine-supply init
 
 </details>
 
-## What exists today
+## What exists in the development branch
 
-| In this prototype | Not implemented / not validated |
+| Implemented in code / database | Still pending or not validated |
 |---|---|
-| Worker and supervisor demo views | Production authentication or role-based access |
-| Mock, rule-based extraction | Production AI inference |
-| Editable records and human confirmation | Clinical diagnosis or triage |
-| Browser-native voice input (English, Hindi, Bengali, Tamil, Telugu and Marathi locale selection; Chrome verified) | BUSHO-operated transcription service |
-| Synthetic inventory attention logic | Live government / facility inventory feeds |
-| Replenishment draft workflow | Real orders or procurement |
-| English, Hindi, Tamil, Telugu, Bengali and Marathi interface | Field validation with health workers |
-| Browser-local persistence | Shared backend, database, or cross-device sync |
-| Automated prototype checks | Measured health outcomes or proven impact |
+| Chhattisgarh LGD directory snapshot (33 districts, 146 unique block codes) | Verified facility registry and real workforce assignments |
+| Supabase schema, role-scoped RLS policies, column grants and workflow transition guards | Live Auth users and operational records |
+| Worker report submission adapter, server-backed history and correction resumption | Real two-worker / two-supervisor, two-facility end-to-end validation |
+| Supervisor inbox, report detail, review decisions and append-only event timeline | Live supervisor workflow demonstration with provisioned accounts |
+| Administrator provisioning policy, invitation service code and gated admin workspace | Deployment and live verification of the `provision-user` Edge Function |
+| Dated PMBJK reference snapshots kept separate from AAM / CGMSC | Live Kendra locations and external government API integrations |
+| Mock, rule-based extraction with human correction | Production AI inference or clinical validation |
+| Browser-native voice input and six interface languages | Native-speaker validation and a BUSHO-operated transcription service |
+| Automated Node and PostgreSQL 17 database-contract tests | Field validation, measured outcomes and security sign-off |
+
+**Live project boundary:** The connected Supabase project currently has no Auth users, profiles, facilities, workers, assignments, reports or audit records. The provisioning Edge Function is present in the development branch but is not deployed. No real workforce workflow has been demonstrated. Do not enter patient-identifiable information.
 
 **Voice privacy:** Voice input uses the browser's speech-recognition service, which may send audio to the browser vendor. BUSHO does not store audio recordings. Manual text entry remains available. Do not speak names, phone numbers, diagnoses, government IDs, or other identifying patient details.
 
 ## Website portals
 
-BUSHO has one shared public landing page and two separate web portals:
+The development branch contains one public landing page and three separate role-gated workspaces:
 
-- `/` — common public landing page and role selection.
-- `/worker.html` — Health Worker Portal for field reporting, draft review, and confirmation.
-- `/supervisor.html` — Supervisor Portal for operational monitoring, inventory signals, and administrative review.
+- `/` — public product landing page.
+- `/worker.html` — authenticated health-worker reporting, server-backed history and correction workflow.
+- `/supervisor.html` — authenticated facility-scoped report inbox, human review and audit timeline.
+- `/admin.html` — administrator-only account invitations and facility / geographic assignment.
 
-The planned mobile app is initially for Health Workers only. The portal sign-ins currently use synthetic, client-side demo credentials and are **not production authentication**. Do not enter real patient or sensitive health data.
+Account roles and assignments are derived from the database, not browser-supplied metadata. New accounts are invited by an authorised administrator; users set their own password through the invitation link. The browser never receives the Supabase service-role / secret key.
 
-Demo credentials:
-
-- Health Worker: `worker@busho.demo` / `worker123`
-- Supervisor: `supervisor@busho.demo` / `supervisor123`
-
-## Run locally
-
-**Requirements:** Node.js 18+ and a modern browser.
-
-```bash
-git clone https://github.com/kirtanswamy/BUSHO.git
-cd BUSHO
-npm install
-npm start
-```
-
-Open **http://127.0.0.1:4173**.
-
-Run automated checks:
-
-```bash
-npm run check
-```
-
-## Project map
-
-| Path | Responsibility |
-|---|---|
-| `index.html` | Application shell and worker / supervisor views |
-| `styles-v2.css` | Responsive interface and design system |
-| `app-v2.js` | Demo workflow, mock extraction, validation, sample inventory and voice interaction |
-| `i18n.js` | Interface translations |
-| `server.mjs` | Lightweight local static server |
-| `tests/` and `scripts/` | Automated checks and smoke tests |
-| `ARCHITECTURE.md` | Data flow, boundaries and proposed evolution |
-| `IMPACT_AND_IMPLEMENTATION.md` | Risks, pilot logic and evaluation approach |
+**Release status:** These changes are on the draft pull request [#5](https://github.com/kirtanswamy/BUSHO/pull/5), not on the production branch. The production domain remains attached to `main`. Do not treat the current production website as the deployed version of these development-branch workflows.
 
 ## Before a real pilot
 

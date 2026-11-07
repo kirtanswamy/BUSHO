@@ -153,21 +153,22 @@ try {
   console.log('\n[role portals]');
   const workerPage = await rawGet('/worker.html');
   const supervisorPage = await rawGet('/supervisor.html');
+  const adminPage = await rawGet('/admin.html');
   check(workerPage.status === 200 && workerPage.body.includes('data-portal-role=\"worker\"'), 'health worker portal route is served with worker role');
   check(supervisorPage.status === 200 && supervisorPage.body.includes('data-portal-role=\"supervisor\"'), 'supervisor portal route is served with supervisor role');
-  check(workerPage.body.includes('worker@busho.demo') && !workerPage.body.includes('supervisor@busho.demo'), 'worker portal exposes only worker demo credentials');
-  check(supervisorPage.body.includes('supervisor@busho.demo') && !supervisorPage.body.includes('worker@busho.demo'), 'supervisor portal exposes only supervisor demo credentials');
+  check(!workerPage.body.includes('@busho.demo') && workerPage.body.includes('your registered email'), 'worker portal does not expose synthetic login credentials');
+  check(!supervisorPage.body.includes('@busho.demo') && supervisorPage.body.includes('Authenticated BUSHO account'), 'supervisor portal does not expose synthetic login credentials');
   check(!index.body.includes('id=\"worker-panel\"') && !index.body.includes('id=\"supervisor-panel\"'), 'public landing page does not embed either private workspace');
   check(workerPage.body.includes('class="portal-sidebar worker-sidebar"') && workerPage.body.includes('data-portal-view="new-report"'), 'worker portal has its own field-work navigation');
   check(supervisorPage.body.includes('class="portal-sidebar supervisor-sidebar"') && supervisorPage.body.includes('data-portal-view="reports"') && supervisorPage.body.includes('data-portal-view="approvals"'), 'supervisor portal has dedicated reports and approvals navigation');
   check(workerPage.body.includes('data-module="my-reports"') && supervisorPage.body.includes('data-module="reports"'), 'worker report history and supervisor reports inbox are separate modules');
   check(workerPage.body.includes('id="message-text"') && supervisorPage.body.includes('id="message-text"'), 'report input has the live status node required by the extraction workflow');
   check(workerPage.body.includes('id="profile-trigger"') && supervisorPage.body.includes('id="profile-trigger"'), 'both role portals expose an accessible profile menu');
-  check(supervisorPage.body.includes('id="sv-reports-total"') && supervisorPage.body.includes('class="supervisor-kpi-grid"'), 'supervisor overview contains a populated operations dashboard');
+  check(supervisorPage.body.includes('data-module="overview"') && supervisorPage.body.includes('supervisor-operations.js'), 'supervisor overview mounts the authenticated live operations workspace');
 
   console.log('\n[assets]');
-  const pages = [index.body, workerPage.body, supervisorPage.body];
-  const allPageBodies = [index.body, workerPage.body, supervisorPage.body];
+  const pages = [index.body, workerPage.body, supervisorPage.body, adminPage.body];
+  const allPageBodies = [index.body, workerPage.body, supervisorPage.body, adminPage.body];
   const allRefs = [...new Set(allPageBodies.flatMap(localRefs))];
   for (const ref of allRefs) {
     const r = await rawGet(ref);

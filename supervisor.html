@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles-v2.css?v=10" />
-    <script src="i18n.js"></script>
+    <link rel="stylesheet" href="styles-v2.css?v=12" />
+    <script src="i18n.js?v=2"></script>
   </head>
   <body class="supervisor-portal-body">
     <a href="#main-content" class="skip-link" data-i18n="ui.skipLink">Skip to main content</a>
@@ -26,7 +26,7 @@
         </a>
         <div class="topbar-spacer"></div>
         <div class="topbar-right">
-          <span class="demo-badge">Demo: synthetic data</span>
+          <span class="demo-badge">Secure workspace</span>
           <div class="lang-selector" role="region" aria-label="Language selection" data-i18n-attr="aria-label:ui.languageSelection">
             <label for="lang-select" class="visually-hidden" data-i18n="header.langLabel">Language</label>
             <select id="lang-select" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
@@ -39,9 +39,9 @@
             </select>
           </div>
           <div class="profile-menu-wrap">
-            <button class="profile-trigger" id="profile-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu"><span class="profile-avatar">SV</span><span class="profile-trigger-copy"><strong>Operations Console</strong><small>Demo account</small></span><span class="profile-chevron">⌄</span></button>
+            <button class="profile-trigger" id="profile-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu"><span class="profile-avatar">BU</span><span class="profile-trigger-copy"><strong>Supervisor workspace</strong><small>Signed-in account</small></span><span class="profile-chevron">⌄</span></button>
             <div class="profile-dropdown" id="profile-dropdown" hidden>
-              <div class="profile-dropdown-head"><strong>Operations Console</strong><span>supervisor@busho.demo</span></div>
+              <div class="profile-dropdown-head"><strong>Supervisor workspace</strong><span>Authenticated BUSHO account</span></div>
               <button type="button" data-profile-action="profile">Account details</button>
               <button type="button" data-profile-action="facility">Assigned facility</button>
               <button type="button" data-profile-action="preferences">Language & preferences</button>
@@ -55,18 +55,18 @@
       <main id="main-content" role="main" class="portal-page" data-portal-role="supervisor">
         <section class="portal-login-section" id="portal-login" aria-labelledby="portal-login-title">
           <div class="portal-login-card">
-            <p class="section-kicker">BUSHO SECURE WORKSPACE · DEMO</p>
+            <p class="section-kicker">BUSHO SECURE WORKSPACE</p>
             <h1 id="portal-login-title">Supervisor Portal</h1>
-            <p>Operations oversight and administrative review. Sign in with the synthetic credentials below to explore this prototype.</p>
+            <p>Operations oversight and administrative review. Sign in with your BUSHO account; access is granted only after your assigned operational scope is approved.</p>
             <form id="portal-login-form" class="portal-login-form">
               <label for="portal-username">Email</label>
-              <input id="portal-username" name="username" type="email" autocomplete="username" required placeholder="name@busho.demo">
+              <input id="portal-username" name="username" type="email" autocomplete="username" required placeholder="your registered email">
               <label for="portal-password">Password</label>
               <input id="portal-password" name="password" type="password" autocomplete="current-password" required>
               <p class="portal-login-error" id="portal-login-error" role="alert" aria-live="polite"></p>
               <button class="btn btn-primary" type="submit">Sign in to Supervisor Portal</button>
             </form>
-            <div class="demo-credentials"><strong>Synthetic demo credentials</strong><code>supervisor@busho.demo / supervisor123</code><span>These credentials are for this local prototype only. This client-side demo gate is not production authentication.</span></div>
+            <div class="demo-credentials"><strong>Operations access</strong><span>Accounts are provisioned by a BUSHO administrator. New or unassigned accounts remain pending until their role and facility/block scope are approved. This portal uses Supabase Auth and database-controlled access policies.</span></div>
             <a href="index.html" class="portal-back-link">← Back to BUSHO landing page</a>
           </div>
         </section>
@@ -74,16 +74,16 @@
   <div class="sidebar-brand sidebar-role-label"><strong>BUSHO</strong><small>OPERATIONS CONSOLE</small></div>
   <p class="sidebar-label">OPERATIONS</p>
   <button class="sidebar-link active" data-portal-view="overview"><span>▦</span> Overview</button>
-  <button class="sidebar-link" data-portal-view="reports"><span>▤</span> Reports Inbox <b class="sidebar-count">08</b></button>
+  <button class="sidebar-link" data-portal-view="reports"><span>▤</span> Reports Inbox <b class="sidebar-count">0</b></button>
   <button class="sidebar-link" data-portal-view="trends"><span>⌁</span> Health Trends</button>
   <button class="sidebar-link" data-portal-view="inventory"><span>▣</span> Inventory</button>
   <button class="sidebar-link" data-portal-view="facilities"><span>⌂</span> Facilities</button>
   <button class="sidebar-link" data-portal-view="workers"><span>♙</span> Health Workers</button>
-  <button class="sidebar-link" data-portal-view="approvals"><span>✓</span> Approvals <b class="sidebar-count">03</b></button>
+  <button class="sidebar-link" data-portal-view="approvals"><span>✓</span> Approvals <b class="sidebar-count">0</b></button>
   <p class="sidebar-label">ADMINISTRATION</p>
   <button class="sidebar-link" data-portal-view="activity"><span>◷</span> Activity Log</button>
   <button class="sidebar-link" data-portal-view="settings"><span>⚙</span> Settings</button>
-  <div class="sidebar-bottom"><span class="demo-sidebar-label">SYNTHETIC DEMO · NOT LIVE</span></div>
+  <div class="sidebar-bottom"><span class="demo-sidebar-label">DATABASE CONTROLLED</span></div>
 </aside>
 
                   <!-- Interactive Demo -->
@@ -108,43 +108,15 @@
                 <h2 id="demo-title">Operations workspace</h2>
               </div>
             </div>
-            <section class="portal-module active supervisor-overview-module" data-module="overview">
-              <div class="module-heading"><div><p class="section-kicker">BLOCK OPERATIONS · DEMO DATA</p><h2>Good afternoon, Supervisor</h2><p>A consolidated view of field reporting, facility readiness and items requiring attention.</p></div><span class="scope-label">Rampur block · Synthetic dataset</span></div>
-              <div class="supervisor-kpi-grid">
-                <article class="supervisor-kpi kpi-blue"><div class="kpi-top"><span>Reports received</span><span class="kpi-icon">▤</span></div><strong id="sv-reports-total">30</strong><small>Across 2 demo facilities</small><div class="kpi-foot"><span class="kpi-trend">↑ 12%</span><span>vs previous 7 days</span></div></article>
-                <article class="supervisor-kpi kpi-amber"><div class="kpi-top"><span>Needs review</span><span class="kpi-icon">◷</span></div><strong id="sv-reports-review">08</strong><small>Field reports awaiting review</small><div class="kpi-foot"><span class="kpi-trend">Action needed</span><span>Supervisor queue</span></div></article>
-                <article class="supervisor-kpi kpi-red"><div class="kpi-top"><span>Stock alerts</span><span class="kpi-icon">!</span></div><strong>02</strong><small>Items below demo thresholds</small><div class="kpi-foot"><span class="kpi-trend">High priority</span><span>Rampur HWC</span></div></article>
-                <article class="supervisor-kpi kpi-teal"><div class="kpi-top"><span>Active workers</span><span class="kpi-icon">♙</span></div><strong>06</strong><small>Across assigned facilities</small><div class="kpi-foot"><span class="kpi-trend">On track</span><span>This week</span></div></article>
-              </div>
-              <div class="supervisor-overview-grid">
-                <article class="module-card overview-wide"><div class="module-card-head"><div><p class="card-overline">REPORTING ACTIVITY</p><h3>Reports received this week</h3><p>Illustrative daily reporting volume · synthetic dataset</p></div><span class="scope-label">Last 7 days</span></div>
-                  <div class="activity-chart" role="img" aria-label="Illustrative reports received across seven days"><div class="chart-y-labels"><span>12</span><span>8</span><span>4</span><span>0</span></div><div class="chart-bars"><div style="--bar:42%"><i></i><span>Mon</span><b>5</b></div><div style="--bar:58%"><i></i><span>Tue</span><b>7</b></div><div style="--bar:50%"><i></i><span>Wed</span><b>6</b></div><div style="--bar:75%"><i></i><span>Thu</span><b>9</b></div><div style="--bar:66%"><i></i><span>Fri</span><b>8</b></div><div style="--bar:91%"><i></i><span>Sat</span><b>11</b></div><div style="--bar:58%"><i></i><span>Sun</span><b>7</b></div></div></div>
-                </article>
-                <article class="module-card priority-overview"><div class="module-card-head"><div><p class="card-overline">PRIORITY QUEUE</p><h3>Needs your attention</h3></div><span class="status-pill status-review">3 items</span></div>
-                  <button class="priority-row" data-go-view="reports"><span class="priority-icon priority-red">!</span><span><strong>Fever mentions · Rampur HWC</strong><small>Report requires human review</small></span><b>Review →</b></button>
-                  <button class="priority-row" data-go-view="inventory"><span class="priority-icon priority-amber">▣</span><span><strong>ORS packets below threshold</strong><small>20 of 50 packets reported</small></span><b>View →</b></button>
-                  <button class="priority-row" data-go-view="approvals"><span class="priority-icon priority-blue">↗</span><span><strong>Replenishment request</strong><small>Awaiting administrative decision</small></span><b>Open →</b></button>
-                </article>
-                <article class="module-card"><div class="module-card-head"><div><p class="card-overline">FACILITY COVERAGE</p><h3>Reporting by facility</h3><p>Assigned demonstration facilities</p></div><button class="text-action" data-go-view="facilities">View all →</button></div>
-                  <div class="facility-progress"><div class="facility-progress-head"><strong>Rampur HWC</strong><span>18 reports</span></div><div class="progress-track"><i style="width:75%"></i></div><small>2 stock signals · Attention</small></div>
-                  <div class="facility-progress"><div class="facility-progress-head"><strong>North HWC</strong><span>12 reports</span></div><div class="progress-track"><i style="width:50%"></i></div><small>No stock signals · Normal</small></div>
-                </article>
-                <article class="module-card"><div class="module-card-head"><div><p class="card-overline">INVENTORY WATCH</p><h3>Stock status</h3></div><button class="text-action" data-go-view="inventory">Open inventory →</button></div>
-                  <div class="inventory-watch-row"><span class="stock-symbol stock-critical">ORS</span><span><strong>ORS packets</strong><small>Rampur HWC</small></span><b class="stock-level critical">20 / 50</b></div>
-                  <div class="inventory-watch-row"><span class="stock-symbol stock-low">Fe</span><span><strong>Iron & folic acid</strong><small>Rampur HWC</small></span><b class="stock-level low">14 / 60</b></div>
-                  <div class="inventory-watch-row"><span class="stock-symbol stock-ok">Zn</span><span><strong>Zinc tablets</strong><small>Rampur HWC</small></span><b class="stock-level ok">72 / 100</b></div>
-                </article>
-              </div>
-              <p class="demo-data-disclaimer">All figures and activity shown here are synthetic demonstration data. They are not live facility reports, clinical findings or government system records.</p>
-            </section>
-            <section class="portal-module" data-module="reports"><div class="module-heading"><div><p class="section-kicker">REPORT MANAGEMENT</p><h2>Reports Inbox</h2><p>Review confirmed field reports from your assigned facilities.</p></div></div><article class="module-card"><div class="module-card-head"><div><h3>Incoming reports</h3><p>Synthetic report records for interface demonstration</p></div><div class="filter-chips" role="group" aria-label="Filter reports"><button type="button" class="filter-chip active" data-report-filter="all">All reports</button><button type="button" class="filter-chip" data-report-filter="review">Needs review</button><button type="button" class="filter-chip" data-report-filter="confirmed">Reviewed</button></div></div><div class="simple-table"><div class="simple-row simple-header"><span>REPORT / FACILITY</span><span>WORKER</span><span>STATUS</span><span>PRIORITY</span></div><div class="simple-row"><span>Fever mentions · Rampur HWC</span><span>Demo Worker A</span><span><b class="status-pill status-review">Needs review</b></span><span>High</span></div><div class="simple-row"><span>ORS stock update · Rampur HWC</span><span>Demo Worker B</span><span><b class="status-pill status-confirmed">Confirmed</b></span><span>Medium</span></div><div class="simple-row"><span>Routine field update · North HWC</span><span>Demo Worker C</span><span><b class="status-pill status-confirmed">Confirmed</b></span><span>Normal</span></div></div></article></section>
-            <section class="portal-module" data-module="trends"><div class="module-heading"><div><p class="section-kicker">REPORTING PATTERNS</p><h2>Health Trends</h2><p>Signals for human review, not clinical conclusions.</p></div></div><article class="module-card"><h3>Reported symptom signals</h3><p>Fever mentions: +38% against the previous synthetic seven-day period.</p><p class="muted-copy">This illustrative trend does not establish an outbreak or confirmed medical event.</p></article></section>
-            <section class="portal-module" data-module="inventory"><div class="module-heading"><div><p class="section-kicker">STOCK MONITORING</p><h2>Inventory</h2><p>Review reported stock signals for assigned facilities.</p></div></div><article class="module-card"><div class="simple-table"><div class="simple-row simple-header"><span>ITEM</span><span>FACILITY</span><span>REPORTED STOCK</span><span>STATUS</span></div><div class="simple-row"><span>ORS packets</span><span>Rampur HWC</span><span>20 / 50</span><span><b class="status-pill status-review">Critical</b></span></div><div class="simple-row"><span>Iron and folic acid</span><span>Rampur HWC</span><span>14 / 60</span><span><b class="status-pill status-review">Low</b></span></div><div class="simple-row"><span>Zinc tablets</span><span>Rampur HWC</span><span>72 / 100</span><span><b class="status-pill status-confirmed">Healthy</b></span></div></div></article></section>
-            <section class="portal-module" data-module="facilities"><div class="module-heading"><div><p class="section-kicker">COVERAGE</p><h2>Facilities</h2><p>Assigned facility overview.</p></div></div><article class="module-card"><div class="simple-table"><div class="simple-row simple-header"><span>FACILITY</span><span>REPORTS</span><span>STOCK SIGNALS</span><span>STATUS</span></div><div class="simple-row"><span>Rampur HWC</span><span>18</span><span>2</span><span><b class="status-pill status-review">Attention</b></span></div><div class="simple-row"><span>North HWC</span><span>12</span><span>0</span><span><b class="status-pill status-confirmed">Normal</b></span></div></div></article></section>
-            <section class="portal-module" data-module="workers"><div class="module-heading"><div><p class="section-kicker">TEAM</p><h2>Health Workers</h2><p>Reporting activity for workers in your assigned scope.</p></div></div><article class="module-card"><div class="simple-table"><div class="simple-row simple-header"><span>WORKER</span><span>FACILITY</span><span>REPORTS THIS WEEK</span><span>STATUS</span></div><div class="simple-row"><span>Demo Worker A</span><span>Rampur HWC</span><span>6</span><span><b class="status-pill status-confirmed">Active</b></span></div><div class="simple-row"><span>Demo Worker B</span><span>North HWC</span><span>4</span><span><b class="status-pill status-confirmed">Active</b></span></div></div></article></section>
-            <section class="portal-module" data-module="approvals"><div class="module-heading"><div><p class="section-kicker">ADMINISTRATIVE CONTROL</p><h2>Approvals</h2><p>Administrative requests are separate from report review.</p></div></div><article class="module-card"><div class="module-card-head"><div><h3>Replenishment requests</h3><p>Illustrative requests requiring an authorized decision</p></div></div><div class="simple-table"><div class="simple-row simple-header"><span>REQUEST</span><span>FACILITY</span><span>STATUS</span><span>ACTION</span></div><div class="simple-row"><span>ORS replenishment draft</span><span>Rampur HWC</span><span><b class="status-pill status-review">Pending approval</b></span><button class="text-action" data-go-view="overview">Review stock signal →</button></div></div></article></section>
-            <section class="portal-module" data-module="activity"><div class="module-heading"><div><p class="section-kicker">AUDIT TRAIL</p><h2>Activity Log</h2><p>Illustrative demo activity; not a production audit record.</p></div></div><article class="module-card"><div class="simple-row"><span>10:42 AM</span><span>Worker confirmed routine field report</span><span>Rampur HWC</span></div><div class="simple-row"><span>Yesterday</span><span>Inventory signal flagged for review</span><span>Rampur HWC</span></div></article></section>
-            <section class="portal-module" data-module="settings"><div class="module-heading"><div><p class="section-kicker">PREFERENCES</p><h2>Settings</h2></div></div><article class="module-card"><p>Supervisor demo preferences and assigned-scope settings will be configured here.</p></article></section>
+            <section class="portal-module active supervisor-overview-module" data-module="overview"><div class="module-heading"><div><p class="section-kicker">SECURE OPERATIONS</p><h2>Loading operational overview</h2><p>Live records appear after your authorised account is verified.</p></div></div></section>
+            <section class="portal-module" data-module="reports"><div class="module-heading"><div><p class="section-kicker">REPORT MANAGEMENT</p><h2>Loading reports inbox</h2></div></div></section>
+            <section class="portal-module" data-module="trends"><div class="module-heading"><div><p class="section-kicker">REPORTING PATTERNS</p><h2>Health trends</h2></div></div></section>
+            <section class="portal-module" data-module="inventory"><div class="module-heading"><div><p class="section-kicker">STOCK MONITORING</p><h2>Inventory</h2></div></div></section>
+            <section class="portal-module" data-module="facilities"><div class="module-heading"><div><p class="section-kicker">COVERAGE</p><h2>Facilities</h2></div></div></section>
+            <section class="portal-module" data-module="workers"><div class="module-heading"><div><p class="section-kicker">TEAM ACTIVITY</p><h2>Health workers</h2></div></div></section>
+            <section class="portal-module" data-module="approvals"><div class="module-heading"><div><p class="section-kicker">ADMINISTRATIVE CONTROL</p><h2>Approvals</h2></div></div></section>
+            <section class="portal-module" data-module="activity"><div class="module-heading"><div><p class="section-kicker">AUDIT TRAIL</p><h2>Activity log</h2></div></div></section>
+            <section class="portal-module" data-module="settings"><div class="module-heading"><div><p class="section-kicker">PREFERENCES</p><h2>Settings</h2></div></div></section>
             <div class="portal-module" data-module="overview-content">
 <!-- Worker View -->
             <div class="view-panel active" id="worker-panel" role="tabpanel" aria-labelledby="demo-title">
@@ -425,7 +397,6 @@
           <div class="footer-links">
             <a href="terms.html" data-i18n="footer.terms">Terms</a>
             <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
-            <button class="reset-btn" id="reset-demo" type="button" data-i18n="footer.reset">Reset demo data</button>
             </div>
         </div>
       </footer>
@@ -436,10 +407,15 @@
       <span id="toast-text"></span>
     </div>
 
-    <script src="app-v2.js?v=10"></script>
-    <script src="role-auth.js?v=1"></script>
+    <script src="supabase-config.js?v=1"></script>
+    <script src="supabase-client.js?v=8"></script>
+    <script src="app-v2.js?v=25"></script>
+    <script src="portal-auth-policy.js?v=1"></script>
+    <script src="role-auth.js?v=7"></script>
     <script src="portal-navigation.js?v=1"></script>
-    <script src="portal-enhancements.js?v=2"></script>
+    <script src="portal-enhancements.js?v=4"></script>
     <script src="portal-redesign.js?v=2"></script>
+    <script src="supervisor-operations.js?v=3"></script>
+    <script src="supervisor-portal.js?v=1"></script>
   </body>
 </html>
