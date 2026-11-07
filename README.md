@@ -168,6 +168,10 @@ Account roles and assignments are derived from the database, not browser-supplie
 
 **Release status:** These changes are on the draft pull request [#5](https://github.com/kirtanswamy/BUSHO/pull/5), not on the production branch. The production domain remains attached to `main`. Do not treat the current production website as the deployed version of these development-branch workflows.
 
+## Role and workflow blueprint
+
+The current application roles are deliberately separate from health-worker cadre/designation. Read the [role, responsibility and permission blueprint](docs/role-responsibility-permission-blueprint.md) before extending permissions or building additional operational workflows. It defines the evidence boundaries, role matrix, server-side permission rules, synthetic reference scenario and field-validation questions. It is a product/engineering baseline, not a government-approved SOP.
+
 ## Before a real pilot
 
 BUSHO is a **workflow prototype**, not a deployable healthcare product. A responsible next phase would be:
