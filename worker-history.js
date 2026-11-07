@@ -223,14 +223,16 @@
 
     function resumeReport(id) {
       const report = reports.find(row => row.id === id);
-      if (!report) return;
+      if (!report || !['draft','correction_requested'].includes(report.status)) return false;
       try {
         const editor = typeof globalThis !== 'undefined' ? globalThis.BUSHO_WORKER_REPORT_EDITOR : null;
         if (!editor || typeof editor.openReport !== 'function') throw new Error('The report editor is not ready. Refresh the page.');
         editor.openReport(report);
+        return true;
       } catch (cause) {
         error = cause.message || 'Unable to reopen this report.';
         render();
+        return false;
       }
     }
 
