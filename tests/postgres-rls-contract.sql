@@ -7,7 +7,8 @@ insert into auth.users (id, raw_user_meta_data) values
   ('33333333-3333-4333-8333-333333333333', '{"full_name":"Synthetic Supervisor"}'),
   ('44444444-4444-4444-8444-444444444444', '{"full_name":"Synthetic State Admin"}'),
   ('55555555-5555-4555-8555-555555555555', '{"full_name":"Synthetic District Admin"}'),
-  ('66666666-6666-4666-8666-666666666666', '{"full_name":"Synthetic Supervisor B"}');
+  ('66666666-6666-4666-8666-666666666666', '{"full_name":"Synthetic Supervisor B"}'),
+  ('77777777-7777-4777-8777-777777777777', '{"full_name":"Synthetic Storekeeper B"}');
 
 update public.profiles
 set role = case id
@@ -17,6 +18,7 @@ set role = case id
   when '44444444-4444-4444-8444-444444444444' then 'state_admin'
   when '55555555-5555-4555-8555-555555555555' then 'district_admin'
   when '66666666-6666-4666-8666-666666666666' then 'supervisor'
+  when '77777777-7777-4777-8777-777777777777' then 'storekeeper'
 end,
 status = 'active'
 where id in (
@@ -25,7 +27,8 @@ where id in (
   '33333333-3333-4333-8333-333333333333',
   '44444444-4444-4444-8444-444444444444',
   '55555555-5555-4555-8555-555555555555',
-  '66666666-6666-4666-8666-666666666666'
+  '66666666-6666-4666-8666-666666666666',
+  '77777777-7777-4777-8777-777777777777'
 );
 
 insert into public.facilities
@@ -67,7 +70,8 @@ values
   ('33333333-3333-4333-8333-333333333333', 'block', '22', '377', '3625', 'supervisor'),
   ('44444444-4444-4444-8444-444444444444', 'state', '22', null, null, 'state_admin'),
   ('55555555-5555-4555-8555-555555555555', 'district', '22', '377', null, 'district_admin'),
-  ('66666666-6666-4666-8666-666666666666', 'block', '22', '646', '3629', 'supervisor');
+  ('66666666-6666-4666-8666-666666666666', 'block', '22', '646', '3629', 'supervisor'),
+  ('77777777-7777-4777-8777-777777777777', 'block', '22', '646', '3629', 'storekeeper');
 
 insert into public.medicine_catalogue_releases
   (id, catalogue_code, catalogue_name, state_lgd_code, source_authority, source_date,
@@ -428,6 +432,122 @@ begin
     raise exception 'Supervisor B could not verify the report in their assigned facility';
   end if;
 end $supervisor_b_scope_check$;
+commit;
+
+-- Supervisor B creates a Balod replenishment recommendation from their verified report.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '66666666-6666-4666-8666-666666666666', true);
+insert into public.replenishment_requests
+  (facility_id, inventory_item_id, requested_quantity, status, source_report_id,
+   on_hand_quantity, unit, note, data_mode)
+select
+  r.facility_id,
+  '20000000-0000-4000-8000-000000000002',
+  10,
+  'draft',
+  r.id,
+  2,
+  'packets',
+  'Synthetic Balod replenishment recommendation',
+  'synthetic_demo'
+from public.reports r
+where r.original_text = 'worker_report_created synthetic second facility';
+update public.replenishment_requests
+set status = 'recommended_to_facility_store'
+where note = 'Synthetic Balod replenishment recommendation';
+update public.replenishment_requests
+set status = 'supervisor_approved'
+where note = 'Synthetic Balod replenishment recommendation';
+update public.replenishment_requests
+set status = 'submitted_to_dpdmis', dpdmis_reference = 'DPDMIS-TEST-BALOD-001'
+where note = 'Synthetic Balod replenishment recommendation';
+commit;
+
+-- Balod storekeeper sees only the Balod request and can record supply-chain
+-- allocation, dispatch and two receipts. Cross-facility mutation is blocked.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '77777777-7777-4777-8777-777777777777', true);
+do $storekeeper_scope_check$
+declare
+  v_count integer;
+  v_updated integer;
+begin
+  select count(*) into v_count from public.replenishment_requests;
+  if v_count <> 1 then
+    raise exception 'Storekeeper must see only the Balod request; got %', v_count;
+  end if;
+  select count(*) into v_count from public.replenishment_requests
+  where note = 'Synthetic replenishment recommendation';
+  if v_count <> 0 then
+    raise exception 'Balod storekeeper can read Dhamtari replenishment request';
+  end if;
+  select count(*) into v_count from public.replenishment_events;
+  if v_count < 4 then
+    raise exception 'Storekeeper should see Balod workflow event history; got %', v_count;
+  end if;
+
+  update public.replenishment_requests
+  set status = 'allocated', allocation_reference = 'ALLOC-TEST-BALOD-001'
+  where note = 'Synthetic Balod replenishment recommendation';
+  get diagnostics v_updated = row_count;
+  if v_updated <> 1 then raise exception 'Storekeeper could not record allocation'; end if;
+
+  update public.replenishment_requests
+  set status = 'dispatched', dispatch_reference = 'CHALLAN-TEST-BALOD-001'
+  where note = 'Synthetic Balod replenishment recommendation';
+  get diagnostics v_updated = row_count;
+  if v_updated <> 1 then raise exception 'Storekeeper could not record dispatch'; end if;
+
+  update public.replenishment_requests
+  set status = 'partially_received', received_quantity = 4,
+      receipt_reference = 'GRN-TEST-BALOD-PART-001'
+  where note = 'Synthetic Balod replenishment recommendation';
+  get diagnostics v_updated = row_count;
+  if v_updated <> 1 then raise exception 'Storekeeper could not record partial receipt'; end if;
+
+  update public.replenishment_requests
+  set status = 'received', received_quantity = 10,
+      receipt_reference = 'GRN-TEST-BALOD-FINAL-001'
+  where note = 'Synthetic Balod replenishment recommendation';
+  get diagnostics v_updated = row_count;
+  if v_updated <> 1 then raise exception 'Storekeeper could not close full receipt'; end if;
+
+  update public.replenishment_requests
+  set status = 'received', received_quantity = 10,
+      receipt_reference = 'GRN-OVERWRITE-ATTEMPT'
+  where note = 'Synthetic replenishment recommendation';
+  get diagnostics v_updated = row_count;
+  if v_updated <> 0 then raise exception 'Balod storekeeper updated Dhamtari request'; end if;
+end $storekeeper_scope_check$;
+do $storekeeper_receipt_audit_check$
+declare
+  v_count integer;
+  v_received numeric;
+  v_status text;
+begin
+  select received_quantity,status into v_received,v_status
+  from public.replenishment_requests
+  where note = 'Synthetic Balod replenishment recommendation';
+  if v_received <> 10 or v_status <> 'received' then
+    raise exception 'Final receipt reconciliation is incorrect: % / %', v_received, v_status;
+  end if;
+  select count(*) into v_count from public.replenishment_events re
+  join public.replenishment_requests rr on rr.id = re.replenishment_request_id
+  where rr.note = 'Synthetic Balod replenishment recommendation'
+    and re.action = 'receipt_recorded';
+  if v_count <> 2 then
+    raise exception 'Expected partial and final receipt events, got %', v_count;
+  end if;
+  select count(*) into v_count from public.replenishment_events re
+  join public.replenishment_requests rr on rr.id = re.replenishment_request_id
+  where rr.note = 'Synthetic Balod replenishment recommendation'
+    and re.external_reference in ('GRN-TEST-BALOD-PART-001','GRN-TEST-BALOD-FINAL-001');
+  if v_count <> 2 then
+    raise exception 'Receipt references were not recorded in immutable event history';
+  end if;
+end $storekeeper_receipt_audit_check$;
 commit;
 
 -- District admin sees Dhamtari only; state admin sees both facilities.
