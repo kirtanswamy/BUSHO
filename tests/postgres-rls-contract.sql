@@ -1,0 +1,293 @@
+-- Runs only against the disposable PostgreSQL 17 CI service.
+-- Uses synthetic identities, aggregate-only reports and fake external references.
+
+insert into auth.users (id, raw_user_meta_data) values
+  ('11111111-1111-4111-8111-111111111111', '{"full_name":"Synthetic Worker A"}'),
+  ('22222222-2222-4222-8222-222222222222', '{"full_name":"Synthetic Worker B"}'),
+  ('33333333-3333-4333-8333-333333333333', '{"full_name":"Synthetic Supervisor"}'),
+  ('44444444-4444-4444-8444-444444444444', '{"full_name":"Synthetic State Admin"}'),
+  ('55555555-5555-4555-8555-555555555555', '{"full_name":"Synthetic District Admin"}');
+
+update public.profiles
+set role = case id
+  when '11111111-1111-4111-8111-111111111111' then 'worker'
+  when '22222222-2222-4222-8222-222222222222' then 'worker'
+  when '33333333-3333-4333-8333-333333333333' then 'supervisor'
+  when '44444444-4444-4444-8444-444444444444' then 'state_admin'
+  when '55555555-5555-4555-8555-555555555555' then 'district_admin'
+end,
+status = 'active'
+where id in (
+  '11111111-1111-4111-8111-111111111111',
+  '22222222-2222-4222-8222-222222222222',
+  '33333333-3333-4333-8333-333333333333',
+  '44444444-4444-4444-8444-444444444444',
+  '55555555-5555-4555-8555-555555555555'
+);
+
+insert into public.facilities
+  (id, name, district, state, state_lgd_code, district_lgd_code, block_lgd_code,
+   facility_type, verification_status, is_synthetic)
+values
+  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'Synthetic Dhamtari HWC', 'Dhamtari', 'Chhattisgarh',
+   '22', '377', '3625', 'aam_shc', 'verified', true),
+  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'Synthetic Balod HWC', 'Balod', 'Chhattisgarh',
+   '22', '646', '3629', 'aam_shc', 'verified', true);
+
+insert into public.workers
+  (id, facility_id, display_name, whatsapp_number, role, is_active, auth_user_id)
+values
+  ('10000000-0000-4000-8000-000000000001', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+   'Synthetic Worker A', '+910000000001', 'worker', true, '11111111-1111-4111-8111-111111111111'),
+  ('10000000-0000-4000-8000-000000000002', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+   'Synthetic Worker B', '+910000000002', 'worker', true, '22222222-2222-4222-8222-222222222222');
+
+insert into public.user_facility_assignments (user_id, facility_id, assignment_role)
+values
+  ('11111111-1111-4111-8111-111111111111', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'worker'),
+  ('22222222-2222-4222-8222-222222222222', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'worker');
+
+insert into public.user_scope_assignments
+  (user_id, scope_level, state_lgd_code, district_lgd_code, block_lgd_code, scope_role)
+values
+  ('33333333-3333-4333-8333-333333333333', 'block', '22', '377', '3625', 'supervisor'),
+  ('44444444-4444-4444-8444-444444444444', 'state', '22', null, null, 'state_admin'),
+  ('55555555-5555-4555-8555-555555555555', 'district', '22', '377', null, 'district_admin');
+
+insert into public.inventory_items (id, facility_id, item_code, name, unit, is_active)
+values
+  ('20000000-0000-4000-8000-000000000001', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+   'ORS-PKT', 'ORS packets', 'packets', true),
+  ('20000000-0000-4000-8000-000000000002', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+   'ORS-PKT', 'ORS packets', 'packets', true);
+
+-- Worker A can read only their assigned facility and their own worker record.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '11111111-1111-4111-8111-111111111111', true);
+do $$
+declare
+  v_count integer;
+begin
+  select count(*) into v_count from public.facilities;
+  if v_count <> 1 then raise exception 'Worker A facility scope leak: expected 1, got %', v_count; end if;
+  select count(*) into v_count from public.workers;
+  if v_count <> 1 then raise exception 'Worker A worker scope leak: expected 1, got %', v_count; end if;
+end $$;
+
+insert into public.reports
+  (facility_id, worker_id, reporting_date, original_text, language_code, status, summary)
+values
+  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+   '10000000-0000-4000-8000-000000000001',
+   current_date, 'worker_report_created synthetic aggregate only', 'en', 'draft', '{"source":"voice"}');
+
+update public.reports
+set summary = '{"source":"voice","fever_count":4}'
+where original_text = 'worker_report_created synthetic aggregate only';
+
+update public.reports
+set status = 'submitted'
+where original_text = 'worker_report_created synthetic aggregate only';
+
+-- A worker cannot self-verify a submitted report.
+update public.reports
+set status = 'supervisor_verified'
+where original_text = 'worker_report_created synthetic aggregate only';
+
+do $$
+declare
+  v_status text;
+  v_events integer;
+begin
+  select status into v_status from public.reports
+  where original_text = 'worker_report_created synthetic aggregate only';
+  if v_status <> 'submitted' then raise exception 'Worker escalated own report unexpectedly: %', v_status; end if;
+
+  select count(*) into v_events from public.report_events re
+  join public.reports r on r.id = re.report_id
+  where r.original_text = 'worker_report_created synthetic aggregate only';
+  if v_events <> 3 then raise exception 'Expected create, field-edit and submit audit events; got %', v_events; end if;
+end $$;
+
+-- Worker stock observation is facility-scoped and attributable to the logged-in worker.
+insert into public.inventory_snapshots
+  (inventory_item_id, quantity, observed_by, source, data_mode)
+values
+  ('20000000-0000-4000-8000-000000000001', 12,
+   '10000000-0000-4000-8000-000000000001', 'worker_report', 'synthetic_demo');
+commit;
+
+-- Worker B creates a report in a different district/facility.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '22222222-2222-4222-8222-222222222222', true);
+insert into public.reports
+  (facility_id, worker_id, reporting_date, original_text, language_code, status, summary)
+values
+  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+   '10000000-0000-4000-8000-000000000002',
+   current_date, 'worker_report_created synthetic second facility', 'en', 'draft', '{"source":"manual"}');
+update public.reports
+set status = 'submitted'
+where original_text = 'worker_report_created synthetic second facility';
+do $$
+declare v_count integer;
+begin
+  select count(*) into v_count from public.reports;
+  if v_count <> 1 then raise exception 'Worker B must only see their own report, got %', v_count; end if;
+end $$;
+commit;
+
+-- The block supervisor can review only Dhamtari's report and assigned workers.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '33333333-3333-4333-8333-333333333333', true);
+do $$
+declare v_count integer;
+begin
+  select count(*) into v_count from public.reports;
+  if v_count <> 1 then raise exception 'Block supervisor report scope leak: expected 1, got %', v_count; end if;
+  select count(*) into v_count from public.workers;
+  if v_count <> 1 then raise exception 'Block supervisor worker scope leak: expected 1, got %', v_count; end if;
+end $$;
+
+update public.reports
+set status = 'supervisor_verified', review_note = 'Aggregate counts reviewed in synthetic CI test'
+where original_text = 'worker_report_created synthetic aggregate only';
+
+update public.reports
+set summary = '{"source":"voice","fever_count":4,"reviewed":true}'
+where original_text = 'worker_report_created synthetic aggregate only';
+
+do $$
+declare v_count integer;
+begin
+  select count(*) into v_count from public.report_events re
+  join public.reports r on r.id = re.report_id
+  where r.original_text = 'worker_report_created synthetic aggregate only'
+    and re.action = 'report_fields_updated';
+  if v_count <> 2 then raise exception 'Expected two field-edit audit events, got %', v_count; end if;
+end $$;
+
+insert into public.replenishment_requests
+  (facility_id, inventory_item_id, requested_quantity, status, created_by_user_id,
+   source_report_id, on_hand_quantity, unit, note, data_mode)
+select
+  r.facility_id,
+  '20000000-0000-4000-8000-000000000001',
+  20,
+  'recommended_to_facility_store',
+  '33333333-3333-4333-8333-333333333333',
+  r.id,
+  5,
+  'packets',
+  'Synthetic replenishment recommendation',
+  'synthetic_demo'
+from public.reports r
+where r.original_text = 'worker_report_created synthetic aggregate only';
+
+update public.replenishment_requests
+set status = 'supervisor_approved'
+where note = 'Synthetic replenishment recommendation';
+
+update public.replenishment_requests
+set status = 'submitted_to_dpdmis', dpdmis_reference = 'DPDMIS-TEST-001'
+where note = 'Synthetic replenishment recommendation';
+
+do $$
+declare
+  v_reviewer uuid;
+  v_created uuid;
+  v_status text;
+begin
+  select reviewed_by_user_id, created_by_user_id, status
+  into v_reviewer, v_created, v_status
+  from public.replenishment_requests
+  where note = 'Synthetic replenishment recommendation';
+  if v_reviewer <> auth.uid() then raise exception 'Supervisor approval attribution was not recorded'; end if;
+  if v_created <> auth.uid() then raise exception 'Indent creator attribution was not recorded'; end if;
+  if v_status <> 'submitted_to_dpdmis' then raise exception 'Unexpected indent status: %', v_status; end if;
+end $$;
+
+-- An assigned supervisor can never rewrite a submitted external-system reference.
+do $$
+declare v_blocked boolean := false;
+begin
+  begin
+    update public.replenishment_requests
+    set dpdmis_reference = 'DPDMIS-OVERWRITTEN'
+    where note = 'Synthetic replenishment recommendation';
+  exception when others then
+    v_blocked := true;
+  end;
+  if not v_blocked then raise exception 'A recorded DPDMIS reference was mutable'; end if;
+end $$;
+commit;
+
+-- Worker A can track the indent generated from their own reviewed report.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '11111111-1111-4111-8111-111111111111', true);
+do $$
+declare v_count integer; v_status text;
+begin
+  select count(*) into v_count from public.replenishment_requests;
+  if v_count <> 1 then raise exception 'Worker A cannot see their own replenishment status'; end if;
+  select status into v_status from public.replenishment_requests;
+  if v_status <> 'submitted_to_dpdmis' then raise exception 'Worker sees wrong indent status: %', v_status; end if;
+  select count(*) into v_count from public.replenishment_events;
+  if v_count < 3 then raise exception 'Worker should see append-only indent events, got %', v_count; end if;
+end $$;
+commit;
+
+-- Worker B must not see another facility's indent.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '22222222-2222-4222-8222-222222222222', true);
+do $$
+declare v_count integer;
+begin
+  select count(*) into v_count from public.replenishment_requests;
+  if v_count <> 0 then raise exception 'Worker B can see another worker facility indent'; end if;
+end $$;
+commit;
+
+-- District admin sees Dhamtari only; state admin sees both facilities.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '55555555-5555-4555-8555-555555555555', true);
+do $$
+declare v_count integer;
+begin
+  select count(*) into v_count from public.facilities;
+  if v_count <> 1 then raise exception 'District admin should see exactly one assigned district, got %', v_count; end if;
+  select count(*) into v_count from public.reports;
+  if v_count <> 1 then raise exception 'District admin report scope leak: expected 1, got %', v_count; end if;
+end $$;
+commit;
+
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '44444444-4444-4444-8444-444444444444', true);
+do $$
+declare v_count integer; v_status text;
+begin
+  select count(*) into v_count from public.facilities;
+  if v_count <> 2 then raise exception 'State admin should see both seeded test facilities, got %', v_count; end if;
+  select count(*) into v_count from public.reports;
+  if v_count <> 2 then raise exception 'State admin should see two scoped reports, got %', v_count; end if;
+end $$;
+update public.reports
+set status = 'closed'
+where original_text = 'worker_report_created synthetic aggregate only';
+do $$
+declare v_status text;
+begin
+  select status into v_status from public.reports
+  where original_text = 'worker_report_created synthetic aggregate only';
+  if v_status <> 'supervisor_verified' then raise exception 'State admin unexpectedly received supervisor write authority'; end if;
+end $$;
+commit;
+
+select 'BUSHO PostgreSQL RLS contract passed' as result;
