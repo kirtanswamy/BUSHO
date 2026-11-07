@@ -375,3 +375,12 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Added negative assertions: supervisor cannot allocate; storekeeper cannot read or update the Dhamtari request; over-receipt is rejected; the two receipt events and their external references are preserved.
 - All records are synthetic CI fixtures only. Connected Supabase remains unchanged; no live migrations, Auth accounts, facilities, reports, Edge Functions or production deployments were created.
 - Latest test SQL blob SHA: `38ed0f01ab2cf9e87dd07203d235192ee6516ae6`. CI has not yet been confirmed for this head.
+
+
+## Part 2E.2 — invalid transition and immutable event guards — 2026-11-07
+
+- Tightened the additive storekeeper-separation migration so dispatch can only follow the `allocated` state; direct dispatch from `submitted_to_dpdmis` is no longer an allowed transition.
+- Added PostgreSQL contract assertions that a storekeeper cannot dispatch before allocation, and cannot update or delete replenishment event rows after they have been recorded.
+- Existing synthetic Balod scenario still covers supervisor approval/submission, storekeeper allocation, dispatch, partial receipt, final receipt, over-receipt rejection, receipt reference provenance and cross-facility isolation.
+- These are CI fixture assertions only. No live Supabase migration or operational records were changed.
+- Latest migration file SHA: `0b0dd840885ff7218e8d28131c124f6b9e5ad9fe`; latest SQL contract file SHA: `fe781341359ca49ac388c042d389d3ee9351a7b2`. CI status for the latest branch head remains unconfirmed.
