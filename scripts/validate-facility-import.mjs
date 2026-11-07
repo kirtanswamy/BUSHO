@@ -159,6 +159,7 @@ export function validateFacilityRows(rows, options = {}) {
       verification_status: 'needs_review',
       is_synthetic: false,
       is_active: true,
+      safe_to_assign: false,
       review_flags: reviewFlags,
       source_row: rowNumber
     });
@@ -171,6 +172,12 @@ export function validateFacilityRows(rows, options = {}) {
       accepted_for_review: records.length,
       rejected_rows: errors.length,
       warning_count: warnings.length
+    },
+    import_policy: {
+      mode: 'staging_only',
+      safe_to_assign: false,
+      verification_status: 'needs_review',
+      note: 'This output is not a database import. A human must verify each facility and approve its registry identity before it can become assignable.'
     },
     provenance: {
       authority: sourceAuthority,
