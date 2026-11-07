@@ -84,6 +84,7 @@
     const doc = options.document;
     const onState = typeof options.onState === 'function' ? options.onState : () => {};
     const role = options.role || 'supervisor';
+    const profile = options.profile || {};
     let reports = [];
     let selectedId = null;
     let filter = 'all';
@@ -145,7 +146,8 @@
       }
       doc.querySelectorAll('.demo-sidebar-label').forEach(node => node.textContent = 'LIVE · DATABASE CONTROLLED');
       doc.querySelectorAll('.demo-data-disclaimer').forEach(node => node.remove());
-      doc.querySelectorAll('.profile-trigger-copy strong').forEach(node => node.textContent = 'Supervisor workspace');
+      doc.querySelectorAll('.profile-trigger-copy strong').forEach(node => node.textContent = profile.display_name || 'Supervisor workspace');
+      doc.querySelectorAll('.profile-dropdown-head strong').forEach(node => node.textContent = profile.display_name || 'Supervisor workspace');
       doc.querySelectorAll('.profile-trigger-copy small').forEach(node => node.textContent = summary.facilities + ' assigned facilities in report data');
       onState({ reports, summary, selected, busy, error });
     }
