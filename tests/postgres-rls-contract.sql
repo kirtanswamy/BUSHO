@@ -150,14 +150,19 @@ commit;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '33333333-3333-4333-8333-333333333333', true);
-do $$
-declare v_count integer;
+do $supervisor_scope_check$
+declare
+  v_count integer;
 begin
   select count(*) into v_count from public.reports;
-  if v_count <> 1 then raise exception 'Block supervisor report scope leak: expected 1, got %', v_count; end if;
+  if v_count <> 1 then
+    raise exception 'Block supervisor report scope leak: expected 1, got %', v_count;
+  end if;
   select count(*) into v_count from public.workers;
-  if v_count <> 1 then raise exception 'Block supervisor worker scope leak: expected 1, got %', v_count; end if;
-end $;
+  if v_count <> 1 then
+    raise exception 'Block supervisor worker scope leak: expected 1, got %', v_count;
+  end if;
+end $supervisor_scope_check$;
 
 update public.report_items
 set quantity = 5,
