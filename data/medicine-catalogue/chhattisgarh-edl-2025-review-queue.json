@@ -20,16 +20,17 @@
     "expectedSourceRows": 278,
     "phcAnnexureRows": 172,
     "shcAnnexureRows": 106,
-    "transcriptionFlaggedRows": 15,
+    "transcriptionFlaggedRows": 17,
     "flagCounts": {
-      "possible_truncated_unit_or_ocr": 1,
       "source_spelling_or_ocr_check": 6,
+      "possible_truncated_unit_or_ocr": 2,
+      "source_truncated_text": 1,
       "programme_reference_not_sku": 8
     },
     "mandatoryHumanReviewRows": 278,
     "structuralErrorCount": 0,
-    "renderedPdfCheckedRows": 16,
-    "remainingRowsWithoutTargetedRowEvidence": 262,
+    "renderedPdfCheckedRows": 18,
+    "remainingRowsWithoutTargetedRowEvidence": 260,
     "crossAnnexureDiscrepancies": 1
   },
   "policy": {
@@ -707,19 +708,26 @@
       "annexure": "phc_phc_aam_uphc",
       "item": 37,
       "printedPage": 48,
-      "sourceDescription": "Diethylcarbamazine Tablet 100 mg Diethylcarbamazine Oral liquid 120 mg/5 ml",
-      "transcriptionFlags": [],
-      "reviewStatus": "pending_source_reconciliation",
-      "sourcePdfChecked": false,
+      "sourceDescription": "Diethylcarbamazine Tablet 100 mg Diethylcarbama",
+      "transcriptionFlags": [
+        "source_truncated_text"
+      ],
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 50, printed page 48: row 37 visibly reads “Diethylcarbamazine Tablet 100 mg Diethylcarbama” and stops at “Diethylcarbama”. The source transcription had incorrectly expanded the truncated text into a full oral-liquid description; corrected to the visible source text only. Do not infer the missing letters or formulation.",
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourcePdfVisualFinding": "Rendered PDF physical page 50, printed page 48: row 37 visibly reads “Diethylcarbamazine Tablet 100 mg Diethylcarbama” and stops at “Diethylcarbama”. The source transcription had incorrectly expanded the truncated text into a full oral-liquid description; corrected to the visible source text only. Do not infer the missing letters or formulation.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 48, item 37.",
+      "sourceTextLayerFinding": "The official PDF text layer contains the same truncated source string. Preserve verbatim; do not complete the word or unit by inference."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -3589,19 +3597,26 @@
       "annexure": "shc_aam",
       "item": 22,
       "printedPage": 54,
-      "sourceDescription": "Gentamicin Injection 10 mg/ml Gentamicin Injection 80 mg/ml",
-      "transcriptionFlags": [],
-      "reviewStatus": "pending_source_reconciliation",
-      "sourcePdfChecked": false,
+      "sourceDescription": "Gentamicin Injection 10 mg/ml Gentamicin Injection 80 mg/m",
+      "transcriptionFlags": [
+        "possible_truncated_unit_or_ocr"
+      ],
+      "reviewStatus": "pending_authorised_review",
+      "sourcePdfChecked": true,
       "reviewer": null,
       "reviewedAt": null,
       "rowInterpretation": null,
       "candidateItems": [],
       "facilityApplicability": null,
       "localDpdmisItemCode": null,
-      "evidenceNote": null,
+      "evidenceNote": "Rendered PDF physical page 56, printed page 54: row 22 visibly ends “Gentamicin Injection 80 mg/m” with no trailing “l”. The source transcription had supplied “ml”; corrected to the visible source text only. Do not infer the missing character.",
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourcePdfVisualFinding": "Rendered PDF physical page 56, printed page 54: row 22 visibly ends “Gentamicin Injection 80 mg/m” with no trailing “l”. The source transcription had supplied “ml”; corrected to the visible source text only. Do not infer the missing character.",
+      "sourcePdfVisualEvidence": "Direct visual inspection of uploaded EDL_2025.pdf rendered page; PDF SHA-256 6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 54, item 22.",
+      "sourceTextLayerFinding": "The official PDF text layer contains the same truncated source string. Preserve verbatim; do not complete the word or unit by inference."
     },
     {
       "annexure": "shc_aam",
@@ -5154,11 +5169,11 @@
     }
   ],
   "sourceTextLayerReview": {
-    "checkedRows": 15,
-    "method": "Text-layer comparison plus targeted rendered-page visual inspection for 16 rows. This is not pharmacist/CGMSC approval.",
+    "checkedRows": 17,
+    "method": "PDF text-layer comparison and targeted rendered-page visual inspection for 18 rows. This is not pharmacist/CGMSC approval.",
     "limitations": [
       "The PDF text layer can itself contain OCR/transcription errors or omit characters.",
-      "Rendered visual inspection was completed for 16 targeted rows, not every row.",
+      "Rendered visual inspection has targeted 18 rows; 260 rows still need individual row-level comparison.",
       "No clinical or procurement interpretation is approved."
     ],
     "observedInconsistency": "PHC-AAM/UPHC Annexure 4 item 172 text layer says 'Medroxprogesterone'; SHC-AAM Annexure 5 item 81 says 'Medroxyprogesterone'. Preserve both source strings pending authorised review."
