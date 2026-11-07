@@ -176,3 +176,22 @@ test('requires a durable draft-ID callback before creating a new report', async 
   );
   assert.equal(created, false);
 });
+
+test('reconciles a retry when the server already submitted the saved report', async () => {
+  const calls = [];
+  const client = {
+    async getReport(id) { calls.push(['get', id]); return { id, status: 'submitted', report_items: [{ id: 'item-1' }] }; },
+    async updateReportDraft() { calls.push(['update']); throw new Error('must not update a submitted report'); },
+    async replaceReportItems() { calls.push(['replace']); throw new Error('must not replace submitted items'); },
+    async submitReport() { calls.push(['submit']); throw new Error('must not resubmit'); }
+  };
+  const result = await persistence.persistConfirmedReport({
+    client,
+    reportId: 'submitted-report',
+    originalText: 'field update',
+    draft: sampleDraft()
+  });
+  assert.deepEqual(calls, [['get', 'submitted-report']]);
+  assert.equal(result.alreadySubmitted, true);
+  assert.equal(result.report.status, 'submitted');
+});
