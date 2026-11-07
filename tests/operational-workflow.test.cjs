@@ -50,7 +50,7 @@ test('verified report can create a facility indent recommendation, but not a pur
   assert.equal(indent.purchaseOrderCreated, false);
 });
 
-test('DPDMIS submission and dispatch require external references before receipt can be recorded', () => {
+test('supervisor approval/submission and storekeeper allocation/dispatch/receipt enforce separated roles', () => {
   const indent = {
     id: 'IND-001', status: 'recommended_to_facility_store', requestedQty: 30, receivedQty: 0,
     events: [], purchaseOrderCreated: false
@@ -59,9 +59,6 @@ test('DPDMIS submission and dispatch require external references before receipt 
     to: 'submitted_to_dpdmis', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
     reference: 'DEMO-DPDMIS-001'
   }), /not available/i);
-  assert.throws(() => workflow.transitionIndent(indent, {
-    to: 'supervisor_approved', actorRole: 'worker', actorLabel: 'Demo CHO'
-  }), /not allowed/i);
   const approved = workflow.transitionIndent(indent, {
     to: 'supervisor_approved', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
     at: '2026-11-06T10:04:30.000Z'
@@ -75,19 +72,33 @@ test('DPDMIS submission and dispatch require external references before receipt 
     reference: 'DEMO-DPDMIS-001', at: '2026-11-06T10:05:00.000Z'
   });
   assert.equal(submitted.status, 'submitted_to_dpdmis');
+
   assert.throws(() => workflow.transitionIndent(submitted, {
-    to: 'dispatched', actorRole: 'supervisor', actorLabel: 'Demo Supervisor'
-  }), /reference/i);
-  const dispatched = workflow.transitionIndent(submitted, {
+    to: 'allocated', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
+    reference: 'DEMO-ALLOC-001'
+  }), /not allowed/i);
+  const allocated = workflow.transitionIndent(submitted, {
+    to: 'allocated', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
+    reference: 'DEMO-ALLOC-001', at: '2026-11-06T10:05:30.000Z'
+  });
+  assert.throws(() => workflow.transitionIndent(allocated, {
     to: 'dispatched', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
+    reference: 'DEMO-CHALLAN-001'
+  }), /not allowed/i);
+  const dispatched = workflow.transitionIndent(allocated, {
+    to: 'dispatched', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
     reference: 'DEMO-CHALLAN-001', at: '2026-11-06T10:06:00.000Z'
   });
   assert.throws(() => workflow.transitionIndent(dispatched, {
     to: 'received', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
     reference: 'DEMO-GRN-OVER', receivedQty: 31
+  }), /not allowed/i);
+  assert.throws(() => workflow.transitionIndent(dispatched, {
+    to: 'received', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
+    reference: 'DEMO-GRN-OVER', receivedQty: 31
   }), /exceed/i);
   const received = workflow.transitionIndent(dispatched, {
-    to: 'received', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
+    to: 'received', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
     reference: 'DEMO-GRN-001', receivedQty: 30, at: '2026-11-06T10:07:00.000Z'
   });
   assert.equal(received.receivedQty, 30);
