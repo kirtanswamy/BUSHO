@@ -159,6 +159,7 @@ test('worker report creation uses the worker profile and assigned facility, not 
   assert.equal(body.facility_id, 'facility-1');
   assert.equal(body.status, 'draft');
   assert.notEqual(body.worker_id, 'attacker-selected-worker');
+  assert.ok(calls.some(call => call.url.includes('facilities(name,district,block_lgd_code)')));
 });
 
 test('sign-out clears the browser session even when the remote logout request fails', async () => {
