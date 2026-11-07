@@ -396,3 +396,5 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Updated `supabase-client.js` to include movement rows in inventory and replenishment reads. The current supervisor screen is still a demo/local-state interface; this change exposes server data but does not claim the fulfilment UI is integrated.
 - No connected Supabase migration or data writes were performed. CI for this latest code has not yet been confirmed.
 - Latest test SQL SHA: `a294dbf5cb8a0c5dd9a8f7fe4f2391d52a05d72f`; movement migration SHA: `c5ea0ce53c6e37d7d8e9b8de4a974e10d0821438`; Supabase client SHA: `c1d6200559435a05bf3a383fa29a74a3a82e6393`.
+
+- Added an RLS contract assertion that a worker cannot browse the inventory movement ledger; only facility operational roles and scoped administrators can read it. Latest SQL contract SHA: `68b3bcfb485f1559cb103f801ac8fc1850b895de`.
