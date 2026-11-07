@@ -82,6 +82,17 @@ begin
     raise exception 'Assigned supervisor or storekeeper role required';
   end if;
 
+  -- Idempotent retry: accept an exact replay of a completed receipt only
+  -- after facility/role authorization. No quantity/reference changes occur,
+  -- so the inbound movement trigger remains a no-op.
+  if v_role = 'storekeeper'
+     and new.status = old.status
+     and new.received_quantity = old.received_quantity
+     and new.receipt_reference is not distinct from old.receipt_reference
+     and new.status in ('partially_received','received') then
+    return new;
+  end if;
+
   if old.status = 'draft' and new.status = 'recommended_to_facility_store' then
     if v_role <> 'supervisor' then raise exception 'Only a supervisor can recommend an indent'; end if;
   elsif old.status = 'recommended_to_facility_store' and new.status = 'supervisor_approved' then
