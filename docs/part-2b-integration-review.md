@@ -221,6 +221,6 @@ The worker-side submit path is now connected to the persistence boundary:
 
 ### Tests and release boundary
 - PostgreSQL 17 CI contract now applies the facility registry migration and exercises batch creation, staging, verification, facility promotion, audit event and district-scope denial with synthetic CI identities.
-- CI run `42368834377` passed on commit `5fe32e4c848c7729e11236a5bbd811d8293ba031`: Node 18/22/24, 135 tests with zero failures, smoke checks and PostgreSQL 17 database contract. Batch-recovery and grant-cleanup follow-ups need a fresh CI result.
+- CI run `42369105186` passed on latest commit `4d4c8f5f71e449f99f412ea964335660dd0846d5`: Node 18/22/24, 135 tests with zero failures, smoke checks and PostgreSQL 17 database contract. A separate run `42369093524` passed with the staging and batch-completion audit events.
 - Live Supabase schema has not been migrated; no Edge Function deployed; no Auth users/facilities created. Production remains on `main`.
 - No current authoritative Chhattisgarh facility export has been received. Do not seed from stale AAM lists or ambiguous DPDMIS names. The importer is staging/review only and should be run only against a current dated government export.
