@@ -971,9 +971,6 @@ begin
 
   -- Idempotent retry: accept an exact replay of an already-recorded receipt.
   -- No quantity/reference changes means the receipt movement trigger is a no-op.
-  raise notice 'RECEIPT_RETRY_DIAG role=% old_status=% new_status=% old_qty=% new_qty=% old_ref=% new_ref=%',
-    v_role, old.status, new.status, old.received_quantity, new.received_quantity,
-    old.receipt_reference, new.receipt_reference;
   if new.status = old.status
      and new.received_quantity = old.received_quantity
      and new.receipt_reference is not distinct from old.receipt_reference
