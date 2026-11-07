@@ -114,6 +114,8 @@ test('transcription audit covers all 278 source rows and flags possible OCR issu
   assert.ok(phcRow36.transcription_flags.includes('possible_truncated_unit_or_ocr'));
   const phcRow12 = report.entries.find(entry => entry.annexure === 'phc_phc_aam_uphc' && entry.item === 12);
   assert.ok(phcRow12.transcription_flags.includes('source_spelling_or_ocr_check'));
+  const phcRow17 = report.entries.find(entry => entry.annexure === 'phc_phc_aam_uphc' && entry.item === 17);
+  assert.ok(phcRow17.transcription_flags.includes('pdf_visual_text_correction'));
   const phcRow37 = report.entries.find(entry => entry.annexure === 'phc_phc_aam_uphc' && entry.item === 37);
   assert.ok(phcRow37.transcription_flags.includes('source_truncated_text'));
   const shcRow22 = report.entries.find(entry => entry.annexure === 'shc_aam' && entry.item === 22);
