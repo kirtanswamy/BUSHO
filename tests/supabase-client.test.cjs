@@ -467,3 +467,46 @@ test('worker role cannot call the administrator provisioning function', async ()
   await assert.rejects(client.provisionUser({ role: 'platform_admin' }), /not available to the worker role/i);
   assert.equal(calls.some(url => url.includes('/functions/v1/provision-user')), false);
 });
+
+test('platform administrator can request provisioning options and create state-level invitations', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'platform-token',
+    refresh_token: 'platform-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'auth-platform-admin' }
+  }));
+  const calls = [];
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    storage,
+    now: () => 1_800_000_000_000,
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      if (url.includes('/rest/v1/profiles?')) {
+        return jsonResponse([{ id: 'auth-platform-admin', role: 'platform_admin', status: 'active' }]);
+      }
+      if (url.includes('/rest/v1/facilities?')) return jsonResponse([]);
+      if (url.includes('/rest/v1/districts?')) return jsonResponse([{ lgd_code: '101', name: 'Balod', state_lgd_code: '22' }]);
+      if (url.includes('/functions/v1/provision-user')) {
+        return jsonResponse({ ok: true, invitation: { userId: 'new-state-admin', role: 'state_admin', status: 'invited' } }, 201);
+      }
+      throw new Error('Unexpected request: ' + url);
+    }
+  });
+  const options = await client.listProvisioningOptions();
+  assert.equal(options.facilities.length, 0);
+  assert.equal(options.districts[0].name, 'Balod');
+  assert.ok(calls.some(call => call.url.includes('/rest/v1/districts?')));
+  const result = await client.provisionUser({
+    email: 'state@example.org',
+    displayName: 'State Admin',
+    role: 'state_admin',
+    scope: { level: 'state', stateLgdCode: '22', districtLgdCode: '' },
+    facilityIds: []
+  });
+  assert.equal(result.invitation.role, 'state_admin');
+  const provisionCall = calls.find(call => call.url.includes('/functions/v1/provision-user'));
+  assert.equal(provisionCall.options.headers.Authorization, 'Bearer platform-token');
+});
