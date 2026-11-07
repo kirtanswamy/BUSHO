@@ -323,10 +323,10 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - **CI verification:** latest CI run `42394392227` passed on the updated EDL page-map and transcription corrections: Node 18/22/24 checks and PostgreSQL 17 database contract all succeeded. This is CI-only verification; no connected Supabase migration or production deployment occurred.
 
 
-## Part 2D.5 — rendered-page OCR discrepancy correction — 2026-11-07
+## Part 2D.5 — rendered-page OCR discrepancy correction — 2026-11-07 (superseded by Part 2D.6)
 
 - Visual inspection of PHC Annexure 4 item 17 (printed page 47, physical PDF page 49) found the rendered source reads `Levocetirizine` twice. The PDF text layer and prior transcription had `Levocetrizine` in the second occurrence. Corrected the source transcription to the rendered page and recorded the discrepancy.
-- Targeted rendered-page evidence now covers 19 rows; 259 rows remain without individual targeted visual evidence. This is not pharmacist/CGMSC approval.
+- At this intermediate checkpoint, 19 rows had targeted visual evidence. Part 2D.6 subsequently completed the full 278-row page review.
 
 
 ## Part 2D.6 — complete rendered-page source reconciliation — 2026-11-07
@@ -337,3 +337,10 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Recorded highlighted source spans and source notes separately; no asterisk meaning is inferred where the PDF provides no legend.
 - Review queue now records rendered-PDF and text-layer checks for all 278 rows. All remain pending authorised pharmacist/CGMSC review; no normalized medicine mappings or live catalogue imports are approved.
 - No connected Supabase migration, live insert, facility import, account provisioning, Edge Function deployment or production release occurred.
+
+
+## Part 2D.7 — source annotation preservation and review-gate tests — 2026-11-07
+
+- Added `data/medicine-catalogue/chhattisgarh-edl-2025-source-annotations.json` with seven highlighted source spans, 23 source notes/conditions and the complete asterisk-marked row list from both annexures.
+- Added tests requiring the review queue to contain 278 visually/text-checked rows, with every row still pending authorised review, no reviewer assigned, no candidate normalized items, and live/stock/prescribing import gates closed.
+- Added tests for highlighted-span and source-note preservation.
