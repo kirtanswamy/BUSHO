@@ -155,3 +155,35 @@ The worker-side submit path is now connected to the persistence boundary:
 - CI run `42365474633` passed after the worker history and correction-resumption changes: Node 18/22/24, 90 tests, smoke checks and PostgreSQL 17 RLS/database-contract.
 - Vercel preview remains rate-limited by the team build plan; production domain and data remain untouched.
 - No Auth users, facilities, workers, assignments or reports were created in the live Supabase project.
+
+## Part 2B.5 — administrator provisioning workspace — 2026-11-07
+
+### Administrator UI and role model
+- Added a dedicated `admin.html` page and `admin-portal.js` controller. It is not embedded in the public landing page or the supervisor portal.
+- The administrator page's Auth gate admits only active `platform_admin`, `state_admin` and `district_admin` profiles.
+- UI role choices mirror the intended hierarchy: platform → state/district admin (and facility roles only when verified facilities are visible); state → district admin / supervisor / worker; district → supervisor / worker.
+- The browser reads the signed-in profile from Supabase Auth + `profiles`; it does not send a caller role as proof. The Edge Function independently re-reads the profile and active geographic scope with the server-side Supabase context.
+- Workers require exactly one facility and explicit data-processing consent. Supervisors may be assigned 1–20 facilities. Administrative roles receive district/state scope rather than facility assignments.
+- Administrator invitation acceptance routes to the admin console. The invited user only chooses a password; they cannot select their own role or scope.
+
+### Edge Function hardening
+- The function uses `withSupabase({ auth: 'user' })` and `ctx.userClaims` for caller authentication, with privileged operations restricted to `ctx.supabaseAdmin` inside the Edge Function.
+- Caller role/status and active scope are re-read from database tables. The shared provisioning service validates hierarchy, temporal scope validity, Chhattisgarh LGD state code, facility status, verification and synthetic-data flags.
+- The Auth invitation includes display name and preferred language only; role is written to the protected profile row after Auth creates the account.
+- Partial failures attempt profile suspension, assignment rollback and Auth user deletion. Incomplete rollback is returned as an explicit reconciliation error.
+- Added JSON content-type validation and a streaming 12 KB request-body limit, including requests without a trustworthy Content-Length header. Responses are no-store; CORS is origin-allowlisted.
+- The service-role / secret key is not included in browser files.
+
+### Tests and release boundary
+- Added admin portal integration tests, platform-admin provisioning client tests and static Edge Function security-contract tests. Smoke tests now serve and audit `admin.html` and all local assets.
+- CI run `42366667375` passed Node 18/22/24 and PostgreSQL 17 database-contract checks for the admin workspace and request parser. README follow-up runs `42366704102` / `42366708441` have Node checks green; their database-contract jobs were still completing when this checkpoint was written. The Edge Function security-contract test was added after those runs and needs a fresh CI pass.
+- Supabase currently has zero Auth users, profiles, facilities, workers, assignments, reports and audit records. The project has zero deployed Edge Functions. The provisioning service has not been deployed or invoked.
+- Because there are no verified facility records, the admin UI disables worker/supervisor invitations rather than inventing facilities. No live invitation or account was created.
+- Vercel preview remains affected by the team build-rate-limit failure. Production domain remains on `main`; this development branch is still PR #5 draft.
+
+### Next steps
+1. Get a fresh green CI run including the new Edge Function security-contract test.
+2. Validate Edge Function configuration, deployed origin allowlist and invitation redirect URL. Deploy only after explicit release approval.
+3. Source and verify Chhattisgarh AAM/HWC facility records, including source date, LGD linkage, duplicates and facility verification status; do not derive facility rows from district/block names alone.
+4. Provision an authorised platform administrator through a separately approved secure process, then test admin → district/state admin → worker/supervisor invitation.
+5. Run the two-facility/two-worker/two-supervisor isolation test before any production rollout.
