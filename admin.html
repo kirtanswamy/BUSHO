@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f8fc">
+  <meta name="description" content="BUSHO administrator workspace for controlled account provisioning and facility assignments.">
+  <title>BUSHO | Administrator Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles-v2.css?v=13">
+  <style>
+    .admin-shell{min-height:100vh;background:#f4f7fb;color:#1b2c46;font-family:"Plus Jakarta Sans",sans-serif}
+    .admin-topbar{height:72px;background:#fff;border-bottom:1px solid #e5ebf3;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,5vw,72px)}
+    .admin-brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.04em}.admin-brand-mark{width:38px;height:38px;border-radius:12px;background:#e9f0ff;color:#2859aa;display:grid;place-items:center;font-weight:900}
+    .admin-topbar button{border:1px solid #dce4ef;background:#fff;border-radius:10px;padding:9px 14px;color:#445672;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+    .admin-main{width:min(1120px,calc(100% - 36px));margin:42px auto 72px}
+    .admin-eyebrow{font-size:10px;letter-spacing:.16em;font-weight:800;color:#5175ad}
+    .admin-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}.admin-hero h1{font-size:clamp(27px,4vw,40px);letter-spacing:-.055em;margin:8px 0;color:#1a2c46}.admin-hero p{font-size:13px;color:#718097;max-width:610px;line-height:1.7;margin:0}
+    .admin-role-chip{background:#eaf1ff;color:#315da8;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:800;white-space:nowrap}
+    .admin-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.8fr);gap:18px;align-items:start}
+    .admin-card{background:#fff;border:1px solid #e3eaf3;border-radius:18px;padding:24px;box-shadow:0 12px 35px rgba(26,47,79,.045)}
+    .admin-card h2{font-size:17px;letter-spacing:-.03em;margin:0 0 7px}.admin-card>p{font-size:12px;color:#718097;line-height:1.7;margin:0 0 20px}
+    .admin-form{display:grid;gap:16px}.admin-field{display:grid;gap:7px}.admin-field label,.admin-group-label{font-size:11px;font-weight:800;color:#43546d}.admin-field input,.admin-field select{width:100%;border:1px solid #dce4ee;border-radius:10px;padding:12px 13px;background:#fff;color:#243750;font:inherit;font-size:13px;min-width:0}.admin-field input:focus,.admin-field select:focus{outline:3px solid #e6efff;border-color:#7396d2}
+    .admin-two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}.admin-facility-list{display:grid;gap:8px;max-height:250px;overflow:auto;padding:2px}.admin-facility-option{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid #e5ebf3;border-radius:11px;cursor:pointer}.admin-facility-option input{margin-top:3px;accent-color:#315da8}.admin-facility-option strong{display:block;font-size:12px}.admin-facility-option small{display:block;color:#7b899d;font-size:10px;margin-top:3px}
+    .admin-consent{display:flex;align-items:flex-start;gap:10px;padding:13px;border-radius:11px;background:#f6f8fc;color:#596a81;font-size:11px;line-height:1.6}.admin-consent input{margin-top:3px;accent-color:#315da8}
+    .admin-submit{border:0;border-radius:11px;background:#2859aa;color:white;padding:14px 18px;font:inherit;font-size:12px;font-weight:800;cursor:pointer}.admin-submit:disabled{opacity:.55;cursor:wait}
+    .admin-status{min-height:20px;font-size:12px;line-height:1.6;color:#64758d}.admin-status.error{color:#a33d37}.admin-status.success{color:#176a43}
+    .admin-side-stack{display:grid;gap:14px}.admin-side-note{padding:16px;border-radius:13px;background:#f7f9fc;border:1px solid #e9eef5}.admin-side-note strong{display:block;font-size:12px;margin-bottom:5px}.admin-side-note p{font-size:11px;color:#718097;line-height:1.65;margin:0}.admin-empty{border:1px dashed #cfd9e8;background:#f8fafd;border-radius:12px;padding:17px;font-size:12px;color:#6c7b91;line-height:1.7}
+    .admin-login-card{width:min(100%,480px);margin:11vh auto;background:white;border:1px solid #e3eaf3;border-radius:20px;padding:30px;box-shadow:0 24px 70px rgba(25,48,85,.08)}.admin-login-card h1{font-size:26px;letter-spacing:-.04em;margin:12px 0}.admin-login-card p{font-size:12px;color:#718097;line-height:1.7}.admin-login-form{display:grid;gap:10px;margin-top:22px}.admin-login-form label{font-size:11px;font-weight:800}.admin-login-form input{border:1px solid #dce4ee;border-radius:10px;padding:12px;font:inherit}.admin-login-form button{margin-top:8px}
+    .hidden{display:none!important}
+    @media(max-width:780px){.admin-grid{grid-template-columns:1fr}.admin-main{margin-top:28px}.admin-hero{align-items:flex-start;flex-direction:column}.admin-two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body class="admin-shell">
+  <main data-portal-role="admin">
+    <section id="portal-login" class="portal-login-section" aria-labelledby="admin-login-title">
+      <div class="admin-login-card">
+        <div class="admin-brand"><span class="admin-brand-mark">B</span><span>BUSHO <small class="admin-eyebrow">ADMINISTRATION</small></span></div>
+        <p class="admin-eyebrow" style="margin-top:26px">SECURE ADMINISTRATOR ACCESS</p>
+        <h1 id="admin-login-title">Provisioning workspace</h1>
+        <p>Sign in with an authorised platform, state or district administrator account. Roles and geographic scope are validated by the server.</p>
+        <form id="portal-login-form" class="admin-login-form">
+          <label for="portal-username">Administrator email</label>
+          <input id="portal-username" type="email" autocomplete="username" required placeholder="your registered email">
+          <label for="portal-password">Password</label>
+          <input id="portal-password" type="password" autocomplete="current-password" required>
+          <p id="portal-login-error" class="portal-login-error" role="alert" aria-live="polite"></p>
+          <button class="admin-submit" type="submit">Sign in securely</button>
+        </form>
+        <a href="index.html" class="portal-back-link">← Back to BUSHO</a>
+      </div>
+    </section>
+
+    <div id="portal-app" class="hidden" aria-hidden="true">
+      <header class="admin-topbar">
+        <div class="admin-brand"><span class="admin-brand-mark">B</span><span>BUSHO <small class="admin-eyebrow">ADMIN CONSOLE</small></span></div>
+        <button id="portal-logout" type="button">Sign out</button>
+      </header>
+      <section class="admin-main">
+        <div class="admin-hero">
+          <div><div class="admin-eyebrow">IDENTITY · ACCESS · ACCOUNTABILITY</div><h1 id="demo-title" tabindex="-1">Controlled account provisioning</h1><p>Create verified workforce accounts and assign only the facilities or administrative geography permitted by your server-controlled role.</p></div>
+          <span id="admin-role-chip" class="admin-role-chip">Authorised administrator</span>
+        </div>
+        <div class="admin-grid">
+          <section class="admin-card">
+            <h2>Invite a team member</h2>
+            <p>BUSHO sends a password-setup invitation. The role and assignment are stored in the database before access is granted.</p>
+            <form id="provision-form" class="admin-form">
+              <div class="admin-two-col">
+                <div class="admin-field"><label for="provision-name">Full name</label><input id="provision-name" name="displayName" required minlength="2" maxlength="100" autocomplete="name"></div>
+                <div class="admin-field"><label for="provision-email">Work email</label><input id="provision-email" name="email" type="email" required maxlength="254" autocomplete="email"></div>
+              </div>
+              <div class="admin-two-col">
+                <div class="admin-field"><label for="provision-role">Account role</label><select id="provision-role" name="role" required></select></div>
+                <div class="admin-field"><label for="provision-language">Preferred language</label><select id="provision-language" name="preferredLanguage"><option value="hi">हिन्दी · Hindi</option><option value="en">English</option><option value="ta">தமிழ் · Tamil</option><option value="te">తెలుగు · Telugu</option><option value="bn">বাংলা · Bengali</option><option value="mr">मराठी · Marathi</option></select></div>
+              </div>
+              <div id="facility-section" class="admin-field hidden"><span class="admin-group-label">Verified facility assignment</span><div id="facility-options" class="admin-facility-list"></div><small id="facility-help" class="admin-status">Choose the facility or facilities this account will serve.</small></div>
+              <div id="district-section" class="admin-field hidden"><label for="provision-district">Administrative district</label><select id="provision-district"><option value="">Select a district</option></select></div>
+              <label id="consent-section" class="admin-consent hidden"><input id="provision-consent" type="checkbox"><span>I confirm that this worker has been informed about BUSHO's data use and agrees to the required processing of aggregated, non-identifying field reports.</span></label>
+              <button id="provision-submit" class="admin-submit" type="submit">Send secure invitation</button>
+              <p id="provision-status" class="admin-status" role="status" aria-live="polite"></p>
+            </form>
+          </section>
+          <aside class="admin-side-stack">
+            <section class="admin-card"><h2>Provisioning controls</h2><div class="admin-side-note"><strong>Server-enforced hierarchy</strong><p>Platform admins can provision state and district administrators. State admins can provision district admins, supervisors and workers. District admins can provision supervisors and workers only within their district.</p></div><div class="admin-side-note" style="margin-top:10px"><strong>No self-elevation</strong><p>Role, status and geographic scope are validated from the authenticated database profile. Browser metadata is never used as authority.</p></div><div class="admin-side-note" style="margin-top:10px"><strong>Auditable changes</strong><p>Successful invitations create a provisioning audit record. Partial failures trigger account suspension and rollback.</p></div></section>
+            <section class="admin-card"><h2>Facility readiness</h2><p id="facility-readiness">Checking verified facilities in your authorised scope…</p><div id="facility-readiness-detail" class="admin-empty">Loading facility directory.</div></section>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="supabase-config.js?v=1"></script>
+  <script src="supabase-client.js?v=8"></script>
+  <script src="portal-auth-policy.js?v=1"></script>
+  <script src="role-auth.js?v=6"></script>
+  <script src="admin-portal.js?v=1"></script>
+</body>
+</html>
