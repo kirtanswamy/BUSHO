@@ -1,0 +1,1574 @@
+{
+  "schemaVersion": 1,
+  "catalogue": {
+    "code": "CG-EDL",
+    "name": "Chhattisgarh Essential Drug List",
+    "version": "2025",
+    "authority": "Department of Health and Family Welfare, Government of Chhattisgarh",
+    "notificationDate": "2025-11-12",
+    "sourceDocumentTitle": "Essential Drug List – 2025",
+    "sourceUrl": "https://dpdmis.in/faconline/Common/Document/EDL_2025.pdf",
+    "status": "reference_only"
+  },
+  "annexures": {
+    "phc_phc_aam_uphc": {
+      "facilityLevel": "phc_aam",
+      "sourceAnnexure": "Annexure 4",
+      "publishedEntryCount": 172
+    }
+  },
+  "sampleOnly": true,
+  "transcriptionStatus": "transcribed_from_pdf_text_unreviewed",
+  "reviewNotice": "Source-text transcription only. Human reconciliation against the rendered official PDF, footnotes and pharmacist review remain pending. This is not a clinically reviewed catalogue, stock list, prescribing reference, procurement instruction or facility authorization.",
+  "sourcePageConvention": "Printed footer page numbers on the PDF pages, not contents-index references.",
+  "entries": [
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 1,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Oxygen gas for inhalation"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 2,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Lignocaine Injection 2% Lignocaine Topical form 2%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 3,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Lignocaine Injection 2% + Adrenaline Injection 1:200000 (5 mcg/ml)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 4,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Atropine Injection 0.6 mg/ml Atropine Injection 1 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 5,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Midazolam Injection 1 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 6,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Ketamine Injection10 mg/ml (Should be stored in lock and key)\n(Schedule X -prescription shall be in duplicate and one copy of which shall be retained by the licensee for a period of 2 Years)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 7,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Injection Thiopentone 500 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 8,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Bupivacaine Injection (Sensorcain) 0.5 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 9,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Neostigmine Injection 0.5 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 10,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Vecuronium Powder for Injection 4 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 11,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anesthetics Agent",
+      "sourceDescription": "Pentazocine Injection 30 mg/ml*"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 12,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Analgesics, antipyretics, non-steroidal anti-inflammatory medicines, medicines used to treat gout and disease modifying agents used in rheumatoid disorders",
+      "sourceDescription": "Asprin (Acetylsalicylic acid) Tablet 150 mg Asprin (Acetylsalicylic acid) Tablet 75 mg\n(Not to be used in suspected dengue patients and other clinical conditions without prescription)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 13,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Analgesics, antipyretics, non-steroidal anti-inflammatory medicines, medicines used to treat gout and disease modifying agents used in rheumatoid disorders",
+      "sourceDescription": "Diclofenac Tablet 50 mg Diclofenac Injection 25 mg/ml Diclofenac Gel 1%W/W"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 14,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Analgesics, antipyretics, non-steroidal anti-inflammatory medicines, medicines used to treat gout and disease modifying agents used in rheumatoid disorders",
+      "sourceDescription": "Ibuprofen Tablet 200 mg\n(Not to be used in suspected dengue patients and other clinical conditions without prescription)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 15,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Analgesics, antipyretics, non-steroidal anti-inflammatory medicines, medicines used to treat gout and disease modifying agents used in rheumatoid disorders",
+      "sourceDescription": "Ibuprofen Oral Liquid 100 mg/5 ml, 50 ml bottle\n(Not to be used in suspected dengue patients and other clinical conditions without prescription) (Recommended by RBSK Program Division)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 16,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Analgesics, antipyretics, non-steroidal anti-inflammatory medicines, medicines used to treat gout and disease modifying agents used in rheumatoid disorders",
+      "sourceDescription": "Paracetamol Tablet 500 mg, Paracetamol Tablet 100 mg Paracetamol Syrup 125 mg/5 ml Paracetamol Suppository 100 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 17,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anti-allergics and medicines used in anaphylaxis",
+      "sourceDescription": "Levocetirizine Tablet 5mg Levocetrizine Oral liquid 2.5 mg/5 ml (Paediatric Use)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 18,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anti-allergics and medicines used in anaphylaxis",
+      "sourceDescription": "Chlorpheniramine Tablet 4 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 19,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anti-allergics and medicines used in anaphylaxis",
+      "sourceDescription": "Dexamethasone Tablet 0.5 mg Dexamethasone Injection 4 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 20,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anti-allergics and medicines used in anaphylaxis",
+      "sourceDescription": "Hydrocortisone Succinate Injection 100 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 21,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anti-allergics and medicines used in anaphylaxis",
+      "sourceDescription": "Pheniramine Injection 22.75 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 22,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anti-allergics and medicines used in anaphylaxis",
+      "sourceDescription": "Prednisolone Tablet 5 mg Prednisolone Oral liquid 5 mg/5 ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 23,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anti-allergics and medicines used in anaphylaxis",
+      "sourceDescription": "Hydroxyzine oral syrup"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 24,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anti-allergics and medicines used in anaphylaxis",
+      "sourceDescription": "Betamethasone Injection 4 mg per 1 ml in 1 ml ampule"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 25,
+      "sourcePage": 48,
+      "therapeuticCategorySource": "Anti-dotes and other substances used in poisoning",
+      "sourceDescription": "Activated charcoal"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 26,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-dotes and other substances used in poisoning",
+      "sourceDescription": "Calcium gluconate Injection 100 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 27,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-dotes and other substances used in poisoning",
+      "sourceDescription": "Snake venom antiserum Injection"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 28,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-convulsants/Anti-epileptics",
+      "sourceDescription": "Magnesium Sulfate Injection (50% solution), 2 ml ampoule"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 29,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-convulsants/Anti-epileptics",
+      "sourceDescription": "Diazepam Oral liquid 2 mg/5 ml Diazepam Injection 5 mg/ml Diazepam Tablet 5 mg*"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 30,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-convulsants/Anti-epileptics",
+      "sourceDescription": "Phenobarbitone Tablet 30 mg Phenobarbitone Oral liquid 20 mg/5 ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 31,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-convulsants/Anti-epileptics",
+      "sourceDescription": "Phenytoin Tablet 50 mg Phenytoin Tablet 300 mg Phenytoin ER Tablet 300 mg Phenytoin Injection 25 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 32,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-convulsants/Anti-epileptics",
+      "sourceDescription": "Sodium valproate Tablet 250 mg Sodium valproate Tablet 500 mg Sodium valproate Syrup each 5 ml contains 200 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 33,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-convulsants/Anti-epileptics",
+      "sourceDescription": "Midazolam Nasal Spray*\n(For emergency purpose)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 34,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-convulsants/Anti-epileptics",
+      "sourceDescription": "Carbamazepine Tablet 100 mg Carbamazepine Tablet 200 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 35,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-convulsants/Anti-epileptics",
+      "sourceDescription": "Diphenylhydantoin Tablet 100 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 36,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Intestinal Anthelmintics",
+      "sourceDescription": "Albendazole Tablet 400 mg Albendazole Oral liquid 200 mg/5 m"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 37,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-filarial",
+      "sourceDescription": "Diethylcarbamazine Tablet 100 mg Diethylcarbamazine Oral liquid 120 mg/5 ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 38,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Amoxicillin Capsule 250 mg Amoxicillin Capsule 500 mg Amoxicillin Oral liquid 250 mg/5 ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 39,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Amoxicillin 500 mg + Clavulanic acid 125 mg Tablet"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 40,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Azithromycin Tablet 250 mg Azithromycin Tablet 500 mg Azithromycin Oral liquid 200 mg/5 ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 41,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Ciprofloxacin Tablet 250 mg Ciprofloxacin Tablet 500 mg Ciprofloxacin Oral liquid 250 mg/5ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 42,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Cefixime Tablet 200 mg Cefixime Oral liquid 50 mg/5 ml Cefixime Oral liquid 100 mg/5 ml*"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 43,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Tab Co-trimoxazole [Sulphamethoxazol 80 mg +Trimethoprim 400 mg] Tab. 20 mg trimethoprim + 100 mg sulphamethoxazole Co-trimoxazole Oral Liquid [Sulphamethoxazol e 200 mg + Trimethoprim 40 mg/5 ml ]"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 44,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Gentamicin Injection 10 mg/ml Gentamicin Injection 80 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 45,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Doxycycline Capsule 100 mg Doxycycline Dry Syrup 50 mg/5 ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 46,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Norfloxacin tab/oral liquid"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 47,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Penicillin V Tablet 250 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 48,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Benzyl penicillin Powder for Injection 10 lac units"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 49,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Cefazolin Injection 500 mg Cefazolin Injection 1 gm"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 50,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Cefotaxime Injection 250 Cefotaxime Injection 500 mg Cefotaxime Injection 1 g*"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 51,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-bacterial",
+      "sourceDescription": "Ceftriaxone Injection 250 Ceftriaxone Injection 500 mg Ceftriaxone Injection 1 g*"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 52,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-leprosy medicines",
+      "sourceDescription": "As per current program guidelines (Adults and Pediatrics)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 53,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-tuberculosis medicines",
+      "sourceDescription": "As per current program guidelines (Adults and Pediatrics)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 54,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-fungal medicines",
+      "sourceDescription": "Clotrimazole Pessary 100 mg Clotrimazole Vaginal Tablet Clotrimazole Drops 1% Clotrimazole Cream 1%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 55,
+      "sourcePage": 49,
+      "therapeuticCategorySource": "Anti-fungal medicines",
+      "sourceDescription": "Fluconazole Tablet 150 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 56,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-fungal medicines",
+      "sourceDescription": "Miconazole ointment Miconazole Tablet"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 57,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-protozoal medicines",
+      "sourceDescription": "Metronidazole Tablet 200 mg Metronidazole Tablet 400 mg Metronidazole Oral liquid 200 mg/5 ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 58,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-malarial medicines",
+      "sourceDescription": "As per program guidelines (Adults and Pediatrics)- As per NVBDCP Guideline"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 59,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Medicines used in Palliative care",
+      "sourceDescription": "Amitriptyline Tablet 10 mg Amitriptyline Tablet 25 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 60,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Medicines used in Palliative care",
+      "sourceDescription": "Lactulose Oral liquid 10 g/15 ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 61,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Medicines used in Palliative care",
+      "sourceDescription": "Tramadol capsule 50 mg*\n(Should be stored in double lock and key)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 62,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Medicines used in Palliative care",
+      "sourceDescription": "Povidone Iodine Lotion and Ointment"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 63,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Medicines used in Palliative care",
+      "sourceDescription": "Ethamsylate Tablet"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 64,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Medicines used in Palliative care",
+      "sourceDescription": "Deriphylline Tablet sustained release"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 65,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-parkinsonism medicines",
+      "sourceDescription": "Levodopa (A) + Carbidopa (B) 100 mg (A) + 10 mg (B)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 66,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-anemia medicines",
+      "sourceDescription": "Ferrous Salt (A) + Folic Acid (B): As per Anemia Mukt Bharat Abhiyan\nChildren 06-59 months: Each ml of Iron and Folic Acid syrup containing 20 mg elemental Iron+ 100 mcg of Folic Acid.\nChildren 05-9 years: Tablet 45 mg Elemental Iron (A) + 400 mcg (B)[Pink Color]\nAdolescent (10-19 Year): Tablet 60 mg Elemental Iron (A)+ 500 mcg (B) [Blue Color]\nAdult: Tablet 60 mg Elemental Iron (A)+ 500 mcg (B)[ Red color]"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 67,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-anemia medicines",
+      "sourceDescription": "Folic acid Tablet 5 mg Folic acid Tablet 400 mcg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 68,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-anemia medicines",
+      "sourceDescription": "IFA Syrup"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 69,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-anemia medicines",
+      "sourceDescription": "Phytomenadione Injection 10 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 70,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Cardiovascular medicines",
+      "sourceDescription": "Clopidogrel Tablet 75 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 71,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Cardiovascular medicines",
+      "sourceDescription": "Diltiazem Tablet 60 mg Diltiazem Tablet 90 mg SR"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 72,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Cardiovascular medicines",
+      "sourceDescription": "Isosorbide-5- mononitrate Tablet 5 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 73,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Cardiovascular medicines",
+      "sourceDescription": "Metoprolol Tablet 25 mg Metoprolol SR Tablet 25 mg Metoprolol SR Tablet 50 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 74,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Cardiovascular medicines",
+      "sourceDescription": "Isosorbide dinitrate Tablet 5 mg (sublingual)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 75,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Cardiovascular medicines",
+      "sourceDescription": "Dopamine Injection 40 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 76,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Cardiovascular medicines",
+      "sourceDescription": "Hydroxyurea Capsule 100mg, 300mg, 500mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 77,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-hypertensive medicine",
+      "sourceDescription": "Amlodipine Tablet 2.5 mg Amlodipine Tablet 5 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 78,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-hypertensive medicine",
+      "sourceDescription": "Enalapril Tablet 5 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 79,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-hypertensive medicine",
+      "sourceDescription": "Hydrochlorothiazide Tablet 12.5 mg Hydrochlorothiazide Tablet 25 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 80,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-hypertensive medicine",
+      "sourceDescription": "Labetalol Tablet 100 mg Labetalol Injection 5 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 81,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-hypertensive medicine",
+      "sourceDescription": "Methyldopa Tablet 250 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 82,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Anti-hypertensive medicine",
+      "sourceDescription": "Telmisartan Tablet 40 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 83,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Medicines used in shock and heart failure",
+      "sourceDescription": "Adrenaline Injection 1 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 84,
+      "sourcePage": 50,
+      "therapeuticCategorySource": "Hypolipidemic medicines",
+      "sourceDescription": "Atorvastatin Tablet 10 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 85,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Framycetin Cream 0.5%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 86,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Silver sulphadiazine Cream 1%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 87,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Calamine Lotion"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 88,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Betamethasone Cream 0.1%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 89,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Benzoyl peroxide Gel 2.5%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 90,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Benzyl Benzoate ointment/lotion"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 91,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Mupirocin Ointment"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 92,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Potassium Permanganate 0.1%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 93,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Zinc Oxide cream 10%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 94,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Fusidic Acid Cream 5mg/10gm preparation 2% or 20mg per gram Fusidic Acid Cream 2%: 5 mg/10 mg Preparation"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 95,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Dermatological medicines (Topical)",
+      "sourceDescription": "Pemethrin Cream 5%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 96,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Disinfectants and antiseptics",
+      "sourceDescription": "Cetrimide Solution 20% (concentrate for dilution)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 97,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Disinfectants and antiseptics",
+      "sourceDescription": "Chlorhexidine Solution 5 (Concentrate for dilution)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 98,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Disinfectants and antiseptics",
+      "sourceDescription": "Ethyl alcohol (Denatured) Solution 70%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 99,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Disinfectants and antiseptics",
+      "sourceDescription": "Hydrogen peroxide Solution 6%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 100,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Disinfectants and antiseptics",
+      "sourceDescription": "Methylrosanilinium chloride (Gentian Violet)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 101,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Disinfectants and antiseptics",
+      "sourceDescription": "Bleaching powder Containing not less than 30% w/w of available chlorine (as per I.P)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 102,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Disinfectants and antiseptics",
+      "sourceDescription": "Gama Benzene Hexachloride"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 103,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Diuretics",
+      "sourceDescription": "Furosemide Tablet 40 mg Furosemide Injection 10 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 104,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Diuretics",
+      "sourceDescription": "Mannitol Injection 10% Mannitol Injection 20%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 105,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Ear, nose and throat medicines",
+      "sourceDescription": "Xylometazoline Nasal drops 0.05 % Xylometazoline Nasal drops 0.1 %"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 106,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Ear, nose and throat medicines",
+      "sourceDescription": "Wax solvant ear drops: benzocaine, chlorbutol, paradicholorobenzene, turpentaine oil"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 107,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Ear, nose and throat medicines",
+      "sourceDescription": "Combo ear drop-Chloramphenicol 5% w/v +clotrimazole 1% +Lignocaine hydrochloride 2%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 108,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Ear, nose and throat medicines",
+      "sourceDescription": "Normal saline nasal drops (.05%w/v)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 109,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Ear, nose and throat medicines",
+      "sourceDescription": "Boro-Spirit ear drop"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 110,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Ear, nose and throat medicines",
+      "sourceDescription": "Ofloxacin Tablet 200 mg Ofloxacin Tablet 400 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 111,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Omeprazole Capsule 20 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 112,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Ranitidine Injection"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 113,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Metoclopramide Tablet 10 mg Metoclopramide Oral liquid 5 mg/5 ml Metoclopramide Injection 5 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 114,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Ondansetron Tablet 4 mg Ondansetron Oral liquid 2 mg/5 ml Ondansetron Injection 2 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 115,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Domperidone Tablet 10 mg Domperidone Syrup"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 116,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Hyoscinebutylbromide Tablet 10 mg Hyoscinebutylbromide Injection 20 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 117,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Ispaghula Granules/Husk/Powder (Herbal medicine)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 118,
+      "sourcePage": 51,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Drotavarin Tablet 500 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 119,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Bisacodyl Tablet 5 mg/10mg Bisacodyl Suppository 5 mg/10mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 120,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Oral rehydration salts (ORS)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 121,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Zinc sulphate Dispersible Tablet 20 mg Zinc sulphate syrup"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 122,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Dicyclomine Tablet 10 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 123,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Senna Powder (Herbal medicine)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 124,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Dioctyl sulfosuccinate sodium"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 125,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Magnesium Hydroxide liquid"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 126,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Sucralfate Tablet 10 mg, Sucralfate Oral Liquid 100 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 127,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Gastrointestinal medicines",
+      "sourceDescription": "Hyoscine butylbromide Tablet 500 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 128,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines used in diabetes mellitus",
+      "sourceDescription": "Glimepiride Tablet 2 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 129,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines used in diabetes mellitus",
+      "sourceDescription": "Metformin Tablet 500 mg Metformin SR Tablet 500 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 130,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines used in diabetes mellitus",
+      "sourceDescription": "Insulin (Soluble) Injection 40 IU/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 131,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines used in diabetes mellitus",
+      "sourceDescription": "Premix Insulin 30:70 Injection (Regular:NPH) Injection 40 IU/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 132,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines used in diabetes mellitus",
+      "sourceDescription": "Glibenclamide Tablet 2.5 mg Glibenclamide Tablet 5 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 133,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines used in diabetes mellitus",
+      "sourceDescription": "Glucose Packet 75 mg for OGTT Test"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 134,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Thyroid and Anti-thyroid medicines",
+      "sourceDescription": "Levothyroxine Tablet 25 mcg Levothyroxine Tablet 50 mcg Levothyroxine Tablet 100 mcg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 135,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Vaccines",
+      "sourceDescription": "As per current National programme guidelines"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 136,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Vaccines",
+      "sourceDescription": "Rabies vaccine, Anti Rabies Serum"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 137,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Oxytocic & Abortificents Medicines",
+      "sourceDescription": "Misoprostol Tablet 200 mcg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 138,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Oxytocic & Abortificents Medicines",
+      "sourceDescription": "Oxytocin Injection 5 IU/ml\n(Only where deliveries are conducted)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 139,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Oxytocic & Abortificents Medicines",
+      "sourceDescription": "Nifedipine Tablet 10 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 140,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Oxytocic & Abortificents Medicines",
+      "sourceDescription": "Methylergometrine Injection 0.2 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 141,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Psychotherapeutic Drugs",
+      "sourceDescription": "Alprazolam Tablet 0.25 mg*"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 142,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Psychotherapeutic Drugs",
+      "sourceDescription": "Clonazepam Tablet 0.5 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 143,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Psychotherapeutic Drugs",
+      "sourceDescription": "Olanzapine Tablet 5 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 144,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines acting on the Respiratory tract",
+      "sourceDescription": "Budesonide Inhalation (MDI/DPI) 100 mcg/dose Budesonide Respirator solution for use in nebulizer 0.5 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 145,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines acting on the Respiratory tract",
+      "sourceDescription": "Salbutamol Tablet 2 mg Salbutamol Oral liquid 2 mg/5 ml Salbutamol Respirator solution for use in nebulizer 5 mg/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 146,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines acting on the Respiratory tract",
+      "sourceDescription": "Montelukast Syrup Montelukast Tablet"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 147,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines acting on the Respiratory tract",
+      "sourceDescription": "Syrup Dextromethorphan"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 148,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines acting on the Respiratory tract",
+      "sourceDescription": "Syrup Bromhexine Hydrochloride"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 149,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines acting on the Respiratory tract",
+      "sourceDescription": "Syrup Pheniramine Maleate"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 150,
+      "sourcePage": 52,
+      "therapeuticCategorySource": "Medicines acting on the Respiratory tract",
+      "sourceDescription": "Ipratropium Inhalation (MDI/DPI) 20 mcg/dose Ipratropium Respirator solution for use in nebulizer 250 mcg/ml."
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 151,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Solutions correcting water, electrolyte disturbances and acid-base disturbances",
+      "sourceDescription": "Ringer lactate Injection"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 152,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Solutions correcting water, electrolyte disturbances and acid-base disturbances",
+      "sourceDescription": "Sodium chloride injection 0.9%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 153,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Solutions correcting water, electrolyte disturbances and acid-base disturbances",
+      "sourceDescription": "Pediatric solution like Isolyte P, N/2 & N/5"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 154,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Solutions correcting water, electrolyte disturbances and acid-base disturbances",
+      "sourceDescription": "Potassium chloride Oral liquid 500 mg/5 ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 155,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Solutions correcting water, electrolyte disturbances and acid-base disturbances",
+      "sourceDescription": "Dextrose 5% Dextrose 25%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 156,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Vitamins and minerals",
+      "sourceDescription": "Ascorbic acid (Vitamin C) Tablet 100 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 157,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Vitamins and minerals",
+      "sourceDescription": "Calcium carbonate Tablet 500 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 158,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Vitamins and minerals",
+      "sourceDescription": "Cholecalciferol Tablet 60000 IU"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 159,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Vitamins and minerals",
+      "sourceDescription": "Pyridoxine Tablet 25 mg Pyridoxine Tablet 50 mg Pyridoxine tablet 100 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 160,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Vitamins and minerals",
+      "sourceDescription": "Vitamin A Oral liquid 100000 IU/ml"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 161,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Vitamins and minerals",
+      "sourceDescription": "B Complex Tablet B Complex Injection"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 162,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Ophthalmological Medicines",
+      "sourceDescription": "Lignocaine Eye drop 4%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 163,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Ophthalmological Medicines",
+      "sourceDescription": "Tropicamide Drops 1%"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 164,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Ophthalmological Medicines",
+      "sourceDescription": "Ciprofloxacin Drops 0.3 %"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 165,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Ophthalmological Medicines",
+      "sourceDescription": "Sodium cromoglycate 2% eye drop"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 166,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Ophthalmological Medicines",
+      "sourceDescription": "Methylcellulose Eye drops"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 167,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Contraceptives",
+      "sourceDescription": "Ethinylestradiol (A) + Levonorgestrel Tablet 0.03 mg (A) + 0.15 mg (B)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 168,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Contraceptives",
+      "sourceDescription": "Copper bearing intra-uterine device IUCD 380A & 375"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 169,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Contraceptives",
+      "sourceDescription": "Male Condom"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 170,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Contraceptives",
+      "sourceDescription": "Non- hormonal Ormeloxifene (30 mg Tablet)"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 171,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Contraceptives",
+      "sourceDescription": "Emergency Contraceptive Pill Levonorgestrel 1.5 mg"
+    },
+    {
+      "sourceAnnexure": "phc_phc_aam_uphc",
+      "sourceAnnexureLabel": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "sourceItemNumber": 172,
+      "sourcePage": 53,
+      "therapeuticCategorySource": "Contraceptives",
+      "sourceDescription": "Medroxprogesterone Acetate Injection 150 mg"
+    }
+  ]
+}
