@@ -380,6 +380,15 @@ begin
   if v_count <> 1 then
     raise exception 'Supervisor B report scope leak: expected 1, got %', v_count;
   end if;
+  select count(*) into v_count from public.workers;
+  if v_count <> 1 then
+    raise exception 'Supervisor B worker scope leak: expected 1, got %', v_count;
+  end if;
+  select count(*) into v_count from public.workers
+  where auth_user_id = '11111111-1111-4111-8111-111111111111';
+  if v_count <> 0 then
+    raise exception 'Supervisor B can see Worker A from another facility';
+  end if;
   select count(*) into v_count from public.reports
   where original_text = 'worker_report_created synthetic second facility';
   if v_count <> 1 then
