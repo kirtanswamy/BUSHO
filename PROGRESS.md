@@ -420,3 +420,5 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Expanded the request event history with action, state transition, timestamp and external reference.
 - UI still depends on database RLS and trigger validation. No local-only fallback or synthetic request generation was added.
 - Controller SHA: `29386896a721e5f6c62a768ee7e1d4fbde61e72d`. PostgreSQL CI run for the preceding head was observed in progress; latest head verification still pending.
+
+- CI run `42397275850` exposed a pre-existing malformed PostgreSQL test block delimiter at line 213 (`do $` rather than `do $$`). All three Node-version checks passed; both new migrations applied successfully in PostgreSQL; the database contract stopped at this syntax error before executing the assertions. Fixed the delimiter in the contract file. Re-run pending.
