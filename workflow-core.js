@@ -179,9 +179,10 @@
       requireRole(input.actorRole, ['storekeeper']);
       const reference = typeof input.reference === 'string' ? input.reference.trim() : '';
       const quantity = Number(input.receivedQty);
-      const replay = (next.receiptReferences || []).find(item =>
-        item.reference === reference && Number(item.quantity) === quantity
-      );
+      const latestReceipt = (next.receiptReferences || []).slice(-1)[0];
+      const replay = latestReceipt &&
+        latestReceipt.reference === reference &&
+        Number(latestReceipt.quantity) === quantity;
       if (!reference || !Number.isSafeInteger(quantity) || quantity <= 0 || !replay) {
         throw new Error('Only an exact previously recorded receipt can be retried.');
       }
