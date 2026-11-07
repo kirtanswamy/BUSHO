@@ -171,12 +171,12 @@ test('workers can edit structured report items on drafts and reports returned fo
 
 test('workers can track only replenishment requests created from their own reports', () => {
   const sql = loadMigration();
-  assert.match(sql, /create policy replenishment_requests_worker_select on public\\.replenishment_requests/i);
-  const policy = sql.match(/create policy replenishment_requests_worker_select[\\s\\S]*?;/i)?.[0] || '';
+  assert.match(sql, /create policy replenishment_requests_worker_select on public\.replenishment_requests/i);
+  const policy = sql.match(/create policy replenishment_requests_worker_select[\s\S]*?;/i)?.[0] || '';
   assert.match(policy, /for select to authenticated/i);
-  assert.match(policy, /current_profile_role\\(\\)\\s*=\\s*'worker'/i);
+  assert.match(policy, /current_profile_role\(\)\s*=\s*'worker'/i);
   assert.match(policy, /source_report_id/i);
-  assert.match(policy, /r\\.worker_id\\s*=\\s*app_private\\.auth_worker_id\\(\\)/i);
+  assert.match(policy, /r\.worker_id\s*=\s*app_private\.auth_worker_id\(\)/i);
 });
 
 test('supervisors can correct report items only while reviewing an assigned report', () => {
@@ -206,5 +206,5 @@ test('future public tables, sequences and functions do not inherit broad API acc
   assert.match(sql, /revoke all on tables from anon, authenticated, service_role/i);
   assert.match(sql, /revoke all on sequences from anon, authenticated, service_role/i);
   assert.match(sql, /revoke all on functions from anon, authenticated, service_role/i);
-  assert.match(sql, /alter default privileges for role postgres\\s+revoke execute on functions from public/i);
+  assert.match(sql, /alter default privileges for role postgres\s+revoke execute on functions from public/i);
 });
