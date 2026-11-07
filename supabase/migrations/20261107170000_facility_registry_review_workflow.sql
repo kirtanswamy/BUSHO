@@ -188,7 +188,7 @@ begin
       select 1 from public.blocks b
       where b.lgd_code = v_candidate.block_lgd_code
         and b.state_lgd_code = v_candidate.state_lgd_code
-        and b.district_lgd_code = v_candidate.district_lgd_code
+        and (b.district_lgd_code = v_candidate.district_lgd_code or b.mapping_review_required)
         and b.mapping_review_required = false and b.is_selectable = true
     ) then
       raise exception using errcode = '23503', message = 'The facility block mapping is ambiguous or invalid.';
@@ -321,8 +321,7 @@ grant execute on function app_private.review_facility_registry_candidate(uuid,uu
         select 1 from public.blocks b
         where b.lgd_code = x->>'block_lgd_code'
           and b.state_lgd_code = x->>'state_lgd_code'
-          and b.district_lgd_code = x->>'district_lgd_code'
-          and b.mapping_review_required = false and b.is_selectable = true
+          and (b.district_lgd_code = x->>'district_lgd_code' or b.mapping_review_required = true)
       )
   ) then
     raise exception using errcode = '23503', message = 'One or more block mappings are ambiguous, invalid or not selectable.';
@@ -336,9 +335,11 @@ grant execute on function app_private.review_facility_registry_candidate(uuid,uu
     x->>'state_lgd_code', x->>'district_lgd_code',
     nullif(x->>'block_lgd_code',''), x->>'facility_type',
     (x->>'source_row')::integer,
-    case when jsonb_typeof(x->'review_flags') = 'array'
-      then array(select jsonb_array_elements_text(x->'review_flags'))
-      else '{}'::text[] end
+    array_remove(array[
+      case when v_batch.source_date < current_date - 365 then 'stale_source_snapshot' end,
+      case when exists (select 1 from public.blocks b where b.lgd_code = x->>'block_lgd_code' and b.mapping_review_required) then 'block_parent_mapping_requires_review' end,
+      case when exists (select 1 from public.blocks b where b.lgd_code = x->>'block_lgd_code' and not b.is_selectable) then 'block_not_selectable' end
+    ]::text[], null)
   from jsonb_array_elements(p_candidates) x;
 
   get diagnostics v_inserted = row_count;
