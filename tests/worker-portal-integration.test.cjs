@@ -48,6 +48,8 @@ test('worker history loads after auth and can resume a returned report through t
   const editor = read('app-v2.js');
   assert.match(editor, /BUSHO_WORKER_REPORT_EDITOR/);
   assert.match(editor, /fromDatabaseItems\(report\.report_items/);
+  assert.match(editor, /state\.reportLanguageCode = report\.language_code/);
+  assert.match(editor, /Starting a new report must never overwrite a saved draft/);
   const client = read('supabase-client.js');
   assert.match(client, /async function listMyReports\(\)[\s\S]*requireActiveProfile\(\['worker'\]\)/);
 });
