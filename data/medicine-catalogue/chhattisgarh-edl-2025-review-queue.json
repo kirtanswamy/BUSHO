@@ -240,7 +240,7 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -250,7 +250,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer reproduces 'Asprin' twice in row 12. This is not a transcription mismatch against the extracted text; spelling needs visual-PDF and authorised reviewer decision. Do not silently correct source text.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 48, item 12."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -674,7 +677,7 @@
       "transcriptionFlags": [
         "possible_truncated_unit_or_ocr"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -684,7 +687,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer also ends the concentration as '200 mg/5 m' for row 36. Text extraction alone cannot determine whether the printed page contains 'ml' or whether the source itself is truncated. Keep unresolved pending rendered-page inspection.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 49, item 36."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -964,7 +970,7 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -974,7 +980,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer gives 'As per current program guidelines (Adults and Pediatrics)' for row 52. It is a programme reference, not a medicine SKU; retain as a source row but do not normalize as a stock item.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 49, item 52."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -984,7 +993,7 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -994,7 +1003,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer gives 'As per current program guidelines (Adults and Pediatrics)' for row 53. It is a programme reference, not a medicine SKU; retain as a source row but do not normalize as a stock item.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 49, item 53."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -1076,7 +1088,7 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -1086,7 +1098,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer gives 'As per program guidelines (Adults and Pediatrics)- As per NVBDCP Guideline' for row 58. Programme reference, not a medicine SKU.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 50, item 58."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -1870,7 +1885,7 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -1880,7 +1895,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer reproduces 'Gama Benzene Hexachloride'. Potential source spelling/OCR issue; do not normalize or correct without visual and pharmacist review.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 51, item 102."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -1944,7 +1962,7 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -1954,7 +1972,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer reproduces 'Wax solvant ... paradicholorobenzene ... turpentaine oil'. Potential source spelling/OCR issue; preserve verbatim pending visual and pharmacist review.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 51, item 106."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -2162,7 +2183,7 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -2172,7 +2193,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer reproduces 'Drotavarin Tablet 500 mg'. Potential source spelling/strength issue; preserve verbatim pending visual and pharmacist review.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 51, item 118."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -2470,7 +2494,7 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -2480,7 +2504,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer gives 'As per current National programme guidelines'. Programme reference, not a medicine SKU.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 52, item 135."
     },
     {
       "annexure": "phc_phc_aam_uphc",
@@ -3138,7 +3165,7 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -3148,7 +3175,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer reproduces 'Medroxprogesterone Acetate Injection 150 mg'. Notably, Annexure 5 row 81 spells the corresponding entry 'Medroxyprogesterone'. Treat as a source-level inconsistency requiring visual and pharmacist/CGMSC review; do not harmonize automatically.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 4, printed page 53, item 172."
     },
     {
       "annexure": "shc_aam",
@@ -3626,7 +3656,7 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -3636,7 +3666,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer gives 'As per Program Guidelines (Adults and Pediatrics)' for row 27. Programme reference, not a medicine SKU.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 55, item 27."
     },
     {
       "annexure": "shc_aam",
@@ -3646,7 +3679,7 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -3656,7 +3689,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer gives 'As per Program Guidelines (Adults and Pediatrics)' for row 28. Programme reference, not a medicine SKU.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 55, item 28."
     },
     {
       "annexure": "shc_aam",
@@ -3720,7 +3756,7 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -3730,7 +3766,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer gives 'As Per Program Guidelines (Adults and Pediatrics) As per NVBDCP Guideline' for row 32. Programme reference, not a medicine SKU.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 55, item 32."
     },
     {
       "annexure": "shc_aam",
@@ -4226,7 +4265,7 @@
       "transcriptionFlags": [
         "source_spelling_or_ocr_check"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -4236,7 +4275,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer reproduces 'Gama Benzene Hexachloride'. Potential source spelling/OCR issue; preserve verbatim pending visual and pharmacist review.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 56, item 60."
     },
     {
       "annexure": "shc_aam",
@@ -4714,7 +4756,7 @@
       "transcriptionFlags": [
         "programme_reference_not_sku"
       ],
-      "reviewStatus": "pending_source_reconciliation",
+      "reviewStatus": "pending_rendered_pdf_reconciliation",
       "sourcePdfChecked": false,
       "reviewer": null,
       "reviewedAt": null,
@@ -4724,7 +4766,10 @@
       "localDpdmisItemCode": null,
       "evidenceNote": null,
       "mandatoryHumanReview": true,
-      "normalizedFieldsAllowed": false
+      "normalizedFieldsAllowed": false,
+      "sourceTextLayerChecked": true,
+      "sourceTextLayerFinding": "Official PDF text layer gives 'As per Current National Programme Guidelines'. Programme reference, not a medicine SKU.",
+      "sourceTextLayerEvidence": "Official DPDMIS EDL 2025 PDF text extraction; Annexure 5, printed page 57, item 87."
     },
     {
       "annexure": "shc_aam",
@@ -5068,5 +5113,15 @@
       "mandatoryHumanReview": true,
       "normalizedFieldsAllowed": false
     }
-  ]
+  ],
+  "sourceTextLayerReview": {
+    "checkedRows": 15,
+    "method": "Text-layer comparison using official PDF extraction. This is not a rendered-page visual check.",
+    "limitations": [
+      "The PDF text layer can itself contain OCR/transcription errors or omit characters.",
+      "No rendered page image has been inspected in this pass.",
+      "No clinical or procurement interpretation is approved."
+    ],
+    "observedInconsistency": "PHC-AAM/UPHC Annexure 4 item 172 text layer says 'Medroxprogesterone'; SHC-AAM Annexure 5 item 81 says 'Medroxyprogesterone'. Preserve both source strings pending authorised review."
+  }
 }
