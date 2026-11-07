@@ -28,7 +28,7 @@ test('provisioning Edge Function restricts browser origins and uses no-store res
   assert.match(source, /BUSHO_ALLOWED_ORIGINS/);
   assert.match(source, /Origin is not allowed/);
   assert.match(source, /Cache-Control', 'no-store'/);
-  assert.match(source, /Access-Control-Allow-Methods', 'POST, OPTIONS'/);
+  assert.match(source, /'Access-Control-Allow-Methods': 'POST, OPTIONS'/);
 });
 
 test('privileged Auth invitation and assignment writes remain server-side', () => {
