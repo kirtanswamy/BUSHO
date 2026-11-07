@@ -67,6 +67,39 @@
     return items;
   }
 
+  function fromDatabaseItems(items, originalText) {
+    const rows = Array.isArray(items) ? items : [];
+    const conditions = rows.filter(item => item && item.item_type === 'symptom_trend').map(item => {
+      let metadata = {};
+      try { metadata = item.value_text ? JSON.parse(item.value_text) : {}; } catch {}
+      return {
+        name: String(item.display_label || ''),
+        patients: item.quantity === null || item.quantity === undefined ? '' : String(item.quantity),
+        countStatus: String(metadata.count_status || (item.requires_review ? 'Needs review' : 'Reviewed')),
+        sourcePhrase: String(metadata.source_phrase || '')
+      };
+    });
+    const medicines = rows.filter(item => item && item.item_type === 'stock_observation').map(item => {
+      let metadata = {};
+      try { metadata = item.value_text ? JSON.parse(item.value_text) : {}; } catch {}
+      return {
+        name: String(item.display_label || ''),
+        mentionedAs: String(metadata.mentioned_as || item.display_label || ''),
+        quantity: item.quantity === null || item.quantity === undefined ? '' : String(item.quantity),
+        unit: String(item.unit || ''),
+        stockStatus: String(metadata.stock_status || (item.requires_review ? 'Needs review' : 'Reviewed')),
+        sourcePhrase: String(metadata.source_phrase || ''),
+        fuzzy: Boolean(metadata.possible_spelling_correction)
+      };
+    });
+    const narrative = String(originalText || '');
+    return [
+      { id: 'disease-table', kind: 'symptom', icon: '+', label: 'Reported conditions', rows: conditions, value: JSON.stringify(conditions), confidence: 'review', note: 'Review before resubmission' },
+      { id: 'medicine-table', kind: 'medicine', icon: 'Rx', label: 'Medicine stock', rows: medicines, value: JSON.stringify(medicines), confidence: 'review', note: 'Review before resubmission' },
+      { id: 'original-report', kind: 'source', icon: 'Aa', label: 'Original field report', value: narrative, confidence: 'high', note: 'Original worker source', readOnly: true }
+    ];
+  }
+
   function toReportSummary(draft) {
     const items = toDatabaseItems(draft);
     return {
@@ -148,6 +181,7 @@
   return Object.freeze({
     extractionVersion: EXTRACTION_VERSION,
     toDatabaseItems,
+    fromDatabaseItems,
     toReportSummary,
     persistConfirmedReport
   });
