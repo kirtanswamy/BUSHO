@@ -285,12 +285,12 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - **Next:** complete row-by-row rendered-PDF comparison, starting with all 15 flagged rows and then the remaining rows/footnotes; capture the original PDF SHA-256; do not normalize or ingest until a named authorised pharmacist/CGMSC reviewer signs off.
 
 
-## Part 2D.2 — transcription cross-check and PDF access boundary — 2026-11-07
+## Part 2D.2 — transcription cross-check and PDF access boundary — 2026-11-07 (superseded by Part 2D.3)
 
 - Re-examined the 15 machine-flagged rows using the repository's two source-transcription JSON files. This is a comparison of stored transcribed text only; it is **not** a comparison against the official PDF text layer or rendered PDF pages.
-- The PHC Annexure 4 item 36 transcription ends with `200 mg/5 m`. This is a truncation in the repository transcription. Its correctness relative to the PDF is unknown until the original page is inspected.
+- The PHC Annexure 4 item 36 transcription ends with `200 mg/5 m`. Part 2D.3 subsequently confirmed this same truncation is visibly present in the uploaded PDF.
 - The PHC Annexure 4 item 12 transcription contains `Asprin`; item 102 and SHC Annexure 5 item 60 both contain `Gama Benzene Hexachloride`. Preserve these source strings until the PDF and authorised reviewer establish whether they are source spellings or transcription errors.
-- Found a cross-annexure discrepancy in the repository transcriptions: Annexure 4 item 172 says `Medroxprogesterone Acetate Injection 150 mg`, while Annexure 5 item 81 says `Medroxyprogesterone Acetate Injection 150 mg`. This is a transcription-level discrepancy only; neither version is treated as authoritative.
+- Found a cross-annexure discrepancy in the repository transcriptions: Annexure 4 item 172 says `Medroxprogesterone Acetate Injection 150 mg`, while Annexure 5 item 81 says `Medroxyprogesterone Acetate Injection 150 mg`. Part 2D.3 confirmed both spellings are present in the rendered source PDF; this is a source-document inconsistency.
 - Programme-guideline rows (Annexure 4 items 52, 53, 58, 135; Annexure 5 items 27, 28, 32, 87) are instructions/references rather than obvious medicine product descriptions. Preserve their source rows, but do not map them to inventory products without formal interpretation.
 - **Evidence boundary:** the official DPDMIS PDF URL was opened as a web document, but PDF page screenshots/text extraction did not return usable page content in this session, and direct download failed. No rendered page was visually inspected. The queue still has all 278 rows marked `sourcePdfChecked: false`; no row has a PDF verification claim.
 - No clinical review, normalization, facility applicability approval, live import or procurement use is approved.
