@@ -342,38 +342,6 @@ begin
 end $$;
 commit;
 
--- Storekeeper cannot approve a recommendation. Create a disposable Balod
--- recommendation as the assigned supervisor, attempt the forbidden transition
--- as the assigned storekeeper, then roll back the fixture.
-begin;
-set local role authenticated;
-select set_config('request.jwt.claim.sub', '66666666-6666-4666-8666-666666666666', true);
-insert into public.replenishment_requests
-  (facility_id, inventory_item_id, requested_quantity, status, source_report_id,
-   on_hand_quantity, unit, note, data_mode)
-select r.facility_id, '20000000-0000-4000-8000-000000000002', 3,
-       'recommended_to_facility_store', r.id, 0, 'packets',
-       'Synthetic storekeeper approval denial fixture', 'synthetic_demo'
-from public.reports r
-where r.original_text = 'worker_report_created synthetic second facility';
-set local role authenticated;
-select set_config('request.jwt.claim.sub', '77777777-7777-4777-8777-777777777777', true);
-do $storekeeper_cannot_approve$
-declare v_blocked boolean := false;
-begin
-  begin
-    update public.replenishment_requests
-    set status = 'supervisor_approved'
-    where note = 'Synthetic storekeeper approval denial fixture';
-  exception when others then
-    v_blocked := true;
-  end;
-  if not v_blocked then
-    raise exception 'Storekeeper was able to approve a supervisor recommendation';
-  end if;
-end $storekeeper_cannot_approve$;
-rollback;
-
 -- Worker A can track the indent generated from their own reviewed report.
 begin;
 set local role authenticated;
@@ -465,6 +433,38 @@ begin
   end if;
 end $supervisor_b_scope_check$;
 commit;
+
+-- Storekeeper cannot approve a recommendation. Create a disposable Balod
+-- recommendation as the assigned supervisor, attempt the forbidden transition
+-- as the assigned storekeeper, then roll back the fixture.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '66666666-6666-4666-8666-666666666666', true);
+insert into public.replenishment_requests
+  (facility_id, inventory_item_id, requested_quantity, status, source_report_id,
+   on_hand_quantity, unit, note, data_mode)
+select r.facility_id, '20000000-0000-4000-8000-000000000002', 3,
+       'recommended_to_facility_store', r.id, 0, 'packets',
+       'Synthetic storekeeper approval denial fixture', 'synthetic_demo'
+from public.reports r
+where r.original_text = 'worker_report_created synthetic second facility';
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '77777777-7777-4777-8777-777777777777', true);
+do $storekeeper_cannot_approve$
+declare v_blocked boolean := false;
+begin
+  begin
+    update public.replenishment_requests
+    set status = 'supervisor_approved'
+    where note = 'Synthetic storekeeper approval denial fixture';
+  exception when others then
+    v_blocked := true;
+  end;
+  if not v_blocked then
+    raise exception 'Storekeeper was able to approve a supervisor recommendation';
+  end if;
+end $storekeeper_cannot_approve$;
+rollback;
 
 -- Supervisor B creates a Balod replenishment recommendation from their verified report.
 begin;
