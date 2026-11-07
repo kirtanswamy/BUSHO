@@ -243,3 +243,14 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Explicitly keeps Jan Aushadhi separate from AAM/CGMSC facilities and stock. Calls out that current schema lacks AAM-PHC distinction and a delegated MO/facility-head capability; these are gaps, not permissions to infer.
 - Captures local validation questions and implementation sequence 2C.3 → 2D → 2E → 2F → 2G → 2H. No connected Supabase schema, users, data or deployment changed.
 - This is a documentation checkpoint; it does not assert field validation or live workflow readiness. The next coding step is 2C.3 policy/schema alignment, preceded by tests and a review of current RLS draft visibility.
+
+
+## Part 2C.3 — policy and facility taxonomy alignment (implementation checkpoint; CI pending)
+
+- Added `supabase/migrations/20261107190000_busho_role_policy_alignment.sql` on the feature branch.
+- Added `aam_phc` as a distinct facility type in both the facilities and facility-registry candidate constraints; updated the staging validator and added a test proving AAM-PHC candidates remain `needs_review` and non-assignable.
+- Tightened report SELECT RLS: a worker can still read their own draft; assigned supervisors and scoped administrators can read reports only after submission (non-draft). Added a PostgreSQL RLS contract case that creates a same-facility private draft and asserts the supervisor cannot read it.
+- Updated CI to apply the new migration after the facility registry migration and before the PostgreSQL RLS contract; added migration-order and policy regression assertions.
+- No cadre field or new cadre-based permissions were added: CHO/ANM/MPW/ASHA/pharmacist/MO remain descriptive workforce designations pending local validation, not authorisation roles.
+- **Status:** implementation committed; the latest branch commit has not yet produced a visible CI run at the time of this note. Do not call this migration validated until Node 18/22/24, PostgreSQL 17 contract and smoke checks pass.
+- **Live environment unchanged:** no connected Supabase migration, user, facility, report, Edge Function deployment or production release was changed.
