@@ -343,7 +343,7 @@ document.querySelectorAll('.role-btn').forEach(button => {
 });
 document.querySelectorAll('.quick-btn').forEach(button => button.addEventListener('click', () => setSample(button.dataset.sample)));
 document.getElementById('extract-btn').addEventListener('click', makeExtraction); document.getElementById('confirm-btn').addEventListener('click', confirmReport); document.getElementById('edit-btn').addEventListener('click', editFields); document.getElementById('view-inventory').addEventListener('click', openInventory); document.getElementById('close-inventory').addEventListener('click', closeInventory); document.getElementById('approve-replenishment').addEventListener('click', approveReplenishment);
-document.getElementById('reset-demo').addEventListener('click', () => { try { if (activeAuthUserId) window.localStorage.removeItem(STORAGE_PREFIX + activeAuthUserId); } catch {} state = initialState(); closeInventory(); renderAll(); showToast(t('footer.reset')); });
+document.getElementById('reset-demo')?.addEventListener('click', () => { try { if (activeAuthUserId) window.localStorage.removeItem(STORAGE_PREFIX + activeAuthUserId); } catch {} state = initialState(); closeInventory(); renderAll(); showToast(t('footer.reset')); });
 // Voice input using the browser Web Speech API.
 const voiceButton = document.querySelector('.voice-button');
 let recognition = null;
