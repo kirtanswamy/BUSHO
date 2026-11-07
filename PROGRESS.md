@@ -346,3 +346,5 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Added tests for highlighted-span and source-note preservation.
 
 - Follow-up test-schema check: the review queue exposes its safety gates under `policy.safeToImportToLive` / `policy.safeForStockOrPrescribing` (not `import_policy`). The new assertions were aligned to the actual queue schema in commit `9150dc9`; latest-head CI must confirm them.
+
+- **Latest-head CI:** run `42395089510` passed after the 278-row review queue, annotation register and regression tests were added. Node 18, Node 22, Node 24 and PostgreSQL 17 database-contract/RLS verification all succeeded.
