@@ -106,3 +106,32 @@ The worker-side submit path is now connected to the persistence boundary:
 - Supervisor inbox/review UI remains synthetic and is not yet reading reports from Supabase.
 - Worker report history, assigned-facility context, real notifications and facility-scoped metrics are not yet wired to server data.
 - No admin provisioning workflow exists yet. Do not self-assign roles or seed live users/facilities without an approved provisioning process.
+
+## Part 2B.3 — supervisor operations workspace implementation — 2026-11-07
+
+### Data and authorization contract
+- Re-checked the live foreign keys from `reports` to `workers` and `facilities`, and from `report_items` / `report_events` to `reports`.
+- Re-checked the live RLS policies: supervisors can select reports only within assigned facility scope; report items and report events are readable through their parent report; worker writes are restricted to their own editable report.
+- The authenticated client method `listSupervisorReports()` validates the server-controlled profile role and fetches report rows with structured items, events, worker display fields and facility display fields.
+- The inbox query filters to submitted/reviewed states; unsubmitted drafts are not shown in the supervisor UI. Note: the underlying reports SELECT policy remains broader for assigned facility scope; if draft confidentiality is a strict policy requirement, tighten that RLS policy in a separately tested migration rather than relying on a UI filter.
+
+### Implemented UI
+- Added `supervisor-operations.js` and `supervisor-portal.js`.
+- Dashboard KPIs are calculated from the returned scoped report set; no statewide totals or previous-period trend are inferred.
+- Inbox supports search, status filters, refresh and report detail.
+- Detail view displays original worker narrative, structured observations with source phrases and uncertainty, latest review note and database-generated audit events.
+- Review decisions match the existing PostgreSQL transition guard: verify, request correction, escalate, reject, and close where permitted by current status. The database trigger and RLS policies remain authoritative.
+- District/state admins can view their scoped report set but do not receive supervisor decision controls in this UI.
+- Synthetic supervisor KPIs, fictional facility/worker names, demo inbox rows, local notifications and fake activity timeline were removed from the live supervisor workspace. Inventory, trends and replenishment approvals now show explicit not-connected states instead of invented records.
+
+### Tests and verification
+- Added supervisor operations helper tests and controller integration tests.
+- Added Supabase client tests for the role-gated embedded inbox query and worker denial.
+- **Pending:** fresh CI for the latest checkpoint. Vercel preview status currently reports a team build-rate-limit failure; this is not a successful preview and production has not been changed.
+- No live accounts, facilities, reports or synthetic production records were created. A real authenticated workflow remains blocked on approved provisioning.
+
+### Next engineering steps
+1. Run the latest GitHub Actions workflow and fix any failures.
+2. Implement server-backed worker report history and facility context, including returned notes and resubmission status.
+3. Implement controlled administrator provisioning with no self-assigned roles or facility scope.
+4. Provision authorised test accounts/facilities only after explicit approval, then test two facilities and two worker/supervisor accounts for cross-scope leakage and the full worker → supervisor → worker cycle.
