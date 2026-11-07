@@ -464,7 +464,7 @@ begin
     raise exception 'Storekeeper was able to approve a supervisor recommendation';
   end if;
 end $storekeeper_cannot_approve$;
-
+rollback;
 
 -- Supervisor B creates a Balod replenishment recommendation from their verified report.
 begin;
