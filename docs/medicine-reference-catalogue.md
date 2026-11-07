@@ -142,3 +142,7 @@ The initial audit contained a systematic +1 error in its printed-page map. The u
 - Highlighted source text is not discarded: PHC items 13, 58, 66 and 119; SHC items 4, 32 and 35 have highlighted spans recorded separately in the source-annotations file.
 - Asterisk markers are preserved. No complete general asterisk legend was identified in the annexure pages reviewed; specific accompanying text is retained as written, including Schedule X, double-lock storage, controlled-medicine and emergency-purpose notes.
 - All 278 rows are marked source-PDF checked but remain pending authorised pharmacist/CGMSC review. This is source transcription verification, not clinical approval or normalized SKU mapping.
+
+
+### Source annotation register
+The separate `data/medicine-catalogue/chhattisgarh-edl-2025-source-annotations.json` preserves seven highlighted spans, 23 source notes/conditions, and the asterisk-marked row list. Highlights are recorded as formatting only; the meaning of asterisks is not inferred where the source gives no legend. The review queue marks all 278 rows as rendered-PDF and text-layer checked, but every row remains pending authorised pharmacist/CGMSC review.
