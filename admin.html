@@ -88,6 +88,29 @@
             <section class="admin-card"><h2>Facility readiness</h2><p id="facility-readiness">Checking verified facilities in your authorised scope…</p><div id="facility-readiness-detail" class="admin-empty">Loading facility directory.</div></section>
           </aside>
         </div>
+        <section class="admin-card" style="margin-top:18px">
+          <div class="admin-eyebrow">FACILITY DIRECTORY · SOURCE CONTROL</div>
+          <h2 style="margin-top:8px">Import and verify facilities</h2>
+          <p>Stage a dated government facility export, validate its Chhattisgarh LGD mapping, then review each candidate. Verification creates an assignable facility only after a human decision and an audit record.</p>
+          <form id="facility-import-form" class="admin-form">
+            <div class="admin-two-col">
+              <div class="admin-field"><label for="facility-source-authority">Source authority</label><input id="facility-source-authority" required maxlength="160" placeholder="e.g. Directorate of Health Services, Chhattisgarh"></div>
+              <div class="admin-field"><label for="facility-source-date">Source snapshot date</label><input id="facility-source-date" type="date" required></div>
+            </div>
+            <div class="admin-field"><label for="facility-source-url">Official source URL (HTTPS)</label><input id="facility-source-url" type="url" required placeholder="https://official-source.gov.in/..."></div>
+            <div class="admin-field"><label for="facility-import-file">Facility export (.csv or validator .json)</label><input id="facility-import-file" type="file" accept=".csv,.json,text/csv,application/json" required><small class="admin-status">CSV headers: external_registry_id, name, facility_type, district_lgd_code, block_lgd_code. Or use the JSON staging output from the repository validator.</small></div>
+            <button id="facility-import-submit" class="admin-submit" type="submit">Validate and stage facility candidates</button>
+            <p id="facility-import-status" class="admin-status" role="status" aria-live="polite"></p>
+          </form>
+          <div id="facility-import-review" class="hidden" style="margin-top:24px">
+            <div class="admin-two-col" style="align-items:center">
+              <div><h2>Candidate review queue</h2><p id="facility-batch-summary" class="admin-status"></p></div>
+              <div style="display:flex;justify-content:flex-end;gap:8px;align-items:center"><button id="facility-page-prev" type="button">Previous</button><span id="facility-page-label" class="admin-status">Page 1</span><button id="facility-page-next" type="button">Next</button></div>
+            </div>
+            <div id="facility-candidate-list" class="admin-side-stack"></div>
+            <button id="facility-batch-complete" class="admin-submit" type="button" style="margin-top:16px">Complete reviewed batch</button>
+          </div>
+        </section>
       </section>
     </div>
   </main>
@@ -95,6 +118,6 @@
   <script src="supabase-client.js?v=8"></script>
   <script src="portal-auth-policy.js?v=1"></script>
   <script src="role-auth.js?v=7"></script>
-  <script src="admin-portal.js?v=2"></script>
+  <script src="admin-portal.js?v=3"></script>
 </body>
 </html>
