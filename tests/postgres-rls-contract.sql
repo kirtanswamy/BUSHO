@@ -198,7 +198,15 @@ values
 update public.reports
 set status = 'submitted'
 where original_text = 'worker_report_created synthetic second facility';
-do $$
+
+insert into public.report_items
+  (report_id, item_type, item_code, display_label, quantity, unit, value_text, requires_review)
+select id, 'stock_observation', 'ORS', 'ORS packets', 8, 'packets',
+       'Synthetic second-facility stock observation', true
+from public.reports
+where original_text = 'worker_report_created synthetic second facility';
+
+do $
 declare v_count integer;
 begin
   select count(*) into v_count from public.reports;
@@ -381,6 +389,18 @@ begin
   where original_text = 'worker_report_created synthetic aggregate only';
   if v_count <> 0 then
     raise exception 'Supervisor B can read Worker A report from another facility';
+  end if;
+  select count(*) into v_count from public.report_items ri
+  join public.reports r on r.id = ri.report_id
+  where r.original_text = 'worker_report_created synthetic second facility';
+  if v_count <> 1 then
+    raise exception 'Supervisor B must see the stock observation in their assigned facility';
+  end if;
+  select count(*) into v_count from public.report_items ri
+  join public.reports r on r.id = ri.report_id
+  where r.original_text = 'worker_report_created synthetic aggregate only';
+  if v_count <> 0 then
+    raise exception 'Supervisor B can read report items from another facility';
   end if;
 
   update public.reports
