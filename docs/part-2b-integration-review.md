@@ -99,7 +99,7 @@ The worker-side submit path is now connected to the persistence boundary:
 ### Verification status
 - CI run `42363981095` passed all three Node versions (18, 22, 24) and the PostgreSQL 17 database-contract job, including applying the migrations and running the RLS workflow contract. This run covered the worker integration code before the final language-copy-only commits.
 - The Vercel preview deployment for the later language-copy commit reported success. This is a preview, not production.
-- A fresh full CI run for the latest documentation/copy commit is still required before this part is marked complete.
+- The full CI run for the checkpoint commit passed all three Node versions and the PostgreSQL 17 database-contract job: run `42364121713`. The Vercel preview status for the same checkpoint is successful. This verifies automated checks, not a live authenticated user journey.
 
 ### Remaining blockers
 - The live Supabase project still has no Auth users, worker rows, facility rows or facility assignments. Therefore the UI code cannot yet be demonstrated with a real authorised worker account.
