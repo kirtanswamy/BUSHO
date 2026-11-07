@@ -484,3 +484,11 @@ First read this `PROGRESS.md`, inspect the latest commit and GitHub Actions stat
 - Existing live Supabase schema inspection confirmed `inventory_items` and `inventory_snapshots` are empty, RLS-enabled tables; live project has no `inventory_movements` table yet because branch migrations have not been applied. No live DB changes.
 - HTML commit `0b0bb07`, controller `9f85932`, script include `c34fbb8`. New feature still needs CI/browser E2E verification.
 - PostgreSQL CI on diagnostic commit `8ae995a` still failed at the storekeeper contract. Diagnostic notices show allocation, dispatch, partial receipt, final receipt and exact retry were all reached before the exception; the failure is in the later cross-facility update attempt. Reworked that assertion to accept either RLS zero-row filtering or a trigger rejection, while verifying the Dhamtari request remains unchanged. Latest test commit `6878072`; CI pending.
+
+
+## Part 2F.8 — final transition guard retry fix — 2026-11-08
+
+- Root cause of the repeated receipt retry failure: CI applies `20261107230000_busho_storekeeper_separation.sql` after the earlier operational security migration. That later migration replaces `app_private.guard_replenishment_transition()`, so fixes made only to the earlier function were overwritten during the actual CI migration sequence.
+- Corrected the final, effective guard in `20261107230000_busho_storekeeper_separation.sql`: after assigned supervisor/storekeeper facility authorization, an assigned storekeeper may replay an exact unchanged partial/final receipt (same status, cumulative quantity and receipt reference). Any changed receipt data still follows the guarded transition; movement trigger remains a no-op for exact replay.
+- Removed temporary diagnostic notice from the earlier migration. No schema changes beyond the guard logic; no live migration.
+- Latest code commits: `4360ba9` (effective final guard), `c3e865d` (remove temporary diagnostic). Latest CI for the corrected effective migration still needs confirmation; prior run `42403999433` failed because it applied the later migration that overwrote the earlier retry logic.
