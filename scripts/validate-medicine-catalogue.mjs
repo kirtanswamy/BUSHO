@@ -56,12 +56,12 @@ export function validateMedicineCatalogue(input) {
   }
 
   for (const [key, meta] of Object.entries(input.annexures || {})) {
-    const count = entries.filter(entry => ANNEXURES[entry.sourceAnnexure]?.key === key).length;
+    const count = entries.filter(entry => entry.sourceAnnexure === key).length;
     if (count < Number(meta.publishedEntryCount || 0)) warnings.push(key + ': ' + count + ' of ' + meta.publishedEntryCount + ' source entries transcribed; incomplete catalogue.');
     if (count > Number(meta.publishedEntryCount || 0)) errors.push({ row: null, code: 'annexure_entry_count_exceeded', annexure: key });
   }
-  if (input.sampleOnly !== true) {
-    errors.push({ row: null, code: 'sample_status_missing', message: 'Set sampleOnly=true until the complete annexures are transcribed and reconciled.' });
+  if (typeof input.sampleOnly !== 'boolean') {
+    errors.push({ row: null, code: 'sample_status_missing', message: 'Set sampleOnly=true for a partial transcription or false only after all source rows are transcribed.' });
   }
   if (input.sampleOnly === false) {
     for (const [key, meta] of Object.entries(input.annexures || {})) {
