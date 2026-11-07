@@ -578,3 +578,22 @@ No live Supabase changes, real user provisioning, operational data entry, produc
 - Owner-approved live migration, Auth provisioning, monitoring and production release.
 
 No live Supabase migration, operational account creation, real facility/medicine assignment, production deployment or PR merge was performed.
+
+
+## Part 2H.1 — authenticated portal integration demo harness — 2026-11-08
+
+### Delivered
+- Added `tests/authenticated-portal-demo.test.cjs`, which runs the actual browser Supabase client, portal role policy and portal Auth gate together inside an isolated VM browser harness.
+- The harness exercises password sign-in through the Supabase Auth token endpoint, server-controlled profile lookup, role gate, authenticated event dispatch, workspace visibility, password field clearing, sign-out and unauthenticated event dispatch.
+- Added explicit denial cases for a valid supervisor account attempting the worker portal, a pending worker profile and a missing profile. No production or live Supabase credentials are used; all identities/tokens are synthetic fixtures and the fetch layer is deterministic.
+- Corrected harness-only DOM fidelity issues discovered by CI (submit control reference and focus behavior). No application runtime code changes were required for these test failures.
+- Latest CI run `42408884855` passed all four jobs: Node 18, Node 22, Node 24 and PostgreSQL 17 database contract.
+
+### Scope and limitation
+- This is a real-code integration test for the browser Auth client and role gate, not a live authenticated multi-browser E2E against Supabase. The latter still needs an approved non-production project and administrator-created test identities with verified facility assignments.
+- No password or token has been created in the live project. No Supabase migration, Edge Function deployment, live provisioning, or production change was performed.
+
+### Next within Part 2H
+1. Add equivalent integration coverage for administrator provisioning UI + server policy using mocked server responses, including scope-denial and unverified-facility cases.
+2. Add end-to-end worker report submission and supervisor review controller integration against deterministic Supabase REST fixtures, preserving the live RLS contract tests.
+3. Once approved non-production Auth identities/facilities exist, run true multi-user browser E2E and record evidence before release review.
