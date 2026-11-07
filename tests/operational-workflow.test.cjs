@@ -112,16 +112,16 @@ test('indent can be partially received and then closed only when the balance is 
     events: [], dispatchReference: 'DEMO-CHALLAN-002', purchaseOrderCreated: false
   };
   const partial = workflow.transitionIndent(dispatched, {
-    to: 'partially_received', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
+    to: 'partially_received', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
     reference: 'DEMO-GRN-002A', receivedQty: 12
   });
   assert.equal(partial.receivedQty, 12);
   assert.throws(() => workflow.transitionIndent(partial, {
-    to: 'received', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
+    to: 'received', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
     reference: 'DEMO-GRN-002B', receivedQty: 0
   }), /positive/i);
   const complete = workflow.transitionIndent(partial, {
-    to: 'received', actorRole: 'supervisor', actorLabel: 'Demo Supervisor',
+    to: 'received', actorRole: 'storekeeper', actorLabel: 'Demo Storekeeper',
     reference: 'DEMO-GRN-002B', receivedQty: 18
   });
   assert.equal(complete.receivedQty, 30);
