@@ -13,7 +13,7 @@ Official source:
 - [DPDMIS facility store portal and manuals](https://dpdmis.in/faconline/)
 - [DPDMIS public reporting system](https://dpdmis.in/DPDMISStock/Public_HomeDrug.aspx)
 
-The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, PHCs, Health and Wellness Centres and Sub Health Centres. The PDF has separate annexures:
+The notification says the EDL is for District Hospitals, Civil Hospitals, CHCs, PHCs, Health and Wellness Centres and Sub Health Centres. The PDF has separate annexures. The contents index cites the section starts as pages 47 and 53, but the printed footer on the first actual annexure sheets reads 48 and 54 respectively. BUSHO stores the **printed footer page** as source provenance, not the contents-index reference.
 - Annexure 4: PHC, PHC-AAM and UPHC, printed pages 48–53, 172 numbered source entries.
 - Annexure 5: SHC-AAM, printed pages 54–57, 106 numbered source entries.
 
