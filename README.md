@@ -168,6 +168,12 @@ Account roles and assignments are derived from the database, not browser-supplie
 
 **Release status:** These changes are on the draft pull request [#5](https://github.com/kirtanswamy/BUSHO/pull/5), not on the production branch. The production domain remains attached to `main`. Do not treat the current production website as the deployed version of these development-branch workflows.
 
+## Medicine catalogue validation
+
+The development branch includes a source-transcription validator. It checks provenance, annexure/facility-level consistency, source-row uniqueness and page bounds while refusing unreviewed normalized units or formulation fields. It outputs a staging-only validation report; it does not import to live Supabase.
+
+Run: `node scripts/validate-medicine-catalogue.mjs data/medicine-catalogue/chhattisgarh-edl-2025-sample.json /tmp/edl-validation.json`.
+
 ## Medicine reference catalogue
 
 The development branch adds a versioned, source-attributed medicine catalogue foundation. The first source is the Government of Chhattisgarh **Essential Drug List 2025**. The current JSON file is a clearly labelled partial transcription sample, not the complete EDL and not a stock list. See [medicine catalogue data governance](docs/medicine-reference-catalogue.md) and [the sample source rows](data/medicine-catalogue/chhattisgarh-edl-2025-sample.json).
