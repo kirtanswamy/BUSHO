@@ -992,15 +992,18 @@ begin
       raise exception 'A DPDMIS submission reference is required';
     end if;
   elsif old.status = 'submitted_to_dpdmis' and new.status = 'allocated' then
+    if v_role <> 'storekeeper' then raise exception 'Only an assigned storekeeper can record allocation'; end if;
     if nullif(btrim(new.allocation_reference), '') is null then
       raise exception 'An allocation reference is required';
     end if;
   elsif old.status in ('submitted_to_dpdmis','allocated') and new.status = 'dispatched' then
+    if v_role <> 'storekeeper' then raise exception 'Only an assigned storekeeper can record dispatch'; end if;
     if nullif(btrim(new.dispatch_reference), '') is null then
       raise exception 'A dispatch/challan reference is required';
     end if;
   elsif old.status in ('dispatched','partially_received')
         and new.status in ('partially_received','received') then
+    if v_role <> 'storekeeper' then raise exception 'Only an assigned storekeeper can record receipt'; end if;
     if nullif(btrim(new.receipt_reference), '') is null then
       raise exception 'A goods receipt reference is required';
     end if;
