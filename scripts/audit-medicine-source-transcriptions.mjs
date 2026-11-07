@@ -11,6 +11,7 @@ const TEXT_REVIEW_PATTERNS = [
   { code: 'possible_truncated_unit_or_ocr', pattern: /(?:\b\d+(?:\.\d+)?\s*mg\/5\s*m(?!l)\b|\b\d+(?:\.\d+)?\s*mg\/m(?!l)\b)/i },
   { code: 'source_spelling_or_ocr_check', pattern: /\b(?:Asprin|solvant|paradicholorobenzene|Medroxprogesterone|Drotavarin|Gama Benzene)\b/i },
   { code: 'source_truncated_text', pattern: /\bDiethylcarbama\s*$/i },
+  { code: 'pdf_visual_text_correction', pattern: /\bLevocetirizine Tablet 5mg Levocetirizine Oral liquid/i },
   { code: 'programme_reference_not_sku', pattern: /\b(?:as per|according to)\s+(?:current\s+)?(?:program|programme|national|NVBDCP)/i }
 ];
 
