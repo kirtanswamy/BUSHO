@@ -102,6 +102,10 @@
             <button id="facility-import-submit" class="admin-submit" type="submit">Validate and stage facility candidates</button>
             <p id="facility-import-status" class="admin-status" role="status" aria-live="polite"></p>
           </form>
+          <div class="admin-two-col" style="align-items:end;margin-top:22px">
+            <div class="admin-field"><label for="facility-existing-batch">Resume a previous import batch</label><select id="facility-existing-batch"><option value="">Loading recent batches…</option></select></div>
+            <button id="facility-load-batch" class="admin-submit" type="button">Load batch review</button>
+          </div>
           <div id="facility-import-review" class="hidden" style="margin-top:24px">
             <div class="admin-two-col" style="align-items:center">
               <div><h2>Candidate review queue</h2><p id="facility-batch-summary" class="admin-status"></p></div>
@@ -119,6 +123,6 @@
   <script src="portal-auth-policy.js?v=1"></script>
   <script src="role-auth.js?v=7"></script>
   <script src="admin-portal.js?v=4"></script>
-  <script src="admin-facility-registry.js?v=1"></script>
+  <script src="admin-facility-registry.js?v=2"></script>
 </body>
 </html>
