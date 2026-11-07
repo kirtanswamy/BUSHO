@@ -113,7 +113,7 @@ begin
   join public.medicine_catalogue_entries me on me.id = ii.medicine_catalogue_entry_id
   where ii.id = '20000000-0000-4000-8000-000000000001';
   if v_count <> 1 then raise exception 'Facility inventory item should link to its reviewed reference entry'; end if;
-end $;
+end $$;
 
 insert into public.reports
   (facility_id, worker_id, reporting_date, original_text, language_code, status, summary)
