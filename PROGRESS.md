@@ -709,3 +709,10 @@ No live Supabase migration, operational account creation, real facility/medicine
 - The tests exercise local Supabase Auth, RLS, database transition triggers, constraints and receipt ledger trigger. All data is synthetic_demo; no live stock or external DPDMIS transaction is created. Fixture retention remains intentional due immutable workflow event history.
 - Commits: bb18e7f (expanded tests), 54dd2b9 (assert database trigger denials accurately). Developer must pull and run npm run local:e2e to produce execution evidence; this hosted session cannot access the developer's Docker/local Supabase stack. Do not call Part 2H.10 passed until that local run succeeds.
 - No remote Supabase project, live migration, production deployment or PR merge was changed.
+
+### Part 2H.10 — local end-to-end execution verified — 2026-11-08
+- Developer pulled feature branch through commit `b9883a1` and executed `npm run local:e2e` against the local Supabase stack.
+- Result: all 18 PASS assertions completed, including Auth/profile provisioning, facility isolation, report lifecycle and negative authorization, supervisor-to-storekeeper indent workflow, allocation/dispatch, invalid receipt rejection, partial/final receipt movement reconciliation (12 + 18 = 30), idempotent retry, and anonymous profile RLS denial.
+- The runner intentionally retained the six synthetic Auth users, two synthetic facilities and report/event history for run `0ef7d21c`; this is expected because workflow event history is append-only. The runner completed successfully and printed no cleanup failure.
+- Verified locally by developer-provided terminal output; this is local test evidence, not a hosted CI run or production verification.
+- No production Supabase project, live data, deployment or PR merge was changed.
