@@ -240,3 +240,22 @@ test('reports incomplete rollback explicitly and never silently claims provision
   );
   assert.ok(harness.calls.some(call => call[0] === 'deleteUser'));
 });
+
+
+test('provisions a storekeeper with facility assignment but no worker cadre record or worker consent', async () => {
+  const harness = makeHarness();
+  const result = await provisionUser({
+    ...harness,
+    callerProfile: { id: 'state-1', role: 'state_admin', status: 'active' },
+    callerScopes: [STATE_SCOPE],
+    input: workerInput({ email: 'storekeeper@example.org', displayName: 'Facility Storekeeper', role: 'storekeeper', consentConfirmed: false }),
+    appOrigin: 'https://busho.de5.net',
+    now: FIXED_NOW
+  });
+  assert.equal(result.status, 'invited');
+  assert.equal(result.role, 'storekeeper');
+  const assignment = harness.calls.find(call => call[0] === 'insertFacilityAssignments')[1];
+  assert.deepEqual(assignment, [{ user_id: result.userId, facility_id: FACILITY.id, assignment_role: 'storekeeper', is_active: true }]);
+  assert.equal(harness.calls.some(call => call[0] === 'insertWorker'), false);
+  assert.ok(harness.calls.some(call => call[0] === 'insertAuditLog'));
+});
