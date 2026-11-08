@@ -716,3 +716,9 @@ No live Supabase migration, operational account creation, real facility/medicine
 - The runner intentionally retained the six synthetic Auth users, two synthetic facilities and report/event history for run `0ef7d21c`; this is expected because workflow event history is append-only. The runner completed successfully and printed no cleanup failure.
 - Verified locally by developer-provided terminal output; this is local test evidence, not a hosted CI run or production verification.
 - No production Supabase project, live data, deployment or PR merge was changed.
+
+### Part 2H.11 — inventory ledger integrity and replenishment audit tests authored — 2026-11-08
+- Added local E2E coverage for inventory movement visibility scoped by facility and role; direct authenticated insert/update/delete attempts against the movement ledger; immutable replenishment request fields; backward transition rejection after completed receipt; replenishment event-history status coverage and receipt-delta reconciliation; and duplicate external receipt reference rejection.
+- Duplicate-reference test creates a second synthetic indent, performs a first partial receipt, then attempts a second receipt with the same reference. It verifies the failed movement insert rolls back the parent replenishment update and leaves exactly one movement.
+- The immutable requested-quantity test accepts either a column-level permission denial or a database immutable-field trigger rejection. Current authenticated column grants may reject the write before the trigger, which is still a valid denial but does not independently prove trigger execution.
+- New tests are authored but not yet executed by the developer against local Supabase. Do not mark Part 2H.11 passed until terminal output confirms success. All test data is synthetic_demo; append-only history remains retained. No production data, remote migration, deployment or PR merge was changed.
