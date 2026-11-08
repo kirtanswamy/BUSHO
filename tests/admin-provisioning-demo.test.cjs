@@ -185,3 +185,25 @@ test('admin provisioning UI does not invent district options when directory is e
     assert.equal(role.disabled, true, 'no role requiring a missing facility or district may be selectable');
   }
 });
+
+
+test('admin provisioning UI exposes storekeeper only with a verified facility and submits facility scope', async () => {
+  const facilityId = '11111111-1111-4111-8111-111111111111';
+  const app = harness({
+    facilities: [{ id: facilityId, name: 'Synthetic Verified PHC', state_lgd_code: '22', district_lgd_code: '377', block_lgd_code: '12345' }],
+    districts: [{ lgd_code: '377', name: 'Synthetic District' }]
+  });
+  await app.document.dispatchEvent({ type: 'busho:authenticated', detail: { profile: { id: 'synthetic-admin', role: 'platform_admin', status: 'active', display_name: 'Synthetic Admin' } } });
+  const option = app.elements.get('provision-role').children.find(item => item.value === 'storekeeper');
+  assert.ok(option, 'storekeeper role must be available to platform administrators');
+  assert.equal(option.disabled, false);
+  app.elements.get('provision-role').value = 'storekeeper';
+  app.elements.get('provision-email').value = 'storekeeper.synthetic@example.test';
+  app.elements.get('provision-name').value = 'Synthetic Storekeeper';
+  app.elements.get('facility-options').children[0].children[0].checked = true;
+  await app.elements.get('provision-form').emit('submit');
+  assert.equal(app.calls.provision.length, 1);
+  assert.deepEqual(JSON.parse(JSON.stringify(app.calls.provision[0])), {
+    email: 'storekeeper.synthetic@example.test', displayName: 'Synthetic Storekeeper', preferredLanguage: 'hi', role: 'storekeeper', facilityIds: [facilityId], consentConfirmed: false
+  });
+});
