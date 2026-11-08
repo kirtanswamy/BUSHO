@@ -650,3 +650,12 @@ No live Supabase migration, operational account creation, real facility/medicine
 - Removed `app-v2.js` from `supervisor.html`; worker page continues to load it. Added a regression test in `tests/supervisor-portal-integration.test.cjs` proving the supervisor page does not load the legacy state machine while retaining the dedicated supervisor controller. Commits: `619a6b1`, `0c86eea`.
 - No Supabase branch/project, Auth user, facility, operational row, migration, Edge Function or production setting was created or changed.
 - Next: wait for CI on the new head; if green, verify Vercel deploys that exact SHA and smoke-check supervisor HTML/JS/CSS; then inspect other role pages for legacy worker/demo script leakage before beginning approved isolated browser E2E.
+
+
+### Part 2H.6 — administrator-provisioned storekeeper accounts — 2026-11-08
+- Found a provisioning gap: the database role and facility assignment schema, role-auth gate and storekeeper portal supported `storekeeper`, but the admin invitation UI and server-side provisioning policy allowed only worker/supervisor/admin roles. This prevented the intended supervisor-to-storekeeper workflow from onboarding its storekeeper persona.
+- Added `storekeeper` to the server-side provisionable role set and to state/district/platform administrator provisioning hierarchy. It follows facility assignment validation (active, verified, non-synthetic Chhattisgarh facility, within caller scope), with no worker-consent requirement and no `workers` cadre row created. The account receives the `storekeeper` profile role and `user_facility_assignments.assignment_role='storekeeper'`.
+- Added storekeeper selection and facility assignment to the admin UI, with no storekeeper invitation when there are no verified facilities. Added UI and provisioning-service tests asserting facility assignment, role and absence of worker record.
+- Commits: `9c51149` (server policy), `97a6f79` (admin UI), `c420686` (UI test), `4d41b8b` (service test), `91af3d1` (admin hierarchy fix).
+- CI and Vercel status for the latest commit are pending. No invitations were sent; no Auth users, facilities or live data were created; no Edge Function deployed; no Supabase migration or production change.
+- Next: verify tests and CI; inspect admin provisioning's facility-role semantics and confirm server-side role/facility scope checks; audit remaining operational pages and continue toward isolated browser E2E.
