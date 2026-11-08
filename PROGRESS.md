@@ -1,23 +1,27 @@
 # BUSHO Development Progress
 
-Last updated: 2026-11-07
+Last updated: 2026-11-08
 Working branch: `feature/chhattisgarh-operational-workflow`
 Base branch: `main`
 Production branch: unchanged
 
 > This file is the durable hand-off note for continuing the work in a new chat or after a timeout. Update it whenever a milestone changes state.
 
-## Current state
+## Current verified checkpoint — 2026-11-08
 
-- All work remains isolated on `feature/chhattisgarh-operational-workflow`; PR #5 is open as a draft and no merge to `main` has occurred.
-- The worker report workflow now persists authenticated reports, report items and events to Supabase. Per-user browser storage is recovery-only.
-- Worker report history, assigned-facility context and correction resumption are implemented in the feature branch; live use remains blocked because there are no provisioned users or operational facilities.
-- The supervisor workspace now reads the RLS-scoped server records and supports report review actions and audit timelines. Automated checks passed; live multi-user validation is still blocked on authorised provisioning.
-- Administrator-controlled provisioning and facility-registry review/staging workflows exist in the development branch. The provisioning and facility-registry Edge Functions have not been deployed to the connected Supabase project.
-- The Chhattisgarh EDL 2025 source catalogue has 278 verbatim rows with rendered-page/text reconciliation, a separate source-annotation register, review queue and pharmacist hand-off worksheet. All 278 rows remain pending authorised pharmacist/CGMSC review; normalization and live import remain disabled.
-- Connected Supabase still has zero operational Auth users, profiles, facilities, workers, assignments, reports and audit records. Do not create live users or operational data without an approved provisioning decision.
-- CI run `42395089510` passed Node 18/22/24 and PostgreSQL 17 database-contract/RLS checks for the EDL review-queue code/tests. Documentation-only commits followed; the latest README/progress documentation commits have no new CI run. The Vercel status on the latest README commit reports the team's build-rate limit, not a code result.
-- Production remains attached to `main`. No live Supabase migration, live catalogue import, Edge Function deployment or production release has been performed.
+- Latest verified feature-branch head at the start of this checkpoint: `a9a04a77710b03afaa0b93ffca91c71760498f3b`. A new documentation-only commit adds the Part 2H.5 test plan; re-check CI and Vercel status for the new HEAD before treating it as deployed.
+- PR #5 remains open/draft; no merge to `main`. Production remains unchanged.
+- Latest preview before the documentation commit was READY for the exact `a9a04a7` source commit. Landing, sign-in, worker, supervisor, storekeeper and admin HTML routes returned HTTP 200. Worker CSS/JS assets returned HTTP 200. This is route/asset smoke only, not interactive authenticated browser testing.
+- Connected Supabase project is `vufnjwkaaqtyukjcvknu`, ACTIVE_HEALTHY. It has 23 public tables and all 23 have RLS enabled.
+- Live counts: Auth users 0; profiles 0; facilities 0; workers 0; facility assignments 0; scope assignments 0; reports 0; audit logs 0; inventory items 0; inventory snapshots 0; replenishment requests 0. Reference data: states 1, districts 33, blocks 146, block mapping candidates 2, PMBJK district snapshots 33, state snapshots 1, individual Kendras 0.
+- Live migration history still lists only `20261107041935` and `20261107042533`. The feature-branch migrations are not applied live.
+- No Supabase development branches currently exist. Creating one can incur hourly compute costs; do not create without explicit owner approval of the displayed cost.
+- Live Edge Function inventory is empty. The `provision-user` and `facility-registry` implementations exist in the feature branch but are not deployed.
+- Security advisor returned no findings; health advisor returned no findings. Performance advisor reported 48 unused-index informational findings; do not remove indexes solely to silence this advisory.
+- New document: [Part 2H.5 authenticated demo plan](docs/part-2h5-authenticated-demo-plan.md). It defines isolated environment choices, synthetic fixtures, positive/negative role tests, evidence requirements and exit criteria. No test environment or identities were provisioned.
+- Important preview audit finding: the worker and supervisor pages return successful HTML, but the supervisor source still contains static synthetic demonstration markup (e.g. Rampur sample alert, hard-coded demo metrics and stock cards) alongside the authenticated data-driven supervisor controller. Confirm that synthetic sections are hidden/removed in the authenticated supervisor view and labelled clearly before demo acceptance. Do not treat HTTP 200 as UI correctness.
+- The current connected project must remain untouched for demos. Do not create live Auth users, facilities, workers, assignments, reports, inventory, apply migrations, or deploy Edge Functions without a separately approved environment and decision.
+- Next: inspect and fix the supervisor static-demo leakage on the feature branch; add a regression test; run CI; verify the new preview; then obtain owner choice/approval for local Supabase, a Supabase branch (cost confirmation required) or a separate non-production project before authenticated multi-user browser E2E.
 
 ## Milestone tracker
 
