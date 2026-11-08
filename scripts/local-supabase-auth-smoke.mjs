@@ -421,6 +421,74 @@ try {
   });
   assert.equal(duplicateIndentMovements.length, 1, 'duplicate reference rejection leaves exactly one movement');
 
+  // Part 2H.12: privilege escalation, assignment tampering and revocation.
+  let profileRoleEscalationDenied = false;
+  try {
+    await request('/rest/v1/profiles?id=eq.' + workerA.id, {
+      key: anonKey, token: workerA.token, method: 'PATCH',
+      body: { role: 'platform_admin', status: 'active' }
+    });
+  } catch (error) {
+    profileRoleEscalationDenied = /failed \((401|403)\)|permission denied|42501|not allowed/i.test(error.message);
+  }
+  assert.equal(profileRoleEscalationDenied, true, 'worker cannot elevate own profile role to platform admin');
+
+  let assignmentInjectionDenied = false;
+  try {
+    await request('/rest/v1/user_facility_assignments', {
+      key: anonKey, token: workerA.token, method: 'POST',
+      body: [{ user_id: workerA.id, facility_id: facilityB.id, assignment_role: 'supervisor' }]
+    });
+  } catch (error) {
+    assignmentInjectionDenied = /failed \((401|403)\)|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(assignmentInjectionDenied, true, 'worker cannot create a cross-facility supervisor assignment');
+
+  let assignmentTamperDenied = false;
+  try {
+    await request('/rest/v1/user_facility_assignments?user_id=eq.' + workerA.id, {
+      key: anonKey, token: workerA.token, method: 'PATCH', body: { assignment_role: 'platform_admin' }
+    });
+  } catch (error) {
+    assignmentTamperDenied = /failed \((401|403)\)|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(assignmentTamperDenied, true, 'worker cannot modify facility assignment role');
+
+  let assignmentDeleteDenied = false;
+  try {
+    await request('/rest/v1/user_facility_assignments?user_id=eq.' + workerA.id, {
+      key: anonKey, token: workerA.token, method: 'DELETE'
+    });
+  } catch (error) {
+    assignmentDeleteDenied = /failed \((401|403)\)|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(assignmentDeleteDenied, true, 'worker cannot revoke or delete facility assignments');
+
+  // Administrative revocation uses the service role only, then validates the
+  // already-issued access token loses facility visibility immediately.
+  await request('/rest/v1/user_facility_assignments?user_id=eq.' + storekeeperA.id + '&facility_id=eq.' + facilityA.id, {
+    method: 'DELETE'
+  });
+  const afterAssignmentRevocation = await request('/rest/v1/inventory_movements?select=id&replenishment_request_id=eq.' + indent.id, {
+    key: anonKey, token: storekeeperA.token
+  });
+  assert.equal(afterAssignmentRevocation.length, 0, 'revoked facility assignment removes ledger access for an existing token');
+
+  await request('/rest/v1/user_facility_assignments', {
+    method: 'POST',
+    body: [{ user_id: storekeeperA.id, facility_id: facilityA.id, assignment_role: 'storekeeper' }]
+  });
+  const afterAssignmentRestore = await request(movementPath, { key: anonKey, token: storekeeperA.token });
+  assert.equal(afterAssignmentRestore.length, 2, 'restored active facility assignment restores scoped ledger access');
+
+  await request('/rest/v1/profiles?id=eq.' + storekeeperA.id, {
+    method: 'PATCH', body: { status: 'suspended' }
+  });
+  const afterProfileSuspensionFacilities = await scopedFacilities(storekeeperA);
+  assert.equal(afterProfileSuspensionFacilities.length, 0, 'suspended profile loses facility access despite a valid existing token');
+  const afterProfileSuspensionMovements = await request(movementPath, { key: anonKey, token: storekeeperA.token });
+  assert.equal(afterProfileSuspensionMovements.length, 0, 'suspended profile loses inventory ledger access');
+
   const anonymous = await fetch(apiUrl + '/rest/v1/profiles?select=id', { headers: headers(anonKey) });
   if (anonymous.status === 200) {
     const anonymousRows = await anonymous.json();
@@ -451,6 +519,9 @@ try {
   console.log('PASS immutable indent fields and backwards transitions are rejected');
   console.log('PASS append-only replenishment event history reconciles receipt deltas');
   console.log('PASS duplicate external receipt reference is rejected atomically');
+  console.log('PASS privilege escalation and facility assignment tampering are denied');
+  console.log('PASS administrative assignment revocation removes access for an existing token');
+  console.log('PASS suspended profile loses scoped access without token replacement');
   console.log('PASS anonymous profile access denied by RLS');
 } finally {
   // Workflow events are intentionally append-only. Deleting a report cascades
