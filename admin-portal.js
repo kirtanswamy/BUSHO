@@ -36,9 +36,9 @@
   }
 
   function allowedRoles(role) {
-    if (role === 'platform_admin') return ['state_admin','district_admin','supervisor','worker'];
-    if (role === 'state_admin') return ['district_admin','supervisor','worker'];
-    if (role === 'district_admin') return ['supervisor','worker'];
+    if (role === 'platform_admin') return ['state_admin','district_admin','supervisor','storekeeper','worker'];
+    if (role === 'state_admin') return ['district_admin','supervisor','storekeeper','worker'];
+    if (role === 'district_admin') return ['supervisor','storekeeper','worker'];
     return [];
   }
 
