@@ -37,15 +37,15 @@ test('health worker invitations require one selected facility and explicit conse
   const js = read('admin-portal.js');
   assert.match(js, /role === 'worker' && facilityIds\.length !== 1/);
   assert.match(js, /role === 'worker' && !consent\.checked/);
-  assert.match(js, /facilityIds: \['worker','supervisor'\]\.includes\(role\) \? facilityIds : \[\]/);
+  assert.match(js, /facilityIds: \['worker','supervisor','storekeeper'\]\.includes\(role\) \? facilityIds : \[\]/);
   assert.match(js, /stateLgdCode: '22'/);
 });
 
 test('platform, state and district roles have distinct server-permitted provisioning hierarchies', () => {
   const js = read('supabase/functions/_shared/provisioning-policy.mjs');
   assert.match(js, /platform_admin: PROVISIONABLE_ROLES/);
-  assert.match(js, /state_admin: \['worker', 'supervisor', 'district_admin'\]/);
-  assert.match(js, /district_admin: \['worker', 'supervisor'\]/);
+  assert.match(js, /state_admin: \['worker', 'supervisor', 'storekeeper', 'district_admin'\]/);
+  assert.match(js, /district_admin: \['worker', 'supervisor', 'storekeeper'\]/);
   assert.match(js, /Only a platform administrator can provision a state administrator/);
   assert.match(js, /Only a state or platform administrator can provision a district administrator/);
 });
