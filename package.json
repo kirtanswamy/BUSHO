@@ -16,7 +16,7 @@
     "start": "node server.mjs",
     "test": "node --test",
     "smoke": "node scripts/smoke.mjs",
-    "check": "node --test && node scripts/smoke.mjs",
+    "check": "node --test && node --check scripts/local-supabase-auth-smoke.mjs && node scripts/smoke.mjs",
     "local:e2e": "node scripts/local-supabase-auth-smoke.mjs"
   }
 }
