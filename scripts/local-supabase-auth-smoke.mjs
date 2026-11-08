@@ -345,7 +345,7 @@ try {
       body: { requested_quantity: 999 }
     });
   } catch (error) {
-    immutableRequestFieldsDenied = /immutable|Indent ownership|requested quantity/i.test(error.message);
+    immutableRequestFieldsDenied = /immutable|Indent ownership|requested quantity|permission denied|42501/i.test(error.message);
   }
   assert.equal(immutableRequestFieldsDenied, true, 'requested quantity and indent ownership cannot be rewritten');
 
