@@ -293,6 +293,134 @@ try {
   });
   assert.equal(storekeeperReportReview.length, 0, 'storekeeper cannot perform supervisor report review');
 
+  // Part 2H.11: inventory ledger integrity, event history and state-transition audit.
+  const storekeeperMovementRows = await request(movementPath, { key: anonKey, token: storekeeperA.token });
+  assert.equal(storekeeperMovementRows.length, 2, 'assigned storekeeper can read facility A receipt movements');
+  const crossFacilityMovementRows = await request(movementPath, { key: anonKey, token: storekeeperB.token });
+  assert.equal(crossFacilityMovementRows.length, 0, 'other-facility storekeeper cannot read facility A movements');
+  const workerMovementRows = await request(movementPath, { key: anonKey, token: workerA.token });
+  assert.equal(workerMovementRows.length, 0, 'worker role cannot read the inventory movement ledger');
+
+  let directLedgerInsertDenied = false;
+  try {
+    await request('/rest/v1/inventory_movements', {
+      key: anonKey, token: storekeeperA.token, method: 'POST',
+      body: [{
+        facility_id: facilityA.id, inventory_item_id: inventoryItem.id,
+        replenishment_request_id: indent.id, movement_type: 'inbound_receipt',
+        quantity_delta: 1, unit: 'packets', external_reference: 'E2E-DIRECT-' + suffix,
+        data_mode: 'synthetic_demo', recorded_by_user_id: storekeeperA.id
+      }]
+    });
+  } catch (error) {
+    directLedgerInsertDenied = /failed \((401|403)\)|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(directLedgerInsertDenied, true, 'authenticated storekeeper cannot insert directly into immutable inventory ledger');
+
+  let directLedgerUpdateDenied = false;
+  try {
+    await request('/rest/v1/inventory_movements?id=eq.' + movements[0].id, {
+      key: anonKey, token: storekeeperA.token, method: 'PATCH',
+      body: { quantity_delta: 999 }
+    });
+  } catch (error) {
+    directLedgerUpdateDenied = /failed \((401|403)\)|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(directLedgerUpdateDenied, true, 'authenticated storekeeper cannot update inventory ledger rows');
+
+  let directLedgerDeleteDenied = false;
+  try {
+    await request('/rest/v1/inventory_movements?id=eq.' + movements[0].id, {
+      key: anonKey, token: storekeeperA.token, method: 'DELETE'
+    });
+  } catch (error) {
+    directLedgerDeleteDenied = /failed \((401|403)\)|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(directLedgerDeleteDenied, true, 'authenticated storekeeper cannot delete inventory ledger rows');
+
+  let immutableRequestFieldsDenied = false;
+  try {
+    await request('/rest/v1/replenishment_requests?id=eq.' + indent.id, {
+      key: anonKey, token: storekeeperA.token, method: 'PATCH',
+      body: { requested_quantity: 999 }
+    });
+  } catch (error) {
+    immutableRequestFieldsDenied = /immutable|Indent ownership|requested quantity/i.test(error.message);
+  }
+  assert.equal(immutableRequestFieldsDenied, true, 'requested quantity and indent ownership cannot be rewritten');
+
+  let backwardsTransitionDenied = false;
+  try {
+    await request('/rest/v1/replenishment_requests?id=eq.' + indent.id, {
+      key: anonKey, token: storekeeperA.token, method: 'PATCH',
+      body: { status: 'dispatched' }
+    });
+  } catch (error) {
+    backwardsTransitionDenied = /not allowed|transition/i.test(error.message);
+  }
+  assert.equal(backwardsTransitionDenied, true, 'completed receipt cannot transition backwards to dispatched');
+
+  const replenishmentEvents = await request('/rest/v1/replenishment_events?select=id,action,status_from,status_to,quantity_delta,external_reference&replenishment_request_id=eq.' + indent.id + '&order=created_at.asc', {
+    key: anonKey, token: storekeeperA.token
+  });
+  assert(replenishmentEvents.some(x => x.action === 'indent_created'), 'append-only replenishment history records indent creation');
+  assert(replenishmentEvents.some(x => x.status_to === 'supervisor_approved'), 'append-only history records supervisor approval');
+  assert(replenishmentEvents.some(x => x.status_to === 'submitted_to_dpdmis'), 'append-only history records DPDMIS submission');
+  assert(replenishmentEvents.some(x => x.status_to === 'allocated'), 'append-only history records allocation');
+  assert(replenishmentEvents.some(x => x.status_to === 'dispatched'), 'append-only history records dispatch');
+  assert.equal(replenishmentEvents.filter(x => x.action === 'receipt_recorded').reduce((sum, x) => sum + Number(x.quantity_delta || 0), 0), 30,
+    'append-only receipt event deltas reconcile to 30');
+
+  let duplicateReferenceDenied = false;
+  const duplicateIndentRows = await request('/rest/v1/replenishment_requests?select=id,status', {
+    key: anonKey, token: supervisorA.token, method: 'POST', prefer: 'return=representation',
+    body: [{
+      facility_id: facilityA.id, inventory_item_id: inventoryItem.id,
+      source_report_id: report.id, requested_quantity: 20, on_hand_quantity: 0,
+      unit: 'packets', status: 'recommended_to_facility_store',
+      data_mode: 'synthetic_demo', note: 'Synthetic duplicate-reference integrity test'
+    }]
+  });
+  const duplicateIndent = duplicateIndentRows[0];
+  await request('/rest/v1/replenishment_requests?id=eq.' + duplicateIndent.id, {
+    key: anonKey, token: supervisorA.token, method: 'PATCH',
+    body: { status: 'supervisor_approved' }
+  });
+  await request('/rest/v1/replenishment_requests?id=eq.' + duplicateIndent.id, {
+    key: anonKey, token: supervisorA.token, method: 'PATCH',
+    body: { status: 'submitted_to_dpdmis', dpdmis_reference: 'E2E-DPDMIS-SECOND-' + suffix }
+  });
+  await request('/rest/v1/replenishment_requests?id=eq.' + duplicateIndent.id, {
+    key: anonKey, token: storekeeperA.token, method: 'PATCH',
+    body: { status: 'allocated', allocation_reference: 'E2E-ALLOC-SECOND-' + suffix }
+  });
+  await request('/rest/v1/replenishment_requests?id=eq.' + duplicateIndent.id, {
+    key: anonKey, token: storekeeperA.token, method: 'PATCH',
+    body: { status: 'dispatched', dispatch_reference: 'E2E-CHALLAN-SECOND-' + suffix }
+  });
+  await request('/rest/v1/replenishment_requests?id=eq.' + duplicateIndent.id, {
+    key: anonKey, token: storekeeperA.token, method: 'PATCH',
+    body: { status: 'partially_received', received_quantity: 5, receipt_reference: 'E2E-GRN-DUP-' + suffix }
+  });
+  try {
+    await request('/rest/v1/replenishment_requests?id=eq.' + duplicateIndent.id, {
+      key: anonKey, token: storekeeperA.token, method: 'PATCH',
+      body: { status: 'partially_received', received_quantity: 10, receipt_reference: 'E2E-GRN-DUP-' + suffix }
+    });
+  } catch (error) {
+    duplicateReferenceDenied = /duplicate key|inventory_movements_request_reference_uidx|unique constraint/i.test(error.message);
+  }
+  assert.equal(duplicateReferenceDenied, true, 'same external receipt reference cannot create a duplicate movement for one indent');
+  const duplicateIndentState = await request('/rest/v1/replenishment_requests?id=eq.' + duplicateIndent.id + '&select=status,received_quantity', {
+    key: anonKey, token: storekeeperA.token
+  });
+  assert.equal(duplicateIndentState[0]?.status, 'partially_received', 'failed duplicate reference transaction preserves prior indent state');
+  assert.equal(Number(duplicateIndentState[0]?.received_quantity), 5, 'failed duplicate reference transaction preserves prior received quantity');
+  const duplicateIndentMovements = await request('/rest/v1/inventory_movements?select=id,quantity_delta,external_reference&replenishment_request_id=eq.' + duplicateIndent.id, {
+    key: anonKey, token: storekeeperA.token
+  });
+  assert.equal(duplicateIndentMovements.length, 1, 'duplicate reference rejection leaves exactly one movement');
+
   const anonymous = await fetch(apiUrl + '/rest/v1/profiles?select=id', { headers: headers(anonKey) });
   if (anonymous.status === 200) {
     const anonymousRows = await anonymous.json();
@@ -302,7 +430,7 @@ try {
   }
 
   console.log('PASS local Supabase Auth health');
-  console.log('PASS four synthetic Auth accounts created and password-authenticated');
+  console.log('PASS six synthetic Auth accounts created and password-authenticated');
   console.log('PASS server-side profile provisioning trigger and scoped active profiles');
   console.log('PASS worker and supervisor facility isolation across two synthetic facilities');
   console.log('PASS worker draft report creation');
@@ -318,6 +446,11 @@ try {
   console.log('PASS missing receipt reference and over-receipt are rejected');
   console.log('PASS partial and final receipts create reconciled inbound ledger deltas');
   console.log('PASS exact receipt retry is idempotent and does not duplicate ledger entries');
+  console.log('PASS inventory movement visibility is facility- and role-scoped');
+  console.log('PASS authenticated users cannot directly insert, update or delete ledger rows');
+  console.log('PASS immutable indent fields and backwards transitions are rejected');
+  console.log('PASS append-only replenishment event history reconciles receipt deltas');
+  console.log('PASS duplicate external receipt reference is rejected atomically');
   console.log('PASS anonymous profile access denied by RLS');
 } finally {
   // Workflow events are intentionally append-only. Deleting a report cascades
