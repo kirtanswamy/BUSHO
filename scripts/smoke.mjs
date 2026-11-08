@@ -162,7 +162,8 @@ try {
   check(workerPage.body.includes('class="portal-sidebar worker-sidebar"') && workerPage.body.includes('data-portal-view="new-report"'), 'worker portal has its own field-work navigation');
   check(supervisorPage.body.includes('class="portal-sidebar supervisor-sidebar"') && supervisorPage.body.includes('data-portal-view="reports"') && supervisorPage.body.includes('data-portal-view="approvals"'), 'supervisor portal has dedicated reports and approvals navigation');
   check(workerPage.body.includes('data-module="my-reports"') && supervisorPage.body.includes('data-module="reports"'), 'worker report history and supervisor reports inbox are separate modules');
-  check(workerPage.body.includes('id="message-text"') && supervisorPage.body.includes('id="message-text"'), 'report input has the live status node required by the extraction workflow');
+  check(workerPage.body.includes('id="message-text"'), 'worker report input has the live status node required by the extraction workflow');
+  check(!supervisorPage.body.includes('id="message-text"') && supervisorPage.body.includes('data-module="reports"'), 'supervisor workspace does not embed the worker report composer');
   check(workerPage.body.includes('id="profile-trigger"') && supervisorPage.body.includes('id="profile-trigger"'), 'both role portals expose an accessible profile menu');
   check(supervisorPage.body.includes('data-module="overview"') && supervisorPage.body.includes('supervisor-operations.js'), 'supervisor overview mounts the authenticated live operations workspace');
 
