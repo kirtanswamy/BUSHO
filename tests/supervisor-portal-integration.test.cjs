@@ -142,3 +142,13 @@ test('supervisor page does not load the legacy worker/demo state machine', () =>
   assert.match(html, /supervisor-portal\.js/);
   assert.match(html, /data-module="overview"/);
 });
+
+
+test('authenticated supervisor portal contains no legacy worker panel or fabricated facility, trend and stock metrics', () => {
+  const html = read('supervisor.html');
+  assert.doesNotMatch(html, /data-module="overview-content"|id="worker-panel"|id="supervisor-panel"/);
+  assert.doesNotMatch(html, /Rampur HWC|Rampur block|Fever mentions at|\+38%|20 \/ 50|14 \/ 60|72 \/ 100|48h/);
+  assert.match(html, /Resolved from your authenticated account/);
+  assert.match(html, /data-module="overview"/);
+  assert.match(html, /supervisor-operations\.js/);
+});
