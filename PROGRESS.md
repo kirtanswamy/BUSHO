@@ -661,3 +661,5 @@ No live Supabase migration, operational account creation, real facility/medicine
 - Next: verify tests and CI; inspect admin provisioning's facility-role semantics and confirm server-side role/facility scope checks; audit remaining operational pages and continue toward isolated browser E2E.
 
 - Follow-up: bumped the admin portal script URL to `admin-portal.js?v=7` in `admin.html` so clients do not retain a cached pre-storekeeper provisioning bundle. Commit `0c31d56`. Latest-head CI and Vercel deployment verification pending.
+
+- CI exposed two stale assertions in `tests/admin-portal-integration.test.cjs` that encoded the old provisioning hierarchy and worker/supervisor-only facility payload. Updated those assertions and added a focused storekeeper contract check. The storekeeper UI/service tests are also present. Latest CI run `42449804731` is queued for commit `a7eb514`; earlier run `42449662069` failed only the Node test matrix on those two stale assertions while PostgreSQL 17 RLS migration/contract job passed. Await latest run before calling this milestone green.
