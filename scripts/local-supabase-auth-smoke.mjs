@@ -13,10 +13,10 @@ const password = 'Local-BUSHO-E2E-' + randomUUID() + '!aA1';
 const users = [];
 const facilities = [];
 const headers = key => ({ apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' });
-async function request(path, { key = serviceKey, method = 'GET', body, prefer } = {}) {
+async function request(path, { key = serviceKey, token = key, method = 'GET', body, prefer } = {}) {
   const response = await fetch(apiUrl + path, {
     method,
-    headers: { ...headers(key), ...(prefer ? { Prefer: prefer } : {}) },
+    headers: { apikey: key, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', ...(prefer ? { Prefer: prefer } : {}) },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {})
   });
   const text = await response.text();
@@ -57,10 +57,10 @@ async function addWorker(user, facility, role) {
   return rows[0].id;
 }
 async function scopedFacilities(user) {
-  return request('/rest/v1/facilities?select=id,name&order=name', { key: user.token });
+  return request('/rest/v1/facilities?select=id,name&order=name', { key: anonKey, token: user.token });
 }
 async function scopedReports(user) {
-  return request('/rest/v1/reports?select=id,facility_id,status&order=created_at', { key: user.token });
+  return request('/rest/v1/reports?select=id,facility_id,status&order=created_at', { key: anonKey, token: user.token });
 }
 
 try {
@@ -95,7 +95,7 @@ try {
   assert.deepEqual(supervisorBFacilities.map(x => x.id), [facilityB.id], 'supervisor B sees only facility B');
 
   const created = await request('/rest/v1/reports?select=id,facility_id,status', {
-    key: workerA.token, method: 'POST', prefer: 'return=representation', body: [{
+    key: anonKey, token: workerA.token, method: 'POST', prefer: 'return=representation', body: [{
       facility_id: facilityA.id, worker_id: workerAId, status: 'draft',
       reporting_date: new Date().toISOString().slice(0, 10),
       original_text: 'Synthetic E2E report; no patient information.',
@@ -114,9 +114,12 @@ try {
   assert(!workerBReports.some(x => x.id === report.id), 'other-facility worker cannot read worker report');
 
   const anonymous = await fetch(apiUrl + '/rest/v1/profiles?select=id', { headers: headers(anonKey) });
-  assert.equal(anonymous.status, 200, 'anonymous PostgREST request is handled');
-  const anonymousRows = await anonymous.json();
-  assert.equal(anonymousRows.length, 0, 'anonymous user cannot read private profiles');
+  if (anonymous.status === 200) {
+    const anonymousRows = await anonymous.json();
+    assert.equal(anonymousRows.length, 0, 'anonymous user cannot read private profiles');
+  } else {
+    assert([401, 403].includes(anonymous.status), 'anonymous profile access is denied');
+  }
 
   console.log('PASS local Supabase Auth health');
   console.log('PASS four synthetic Auth accounts created and password-authenticated');
