@@ -25,6 +25,7 @@
   const ROLE_LABELS = {
     worker: 'Health worker',
     supervisor: 'Facility supervisor',
+    storekeeper: 'Facility storekeeper',
     district_admin: 'District administrator',
     state_admin: 'State administrator'
   };
@@ -91,7 +92,7 @@
 
   function updateRoleSections(event) {
     const role = roleSelect.value;
-    const facilityRole = role === 'worker' || role === 'supervisor';
+    const facilityRole = ['worker', 'supervisor', 'storekeeper'].includes(role);
     const districtRole = role === 'district_admin';
     const stateRole = role === 'state_admin';
     facilitySection.classList.toggle('hidden', !facilityRole);
@@ -113,7 +114,7 @@
       input.disabled = role === 'worker' && selected.length === 1 && !input.checked;
     });
     if (stateRole) showStatus('State scope will be assigned to Chhattisgarh (LGD 22).');
-    else if (role !== 'worker' && role !== 'supervisor' && !districtRole) showStatus('');
+    else if (!facilityRole && !districtRole) showStatus('');
     else if (facilityRole && !facilities.length) showStatus('Facility-based invitations are blocked until verified facilities are available.', 'error');
     else if (districtRole && !districts.length) showStatus('No district directory records are available for this administrator.', 'error');
     else showStatus('');
@@ -125,7 +126,7 @@
       const option = document.createElement('option');
       option.value = role;
       option.textContent = ROLE_LABELS[role];
-      if (['worker','supervisor'].includes(role) && !facilities.length) option.disabled = true;
+      if (['worker','supervisor','storekeeper'].includes(role) && !facilities.length) option.disabled = true;
       if (role === 'district_admin' && !districts.length) option.disabled = true;
       roleSelect.append(option);
     });
@@ -188,10 +189,10 @@
     if (busy || !client || !profile) return;
     const role = roleSelect.value;
     const facilityIds = selectedFacilityIds();
-    if (['worker','supervisor'].includes(role)) {
+    if (['worker','supervisor','storekeeper'].includes(role)) {
       if (!facilities.length) return showStatus('No verified facility is available. No account was created.', 'error');
       if (role === 'worker' && facilityIds.length !== 1) return showStatus('Select exactly one facility for a health worker.', 'error');
-      if (role === 'supervisor' && (facilityIds.length < 1 || facilityIds.length > 20)) return showStatus('Select between 1 and 20 facilities for a supervisor.', 'error');
+      if (['supervisor','storekeeper'].includes(role) && (facilityIds.length < 1 || facilityIds.length > 20)) return showStatus('Select between 1 and 20 facilities for this facility account.', 'error');
     }
     if (role === 'district_admin' && !districtSelect.value) return showStatus('Select the district for this administrator.', 'error');
     if (role === 'worker' && !consent.checked) return showStatus('Confirm that the worker has been informed and consented before sending an invitation.', 'error');
@@ -201,7 +202,7 @@
       displayName: document.getElementById('provision-name').value,
       preferredLanguage: document.getElementById('provision-language').value,
       role,
-      facilityIds: ['worker','supervisor'].includes(role) ? facilityIds : [],
+      facilityIds: ['worker','supervisor','storekeeper'].includes(role) ? facilityIds : [],
       consentConfirmed: role === 'worker' && consent.checked
     };
     if (role === 'district_admin') {
