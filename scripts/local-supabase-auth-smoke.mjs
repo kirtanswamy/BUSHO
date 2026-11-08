@@ -106,18 +106,27 @@ try {
   const report = created[0];
   assert.equal(report.facility_id, facilityA.id);
 
-  const [supervisorAReports, supervisorBReports, workerBReports] = await Promise.all([
-    scopedReports(supervisorA), scopedReports(supervisorB), scopedReports(workerB)
+  const [workerADrafts, supervisorADrafts, supervisorBDrafts, workerBDrafts] = await Promise.all([
+    scopedReports(workerA), scopedReports(supervisorA), scopedReports(supervisorB), scopedReports(workerB)
   ]);
-  assert(supervisorAReports.some(x => x.id === report.id), 'same-facility supervisor can read worker report');
-  assert(!supervisorBReports.some(x => x.id === report.id), 'other-facility supervisor cannot read worker report');
-  assert(!workerBReports.some(x => x.id === report.id), 'other-facility worker cannot read worker report');
+  assert(workerADrafts.some(x => x.id === report.id && x.status === 'draft'), 'worker can read their own draft');
+  assert(!supervisorADrafts.some(x => x.id === report.id), 'supervisor cannot read an unsubmitted worker draft');
+  assert(!supervisorBDrafts.some(x => x.id === report.id), 'other-facility supervisor cannot read worker draft');
+  assert(!workerBDrafts.some(x => x.id === report.id), 'other-facility worker cannot read worker draft');
 
   const submitted = await request('/rest/v1/reports?id=eq.' + report.id + '&select=id,status', {
     key: anonKey, token: workerA.token, method: 'PATCH', prefer: 'return=representation',
     body: { status: 'submitted' }
   });
   assert.equal(submitted[0]?.status, 'submitted', 'worker can submit their own draft');
+
+  const [supervisorASubmitted, supervisorBSubmitted, workerBSubmitted] = await Promise.all([
+    scopedReports(supervisorA), scopedReports(supervisorB), scopedReports(workerB)
+  ]);
+  assert(supervisorASubmitted.some(x => x.id === report.id && x.status === 'submitted'),
+    'same-facility supervisor can read a submitted worker report');
+  assert(!supervisorBSubmitted.some(x => x.id === report.id), 'other-facility supervisor cannot read submitted report');
+  assert(!workerBSubmitted.some(x => x.id === report.id), 'other-facility worker cannot read submitted report');
   const verified = await request('/rest/v1/reports?id=eq.' + report.id + '&select=id,status', {
     key: anonKey, token: supervisorA.token, method: 'PATCH', prefer: 'return=representation',
     body: { status: 'supervisor_verified' }
@@ -140,7 +149,8 @@ try {
   console.log('PASS server-side profile provisioning trigger and scoped active profiles');
   console.log('PASS worker and supervisor facility isolation across two synthetic facilities');
   console.log('PASS worker draft report creation');
-  console.log('PASS same-facility supervisor report visibility');
+  console.log('PASS worker draft remains private until submission');
+  console.log('PASS same-facility supervisor report visibility after submission');
   console.log('PASS worker submission and supervisor verification transitions');
   console.log('PASS cross-facility supervisor and worker report isolation');
   console.log('PASS anonymous profile access denied by RLS');
