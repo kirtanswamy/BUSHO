@@ -68,3 +68,13 @@ test('administrator facility registry workflow requires source provenance, pagin
   assert.match(js, /facility-page-next/);
   assert.doesNotMatch(js, /localStorage|sessionStorage/);
 });
+
+
+test('storekeeper invitations are facility-scoped and require a verified facility', () => {
+  const js = read('admin-portal.js');
+  const policy = read('supabase/functions/_shared/provisioning-policy.mjs');
+  assert.match(js, /storekeeper: 'Facility storekeeper'/);
+  assert.match(js, /'worker','supervisor','storekeeper'/);
+  assert.match(policy, /'worker', 'supervisor', 'storekeeper'/);
+  assert.match(policy, /facilityIds.length < 1 \|\| facilityIds.length > 20/);
+});
