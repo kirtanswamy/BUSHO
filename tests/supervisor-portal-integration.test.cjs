@@ -134,3 +134,11 @@ test('supervisor page no longer activates synthetic browser-local supervisor not
   const html = read('supervisor.html');
   assert.doesNotMatch(html, /Fever mentions · Rampur HWC|Demo Worker A|Reports received this week/);
 });
+
+test('supervisor page does not load the legacy worker/demo state machine', () => {
+  const html = read('supervisor.html');
+  assert.doesNotMatch(html, /<script[^>]+app-v2\.js/);
+  assert.match(html, /supervisor-operations\.js/);
+  assert.match(html, /supervisor-portal\.js/);
+  assert.match(html, /data-module="overview"/);
+});
