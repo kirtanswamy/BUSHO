@@ -97,6 +97,17 @@ begin
   from pg_proc p
   join pg_namespace n on n.oid = p.pronamespace
   where n.nspname = 'public'
+    -- Extension-owned routines (for example pgcrypto) are not BUSHO RPCs.
+    -- Keep auditing every application-owned public routine fail-closed.
+    and not exists (
+      select 1
+      from pg_depend d
+      join pg_extension e on e.oid = d.refobjid
+      where d.classid = 'pg_proc'::regclass
+        and d.objid = p.oid
+        and d.refclassid = 'pg_extension'::regclass
+        and d.deptype = 'e'
+    )
     and (
       has_function_privilege('anon', p.oid, 'EXECUTE')
       or has_function_privilege('authenticated', p.oid, 'EXECUTE')
@@ -114,6 +125,15 @@ begin
   join pg_namespace n on n.oid = p.pronamespace
   where n.nspname in ('public','app_private')
     and p.prosecdef
+    and not exists (
+      select 1
+      from pg_depend d
+      join pg_extension e on e.oid = d.refobjid
+      where d.classid = 'pg_proc'::regclass
+        and d.objid = p.oid
+        and d.refclassid = 'pg_extension'::regclass
+        and d.deptype = 'e'
+    )
     and coalesce(array_to_string(p.proconfig, ','), '') not like '%search_path=%';
   if v_count > 0 then
     raise exception 'SECURITY DEFINER routines missing pinned search_path: %', v_details;
@@ -127,6 +147,15 @@ begin
   cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a
   where n.nspname in ('public','app_private')
     and p.prosecdef
+    and not exists (
+      select 1
+      from pg_depend d
+      join pg_extension e on e.oid = d.refobjid
+      where d.classid = 'pg_proc'::regclass
+        and d.objid = p.oid
+        and d.refclassid = 'pg_extension'::regclass
+        and d.deptype = 'e'
+    )
     and a.grantee = 0
     and a.privilege_type = 'EXECUTE';
   if v_count > 0 then
