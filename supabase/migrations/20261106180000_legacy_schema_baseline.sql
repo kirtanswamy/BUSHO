@@ -2,7 +2,7 @@
 
 create extension if not exists pgcrypto;
 
-create table public.facilities (
+create table if not exists public.facilities (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   district text,
@@ -10,7 +10,7 @@ create table public.facilities (
   created_at timestamptz not null default now()
 );
 
-create table public.workers (
+create table if not exists public.workers (
   id uuid primary key default gen_random_uuid(),
   facility_id uuid not null references public.facilities(id),
   display_name text not null,
@@ -22,7 +22,7 @@ create table public.workers (
   created_at timestamptz not null default now()
 );
 
-create table public.conversations (
+create table if not exists public.conversations (
   id uuid primary key default gen_random_uuid(),
   worker_id uuid not null references public.workers(id),
   channel text not null default 'whatsapp' check (channel = 'whatsapp'),
@@ -33,7 +33,7 @@ create table public.conversations (
   created_at timestamptz not null default now()
 );
 
-create table public.messages (
+create table if not exists public.messages (
   id uuid primary key default gen_random_uuid(),
   conversation_id uuid not null references public.conversations(id),
   provider_message_id text not null unique,
@@ -48,7 +48,7 @@ create table public.messages (
   created_at timestamptz not null default now()
 );
 
-create table public.reports (
+create table if not exists public.reports (
   id uuid primary key default gen_random_uuid(),
   facility_id uuid not null references public.facilities(id),
   worker_id uuid not null references public.workers(id),
@@ -64,7 +64,7 @@ create table public.reports (
   created_at timestamptz not null default now()
 );
 
-create table public.report_items (
+create table if not exists public.report_items (
   id uuid primary key default gen_random_uuid(),
   report_id uuid not null references public.reports(id),
   item_type text not null check (item_type = any (array['symptom_trend'::text,'stock_observation'::text])),
@@ -78,7 +78,7 @@ create table public.report_items (
   created_at timestamptz not null default now()
 );
 
-create table public.inventory_items (
+create table if not exists public.inventory_items (
   id uuid primary key default gen_random_uuid(),
   facility_id uuid not null references public.facilities(id),
   item_code text not null,
@@ -88,7 +88,7 @@ create table public.inventory_items (
   unique (facility_id, item_code)
 );
 
-create table public.inventory_snapshots (
+create table if not exists public.inventory_snapshots (
   id uuid primary key default gen_random_uuid(),
   inventory_item_id uuid not null references public.inventory_items(id),
   quantity numeric not null check (quantity >= 0),
@@ -97,7 +97,7 @@ create table public.inventory_snapshots (
   source text not null default 'worker_report'
 );
 
-create table public.replenishment_requests (
+create table if not exists public.replenishment_requests (
   id uuid primary key default gen_random_uuid(),
   facility_id uuid not null references public.facilities(id),
   inventory_item_id uuid not null references public.inventory_items(id),
@@ -110,7 +110,7 @@ create table public.replenishment_requests (
   created_at timestamptz not null default now()
 );
 
-create table public.ai_runs (
+create table if not exists public.ai_runs (
   id uuid primary key default gen_random_uuid(),
   message_id uuid references public.messages(id),
   report_id uuid references public.reports(id),
@@ -125,7 +125,7 @@ create table public.ai_runs (
   created_at timestamptz not null default now()
 );
 
-create table public.audit_logs (
+create table if not exists public.audit_logs (
   id uuid primary key default gen_random_uuid(),
   actor_worker_id uuid references public.workers(id),
   action text not null,
