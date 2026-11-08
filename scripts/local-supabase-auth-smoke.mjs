@@ -113,6 +113,20 @@ try {
   assert(!supervisorBReports.some(x => x.id === report.id), 'other-facility supervisor cannot read worker report');
   assert(!workerBReports.some(x => x.id === report.id), 'other-facility worker cannot read worker report');
 
+  const submitted = await request('/rest/v1/reports?id=eq.' + report.id + '&select=id,status', {
+    key: anonKey, token: workerA.token, method: 'PATCH', prefer: 'return=representation',
+    body: { status: 'submitted' }
+  });
+  assert.equal(submitted[0]?.status, 'submitted', 'worker can submit their own draft');
+  const verified = await request('/rest/v1/reports?id=eq.' + report.id + '&select=id,status', {
+    key: anonKey, token: supervisorA.token, method: 'PATCH', prefer: 'return=representation',
+    body: { status: 'supervisor_verified' }
+  });
+  assert.equal(verified[0]?.status, 'supervisor_verified', 'assigned supervisor can verify submitted report');
+  const finalAReports = await scopedReports(supervisorA);
+  assert(finalAReports.some(x => x.id === report.id && x.status === 'supervisor_verified'),
+    'supervisor sees the verified report state');
+
   const anonymous = await fetch(apiUrl + '/rest/v1/profiles?select=id', { headers: headers(anonKey) });
   if (anonymous.status === 200) {
     const anonymousRows = await anonymous.json();
@@ -127,6 +141,7 @@ try {
   console.log('PASS worker and supervisor facility isolation across two synthetic facilities');
   console.log('PASS worker draft report creation');
   console.log('PASS same-facility supervisor report visibility');
+  console.log('PASS worker submission and supervisor verification transitions');
   console.log('PASS cross-facility supervisor and worker report isolation');
   console.log('PASS anonymous profile access denied by RLS');
 } finally {
