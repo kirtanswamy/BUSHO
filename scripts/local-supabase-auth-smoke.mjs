@@ -421,6 +421,76 @@ try {
   });
   assert.equal(duplicateIndentMovements.length, 1, 'duplicate reference rejection leaves exactly one movement');
 
+  // Catalogue is reference-controlled; stock observations have role- and actor-scoped writes.
+  let workerCatalogueInsertDenied = false;
+  try {
+    await request('/rest/v1/inventory_items', {
+      key: anonKey, token: workerA.token, method: 'POST',
+      body: [{ facility_id: facilityA.id, item_code: 'E2E-FORGED-' + suffix, name: 'Forged item', unit: 'packs' }]
+    });
+  } catch (error) {
+    workerCatalogueInsertDenied = /failed \((401|403)\)|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(workerCatalogueInsertDenied, true, 'worker cannot add or alter the reference inventory catalogue');
+
+  let forgedSnapshotActorDenied = false;
+  try {
+    await request('/rest/v1/inventory_snapshots', {
+      key: anonKey, token: workerA.token, method: 'POST',
+      body: [{
+        inventory_item_id: inventoryItem.id, quantity: 9, observed_by: workerBId,
+        source: 'worker_report', data_mode: 'synthetic_demo', notes: 'Synthetic forged observer test'
+      }]
+    });
+  } catch (error) {
+    forgedSnapshotActorDenied = /failed \((401|403)\)|row-level security|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(forgedSnapshotActorDenied, true, 'worker cannot submit an inventory snapshot attributed to another worker');
+
+  let workerStorekeeperSnapshotDenied = false;
+  try {
+    await request('/rest/v1/inventory_snapshots', {
+      key: anonKey, token: workerA.token, method: 'POST',
+      body: [{
+        inventory_item_id: inventoryItem.id, quantity: 9, observed_by: workerAId,
+        source: 'storekeeper_count', data_mode: 'synthetic_demo', notes: 'Synthetic forbidden source test'
+      }]
+    });
+  } catch (error) {
+    workerStorekeeperSnapshotDenied = /failed \((401|403)\)|row-level security|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(workerStorekeeperSnapshotDenied, true, 'worker cannot label their own snapshot as a storekeeper count');
+
+  const storekeeperSnapshot = await request('/rest/v1/inventory_snapshots?select=id,inventory_item_id,quantity,source,data_mode', {
+    key: anonKey, token: storekeeperA.token, method: 'POST', prefer: 'return=representation',
+    body: [{
+      inventory_item_id: inventoryItem.id, quantity: 14, observed_by: null,
+      source: 'storekeeper_count', data_mode: 'synthetic_demo', notes: 'Synthetic authorized storekeeper count'
+    }]
+  });
+  assert.equal(storekeeperSnapshot.length, 1, 'assigned storekeeper can record a storekeeper inventory count');
+  assert.equal(storekeeperSnapshot[0]?.source, 'storekeeper_count');
+
+  let replenishmentEventUpdateDenied = false;
+  try {
+    await request('/rest/v1/replenishment_events?replenishment_request_id=eq.' + indent.id, {
+      key: anonKey, token: storekeeperA.token, method: 'PATCH', body: { note: 'tampered' }
+    });
+  } catch (error) {
+    replenishmentEventUpdateDenied = /failed \((401|403)\)|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(replenishmentEventUpdateDenied, true, 'authenticated storekeeper cannot mutate append-only replenishment events');
+
+  let replenishmentEventDeleteDenied = false;
+  try {
+    await request('/rest/v1/replenishment_events?replenishment_request_id=eq.' + indent.id, {
+      key: anonKey, token: storekeeperA.token, method: 'DELETE'
+    });
+  } catch (error) {
+    replenishmentEventDeleteDenied = /failed \((401|403)\)|permission denied|42501/i.test(error.message);
+  }
+  assert.equal(replenishmentEventDeleteDenied, true, 'authenticated storekeeper cannot delete append-only replenishment events');
+
   // Part 2H.12: privilege escalation, assignment tampering and revocation.
   let profileRoleEscalationDenied = false;
   try {
@@ -519,6 +589,10 @@ try {
   console.log('PASS immutable indent fields and backwards transitions are rejected');
   console.log('PASS append-only replenishment event history reconciles receipt deltas');
   console.log('PASS duplicate external receipt reference is rejected atomically');
+  console.log('PASS inventory catalogue writes are denied to operational users');
+  console.log('PASS inventory snapshot actor/source spoofing is rejected');
+  console.log('PASS assigned storekeeper can record a scoped inventory count');
+  console.log('PASS replenishment event history cannot be updated or deleted by authenticated users');
   console.log('PASS privilege escalation and facility assignment tampering are denied');
   console.log('PASS administrative assignment revocation removes access for an existing token');
   console.log('PASS suspended profile loses scoped access without token replacement');
