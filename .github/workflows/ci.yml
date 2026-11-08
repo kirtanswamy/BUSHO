@@ -48,6 +48,10 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-bootstrap.sql
+      - name: Apply BUSHO legacy schema baseline
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261106180000_legacy_schema_baseline.sql
       - name: Apply BUSHO operational security migration
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
