@@ -205,11 +205,16 @@ try {
   });
   assert.equal(submittedRows[0]?.status, 'submitted_to_dpdmis', 'supervisor can record DPDMIS submission reference');
 
-  const supervisorAllocation = await request('/rest/v1/replenishment_requests?id=eq.' + indent.id + '&select=id,status', {
-    key: anonKey, token: supervisorA.token, method: 'PATCH', prefer: 'return=representation',
-    body: { status: 'allocated', allocation_reference: 'E2E-ALLOC-SUP-' + suffix }
-  });
-  assert.equal(supervisorAllocation.length, 0, 'supervisor cannot perform storekeeper allocation');
+  let supervisorAllocationDenied = false;
+  try {
+    await request('/rest/v1/replenishment_requests?id=eq.' + indent.id + '&select=id,status', {
+      key: anonKey, token: supervisorA.token, method: 'PATCH', prefer: 'return=representation',
+      body: { status: 'allocated', allocation_reference: 'E2E-ALLOC-SUP-' + suffix }
+    });
+  } catch (error) {
+    supervisorAllocationDenied = /Only an assigned storekeeper|storekeeper can record allocation|not allowed/i.test(error.message);
+  }
+  assert.equal(supervisorAllocationDenied, true, 'supervisor cannot perform storekeeper allocation');
 
   const otherFacilityAllocation = await request('/rest/v1/replenishment_requests?id=eq.' + indent.id + '&select=id,status', {
     key: anonKey, token: storekeeperB.token, method: 'PATCH', prefer: 'return=representation',
