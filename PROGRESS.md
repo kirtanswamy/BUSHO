@@ -722,3 +722,9 @@ No live Supabase migration, operational account creation, real facility/medicine
 - Duplicate-reference test creates a second synthetic indent, performs a first partial receipt, then attempts a second receipt with the same reference. It verifies the failed movement insert rolls back the parent replenishment update and leaves exactly one movement.
 - The immutable requested-quantity test accepts either a column-level permission denial or a database immutable-field trigger rejection. Current authenticated column grants may reject the write before the trigger, which is still a valid denial but does not independently prove trigger execution.
 - New tests are authored but not yet executed by the developer against local Supabase. Do not mark Part 2H.11 passed until terminal output confirms success. All test data is synthetic_demo; append-only history remains retained. No production data, remote migration, deployment or PR merge was changed.
+
+### Part 2H.11 — inventory ledger integrity and replenishment audit E2E verified — 2026-11-08
+- Developer pulled branch through `aed498c` and ran `npm run local:e2e` against local Supabase.
+- Result: all 23 PASS assertions completed. Newly verified checks include facility/role-scoped movement visibility, authenticated direct ledger insert/update/delete denial, immutable indent fields, backward transition rejection, append-only replenishment event history and receipt-delta reconciliation, and atomic rejection of duplicate external receipt references.
+- The duplicate-reference test confirmed the failed second receipt did not change the prior received quantity or create a second movement. The run retained six synthetic Auth users, two synthetic facilities and immutable workflow history under run `66c8e5e8` as intended.
+- Evidence is developer-provided local terminal output, not hosted CI or production verification. No remote Supabase project, live data, deployment or PR merge was changed.
