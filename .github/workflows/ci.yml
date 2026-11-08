@@ -56,14 +56,14 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261106190000_busho_operational_security_foundation.sql
-      - name: Apply BUSHO database query tuning migration
-        env:
-          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
-        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107060000_busho_database_query_tuning.sql
       - name: Apply BUSHO supervisor report-item correction migration
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107051839_busho_supervisor_report_item_corrections.sql
+      - name: Apply BUSHO database query tuning migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107060000_busho_database_query_tuning.sql
       - name: Apply BUSHO facility registry review migration
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
@@ -84,6 +84,14 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107233000_busho_inventory_movement_ledger.sql
+      - name: Apply BUSHO inventory snapshot source-role guard migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261108090000_busho_inventory_snapshot_source_role_guard.sql
+      - name: Audit exposed-schema RLS, grants and SECURITY DEFINER helpers
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-security-audit.sql
       - name: Verify worker, supervisor, admin and stock workflows under RLS
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
