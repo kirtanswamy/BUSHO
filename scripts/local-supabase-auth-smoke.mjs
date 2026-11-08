@@ -177,7 +177,7 @@ try {
       }]
     });
   } catch (error) {
-    storekeeperCreateDenied = /failed \((401|403)\)/.test(error.message);
+    storekeeperCreateDenied = /Only an assigned active supervisor|permission denied|42501/i.test(error.message);
   }
   assert.equal(storekeeperCreateDenied, true, 'storekeeper cannot create a supervisor indent recommendation');
 
