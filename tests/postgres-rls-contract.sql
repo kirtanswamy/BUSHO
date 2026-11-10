@@ -434,6 +434,34 @@ begin
 end $supervisor_b_scope_check$;
 commit;
 
+-- An assigned supervisor can return a recommendation with a reason.
+-- The disposable fixture is rolled back after the authorization assertion.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '66666666-6666-4666-8666-666666666666', true);
+insert into public.replenishment_requests
+  (facility_id, inventory_item_id, requested_quantity, status, source_report_id,
+   on_hand_quantity, unit, note, data_mode)
+select r.facility_id, '20000000-0000-4000-8000-000000000002', 3,
+       'recommended_to_facility_store', r.id, 0, 'packets',
+       'Synthetic supervisor clarification return fixture', 'synthetic_demo'
+from public.reports r
+where r.original_text = 'worker_report_created synthetic second facility';
+update public.replenishment_requests
+set status = 'returned_for_clarification',
+    note = 'Please clarify the stock observation'
+where note = 'Synthetic supervisor clarification return fixture';
+do $supervisor_can_return$
+declare v_status text;
+begin
+  select status into v_status
+  from public.replenishment_requests
+  where note = 'Please clarify the stock observation';
+  if v_status is distinct from 'returned_for_clarification' then
+    raise exception 'Assigned supervisor could not return recommendation; status %', v_status;
+  end if;
+end $supervisor_can_return$;
+rollback;
 -- Storekeeper cannot approve a recommendation. Create a disposable Balod
 -- recommendation as the assigned supervisor, attempt the forbidden transition
 -- as the assigned storekeeper, then roll back the fixture.
@@ -450,6 +478,30 @@ from public.reports r
 where r.original_text = 'worker_report_created synthetic second facility';
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '77777777-7777-4777-8777-777777777777', true);
+do $storekeeper_cannot_return$
+declare v_blocked boolean := false;
+begin
+  begin
+    update public.replenishment_requests
+    set status = 'returned_for_clarification',
+        note = 'Storekeeper must not return this recommendation'
+    where note = 'Synthetic storekeeper approval denial fixture';
+  exception when others then
+    v_blocked := true;
+  end;
+
+  if not v_blocked then
+    raise exception 'Storekeeper was able to return a recommendation for clarification';
+  end if;
+
+  if not exists (
+    select 1 from public.replenishment_requests
+    where note = 'Synthetic storekeeper approval denial fixture'
+      and status = 'recommended_to_facility_store'
+  ) then
+    raise exception 'Rejected storekeeper return changed the recommendation';
+  end if;
+end $storekeeper_cannot_return$;
 do $storekeeper_cannot_approve$
 declare v_blocked boolean := false;
 begin
@@ -523,6 +575,36 @@ set status = 'submitted_to_dpdmis', dpdmis_reference = 'DPDMIS-TEST-BALOD-001'
 where note = 'Synthetic Balod replenishment recommendation';
 commit;
 
+-- A DPDMIS-submitted request cannot be moved backwards into clarification.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '66666666-6666-4666-8666-666666666666', true);
+do $supervisor_cannot_return_dpdmis$
+declare v_blocked boolean := false;
+begin
+  begin
+    update public.replenishment_requests
+    set status = 'returned_for_clarification',
+        note = 'Attempted return after DPDMIS submission'
+    where note = 'Synthetic Balod replenishment recommendation';
+  exception when others then
+    v_blocked := true;
+  end;
+
+  if not v_blocked then
+    raise exception 'Supervisor returned a request already submitted to DPDMIS';
+  end if;
+
+  if not exists (
+    select 1 from public.replenishment_requests
+    where note = 'Synthetic Balod replenishment recommendation'
+      and status = 'submitted_to_dpdmis'
+      and dpdmis_reference = 'DPDMIS-TEST-BALOD-001'
+  ) then
+    raise exception 'Rejected DPDMIS return changed the submitted request';
+  end if;
+end $supervisor_cannot_return_dpdmis$;
+commit;
 -- A supervisor may approve and submit the recommendation, but may not
 -- perform storekeeper allocation, dispatch or receipt transitions.
 begin;
@@ -612,6 +694,34 @@ begin
   get diagnostics v_updated = row_count;
   if v_updated <> 1 then raise exception 'Storekeeper could not record partial receipt'; end if;
 
+  -- A GRN reference cannot be reused for a second quantity increment.
+  do $duplicate_grn_reference$
+  declare
+    v_blocked boolean := false;
+    v_received numeric;
+  begin
+    begin
+      update public.replenishment_requests
+      set status = 'partially_received',
+          received_quantity = 6,
+          receipt_reference = 'GRN-TEST-BALOD-PART-001'
+      where note = 'Synthetic Balod replenishment recommendation';
+    exception when others then
+      v_blocked := true;
+    end;
+
+    if not v_blocked then
+      raise exception 'Duplicate GRN reference unexpectedly accepted a new receipt increment';
+    end if;
+
+    select received_quantity into v_received
+    from public.replenishment_requests
+    where note = 'Synthetic Balod replenishment recommendation';
+
+    if v_received <> 4 then
+      raise exception 'Rejected duplicate GRN changed received quantity to %', v_received;
+    end if;
+  end $duplicate_grn_reference$;
   raise notice 'CHECKPOINT: before final receipt';
   update public.replenishment_requests
   set status = 'received', received_quantity = 10,
@@ -668,7 +778,6 @@ begin
 end $storekeeper_scope_check$;
 -- Replaying the final receipt PATCH with the same cumulative quantity/reference
 -- must be idempotent: it must not append a second movement or receipt event.
-begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '77777777-7777-4777-8777-777777777777', true);
 update public.replenishment_requests
@@ -697,7 +806,6 @@ begin
   end if;
 end $receipt_retry_idempotency$;
 commit;
-
 do $storekeeper_receipt_audit_check$
 declare
   v_count integer;

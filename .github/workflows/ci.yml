@@ -88,10 +88,17 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261108090000_busho_inventory_snapshot_source_role_guard.sql
+
+      - name: Apply BUSHO clarification return authorization migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261110114226_restrict_replenishment_clarification_returns.sql
+
       - name: Audit exposed-schema RLS, grants and SECURITY DEFINER helpers
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-security-audit.sql
+
       - name: Verify worker, supervisor, admin and stock workflows under RLS
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
