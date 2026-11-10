@@ -32,12 +32,20 @@ function makeElement(id, initial = {}) {
       list.push(fn);
       listeners.set(type, list);
     },
+    closest(selector) {
+      const selectors = selector.split(',').map(value => value.trim());
+      if (selectors.includes('#portal-logout') && this.id === 'portal-logout') return this;
+      if (selectors.includes('[data-profile-action="signout"]') && this.dataset.profileAction === 'signout') return this;
+      return null;
+    },
     async emit(type, event = {}) {
-      for (const fn of listeners.get(type) || []) await fn({
+      const dispatched = {
         preventDefault() {},
         target: this,
         ...event
-      });
+      };
+      for (const fn of listeners.get(type) || []) await fn(dispatched);
+      if (initial.bubble) await initial.bubble(type, dispatched);
     },
     setAttribute(name, value) { this.attributes[name] = String(value); },
     getAttribute(name) { return this.attributes[name] ?? null; },
@@ -58,7 +66,14 @@ function makePortal(portalRole, account) {
   const email = makeElement('portal-username');
   const password = makeElement('portal-password');
   const error = makeElement('portal-login-error');
-  const logout = makeElement('portal-logout');
+  const documentClickListeners = [];
+  const logout = makeElement('portal-logout', {
+    bubble: async (type, event) => {
+      if (type === 'click') {
+        for (const listener of documentClickListeners) await listener(event);
+      }
+    }
+  });
   const session = makeElement('session-label');
   const submit = makeElement('submit', { textContent: 'Sign in' });
   form.submitElement = submit;
@@ -67,6 +82,9 @@ function makePortal(portalRole, account) {
 
   const events = [];
   const document = {
+    addEventListener(type, listener) {
+      if (type === 'click') documentClickListeners.push(listener);
+    },
     querySelector(selector) {
       if (selector === '[data-portal-role]') return page;
       if (selector === '.portal-session-bar span') return session;
@@ -103,6 +121,11 @@ function makePortal(portalRole, account) {
 
   const sandbox = {
     document,
+    Element: {
+      [Symbol.hasInstance](instance) {
+        return Boolean(instance && typeof instance.closest === 'function');
+      }
+    },
     CustomEvent: class CustomEvent {
       constructor(type, init = {}) { this.type = type; this.detail = init.detail; }
     },

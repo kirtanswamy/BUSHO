@@ -18,7 +18,6 @@
   const emailInput = document.getElementById('portal-username');
   const passwordInput = document.getElementById('portal-password');
   const error = document.getElementById('portal-login-error');
-  const logout = document.getElementById('portal-logout');
   const submit = form?.querySelector('[type="submit"]');
   const sessionLabel = document.querySelector('.portal-session-bar span');
 
@@ -123,13 +122,26 @@
     }
   });
 
-  logout?.addEventListener('click', async () => {
+  let signOutInProgress = false;
+
+  document.addEventListener('click', async event => {
+    const target = event.target instanceof Element
+      ? event.target.closest('#portal-logout, [data-profile-action="signout"]')
+      : null;
+
+    if (!target || signOutInProgress) return;
+
+    event.preventDefault();
+    signOutInProgress = true;
     setBusy(true);
-    try { await authClient?.signOut(); }
-    finally {
+
+    try {
+      await authClient?.signOut();
+    } finally {
       showError('');
       showLogin();
       setBusy(false);
+      signOutInProgress = false;
     }
   });
 

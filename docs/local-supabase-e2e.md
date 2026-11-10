@@ -1,55 +1,205 @@
-# BUSHO local Supabase E2E — Part 2H.9
+# BUSHO Local Supabase E2E
 
-This is a disposable local-only test workflow. It must not be linked to the production project.
+This document describes the local-only integration and browser test workflows for BUSHO.
+
+These workflows use synthetic data and a local Supabase stack. They must not be pointed at a hosted or production Supabase project.
 
 ## Prerequisites
-- Docker Desktop (or another Docker-compatible runtime) running.
-- Supabase CLI installed.
+
+- Docker Desktop or another compatible Docker runtime.
+- Supabase CLI.
 - Node.js 18 or newer.
+- Dependencies installed with `npm ci`.
 - Repository checked out on `feature/chhattisgarh-operational-workflow`.
 
-## Start the local Supabase stack
+## 1. Start the local Supabase stack
+
 From the repository root:
 
-```bash
-supabase start
-supabase status --output env
+```powershell
+npx supabase start
+npx supabase status
 ```
 
-Use the local API URL, anon key, and service-role key printed by the CLI. Export them into the current terminal session (do not commit them):
+Confirm the local API is available at:
 
-PowerShell:
+`http://127.0.0.1:54321`
+
+The browser runner independently checks the local Auth health endpoint and validates the local publishable key.
+
+Do not run `supabase link` as part of this workflow.
+
+## 2. Local API integration E2E
+
+The API runner is:
+
+`scripts/local-supabase-auth-smoke.mjs`
+
+It requires these environment variables:
+
+- `API_URL`
+- `ANON_KEY`
+- `SERVICE_ROLE_KEY`
+
+Set them in the current PowerShell session using values from the local `supabase status --output env` output. Do not commit or print their values.
+
+Example:
+
 ```powershell
 $env:API_URL = "http://127.0.0.1:54321"
 $env:ANON_KEY = "<local anon key>"
 $env:SERVICE_ROLE_KEY = "<local service role key>"
+
+node .\scripts\local-supabase-auth-smoke.mjs
 ```
 
-macOS/Linux:
-```bash
-export API_URL="http://127.0.0.1:54321"
-export ANON_KEY="<local anon key>"
-export SERVICE_ROLE_KEY="<local service role key>"
+The runner creates six synthetic Auth users across two synthetic facilities:
+
+- Worker A and Supervisor A, assigned to Facility A.
+- Worker B and Supervisor B, assigned to Facility B.
+- Storekeeper A assigned to Facility A.
+- Storekeeper B assigned to Facility B.
+
+It exercises:
+
+### Authentication and facility isolation
+
+- Local Supabase Auth health.
+- User creation and password authentication.
+- Server-side profile provisioning.
+- Active profile and facility assignment checks.
+- Cross-facility isolation.
+
+### Worker and supervisor reporting
+
+- Worker draft creation and privacy before submission.
+- Same-facility supervisor visibility after submission.
+- Report correction requests with mandatory reasons.
+- Structured report-item correction and resubmission.
+- Event history and audit metadata.
+- Supervisor reverification.
+- Unauthorized self-verification and cross-facility review denial.
+
+### Replenishment and storekeeper workflow
+
+- Supervisor-only indent recommendation.
+- Clarification return authorization and mandatory reason.
+- Rejection of clarification returns after DPDMIS submission.
+- Supervisor approval and DPDMIS reference recording.
+- Storekeeper-only allocation and dispatch.
+- Receipt-reference validation.
+- Over-receipt rejection.
+- Partial and final goods receipt.
+- Inventory movement delta reconciliation.
+- Idempotent receipt retry.
+- Duplicate external receipt-reference rejection.
+- Append-only event and inventory ledger protections.
+- Inventory catalogue and snapshot authorization.
+- Assignment revocation, restoration, and suspended-profile access checks.
+- Privilege escalation and assignment tampering denial.
+
+All test users, facilities, reports, inventory records and references are synthetic.
+
+### Fixture retention
+
+The API runner intentionally retains synthetic test data. Its `finally` block reports the run identifier, user count, facility count and synthetic report marker.
+
+This is deliberate: workflow history is append-only and deleting the report may conflict with database safeguards.
+
+Do not assume the runner cleans up its users or records.
+
+## 3. Browser authentication and operational E2E
+
+The browser runner is:
+
+`scripts/run-local-browser-e2e.ps1`
+
+Run it from the repository root:
+
+```powershell
+.\scripts\run-local-browser-e2e.ps1
 ```
 
-## Run the synthetic multi-user test
+It:
 
-```bash
-npm run local:e2e
+1. Validates `.local-e2e/credentials.json`.
+2. Checks for fixture `a204be7a` and exactly six expected account labels.
+   Expected labels: `worker-a`, `supervisor-a`, `worker-b`, `supervisor-b`, `storekeeper-a`, `storekeeper-b`.
+3. Confirms the credentials file is ignored by Git.
+4. Reads the local publishable key from `npx supabase status --output env`.
+5. Checks the local Supabase Auth health endpoint.
+6. Temporarily sets `BUSHO_LOCAL_PUBLISHABLE_KEY`.
+7. Runs Playwright using `playwright.config.mjs`.
+8. Restores the previous environment variable.
+
+The six browser accounts cover two workers, two supervisors and two storekeepers.
+
+The credentials file is local-only and must never be committed, uploaded, or pasted into logs or messages.
+
+The browser suite covers portal initialization, authentication, role restrictions, suspended-account behavior and the worker-supervisor report correction and verification journey.
+
+The operational browser journey verifies:
+
+- Worker creates and submits a synthetic report.
+- Supervisor requests a correction with a reason.
+- Worker edits and resubmits the same report.
+- Supervisor reviews and verifies the corrected report.
+- Users sign out through the profile menu when switching roles.
+
+The browser suite uses the local Supabase stack. It must not make requests to a hosted Supabase project.
+
+## 4. Test and verification commands
+
+Run the project checks:
+
+```powershell
+npm run check
 ```
 
-The script creates four temporary Auth users and two synthetic facilities, activates two workers and two supervisors, assigns one worker and one supervisor to each facility, then tests:
-- Password authentication and profile creation.
-- Facility isolation for each worker and supervisor.
-- Worker draft creation and submission.
-- Same-facility supervisor visibility and verification.
-- Cross-facility report isolation.
-- Anonymous profile access denial.
+Run browser E2E separately:
 
-All records are synthetic and the script attempts to clean up its users and facility data in a `finally` block. If interrupted, run `supabase db reset` to discard the local database and recreate it from migrations. Never run this against a linked remote database.
+```powershell
+.\scripts\run-local-browser-e2e.ps1
+```
 
-## Safety boundary
-- Do not run `supabase link`, `supabase db push`, `supabase db reset --linked`, or `supabase functions deploy` for this test.
-- No live patients, facility roster, inventory, or credentials are used.
-- This smoke test uses direct Auth and PostgREST APIs against the local Supabase stack. It is not a full browser E2E and does not yet validate the storekeeper receipt workflow end to end.
-- A passing local run is evidence of local behavior only. Hosted non-production validation and real facility/pharmacist operational review remain separate gates.
+The API integration runner can be run separately after its three environment variables have been set:
+
+```powershell
+node .\scripts\local-supabase-auth-smoke.mjs
+```
+
+Review Playwright output and `test-results` when browser tests fail.
+
+## 5. Recovery and database safety
+
+Do not automatically reset the local database after an interrupted test.
+
+The API runner intentionally retains synthetic fixtures and append-only audit history. A reset destroys local database data, including fixtures and other local test state.
+
+Only run:
+
+```powershell
+npx supabase db reset
+```
+
+when you deliberately intend to discard ALL local database data and rebuild the local database from migrations.
+
+Before resetting:
+
+- Confirm the Supabase CLI is operating on the local stack.
+- Confirm the project is not linked to a hosted project.
+- Confirm no local data or evidence needs to be retained.
+- Understand that local database contents will be lost.
+
+Never use `--linked` or a remote database target for this workflow.
+
+## 6. Safety boundary and limitations
+
+- Use synthetic test identities and synthetic operational records only.
+- Do not use patient-identifiable information or real facility rosters.
+- Do not place credentials, access tokens or API keys in Git.
+- Do not run `supabase link`, `supabase db push`, `supabase db reset --linked`, or `supabase functions deploy` as part of local E2E testing.
+- Do not interpret a passing local test as proof of production readiness.
+- Hosted non-production validation, external-system integration, real facility data verification and operational review require separate authorization and validation.
+
+A passing local run demonstrates behavior against the local Supabase schema, policies, triggers and application workflows only.

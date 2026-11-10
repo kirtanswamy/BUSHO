@@ -1,4 +1,4 @@
-﻿
+
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
@@ -542,3 +542,241 @@ test(
     expect(externalRequests).toEqual([]);
   }
 );
+
+async function signOutThroughProfileMenu(page) {
+  const trigger = page.getByRole('button', {
+    name: 'Open profile menu'
+  });
+
+  await expect(trigger).toBeVisible({ timeout: 10000 });
+  await trigger.click();
+
+  const signOut = page.locator(
+    '#profile-dropdown [data-profile-action="signout"]'
+  );
+
+  await expect(signOut).toBeVisible({ timeout: 5000 });
+  await signOut.click();
+
+  await expect(page.locator('#portal-login-form')).toBeVisible({
+    timeout: 10000
+  });
+
+  await expect(page.locator('#portal-app')).toBeHidden();
+}
+// BUSHO_WORKER_SUPERVISOR_CORRECTION_E2E
+test('worker and supervisor complete a correction and verification cycle', async ({ page }) => {
+  test.setTimeout(90000);
+
+  const externalRequests = trackExternalSupabaseRequests(page);
+
+  // 1. Worker submits a new synthetic report through the actual UI.
+  await login(page, '/worker.html', 'worker-a');
+  await expect(page.locator('#portal-app')).toBeVisible();
+
+  // The worker may land on the dashboard after authentication.
+  // Open the report-entry view before interacting with its controls.
+  await page.locator('[data-portal-view="new-report"]').click();
+
+  await expect(
+    page.locator('[data-sample="routine"]')
+  ).toBeVisible({ timeout: 10000 });
+
+  await page.locator('[data-sample="routine"]').click();
+  await expect(page.locator('#report-input')).not.toHaveValue('');
+
+  await page.locator('#extract-btn').click();
+
+  const editableNames = page.locator(
+    '.clinical-edit-input[data-key="name"]'
+  );
+
+  await expect(editableNames.first()).toBeVisible({
+    timeout: 15000
+  });
+
+  await page.locator('#confirm-btn').click();
+
+  const confirmationLocator = page.locator('#post-confirm');
+
+
+  // Read the transient notification text without requiring it to remain visible.
+  await expect.poll(
+    async () => confirmationLocator.textContent(),
+    { timeout: 20000 }
+  ).toMatch(/submitted for supervisor review/i);
+
+  const initialConfirmation = (await confirmationLocator.textContent()) ?? '';
+  const reportIdMatch = initialConfirmation.match(
+    /Reference\s+([0-9a-f]{8}-[0-9a-f-]{27,})/i
+  );
+
+  expect(
+    reportIdMatch,
+    'Worker confirmation should expose the saved report UUID.'
+  ).not.toBeNull();
+
+  const reportId = reportIdMatch[1];
+
+  // Sign out before changing roles. Do not reuse the worker session.
+  await signOutThroughProfileMenu(page);
+  await expect(page.locator('#portal-login-form')).toBeVisible({
+    timeout: 10000
+  });
+
+  // 2. Supervisor opens the submitted report.
+  await login(page, '/supervisor.html', 'supervisor-a');
+  await expect(page.locator('#portal-app')).toBeVisible();
+
+  await page.locator('[data-portal-view="reports"]').click();
+
+  const supervisorReport = page.locator(
+    `.report-inbox-row[data-open-report="${reportId}"]`
+  );
+
+  await expect(supervisorReport).toBeVisible({
+    timeout: 20000
+  });
+
+  await supervisorReport.click();
+
+  const reviewForm = page.locator('[data-review-form]');
+  await expect(reviewForm).toBeVisible();
+
+  // 3. The UI must reject a correction request without a reason.
+  await reviewForm.locator('[name="decision"]').selectOption(
+    'correction_requested'
+  );
+
+  await reviewForm.locator('button[type="submit"]').click();
+
+  await expect(reviewForm.locator('.review-feedback')).toContainText(
+    /reason is required/i
+  );
+
+  // 4. Submit a valid correction request.
+  const correctionNote =
+    'Synthetic E2E: please verify the extracted observation name.';
+
+  await reviewForm.locator('[name="note"]').fill(correctionNote);
+  await reviewForm.locator('button[type="submit"]').click();
+
+  await expect(
+    page.locator('#supervisor-report-detail .status-pill')
+  ).toContainText(/correction requested/i, {
+    timeout: 20000
+  });
+
+  await expect(
+    page.locator('#supervisor-report-detail')
+  ).toContainText(correctionNote);
+
+  // Sign out before returning to the worker account.
+  await signOutThroughProfileMenu(page);
+  await expect(page.locator('#portal-login-form')).toBeVisible({
+    timeout: 10000
+  });
+
+  // 5. Worker opens the same report from report history.
+  await login(page, '/worker.html', 'worker-a');
+  await expect(page.locator('#portal-app')).toBeVisible();
+
+  await page.locator('[data-portal-view="my-reports"]').click();
+
+  const workerReport = page.locator(
+    `[data-open-worker-report="${reportId}"]`
+  );
+
+  await expect(workerReport).toBeVisible({
+    timeout: 20000
+  });
+
+  await workerReport.click();
+
+  const workerDetail = page.locator('.report-detail');
+  await expect(workerDetail).toContainText(/correction requested/i);
+  await expect(workerDetail).toContainText(correctionNote);
+
+  await workerDetail.locator(
+    `[data-resume-worker-report="${reportId}"]`
+  ).click();
+
+  // 6. Correct a structured observation, preserving the original narrative.
+  const correctedName =
+    `BUSHO E2E corrected observation ${Date.now()}`;
+
+  const workerNameField = page.locator(
+    '.clinical-edit-input[data-key="name"]'
+  ).first();
+
+  await expect(workerNameField).toBeVisible();
+  await workerNameField.fill(correctedName);
+
+  // Blur the field so its change handler persists the structured edit.
+  await page.locator('#report-input').click();
+
+  await expect(workerNameField).toHaveValue(correctedName);
+
+  await page.locator('#confirm-btn').click();
+
+  const resubmissionConfirmation = page.locator('#post-confirm');
+
+  // The notification is transient; inspect its text without requiring visibility.
+  await expect.poll(
+    async () => resubmissionConfirmation.textContent(),
+    { timeout: 20000 }
+  ).toMatch(/resubmitted for supervisor review/i);
+
+  const resubmissionText =
+    (await resubmissionConfirmation.textContent()) ?? '';
+
+  // The same report reference must be retained after resubmission.
+  expect(resubmissionText).toContain(reportId);
+
+  await signOutThroughProfileMenu(page);
+  await expect(page.locator('#portal-login-form')).toBeVisible({
+    timeout: 10000
+  });
+
+  // 7. Supervisor verifies the resubmitted report.
+  await login(page, '/supervisor.html', 'supervisor-a');
+  await expect(page.locator('#portal-app')).toBeVisible();
+
+  await page.locator('[data-portal-view="reports"]').click();
+
+  const resubmittedReport = page.locator(
+    `.report-inbox-row[data-open-report="${reportId}"]`
+  );
+
+  await expect(resubmittedReport).toBeVisible({
+    timeout: 20000
+  });
+
+  await resubmittedReport.click();
+
+  const finalReviewForm = page.locator('[data-review-form]');
+  await expect(finalReviewForm).toBeVisible();
+
+  await expect(
+    page.locator('#supervisor-report-detail')
+  ).toContainText(correctedName);
+
+  await finalReviewForm.locator('[name="decision"]').selectOption(
+    'supervisor_verified'
+  );
+
+  await finalReviewForm.locator('[name="note"]').fill(
+    'Synthetic E2E: corrected observation reviewed and verified.'
+  );
+
+  await finalReviewForm.locator('button[type="submit"]').click();
+
+  await expect(
+    page.locator('#supervisor-report-detail .status-pill')
+  ).toContainText(/^Verified$/i, {
+    timeout: 20000
+  });
+
+  // No request in this journey may reach a hosted Supabase project.
+  expect(externalRequests).toEqual([]);
+});

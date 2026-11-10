@@ -24,7 +24,7 @@
   menu?.querySelectorAll('[data-profile-action]').forEach(button => button.addEventListener('click', () => {
     const action = button.dataset.profileAction;
     closeMenu();
-    if (action === 'signout') document.getElementById('portal-logout')?.click();
+    if (action === 'signout') return;
     else if (action === 'facility') document.querySelector(`[data-go-view="${role==='supervisor'?'facilities':'facility'}"]`)?.click();
     else if (action === 'profile') document.querySelector(`[data-go-view="profile"]`)?.click();
     else if (action === 'preferences') document.getElementById('lang-select')?.focus();
