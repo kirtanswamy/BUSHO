@@ -22,6 +22,7 @@
   let busy = false;
   let error = '';
   let notice = '';
+  let refreshRequired = false;
 
   const list = document.getElementById('storekeeper-requests');
   const summary = document.getElementById('storekeeper-summary');
@@ -30,12 +31,14 @@
 
   function showMessage() {
     if (!message) return;
-    message.innerHTML = error
-      ? '<p class="portal-login-error" role="alert">' + esc(error) + '</p>'
-      : notice ? '<p class="storekeeper-notice" role="status">' + esc(notice) + '</p>' : '';
+    message.innerHTML = [
+      error ? '<p class="portal-login-error" role="alert">' + esc(error) + '</p>' : '',
+      notice ? '<p class="storekeeper-notice" role="status">' + esc(notice) + '</p>' : ''
+    ].join('');
   }
 
   function render() {
+    showMessage();
     const active = rows.filter(row => row.status !== 'received' && row.status !== 'rejected');
     if (summary) summary.innerHTML = [
       ['Requests in scope', rows.length],
@@ -61,9 +64,9 @@
       const item = row.inventory_items || {};
       const movements = Array.isArray(row.inventory_movements) ? row.inventory_movements : [];
       const events = Array.isArray(row.replenishment_events) ? row.replenishment_events : [];
-      const canAllocate = row.status === 'submitted_to_dpdmis';
-      const canDispatch = row.status === 'allocated';
-      const canReceive = ['dispatched','partially_received'].includes(row.status);
+      const canAllocate = !refreshRequired && row.status === 'submitted_to_dpdmis';
+      const canDispatch = !refreshRequired && row.status === 'allocated';
+      const canReceive = !refreshRequired && ['dispatched','partially_received'].includes(row.status);
       const remaining = Math.max(0, Number(row.requested_quantity || 0) - Number(row.received_quantity || 0));
       return '<article class="module-card storekeeper-request" data-request="' + esc(row.id) + '">' +
         '<div class="module-card-head"><div><p class="card-overline">' + esc(row.facilities?.name || 'Assigned facility') + '</p><h3>' + esc(item.name || row.note || 'Replenishment request') + '</h3><p>' + esc(row.requested_quantity) + ' ' + esc(row.unit || item.unit || '') + ' requested · ' + esc(row.on_hand_quantity ?? '—') + ' reported on hand</p></div><span class="status-pill">' + esc(label(row.status)) + '</span></div>' +
@@ -76,7 +79,6 @@
         (events.length ? '<h4>Request event history</h4><ul>' + events.map(e => '<li>' + esc(e.action || 'Request updated') + ' · ' + esc(e.status_from || 'created') + ' → ' + esc(e.status_to || '') + ' · ' + esc(date(e.created_at)) + (e.external_reference ? ' · ' + esc(e.external_reference) : '') + '</li>').join('') + '</ul>' : '') +
         '</details></article>';
     }).join('');
-    showMessage();
   }
 
   async function load() {
@@ -85,49 +87,79 @@
     try {
       const result = await client.listMyReplenishments();
       rows = Array.isArray(result) ? result : [];
+      refreshRequired = false;
     } catch (cause) {
       error = cause?.message || 'Unable to load replenishment requests.';
+      if (!refreshRequired) rows = [];
     } finally {
       busy = false; render();
     }
   }
 
   async function submitAction(form) {
-    if (busy || !client) return;
+    if (busy || !client || refreshRequired) return;
     const card = form.closest('[data-request]');
     const id = card?.dataset.request;
     const row = rows.find(item => item.id === id);
     if (!row) return;
+
     const data = new FormData(form);
     const reference = String(data.get('reference') || '').trim();
     if (!reference) { error = 'An external reference is required.'; render(); return; }
+
     const action = form.dataset.action;
     const input = { id };
-    if (action === 'allocate') Object.assign(input, {status:'allocated',allocationReference:reference});
-    else if (action === 'dispatch') Object.assign(input, {status:'dispatched',dispatchReference:reference});
-    else if (action === 'receive') {
+
+    if (action === 'allocate') {
+      Object.assign(input, { status: 'allocated', allocationReference: reference });
+    } else if (action === 'dispatch') {
+      Object.assign(input, { status: 'dispatched', dispatchReference: reference });
+    } else if (action === 'receive') {
       const quantity = Number(data.get('quantity'));
-      if (!Number.isFinite(quantity) || quantity <= Number(row.received_quantity || 0) || quantity > Number(row.requested_quantity)) {
+      if (!Number.isFinite(quantity) ||
+          quantity <= Number(row.received_quantity || 0) ||
+          quantity > Number(row.requested_quantity)) {
         error = 'Enter a cumulative receipt quantity greater than the previous total and no greater than the request.';
-        render(); return;
+        render();
+        return;
       }
       Object.assign(input, {
         status: quantity === Number(row.requested_quantity) ? 'received' : 'partially_received',
         receivedQuantity: quantity,
         receiptReference: reference
       });
-    } else return;
-    busy = true; error = ''; notice = ''; render();
+    } else {
+      return;
+    }
+
+    busy = true;
+    error = '';
+    notice = '';
+    refreshRequired = true;
+    render();
+
     try {
       await client.transitionReplenishmentRequest(input);
-      notice = 'Update saved by the database. Refreshing the scoped request list…';
+    } catch (cause) {
+      error = cause?.message ||
+        'The update could not be confirmed. Refresh the request list before retrying.';
+      busy = false;
+      render();
+      return;
+    }
+
+    notice = 'Update saved by the database.';
+    try {
       const result = await client.listMyReplenishments();
       rows = Array.isArray(result) ? result : [];
+      refreshRequired = false;
+      notice = 'Update saved and the latest request list was refreshed.';
     } catch (cause) {
-      error = cause?.message || 'The update was not confirmed. Refresh before retrying.';
-    } finally {
-      busy = false; render();
+      error = 'The update was saved, but the request list could not be refreshed. Use Refresh before taking another action.';
     }
+
+    busy = false;
+    render();
   }
 
   list?.addEventListener('submit', event => {
@@ -152,6 +184,6 @@
     }
   });
   document.addEventListener('busho:unauthenticated', () => {
-    client = null; rows = []; busy = false; error = ''; notice = ''; render();
+    client = null; rows = []; busy = false; error = ''; notice = ''; refreshRequired = false; render();
   });
 })();
