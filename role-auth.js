@@ -34,7 +34,7 @@
   }
 
   function showError(message) {
-    if (error) error.textContent = String(message || 'Unable to sign in. Please try again.');
+    if (error) error.textContent = String(message ?? '');
   }
 
   function setBusy(busy) {
@@ -110,7 +110,11 @@
         password: passwordInput?.value
       });
       const profile = await validateProfile(result?.profile);
+
+      // Successful authentication must never leave a login error visible.
       passwordInput.value = '';
+      showError('');
+
       enterPortal(profile);
     } catch (cause) {
       await clearSessionAndShowError(cause.message);

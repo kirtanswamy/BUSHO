@@ -17,6 +17,11 @@
     "test": "node --test",
     "smoke": "node scripts/smoke.mjs",
     "check": "node --test && node --check scripts/local-supabase-auth-smoke.mjs && node scripts/smoke.mjs",
-    "local:e2e": "node scripts/local-supabase-auth-smoke.mjs"
+    "local:e2e": "node scripts/local-supabase-auth-smoke.mjs",
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "supabase": "3.0.0"
   }
 }
