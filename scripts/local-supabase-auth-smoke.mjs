@@ -110,6 +110,22 @@ try {
   const report = created[0];
   assert.equal(report.facility_id, facilityA.id);
 
+  const reportItemRows = await request('/rest/v1/report_items?select=id,report_id,item_type,display_label,quantity,unit,value_text', {
+    key: anonKey, token: workerA.token, method: 'POST', prefer: 'return=representation',
+    body: [{
+      report_id: report.id,
+      item_type: 'stock_observation',
+      display_label: 'Synthetic stock observation before correction',
+      quantity: 4,
+      unit: 'packets',
+      value_text: 'synthetic baseline',
+      confidence: 0.9,
+      requires_review: true
+    }]
+  });
+  assert.equal(reportItemRows.length, 1, 'worker can add a structured item to their draft report');
+  const reportItem = reportItemRows[0];
+
   const [workerADrafts, supervisorADrafts, supervisorBDrafts, workerBDrafts] = await Promise.all([
     scopedReports(workerA), scopedReports(supervisorA), scopedReports(supervisorB), scopedReports(workerB)
   ]);
@@ -143,11 +159,77 @@ try {
   });
   assert.equal(crossFacilityReview.length, 0, 'other-facility supervisor cannot review this report');
 
+  const correctionRequested = await request('/rest/v1/reports?id=eq.' + report.id + '&select=id,status,review_note', {
+    key: anonKey, token: supervisorA.token, method: 'PATCH', prefer: 'return=representation',
+    body: {
+      status: 'correction_requested',
+      review_note: 'Synthetic E2E correction reason: verify the stock observation.'
+    }
+  });
+  assert.equal(correctionRequested[0]?.status, 'correction_requested',
+    'assigned supervisor can request a report correction with a reason');
+
+  const correctedItems = await request('/rest/v1/report_items?id=eq.' + reportItem.id + '&report_id=eq.' + report.id + '&select=id,display_label,quantity,value_text', {
+    key: anonKey, token: workerA.token, method: 'PATCH', prefer: 'return=representation',
+    body: {
+      display_label: 'Synthetic stock observation corrected',
+      quantity: 5,
+      value_text: 'synthetic corrected observation'
+    }
+  });
+  assert.equal(correctedItems[0]?.quantity, 5,
+    'worker can correct structured report items after a correction request');
+  assert.equal(correctedItems[0]?.display_label, 'Synthetic stock observation corrected',
+    'corrected item label is persisted');
+
+  const correctedReport = await request('/rest/v1/reports?id=eq.' + report.id + '&select=id,status,original_text', {
+    key: anonKey, token: workerA.token, method: 'PATCH', prefer: 'return=representation',
+    body: {
+      original_text: 'Synthetic E2E report ' + suffix + '; corrected synthetic stock observation; no patient information.',
+      summary: { source: 'local_e2e_synthetic', correction: 'worker_resubmission' }
+    }
+  });
+  assert.equal(correctedReport[0]?.status, 'correction_requested',
+    'worker can update report content without changing its review status');
+
+  const resubmitted = await request('/rest/v1/reports?id=eq.' + report.id + '&select=id,status', {
+    key: anonKey, token: workerA.token, method: 'PATCH', prefer: 'return=representation',
+    body: { status: 'resubmitted' }
+  });
+  assert.equal(resubmitted[0]?.status, 'resubmitted',
+    'worker can resubmit the corrected report');
+
+  const correctionEvents = await request('/rest/v1/report_events?select=action,status_from,status_to,note,metadata&report_id=eq.' + report.id + '&order=created_at.asc', {
+    key: anonKey, token: supervisorA.token
+  });
+
+  assert(correctionEvents.some(event =>
+    event.status_to === 'correction_requested'
+  ), 'report event history records the correction request');
+
+  assert(correctionEvents.some(event =>
+    event.status_to === 'resubmitted'
+  ), 'report event history records worker resubmission');
+
+  const itemCorrectionEvent = correctionEvents.find(event =>
+    event.action === 'report_item_corrected' &&
+    event.metadata?.report_item_id === reportItem.id
+  );
+
+  assert(itemCorrectionEvent, 'structured item correction creates an audit event');
+  assert(
+    Array.isArray(itemCorrectionEvent.metadata?.changed_fields) &&
+    itemCorrectionEvent.metadata.changed_fields.includes('display_label') &&
+    itemCorrectionEvent.metadata.changed_fields.includes('quantity'),
+    'item correction audit event records changed field names'
+  );
+
   const verified = await request('/rest/v1/reports?id=eq.' + report.id + '&select=id,status', {
     key: anonKey, token: supervisorA.token, method: 'PATCH', prefer: 'return=representation',
     body: { status: 'supervisor_verified' }
   });
-  assert.equal(verified[0]?.status, 'supervisor_verified', 'assigned supervisor can verify submitted report');
+  assert.equal(verified[0]?.status, 'supervisor_verified',
+    'assigned supervisor can verify the corrected and resubmitted report');
   const finalAReports = await scopedReports(supervisorA);
   assert(finalAReports.some(x => x.id === report.id && x.status === 'supervisor_verified'),
     'supervisor sees the verified report state');
@@ -193,6 +275,99 @@ try {
   assert.equal(indentRows.length, 1, 'assigned supervisor can create a recommendation linked to a verified report');
   const indent = indentRows[0];
 
+  const clarificationRows = await request('/rest/v1/replenishment_requests?select=id,facility_id,status,note', {
+    key: anonKey, token: supervisorA.token, method: 'POST', prefer: 'return=representation',
+    body: [{
+      facility_id: facilityA.id,
+      inventory_item_id: inventoryItem.id,
+      source_report_id: report.id,
+      requested_quantity: 7,
+      on_hand_quantity: 0,
+      unit: 'packets',
+      status: 'recommended_to_facility_store',
+      data_mode: 'synthetic_demo',
+      note: 'Synthetic clarification authorization E2E test'
+    }]
+  });
+  assert.equal(clarificationRows.length, 1,
+    'assigned supervisor can create a separate clarification test indent');
+
+  const clarificationIndent = clarificationRows[0];
+  const clarificationPath = '/rest/v1/replenishment_requests?id=eq.' +
+    clarificationIndent.id + '&select=id,status,note';
+
+  let storekeeperReturnDenied = false;
+  try {
+    const rows = await request(clarificationPath, {
+      key: anonKey, token: storekeeperA.token, method: 'PATCH',
+      prefer: 'return=representation',
+      body: {
+        status: 'returned_for_clarification',
+        note: 'Synthetic unauthorized storekeeper return'
+      }
+    });
+    storekeeperReturnDenied = rows.length === 0;
+  } catch (error) {
+    storekeeperReturnDenied =
+      /Only an assigned active supervisor|permission denied|42501|row-level security/i.test(error.message);
+  }
+  assert.equal(storekeeperReturnDenied, true,
+    'storekeeper cannot return an indent for clarification');
+
+  const storekeeperDeniedState = await request(clarificationPath);
+  assert.equal(storekeeperDeniedState[0]?.status, 'recommended_to_facility_store',
+    'storekeeper denial leaves the indent unchanged');
+
+  let crossFacilityReturnDenied = false;
+  try {
+    const rows = await request(clarificationPath, {
+      key: anonKey, token: supervisorB.token, method: 'PATCH',
+      prefer: 'return=representation',
+      body: {
+        status: 'returned_for_clarification',
+        note: 'Synthetic cross-facility supervisor return'
+      }
+    });
+    crossFacilityReturnDenied = rows.length === 0;
+  } catch (error) {
+    crossFacilityReturnDenied =
+      /permission denied|42501|row-level security|Only an assigned active supervisor/i.test(error.message);
+  }
+  assert.equal(crossFacilityReturnDenied, true,
+    'supervisor assigned to another facility cannot return this indent');
+
+  const crossFacilityDeniedState = await request(clarificationPath);
+  assert.equal(crossFacilityDeniedState[0]?.status, 'recommended_to_facility_store',
+    'cross-facility denial leaves the indent unchanged');
+
+  let missingReasonDenied = false;
+  try {
+    await request(clarificationPath, {
+      key: anonKey, token: supervisorA.token, method: 'PATCH',
+      prefer: 'return=representation',
+      body: { status: 'returned_for_clarification', note: '' }
+    });
+  } catch (error) {
+    missingReasonDenied = /clarification reason/i.test(error.message);
+  }
+  assert.equal(missingReasonDenied, true,
+    'supervisor cannot return an indent without a clarification reason');
+
+  const missingReasonState = await request(clarificationPath);
+  assert.equal(missingReasonState[0]?.status, 'recommended_to_facility_store',
+    'missing-reason denial leaves the indent unchanged');
+
+  const validClarificationReturn = await request(clarificationPath, {
+    key: anonKey, token: supervisorA.token, method: 'PATCH',
+    prefer: 'return=representation',
+    body: {
+      status: 'returned_for_clarification',
+      note: 'Synthetic E2E: please confirm the on-hand stock quantity.'
+    }
+  });
+  assert.equal(validClarificationReturn[0]?.status, 'returned_for_clarification',
+    'assigned active supervisor can return an eligible indent with a reason');
+
   const approvedRows = await request('/rest/v1/replenishment_requests?id=eq.' + indent.id + '&select=id,status', {
     key: anonKey, token: supervisorA.token, method: 'PATCH', prefer: 'return=representation',
     body: { status: 'supervisor_approved' }
@@ -204,6 +379,32 @@ try {
     body: { status: 'submitted_to_dpdmis', dpdmis_reference: 'E2E-DPDMIS-' + suffix }
   });
   assert.equal(submittedRows[0]?.status, 'submitted_to_dpdmis', 'supervisor can record DPDMIS submission reference');
+
+  let postDpdmisReturnDenied = false;
+  try {
+    const rows = await request('/rest/v1/replenishment_requests?id=eq.' + indent.id + '&select=id,status', {
+      key: anonKey, token: supervisorA.token, method: 'PATCH',
+      prefer: 'return=representation',
+      body: {
+        status: 'returned_for_clarification',
+        note: 'Synthetic E2E attempt after DPDMIS submission'
+      }
+    });
+    postDpdmisReturnDenied = rows.length === 0;
+  } catch (error) {
+    postDpdmisReturnDenied =
+      /DPDMIS-submitted request cannot be returned/i.test(error.message);
+  }
+  assert.equal(postDpdmisReturnDenied, true,
+    'DPDMIS-submitted indent cannot be returned through clarification workflow');
+
+  const postDpdmisState = await request(
+    '/rest/v1/replenishment_requests?id=eq.' + indent.id + '&select=id,status,dpdmis_reference'
+  );
+  assert.equal(postDpdmisState[0]?.status, 'submitted_to_dpdmis',
+    'denied post-DPDMIS return leaves the main indent submitted');
+  assert.equal(postDpdmisState[0]?.dpdmis_reference, 'E2E-DPDMIS-' + suffix,
+    'denied post-DPDMIS return preserves its external reference');
 
   let supervisorAllocationDenied = false;
   try {
@@ -574,10 +775,15 @@ try {
   console.log('PASS worker draft report creation');
   console.log('PASS worker draft remains private until submission');
   console.log('PASS same-facility supervisor report visibility after submission');
-  console.log('PASS worker submission and supervisor verification transitions');
+  console.log('PASS worker submission, correction request, structured item correction and resubmission');
+  console.log('PASS report correction event history records status transitions and changed fields');
+  console.log('PASS assigned supervisor reverifies the corrected and resubmitted report');
   console.log('PASS cross-facility supervisor and worker report isolation');
   console.log('PASS worker cannot verify own report; cross-facility supervisor review denied');
   console.log('PASS storekeeper cannot create supervisor indent or review worker report');
+  console.log('PASS supervisor clarification return requires assignment and a non-empty reason');
+  console.log('PASS storekeeper and cross-facility supervisor clarification returns are denied');
+  console.log('PASS DPDMIS-submitted indent cannot be returned for clarification');
   console.log('PASS supervisor approval and DPDMIS reference precede storekeeper fulfilment');
   console.log('PASS supervisor and cross-facility storekeeper cannot allocate');
   console.log('PASS storekeeper allocation and dispatch require their role and references');
