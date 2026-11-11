@@ -80,7 +80,7 @@ function makeHarness({ failAt = null, facilities = [FACILITY], district = { lgd_
     },
     async deleteUser(id) { calls.push(['deleteUser', id]); if (failAt === 'deleteUser') throw new Error('delete failed'); }
   };
-  return { repository, authAdmin, calls };
+  return { repository, authAdmin, calls, operations };
 }
 
 test('validates worker provisioning input and requires explicit consent', () => {
@@ -242,6 +242,14 @@ test('returns the completed result for a repeated provisioning idempotency key w
 
 test('rejects a duplicate in-progress provisioning operation without creating a second Auth invite', async () => {
   const harness = makeHarness();
+  harness.operations.push({
+    id: '99999999-9999-4999-8999-999999999999',
+    requested_by: 'state-1',
+    idempotency_key: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    status: 'in_progress',
+    current_step: 'auth_user_created',
+    result: null
+  });
   const args = {
     ...harness,
     callerProfile: { id: 'state-1', role: 'state_admin', status: 'active' },
