@@ -26,7 +26,7 @@
   let provisioningRequestKey = null;
   function createProvisioningRequestKey() {
     if (window.crypto && typeof window.crypto.randomUUID === 'function') {
-      return window.createProvisioningRequestKey();
+      return window.crypto.randomUUID();
     }
     // UUID is an idempotency identifier, not an authentication secret.
     // Keep older/test browser contexts functional when randomUUID is absent.
@@ -218,7 +218,7 @@
       role,
       facilityIds: ['worker','supervisor','storekeeper'].includes(role) ? facilityIds : [],
       consentConfirmed: role === 'worker' && consent.checked,
-      idempotencyKey: provisioningRequestKey || (provisioningRequestKey = crypto.randomUUID())
+      idempotencyKey: provisioningRequestKey || (provisioningRequestKey = createProvisioningRequestKey())
     };
     if (role === 'district_admin') {
       input.scope = { level: 'district', stateLgdCode: '22', districtLgdCode: districtSelect.value };
