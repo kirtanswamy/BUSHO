@@ -21,6 +21,9 @@
   let facilities = [];
   let districts = [];
   let busy = false;
+  // Reuse one key while a submission's outcome is uncertain. Clear it only
+  // after the server confirms success, so a retry cannot send a second invite.
+  let provisioningRequestKey = null;
 
   const ROLE_LABELS = {
     worker: 'Health worker',
@@ -203,7 +206,8 @@
       preferredLanguage: document.getElementById('provision-language').value,
       role,
       facilityIds: ['worker','supervisor','storekeeper'].includes(role) ? facilityIds : [],
-      consentConfirmed: role === 'worker' && consent.checked
+      consentConfirmed: role === 'worker' && consent.checked,
+      idempotencyKey: provisioningRequestKey || (provisioningRequestKey = crypto.randomUUID())
     };
     if (role === 'district_admin') {
       input.scope = { level: 'district', stateLgdCode: '22', districtLgdCode: districtSelect.value };
@@ -218,6 +222,7 @@
     try {
       const result = await client.provisionUser(input);
       const invitation = result.invitation || {};
+      provisioningRequestKey = null;
       form.reset();
       updateRoleSections();
       showStatus('Invitation created for ' + (invitation.email || input.email) + '. The recipient must set a password using the emailed link. Role and scope are now assigned by BUSHO.', 'success');
