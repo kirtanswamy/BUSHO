@@ -41,6 +41,27 @@ test('privileged Auth invitation and assignment writes remain server-side', () =
   assert.doesNotMatch(read('admin-portal.js'), /service_role|secret_key|SUPABASE_SERVICE_ROLE_KEY/i);
 });
 
+test('provisioning operation ledger is server-only and supports durable request checkpoints', () => {
+  const edge = read('supabase/functions/provision-user/index.ts');
+  const service = read('supabase/functions/_shared/provisioning-service.mjs');
+  const migration = read('supabase/migrations/20261112120000_durable_provisioning_operations.sql');
+  assert.match(edge, /from\('provisioning_operations'\)/);
+  assert.match(edge, /createProvisioningOperation/);
+  assert.match(edge, /updateProvisioningOperation/);
+  assert.match(service, /request_fingerprint/);
+  assert.match(service, /reconciliation_required/);
+  assert.match(migration, /unique \(requested_by, idempotency_key\)/);
+  assert.match(migration, /reconciliation_required/);
+  assert.match(migration, /revoke all on public\.provisioning_operations from anon, authenticated/);
+});
+
+test('admin retries preserve the same provisioning request key until success', () => {
+  const admin = read('admin-portal.js');
+  assert.match(admin, /provisioningRequestKey/);
+  assert.match(admin, /crypto\.randomUUID\(\)/);
+  assert.match(admin, /provisioningRequestKey = null;[\s\S]*form\.reset\(\)/);
+});
+
 test('provisioning is not exposed as a browser-side direct profile role update', () => {
   const client = read('supabase-client.js');
   assert.match(client, /functions\/v1\/provision-user/);
