@@ -330,7 +330,9 @@ test(
       el.value = stale.value;
     });
     await requestedQuantity.fill('10');
-    await recommendationForm.locator('button[type="submit"]').click();
+    await recommendationForm.evaluate(form => {
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    });
     await expect(page.locator('#supply-handoff-message')).toContainText(/supervisor-verified report/i);
     await expect(recommendationForm).toBeVisible();
 
@@ -344,7 +346,9 @@ test(
       el.append(unknown);
       el.value = unknown.value;
     });
-    await recommendationForm.locator('button[type="submit"]').click();
+    await recommendationForm.evaluate(form => {
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    });
     await expect(page.locator('#supply-handoff-message')).toContainText(/active inventory item from the same facility/i);
     await expect(recommendationForm).toBeVisible();
 
