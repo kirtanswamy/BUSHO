@@ -354,6 +354,61 @@ try {
   assert.equal(indentRows.length, 1, 'assigned supervisor can create a recommendation linked to a verified report');
   const indent = indentRows[0];
 
+  // Submission keys deduplicate retries for one supervisor without
+  // preventing multiple legitimate recommendations from the same report.
+  const recommendationSubmissionKey = randomUUID();
+  const idempotentPayload = {
+    facility_id: facilityA.id, inventory_item_id: inventoryItem.id,
+    source_report_id: report.id, requested_quantity: 8, on_hand_quantity: 2,
+    unit: 'packets', status: 'recommended_to_facility_store',
+    data_mode: 'synthetic_demo', note: 'Synthetic idempotency retry test',
+    submission_key: recommendationSubmissionKey
+  };
+  const duplicateSubmissions = await Promise.allSettled([
+    request('/rest/v1/replenishment_requests?select=id,submission_key', {
+      key: anonKey, token: supervisorA.token, method: 'POST',
+      prefer: 'return=representation', body: [idempotentPayload]
+    }),
+    request('/rest/v1/replenishment_requests?select=id,submission_key', {
+      key: anonKey, token: supervisorA.token, method: 'POST',
+      prefer: 'return=representation', body: [idempotentPayload]
+    })
+  ]);
+  assert.equal(duplicateSubmissions.filter(x => x.status === 'fulfilled').length, 1,
+    'concurrent duplicate submission keys allow exactly one recommendation insert');
+  const idempotentRows = await request(
+    '/rest/v1/replenishment_requests?select=id,submission_key,created_by_user_id&submission_key=eq.' +
+    recommendationSubmissionKey,
+    { key: anonKey, token: supervisorA.token }
+  );
+  assert.equal(idempotentRows.length, 1, 'one supervisor submission key resolves to one stored recommendation');
+  assert.equal(idempotentRows[0].created_by_user_id, supervisorA.id,
+    'idempotency record is owned by the authenticated supervisor');
+
+  let submissionKeyImmutable = false;
+  try {
+    await request('/rest/v1/replenishment_requests?id=eq.' + idempotentRows[0].id, {
+      key: anonKey, token: supervisorA.token, method: 'PATCH',
+      body: { submission_key: randomUUID() }
+    });
+  } catch (error) {
+    submissionKeyImmutable = /submission key is immutable/i.test(error.message);
+  }
+  assert.equal(submissionKeyImmutable, true, 'a persisted recommendation submission key cannot be changed');
+
+  const distinctRecommendationRows = await request('/rest/v1/replenishment_requests?select=id,submission_key', {
+    key: anonKey, token: supervisorA.token, method: 'POST', prefer: 'return=representation',
+    body: [{
+      ...idempotentPayload,
+      submission_key: randomUUID(),
+      requested_quantity: 9,
+      note: 'Synthetic separate legitimate recommendation'
+    }]
+  });
+  assert.equal(distinctRecommendationRows.length, 1,
+    'a different submission key permits another legitimate recommendation from the same verified report and item');
+  console.log('PASS supervisor recommendation submission keys deduplicate concurrent retries without blocking distinct recommendations');
+
   const clarificationRows = await request('/rest/v1/replenishment_requests?select=id,facility_id,status,note', {
     key: anonKey, token: supervisorA.token, method: 'POST', prefer: 'return=representation',
     body: [{
