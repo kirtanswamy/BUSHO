@@ -42,6 +42,16 @@ Hosted CI completed successfully on the code-fix commits, with Node 18, 22, 24 a
 - `ARCHITECTURE.md` now reflects the authenticated four-role architecture, database security model, integration boundaries and current public-reference data gates.
 - `DEMO_SCENARIOS.md` now describes a complete synthetic worker → supervisor → storekeeper scenario, negative permission tests, failure recovery and evidence pack.
 
+## Latest provisioning reliability work
+
+A service-role-only `provisioning_operations` ledger has been added through migration `20261112120000_durable_provisioning_operations.sql`. It records the requesting administrator, unique idempotency key, canonical request fingerprint, target email/role, current step, Auth user ID when known, result and reconciliation state. Browser-facing `anon` and `authenticated` roles have no table privileges.
+
+The provisioning Edge Function now creates a durable operation before inviting the user, checkpoints the Auth identity immediately after the invite returns, records relationship/assignment progress, and stores a completed result only after the provisioning audit event. Repeated requests with the same administrator/key and same payload return the completed result; an in-progress or failed operation is not blindly re-invited. Reusing a key with changed details is rejected.
+
+The admin UI retains the same request key when the outcome is uncertain and clears it only after confirmed success. This prevents a user retry after a network timeout from silently creating a second invitation.
+
+Important limitation: a process crash can still occur between the external Auth side effect and the next database checkpoint. Such operations remain visibly in progress and require reconciliation; this implementation does not claim automatic crash recovery. A dedicated authorised reconciliation workflow is still required before production provisioning.
+
 ## Remaining work — engineering we can complete without government access
 
 ### P0 — Prove the complete operational workflow
