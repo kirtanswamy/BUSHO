@@ -24,6 +24,17 @@
   // Reuse one key while a submission's outcome is uncertain. Clear it only
   // after the server confirms success, so a retry cannot send a second invite.
   let provisioningRequestKey = null;
+  function createProvisioningRequestKey() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.createProvisioningRequestKey();
+    }
+    // UUID is an idempotency identifier, not an authentication secret.
+    // Keep older/test browser contexts functional when randomUUID is absent.
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, character => {
+      const value = Math.floor(Math.random() * 16);
+      return (character === 'x' ? value : (value & 0x3) | 0x8).toString(16);
+    });
+  }
 
   const ROLE_LABELS = {
     worker: 'Health worker',
