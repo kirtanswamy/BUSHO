@@ -239,65 +239,34 @@ test(
     ).toContainText(/^Verified$/i, { timeout: 20000 });
 
     // --------------------------------------------------------
-    // 3. Create a replenishment request using the authenticated
-    //    application client, tied to the verified report and an
-    //    active inventory item at the same facility.
+    // 3. Create the recommendation through the supervisor UI.
     // --------------------------------------------------------
+    await page.locator('[data-portal-view="supply-handoff"]').click();
+    const recommendationForm = page.locator('#supply-recommendation-form');
+    await expect(recommendationForm).toBeVisible({ timeout: 20000 });
+    const sourceReportSelect = recommendationForm.locator('[name="sourceReportId"]');
+    await expect(sourceReportSelect).toHaveValue(reportId);
+    const itemSelect = recommendationForm.locator('[name="inventoryItemId"]');
+    await expect(itemSelect.locator('option').first()).toBeAttached();
+    const selectedUnit = await recommendationForm.locator('[name="unit"]').inputValue();
+    expect(selectedUnit).toBeTruthy();
 
-    const created = await page.evaluate(async ({ reportId, runId }) => {
-      const client = window.BUSHO_SUPABASE_CLIENT.createClient(
-        window.BUSHO_SUPABASE_CONFIG
-      );
+    // Native validation must reject a zero requested quantity.
+    await recommendationForm.locator('[name="requestedQuantity"]').fill('0');
+    await recommendationForm.locator('[name="onHandQuantity"]').fill('0');
+    await recommendationForm.locator('button[type="submit"]').click();
+    await expect(recommendationForm.locator('[name="requestedQuantity"]')).toHaveJSProperty('validity.valid', false);
 
-      const report = await client.getReport(reportId);
-
-      if (!report || report.status !== 'supervisor_verified') {
-        throw new Error('Source report is not supervisor verified.');
-      }
-
-      if (!report.facility_id) {
-        throw new Error('Verified report has no facility_id.');
-      }
-
-      const inventory = await client.listInventory();
-
-      const item = inventory.find(candidate =>
-        candidate.facility_id === report.facility_id &&
-        candidate.is_active !== false &&
-        candidate.id &&
-        candidate.unit
-      );
-
-      if (!item) {
-        throw new Error(
-          'No active inventory item was found for the verified report facility.'
-        );
-      }
-
-      const request = await client.createReplenishmentRequest({
-        facilityId: report.facility_id,
-        inventoryItemId: item.id,
-        requestedQuantity: 10,
-        sourceReportId: reportId,
-        onHandQuantity: 0,
-        unit: item.unit,
-        note: `Synthetic browser E2E replenishment ${runId}`,
-        dataMode: 'synthetic_demo'
-      });
-
-      if (!request?.id) {
-        throw new Error('Replenishment request creation returned no ID.');
-      }
-
-      return {
-        requestId: request.id,
-        facilityId: report.facility_id,
-        inventoryItemId: item.id,
-        unit: item.unit
-      };
-    }, { reportId, runId });
-
-    const requestId = created.requestId;
+    await recommendationForm.locator('[name="requestedQuantity"]').fill('10');
+    await recommendationForm.locator('[name="onHandQuantity"]').fill('0');
+    await recommendationForm.locator('[name="note"]').fill(`Synthetic browser E2E replenishment ${runId}`);
+    await recommendationForm.locator('button[type="submit"]').click();
+    await expect(page.locator('#supply-handoff-message')).toContainText(/recommendation created/i, { timeout: 20000 });
+    await page.getByRole('button', { name: 'Refresh' }).click();
+    const createdCard = page.locator(`[data-recommendation-note="Synthetic browser E2E replenishment ${runId}"]`);
+    await expect(createdCard).toBeVisible({ timeout: 20000 });
+    const requestId = await createdCard.getAttribute('data-handoff-id');
+    expect(requestId).toMatch(/^[0-9a-f-]{36}$/i);
 
     // --------------------------------------------------------
     // 4. Supervisor approves and submits to DPDMIS.
