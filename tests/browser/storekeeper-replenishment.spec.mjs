@@ -301,12 +301,54 @@ test(
     const selectedUnit = await recommendationForm.locator('[name="unit"]').inputValue();
     expect(selectedUnit).toBeTruthy();
 
-    // Native validation must reject a zero requested quantity.
-    await recommendationForm.locator('[name="requestedQuantity"]').fill('0');
-    await recommendationForm.locator('[name="onHandQuantity"]').fill('0');
+    // Native validation rejects zero/fractional requested quantities and
+    // negative/fractional reported on-hand quantities before any write.
+    const requestedQuantity = recommendationForm.locator('[name="requestedQuantity"]');
+    const onHandQuantity = recommendationForm.locator('[name="onHandQuantity"]');
+    await requestedQuantity.fill('0');
+    await onHandQuantity.fill('0');
     await recommendationForm.locator('button[type="submit"]').click();
-    await expect(recommendationForm.locator('[name="requestedQuantity"]')).toHaveJSProperty('validity.valid', false);
+    await expect(requestedQuantity).toHaveJSProperty('validity.valid', false);
 
+    await requestedQuantity.fill('1.5');
+    await expect(requestedQuantity).toHaveJSProperty('validity.stepMismatch', true);
+    await requestedQuantity.fill('1');
+    await onHandQuantity.fill('-1');
+    await expect(onHandQuantity).toHaveJSProperty('validity.valid', false);
+    await onHandQuantity.fill('1.5');
+    await expect(onHandQuantity).toHaveJSProperty('validity.stepMismatch', true);
+
+    // Stale report and unknown inventory identifiers must be rejected by
+    // the UI's current server-backed source lists, without creating a row.
+    await onHandQuantity.fill('0');
+    await sourceReportSelect.selectOption({ label: await sourceReportSelect.locator('option').first().innerText() });
+    await sourceReportSelect.evaluate(el => {
+      const stale = document.createElement('option');
+      stale.value = '00000000-0000-4000-8000-000000000001';
+      stale.textContent = 'Stale report fixture';
+      el.append(stale);
+      el.value = stale.value;
+    });
+    await requestedQuantity.fill('10');
+    await recommendationForm.locator('button[type="submit"]').click();
+    await expect(page.locator('#supply-handoff-message')).toContainText(/supervisor-verified report/i);
+    await expect(recommendationForm).toBeVisible();
+
+    const refreshedReportSelect = recommendationForm.locator('[name="sourceReportId"]');
+    await refreshedReportSelect.selectOption(reportId);
+    const refreshedItemSelect = recommendationForm.locator('[name="inventoryItemId"]');
+    await refreshedItemSelect.evaluate(el => {
+      const unknown = document.createElement('option');
+      unknown.value = '00000000-0000-4000-8000-000000000002';
+      unknown.textContent = 'Unknown inventory fixture';
+      el.append(unknown);
+      el.value = unknown.value;
+    });
+    await recommendationForm.locator('button[type="submit"]').click();
+    await expect(page.locator('#supply-handoff-message')).toContainText(/active inventory item from the same facility/i);
+    await expect(recommendationForm).toBeVisible();
+
+    await recommendationForm.locator('[name="sourceReportId"]').selectOption(reportId);
     await recommendationForm.locator('[name="requestedQuantity"]').fill('10');
     await recommendationForm.locator('[name="onHandQuantity"]').fill('0');
     await recommendationForm.locator('[name="note"]').fill(`Synthetic browser E2E replenishment ${runId}`);
