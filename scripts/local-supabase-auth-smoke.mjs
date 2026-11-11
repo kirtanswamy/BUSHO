@@ -392,7 +392,9 @@ try {
       body: { submission_key: randomUUID() }
     });
   } catch (error) {
-    submissionKeyImmutable = /submission key is immutable/i.test(error.message);
+    // Operational users intentionally have no UPDATE grant for this
+    // immutable key; privileged paths are additionally guarded by a trigger.
+    submissionKeyImmutable = /submission key is immutable|permission denied/i.test(error.message);
   }
   assert.equal(submissionKeyImmutable, true, 'a persisted recommendation submission key cannot be changed');
 
