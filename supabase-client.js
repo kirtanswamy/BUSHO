@@ -107,21 +107,33 @@
       return parseResponse(response);
     }
 
+    // Multiple portal actions can discover an expired session at the same
+    // time. Supabase rotates refresh tokens, so concurrent refresh requests
+    // using the same token can invalidate one another. Share one refresh
+    // promise across all requests made by this client instance.
+    let refreshInFlight = null;
+
     async function refreshSession(session) {
+      if (refreshInFlight) return refreshInFlight;
       if (!session || !session.refresh_token) {
         clearSession();
         throw new Error('Your BUSHO session has expired. Sign in again.');
       }
-      try {
-        const result = await authRequest('token?grant_type=refresh_token', {
-          method: 'POST',
-          body: { refresh_token: session.refresh_token }
-        });
-        return writeSession(result);
-      } catch (error) {
-        clearSession();
-        throw error;
-      }
+      refreshInFlight = (async () => {
+        try {
+          const result = await authRequest('token?grant_type=refresh_token', {
+            method: 'POST',
+            body: { refresh_token: session.refresh_token }
+          });
+          return writeSession(result);
+        } catch (error) {
+          clearSession();
+          throw error;
+        } finally {
+          refreshInFlight = null;
+        }
+      })();
+      return refreshInFlight;
     }
 
     async function getValidSession() {
