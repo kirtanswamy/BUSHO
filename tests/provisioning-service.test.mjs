@@ -167,6 +167,44 @@ test('provisions worker with database role, facility assignment, consent timesta
   assert.ok(harness.calls.some(call => call[0] === 'insertAuditLog'));
 });
 
+test('keeps the invited profile pending until worker and facility assignments are complete', async () => {
+  const harness = makeHarness();
+  let workerCreated = false;
+  let assignmentsCreated = false;
+  const originalInsertWorker = harness.repository.insertWorker;
+  const originalInsertAssignments = harness.repository.insertFacilityAssignments;
+  const originalActivate = harness.repository.activateProfile;
+
+  harness.repository.insertWorker = async payload => {
+    await originalInsertWorker(payload);
+    workerCreated = true;
+  };
+  harness.repository.insertFacilityAssignments = async rows => {
+    await originalInsertAssignments(rows);
+    assignmentsCreated = true;
+  };
+  harness.repository.activateProfile = async (id, payload) => {
+    assert.equal(workerCreated, true, 'worker cadre record must exist before activation');
+    assert.equal(assignmentsCreated, true, 'facility assignment must exist before activation');
+    await originalActivate(id, payload);
+  };
+
+  const result = await provisionUser({
+    ...harness,
+    callerProfile: { id: 'state-1', role: 'state_admin', status: 'active' },
+    callerScopes: [STATE_SCOPE],
+    input: workerInput(),
+    appOrigin: 'https://busho.de5.net',
+    now: FIXED_NOW
+  });
+
+  const steps = harness.calls.map(call => call[0]);
+  assert.ok(steps.indexOf('insertWorker') < steps.indexOf('activateProfile'));
+  assert.ok(steps.indexOf('insertFacilityAssignments') < steps.indexOf('activateProfile'));
+  assert.ok(steps.indexOf('activateProfile') < steps.indexOf('insertAuditLog'));
+  assert.equal(result.status, 'invited');
+});
+
 test('district admin cannot provision a worker when facility lookup returns no verified facility', async () => {
   const harness = makeHarness({ facilities: [] });
   await assert.rejects(
