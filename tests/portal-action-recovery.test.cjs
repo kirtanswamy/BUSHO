@@ -117,6 +117,12 @@ function makeHarness(role, listResponses, transitionError = null) {
       if (response instanceof Error) throw response;
       return response;
     },
+    async listSupervisorReports() {
+      return [];
+    },
+    async listInventory() {
+      return [];
+    },
     transitionCalls: 0,
     async transitionReplenishmentRequest(input) {
       client.transitionCalls += 1;
