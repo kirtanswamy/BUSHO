@@ -214,4 +214,3 @@ Never use `--linked` or a remote database target for this workflow.
 - Hosted non-production validation, external-system integration, real facility data verification and operational review require separate authorization and validation.
 
 A passing local run demonstrates behavior against the local Supabase schema, policies, triggers and application workflows only.
-
