@@ -701,6 +701,71 @@ try {
   });
   assert.equal(duplicateIndentMovements.length, 1, 'duplicate reference rejection leaves exactly one movement');
 
+  // Concurrent cumulative receipt submissions must never over-receive or
+  // leave the request, movement ledger and append-only event history divergent.
+  const concurrentIndentRows = await request('/rest/v1/replenishment_requests?select=id,status', {
+    key: anonKey, token: supervisorA.token, method: 'POST', prefer: 'return=representation',
+    body: [{
+      facility_id: facilityA.id, inventory_item_id: inventoryItem.id,
+      source_report_id: report.id, requested_quantity: 20, on_hand_quantity: 0,
+      unit: 'packets', status: 'recommended_to_facility_store',
+      data_mode: 'synthetic_demo', note: 'Synthetic concurrent receipt integrity test'
+    }]
+  });
+  const concurrentIndent = concurrentIndentRows[0];
+  await request('/rest/v1/replenishment_requests?id=eq.' + concurrentIndent.id, {
+    key: anonKey, token: supervisorA.token, method: 'PATCH',
+    body: { status: 'supervisor_approved' }
+  });
+  await request('/rest/v1/replenishment_requests?id=eq.' + concurrentIndent.id, {
+    key: anonKey, token: supervisorA.token, method: 'PATCH',
+    body: { status: 'submitted_to_dpdmis', dpdmis_reference: 'E2E-DPDMIS-CONCURRENT-' + suffix }
+  });
+  await request('/rest/v1/replenishment_requests?id=eq.' + concurrentIndent.id, {
+    key: anonKey, token: storekeeperA.token, method: 'PATCH',
+    body: { status: 'allocated', allocation_reference: 'E2E-ALLOC-CONCURRENT-' + suffix }
+  });
+  await request('/rest/v1/replenishment_requests?id=eq.' + concurrentIndent.id, {
+    key: anonKey, token: storekeeperA.token, method: 'PATCH',
+    body: { status: 'dispatched', dispatch_reference: 'E2E-CHALLAN-CONCURRENT-' + suffix }
+  });
+
+  const concurrentReceiptAttempts = await Promise.allSettled([
+    request('/rest/v1/replenishment_requests?id=eq.' + concurrentIndent.id, {
+      key: anonKey, token: storekeeperA.token, method: 'PATCH',
+      body: { status: 'partially_received', received_quantity: 6, receipt_reference: 'E2E-GRN-CONCURRENT-A-' + suffix }
+    }),
+    request('/rest/v1/replenishment_requests?id=eq.' + concurrentIndent.id, {
+      key: anonKey, token: storekeeperA.token, method: 'PATCH',
+      body: { status: 'partially_received', received_quantity: 12, receipt_reference: 'E2E-GRN-CONCURRENT-B-' + suffix }
+    })
+  ]);
+  const concurrentSuccesses = concurrentReceiptAttempts.filter(x => x.status === 'fulfilled').length;
+  assert(concurrentSuccesses >= 1, 'at least one competing cumulative receipt submission is accepted');
+  const concurrentState = await request('/rest/v1/replenishment_requests?id=eq.' + concurrentIndent.id + '&select=status,requested_quantity,received_quantity', {
+    key: anonKey, token: storekeeperA.token
+  });
+  assert.equal(concurrentState.length, 1);
+  const concurrentReceived = Number(concurrentState[0].received_quantity);
+  assert(concurrentReceived > 0 && concurrentReceived <= Number(concurrentState[0].requested_quantity),
+    'concurrent receipt submissions never over-receive the indent');
+  const concurrentMovements = await request('/rest/v1/inventory_movements?select=quantity_delta,external_reference&replenishment_request_id=eq.' + concurrentIndent.id, {
+    key: anonKey, token: storekeeperA.token
+  });
+  const concurrentEvents = await request('/rest/v1/replenishment_events?select=action,quantity_delta&replenishment_request_id=eq.' + concurrentIndent.id, {
+    key: anonKey, token: storekeeperA.token
+  });
+  const concurrentMovementTotal = concurrentMovements.reduce((sum, x) => sum + Number(x.quantity_delta), 0);
+  const concurrentEventTotal = concurrentEvents.filter(x => x.action === 'receipt_recorded')
+    .reduce((sum, x) => sum + Number(x.quantity_delta || 0), 0);
+  assert.equal(concurrentMovementTotal, concurrentReceived,
+    'concurrent receipt movement deltas reconcile exactly to persisted cumulative quantity');
+  assert.equal(concurrentEventTotal, concurrentReceived,
+    'concurrent receipt event deltas reconcile exactly to persisted cumulative quantity');
+  assert.equal(new Set(concurrentMovements.map(x => x.external_reference)).size, concurrentMovements.length,
+    'concurrent receipt movements retain distinct external references');
+  console.log('PASS concurrent cumulative receipt submissions cannot over-receive and ledger/event deltas reconcile');
+
   // Catalogue is reference-controlled; stock observations have role- and actor-scoped writes.
   let workerCatalogueInsertDenied = false;
   try {
