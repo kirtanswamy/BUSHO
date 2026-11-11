@@ -129,14 +129,6 @@ export async function provisionUser({
       scope: request.scope,
       status: 'invited'
     };
-    await repository.updateProvisioningOperation(operation.id, {
-      status: 'completed',
-      current_step: 'completed',
-      auth_user_id: createdUserId,
-      result,
-      completed_at: now().toISOString()
-    });
-
     await repository.insertAuditLog({
       actor_worker_id: null,
       action: 'user_provisioned',
@@ -152,6 +144,13 @@ export async function provisionUser({
       }
     });
 
+    await repository.updateProvisioningOperation(operation.id, {
+      status: 'completed',
+      current_step: 'completed',
+      auth_user_id: createdUserId,
+      result,
+      completed_at: now().toISOString()
+    });
     return result;
   } catch (error) {
     if (createdUserId) {
