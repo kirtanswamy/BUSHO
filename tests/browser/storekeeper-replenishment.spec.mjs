@@ -158,6 +158,9 @@ async function signOutThroughProfileMenu(page) {
       return true;
     });
     expect(signedOut).toBe(true);
+    // The direct client call clears persisted auth but does not emit the
+    // portal's UI auth event. Reload so the portal reinitializes as signed out.
+    await page.reload();
   }
 
   await expect(page.locator('#portal-login-form')).toBeVisible({
