@@ -240,6 +240,24 @@ test('returns the completed result for a repeated provisioning idempotency key w
   assert.equal(harness.calls.filter(call => call[0] === 'createProvisioningOperation').length, 2);
 });
 
+test('rejects a changed payload that reuses a completed provisioning key', async () => {
+  const harness = makeHarness();
+  const args = {
+    ...harness,
+    callerProfile: { id: 'state-1', role: 'state_admin', status: 'active' },
+    callerScopes: [STATE_SCOPE],
+    input: workerInput(),
+    appOrigin: 'https://busho.de5.net',
+    now: FIXED_NOW
+  };
+  await provisionUser(args);
+  await assert.rejects(
+    provisionUser({ ...args, input: workerInput({ facilityIds: ['33333333-3333-4333-8333-333333333333'] }) }),
+    error => error instanceof ProvisioningError && error.code === 'idempotency_payload_mismatch'
+  );
+  assert.equal(harness.calls.filter(call => call[0] === 'inviteUserByEmail').length, 1);
+});
+
 test('rejects a duplicate in-progress provisioning operation without creating a second Auth invite', async () => {
   const harness = makeHarness();
   harness.operations.push({
