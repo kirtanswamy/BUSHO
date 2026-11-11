@@ -248,6 +248,85 @@ try {
   assert.equal(inventoryRows.length, 1, 'service role can seed one synthetic facility inventory catalogue item');
   const inventoryItem = inventoryRows[0];
 
+  // Database-level replenishment insert validation. All test rows are synthetic.
+  const inactiveItemRows = await request('/rest/v1/inventory_items?select=id,facility_id,unit,is_active', {
+    method: 'POST', prefer: 'return=representation',
+    body: [{
+      facility_id: facilityA.id,
+      item_code: 'E2E-INACTIVE-' + suffix,
+      name: 'Synthetic inactive item ' + suffix,
+      unit: 'packets',
+      is_active: false
+    }]
+  });
+  assert.equal(inactiveItemRows.length, 1, 'service role can seed an inactive synthetic inventory item');
+
+  const facilityBItemRows = await request('/rest/v1/inventory_items?select=id,facility_id,unit,is_active', {
+    method: 'POST', prefer: 'return=representation',
+    body: [{
+      facility_id: facilityB.id,
+      item_code: 'E2E-FOREIGN-' + suffix,
+      name: 'Synthetic foreign-facility item ' + suffix,
+      unit: 'packets',
+      is_active: true
+    }]
+  });
+  assert.equal(facilityBItemRows.length, 1, 'service role can seed a second-facility synthetic inventory item');
+
+  async function expectInvalidReplenishment(label, payload, expectedMessage) {
+    let rejected = false;
+    try {
+      await request('/rest/v1/replenishment_requests?select=id', {
+        key: anonKey, token: supervisorA.token, method: 'POST',
+        prefer: 'return=representation',
+        body: [{ ...payload, note: 'Synthetic invalid insert ' + label + ' ' + suffix }]
+      });
+    } catch (error) {
+      rejected = expectedMessage.test(error.message);
+      if (!rejected) throw error;
+    }
+    assert.equal(rejected, true, label + ' is rejected by the database insert guard');
+
+    const survivors = await request(
+      '/rest/v1/replenishment_requests?select=id&note=eq.' +
+      encodeURIComponent('Synthetic invalid insert ' + label + ' ' + suffix),
+      { key: serviceKey }
+    );
+    assert.equal(survivors.length, 0, label + ' rejection leaves no replenishment row behind');
+  }
+
+  const validInsertBase = {
+    facility_id: facilityA.id,
+    source_report_id: report.id,
+    status: 'recommended_to_facility_store',
+    data_mode: 'synthetic_demo',
+    requested_quantity: 3,
+    on_hand_quantity: 0,
+    unit: 'packets'
+  };
+  await expectInvalidReplenishment('inactive item', {
+    ...validInsertBase, inventory_item_id: inactiveItemRows[0].id
+  }, /inventory item is inactive/i);
+  await expectInvalidReplenishment('foreign facility item', {
+    ...validInsertBase, inventory_item_id: facilityBItemRows[0].id
+  }, /must belong to the request facility/i);
+  await expectInvalidReplenishment('unit mismatch', {
+    ...validInsertBase, inventory_item_id: inventoryItem.id, unit: 'bottles'
+  }, /unit must match/i);
+  await expectInvalidReplenishment('fractional requested quantity', {
+    ...validInsertBase, inventory_item_id: inventoryItem.id, requested_quantity: 1.5
+  }, /positive whole number/i);
+  await expectInvalidReplenishment('zero requested quantity', {
+    ...validInsertBase, inventory_item_id: inventoryItem.id, requested_quantity: 0
+  }, /positive whole number/i);
+  await expectInvalidReplenishment('negative on-hand quantity', {
+    ...validInsertBase, inventory_item_id: inventoryItem.id, on_hand_quantity: -1
+  }, /non-negative whole number/i);
+  await expectInvalidReplenishment('fractional on-hand quantity', {
+    ...validInsertBase, inventory_item_id: inventoryItem.id, on_hand_quantity: 0.5
+  }, /non-negative whole number/i);
+  console.log('PASS replenishment insert rejects inactive, cross-facility, unit-mismatched and invalid-quantity inputs atomically');
+
   let storekeeperCreateDenied = false;
   try {
     await request('/rest/v1/replenishment_requests?select=id', {
