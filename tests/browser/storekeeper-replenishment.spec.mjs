@@ -23,7 +23,7 @@ const accounts = new Map(
   credentials.accounts.map(account => [account.label, account])
 );
 
-for (const label of ['worker-a', 'supervisor-a', 'storekeeper-e2e']) {
+for (const label of ['worker-a', 'supervisor-a', 'supervisor-b', 'storekeeper-b', 'storekeeper-e2e']) {
   if (!accounts.get(label)?.email) {
     throw new Error(`Missing local E2E account: ${label}`);
   }
@@ -206,7 +206,31 @@ test(
     await signOutThroughProfileMenu(page);
 
     // --------------------------------------------------------
-    // 2. Supervisor verifies the report.
+    // 2. Facility B supervisor must not see Facility A's report.
+    //    Verify both the rendered inbox and authenticated client result.
+    // --------------------------------------------------------
+
+    await login(page, '/supervisor.html', 'supervisor-b');
+    await page.locator('[data-portal-view="reports"]').click();
+
+    const crossFacilityReportRow = page.locator(
+      `.report-inbox-row[data-open-report="${reportId}"]`
+    );
+    await expect(crossFacilityReportRow).toHaveCount(0);
+
+    const reportVisibleToFacilityB = await page.evaluate(async reportId => {
+      const client = window.BUSHO_SUPABASE_CLIENT.createClient(
+        window.BUSHO_SUPABASE_CONFIG
+      );
+      const reports = await client.listSupervisorReports();
+      return reports.some(report => report.id === reportId);
+    }, reportId);
+    expect(reportVisibleToFacilityB).toBe(false);
+
+    await signOutThroughProfileMenu(page);
+
+    // --------------------------------------------------------
+    // 3. Facility A supervisor verifies the report.
     // --------------------------------------------------------
 
     await login(page, '/supervisor.html', 'supervisor-a');
@@ -318,11 +342,51 @@ test(
     await submissionForm.locator('button[type="submit"]').click();
 
     // --------------------------------------------------------
-    // 5. Storekeeper allocates and dispatches.
+    // 5. Facility B storekeeper must not see or mutate Facility A's
+    //    submitted request. Test UI visibility and server authorization.
     // --------------------------------------------------------
 
     await signOutThroughProfileMenu(page);
+    await login(page, '/storekeeper.html', 'storekeeper-b');
+
+    await expect(page.locator(`[data-request="${requestId}"]`)).toHaveCount(0);
+
+    const facilityBRequestVisible = await page.evaluate(async requestId => {
+      const client = window.BUSHO_SUPABASE_CLIENT.createClient(
+        window.BUSHO_SUPABASE_CONFIG
+      );
+      const requests = await client.listMyReplenishments();
+      return requests.some(request => request.id === requestId);
+    }, requestId);
+    expect(facilityBRequestVisible).toBe(false);
+
+    const crossFacilityMutation = await page.evaluate(async requestId => {
+      const client = window.BUSHO_SUPABASE_CLIENT.createClient(
+        window.BUSHO_SUPABASE_CONFIG
+      );
+      try {
+        await client.transitionReplenishmentRequest({
+          id: requestId,
+          status: 'allocated',
+          allocationReference: 'E2E-CROSS-FACILITY-MUST-DENY'
+        });
+        return { denied: false, message: '' };
+      } catch (error) {
+        return { denied: true, message: error?.message || String(error) };
+      }
+    }, requestId);
+    expect(crossFacilityMutation.denied).toBe(true);
+    expect(crossFacilityMutation.message).toMatch(/outside your facility scope|not updated|not permitted/i);
+
+    await page.locator('#storekeeper-refresh').click();
+    await expect(page.locator(`[data-request="${requestId}"]`)).toHaveCount(0);
+
+    await signOutThroughProfileMenu(page);
     await login(page, '/storekeeper.html', 'storekeeper-e2e');
+
+    // --------------------------------------------------------
+    // 6. Facility A storekeeper allocates and dispatches.
+    // --------------------------------------------------------
 
     let requestCard = await waitForRequestCard(page, requestId);
 
