@@ -357,7 +357,7 @@ test(
     await recommendationForm.locator('[name="onHandQuantity"]').fill('0');
     await recommendationForm.locator('[name="note"]').fill(`Synthetic browser E2E replenishment ${runId}`);
     await recommendationForm.locator('button[type="submit"]').click();
-    await expect(page.locator('#supply-handoff-message')).toContainText(/recommendation created/i, { timeout: 20000 });
+    await expect(page.locator('#supply-handoff-message')).toContainText(/recommendation saved/i, { timeout: 20000 });
     await page.getByRole('button', { name: 'Refresh' }).click();
     const createdCard = page.locator(`[data-recommendation-note="Synthetic browser E2E replenishment ${runId}"]`);
     await expect(createdCard).toBeVisible({ timeout: 20000 });
