@@ -37,9 +37,18 @@ export async function provisionUser({
     assertDistrictAssignmentAllowed(callerProfile, activeScopes, district);
   }
 
+  const requestFingerprint = JSON.stringify({
+    email: request.email,
+    displayName: request.displayName,
+    role: request.role,
+    preferredLanguage: request.preferredLanguage,
+    facilityIds: [...request.facilityIds].sort(),
+    scope: request.scope
+  });
   const operation = await repository.createProvisioningOperation({
     requested_by: callerProfile.id,
     idempotency_key: idempotencyKey,
+    request_fingerprint: requestFingerprint,
     target_email: request.email,
     target_role: request.role,
     status: 'in_progress',
@@ -47,6 +56,9 @@ export async function provisionUser({
   });
   if (!operation?.id) {
     throw new ProvisioningError(500, 'The provisioning operation could not be recorded.', 'operation_record_failed');
+  }
+  if (operation.request_fingerprint !== requestFingerprint) {
+    throw new ProvisioningError(409, 'This request key is already associated with different provisioning details. Do not reuse it for a changed request.', 'idempotency_payload_mismatch');
   }
   if (operation.status === 'completed' && operation.result) return operation.result;
   if (operation.status !== 'in_progress' || operation.idempotency_key !== idempotencyKey) {
