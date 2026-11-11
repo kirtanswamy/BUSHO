@@ -17,6 +17,10 @@ export async function provisionUser({
 }) {
   const request = validateProvisioningInput(input);
   const activeScopes = assertCanProvision(callerProfile, callerScopes, request, now());
+  const idempotencyKey = String(input?.idempotencyKey || '');
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(idempotencyKey)) {
+    throw new ProvisioningError(400, 'A valid provisioning request key is required.', 'invalid_idempotency_key');
+  }
 
   let facilities = [];
   if (request.facilityIds.length) {
@@ -33,8 +37,28 @@ export async function provisionUser({
     assertDistrictAssignmentAllowed(callerProfile, activeScopes, district);
   }
 
+  const operation = await repository.createProvisioningOperation({
+    requested_by: callerProfile.id,
+    idempotency_key: idempotencyKey,
+    target_email: request.email,
+    target_role: request.role,
+    status: 'in_progress',
+    current_step: 'accepted'
+  });
+  if (!operation?.id) {
+    throw new ProvisioningError(500, 'The provisioning operation could not be recorded.', 'operation_record_failed');
+  }
+  if (operation.status === 'completed' && operation.result) return operation.result;
+  if (operation.status !== 'in_progress' || operation.idempotency_key !== idempotencyKey) {
+    throw new ProvisioningError(409, 'This provisioning request is already being processed or requires administrator reconciliation. Do not submit it with a new request key.', 'provisioning_operation_conflict');
+  }
+  if (operation.created === false) {
+    throw new ProvisioningError(409, 'This provisioning request already exists. Its status must be checked before retrying.', 'provisioning_operation_conflict');
+  }
+
   let createdUserId = null;
   try {
+    await repository.updateProvisioningOperation(operation.id, { current_step: 'inviting_auth_user' });
     const invitation = await authAdmin.inviteUserByEmail(request.email, {
       data: {
         display_name: request.displayName,
@@ -85,11 +109,32 @@ export async function provisionUser({
     // records and assignments are being created. Activate only after every
     // required relationship exists, so a partially provisioned invite can
     // never become an active operational account.
+    await repository.updateProvisioningOperation(operation.id, {
+      current_step: 'assignments_created',
+      auth_user_id: createdUserId
+    });
     await repository.activateProfile(createdUserId, {
       display_name: request.displayName,
       preferred_language: request.preferredLanguage,
       role: request.role,
       status: 'active'
+    });
+
+    const result = {
+      userId: createdUserId,
+      email: request.email,
+      displayName: request.displayName,
+      role: request.role,
+      facilityIds: request.facilityIds,
+      scope: request.scope,
+      status: 'invited'
+    };
+    await repository.updateProvisioningOperation(operation.id, {
+      status: 'completed',
+      current_step: 'completed',
+      auth_user_id: createdUserId,
+      result,
+      completed_at: now().toISOString()
     });
 
     await repository.insertAuditLog({
@@ -107,15 +152,7 @@ export async function provisionUser({
       }
     });
 
-    return {
-      userId: createdUserId,
-      email: request.email,
-      displayName: request.displayName,
-      role: request.role,
-      facilityIds: request.facilityIds,
-      scope: request.scope,
-      status: 'invited'
-    };
+    return result;
   } catch (error) {
     if (createdUserId) {
       const rollback = await Promise.allSettled([
@@ -126,12 +163,28 @@ export async function provisionUser({
       try { await authAdmin.deleteUser(createdUserId); }
       catch { deleteFailed = true; }
       if (rollback.some(result => result.status === 'rejected') || deleteFailed) {
+        await repository.updateProvisioningOperation(operation.id, {
+          status: 'reconciliation_required',
+          current_step: 'rollback_incomplete',
+          auth_user_id: createdUserId,
+          error_code: 'provisioning_rollback_incomplete',
+          failure_detail: 'Automatic rollback was incomplete.'
+        });
         throw new ProvisioningError(
           500,
           'Provisioning failed and automatic rollback was incomplete. A platform administrator must reconcile the suspended account and its assignments.',
           'provisioning_rollback_incomplete'
         );
       }
+    }
+    if (!(error instanceof ProvisioningError && error.code === 'provisioning_rollback_incomplete')) {
+      await repository.updateProvisioningOperation(operation.id, {
+        status: 'failed',
+        current_step: 'failed',
+        auth_user_id: createdUserId,
+        error_code: error.code || 'provisioning_failed',
+        failure_detail: 'Provisioning failed; automatic cleanup was attempted.'
+      });
     }
     if (error instanceof ProvisioningError) throw error;
     throw new ProvisioningError(
