@@ -87,6 +87,76 @@ test('new auth users with pending profiles are not granted a BUSHO workspace', a
   assert.equal(result.profile.role, 'pending');
 });
 
+test('concurrent requests share one rotating refresh-token exchange', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'expired-access-token',
+    refresh_token: 'single-use-refresh-token',
+    expires_at: 1_799_999_999,
+    user: { id: 'user-concurrent-refresh' }
+  }));
+
+  const refreshCalls = [];
+  const profileCalls = [];
+  let releaseRefresh;
+  const refreshGate = new Promise(resolve => { releaseRefresh = resolve; });
+  let announceRefreshStarted;
+  const refreshStarted = new Promise(resolve => { announceRefreshStarted = resolve; });
+
+  const fetch = async (url, options = {}) => {
+    if (url.includes('/auth/v1/token?grant_type=refresh_token')) {
+      refreshCalls.push(JSON.parse(options.body));
+      announceRefreshStarted();
+      await refreshGate;
+      return jsonResponse({
+        access_token: 'rotated-access-token',
+        refresh_token: 'rotated-refresh-token',
+        expires_in: 3600,
+        user: { id: 'user-concurrent-refresh' }
+      });
+    }
+    if (url.includes('/rest/v1/profiles?')) {
+      profileCalls.push(options.headers.Authorization);
+      return jsonResponse([{
+        id: 'user-concurrent-refresh',
+        role: 'worker',
+        status: 'active'
+      }]);
+    }
+    if (url.includes('/rest/v1/reports?')) {
+      assert.equal(options.headers.Authorization, 'Bearer rotated-access-token');
+      return jsonResponse([]);
+    }
+    throw new Error('Unexpected request: ' + url);
+  };
+
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    fetch,
+    storage,
+    now: () => 1_800_000_000_000
+  });
+
+  const first = client.listMyReports();
+  await refreshStarted;
+  const second = client.listMyReports();
+  await Promise.resolve();
+  assert.equal(refreshCalls.length, 1, 'only one refresh request may use the rotating token');
+
+  releaseRefresh();
+  await Promise.all([first, second]);
+
+  assert.equal(refreshCalls.length, 1);
+  assert.deepEqual(refreshCalls[0], { refresh_token: 'single-use-refresh-token' });
+  assert.equal(profileCalls.length, 2);
+  assert.ok(profileCalls.every(value => value === 'Bearer rotated-access-token'));
+
+  const stored = JSON.parse(storage.getItem('busho-auth-session-v1'));
+  assert.equal(stored.access_token, 'rotated-access-token');
+  assert.equal(stored.refresh_token, 'rotated-refresh-token');
+});
+
 test('REST requests use the signed-in user token and refresh an expired session', async () => {
   const storage = makeStorage();
   storage.setItem('busho-auth-session-v1', JSON.stringify({
