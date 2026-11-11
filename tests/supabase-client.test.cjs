@@ -574,3 +574,114 @@ test('facility registry client rejects worker profiles before making privileged 
   await assert.rejects(() => client.manageFacilityRegistry({ action: 'create_batch' }), /not available to the worker role/i);
   assert.equal(calls.some(item => item.url.includes('/functions/v1/facility-registry')), false);
 });
+
+
+test('recommendation retry returns the original row only when the idempotency key payload matches', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'supervisor-token',
+    refresh_token: 'supervisor-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'supervisor-1' }
+  }));
+  const calls = [];
+  const payload = {
+    facility_id: 'facility-1',
+    inventory_item_id: 'item-1',
+    requested_quantity: 8,
+    status: 'recommended_to_facility_store',
+    source_report_id: 'report-1',
+    on_hand_quantity: 2,
+    unit: 'packets',
+    note: 'Synthetic retry',
+    data_mode: 'synthetic_demo',
+    submission_key: '123e4567-e89b-42d3-a456-426614174000'
+  };
+  const existing = {
+    id: 'request-1',
+    facility_id: 'facility-1',
+    inventory_item_id: 'item-1',
+    requested_quantity: 8,
+    source_report_id: 'report-1',
+    on_hand_quantity: 2,
+    unit: 'packets',
+    note: 'Synthetic retry',
+    data_mode: 'synthetic_demo',
+    submission_key: payload.submission_key,
+    created_by_user_id: 'supervisor-1'
+  };
+  const fetch = async (url, options) => {
+    calls.push({ url, options });
+    if (url.includes('/rest/v1/profiles?')) {
+      return jsonResponse([{ id: 'supervisor-1', role: 'supervisor', status: 'active' }]);
+    }
+    if (url.endsWith('/rest/v1/replenishment_requests') && options.method === 'POST') {
+      return jsonResponse({ code: '23505', message: 'duplicate key value violates unique constraint' }, 409);
+    }
+    if (url.includes('/rest/v1/replenishment_requests?select=id,facility_id')) {
+      return jsonResponse([existing]);
+    }
+    throw new Error('Unexpected request: ' + url);
+  };
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    fetch,
+    storage,
+    now: () => 1_800_000_000_000
+  });
+  const result = await client.createReplenishmentRequest({
+    facilityId: 'facility-1',
+    inventoryItemId: 'item-1',
+    requestedQuantity: 8,
+    sourceReportId: 'report-1',
+    onHandQuantity: 2,
+    unit: 'packets',
+    note: 'Synthetic retry',
+    dataMode: 'synthetic_demo',
+    submissionKey: payload.submission_key
+  });
+  assert.equal(result.id, 'request-1');
+  assert.equal(calls.filter(call => call.options.method === 'POST').length, 1);
+  assert.ok(calls.some(call => call.url.includes('created_by_user_id=eq.supervisor-1')));
+});
+
+test('recommendation retry rejects reuse of a submission key with different details', async () => {
+  const storage = makeStorage();
+  storage.setItem('busho-auth-session-v1', JSON.stringify({
+    access_token: 'supervisor-token',
+    refresh_token: 'supervisor-refresh',
+    expires_at: 1_800_003_000,
+    user: { id: 'supervisor-1' }
+  }));
+  const existing = {
+    id: 'request-1', facility_id: 'facility-1', inventory_item_id: 'item-1',
+    requested_quantity: 8, source_report_id: 'report-1', on_hand_quantity: 2,
+    unit: 'packets', note: 'Original', data_mode: 'synthetic_demo',
+    submission_key: '123e4567-e89b-42d3-a456-426614174000',
+    created_by_user_id: 'supervisor-1'
+  };
+  const fetch = async (url, options) => {
+    if (url.includes('/rest/v1/profiles?')) {
+      return jsonResponse([{ id: 'supervisor-1', role: 'supervisor', status: 'active' }]);
+    }
+    if (url.endsWith('/rest/v1/replenishment_requests') && options.method === 'POST') {
+      return jsonResponse({ code: '23505', message: 'duplicate key value violates unique constraint' }, 409);
+    }
+    if (url.includes('/rest/v1/replenishment_requests?select=id,facility_id')) return jsonResponse([existing]);
+    throw new Error('Unexpected request: ' + url);
+  };
+  const client = createClient({
+    url: 'https://demo.supabase.co',
+    publishableKey: 'sb_publishable_demo_key',
+    fetch,
+    storage,
+    now: () => 1_800_000_000_000
+  });
+  await assert.rejects(client.createReplenishmentRequest({
+    facilityId: 'facility-1', inventoryItemId: 'item-1',
+    requestedQuantity: 9, sourceReportId: 'report-1', onHandQuantity: 2,
+    unit: 'packets', note: 'Changed', dataMode: 'synthetic_demo',
+    submissionKey: existing.submission_key
+  }), /different recommendation details/i);
+});
