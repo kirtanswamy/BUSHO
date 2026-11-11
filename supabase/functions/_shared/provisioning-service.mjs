@@ -48,13 +48,6 @@ export async function provisionUser({
       throw new ProvisioningError(502, 'Auth did not return the invited user ID.', 'invite_user_missing_id');
     }
 
-    await repository.activateProfile(createdUserId, {
-      display_name: request.displayName,
-      preferred_language: request.preferredLanguage,
-      role: request.role,
-      status: 'active'
-    });
-
     if (request.role === 'worker') {
       await repository.insertWorker({
         auth_user_id: createdUserId,
@@ -87,6 +80,17 @@ export async function provisionUser({
         is_active: true
       });
     }
+
+    // Keep the Auth-triggered profile pending while its role-specific
+    // records and assignments are being created. Activate only after every
+    // required relationship exists, so a partially provisioned invite can
+    // never become an active operational account.
+    await repository.activateProfile(createdUserId, {
+      display_name: request.displayName,
+      preferred_language: request.preferredLanguage,
+      role: request.role,
+      status: 'active'
+    });
 
     await repository.insertAuditLog({
       actor_worker_id: null,
