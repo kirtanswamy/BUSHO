@@ -242,6 +242,9 @@ test(
     // 3. Create the recommendation through the supervisor UI.
     // --------------------------------------------------------
     await page.locator('[data-portal-view="supply-handoff"]').click();
+    // Force a fresh server read after the report was verified; the initial
+    // portal-auth load may have completed before this test's verification.
+    await page.locator('#supply-handoff-refresh').click();
     const recommendationForm = page.locator('#supply-recommendation-form');
     await expect(recommendationForm).toBeVisible({ timeout: 20000 });
     const sourceReportSelect = recommendationForm.locator('[name="sourceReportId"]');
