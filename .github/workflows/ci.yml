@@ -94,6 +94,31 @@ jobs:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261110114226_restrict_replenishment_clarification_returns.sql
 
+      - name: Apply BUSHO replenishment insert integrity migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111190000_replenishment_insert_integrity.sql
+
+      - name: Apply BUSHO replenishment guard deduplication migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111200000_replenishment_guard_deduplication.sql
+
+      - name: Apply BUSHO replenishment quantity guard migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111210000_replenishment_quantity_guard.sql
+
+      - name: Apply BUSHO replenishment submission idempotency migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111220000_replenishment_submission_idempotency.sql
+
+      - name: Grant supervisor replenishment submission key
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111230000_grant_replenishment_submission_key.sql
+
       - name: Audit exposed-schema RLS, grants and SECURITY DEFINER helpers
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
