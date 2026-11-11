@@ -41,7 +41,7 @@
     if(!Number.isSafeInteger(quantity)||quantity<=0||!Number.isFinite(onHand)||onHand<0||!unit||unit!==String(item.unit||'')){error='Enter a positive whole requested quantity and a non-negative on-hand quantity using the inventory item unit.';render();return;}
     busy=true;error='';notice='';refreshRequired=true;render();
     try{
-      const created=await client.createReplenishmentRequest({facilityId:report.facility_id,inventoryItemId:item.id,requestedQuantity:quantity,sourceReportId:report.id,onHandQuantity:onHand,unit,note:String(data.get('note')||'').trim(),dataMode:'synthetic_demo'});
+      const created=await client.createReplenishmentRequest({facilityId:report.facility_id,inventoryItemId:item.id,requestedQuantity:quantity,sourceReportId:report.id,onHandQuantity:onHand,unit,note:String(data.get('note')||'').trim(),dataMode:'operational'});
       if(!created?.id)throw new Error('The server did not confirm a replenishment request ID.');
       notice='Recommendation created. Review the new request in the approval queue.';
       const result=await client.listMyReplenishments();rows=Array.isArray(result)?result:[];refreshRequired=false;

@@ -318,6 +318,15 @@ test(
     const requestId = await createdCard.getAttribute('data-handoff-id');
     expect(requestId).toMatch(/^[0-9a-f-]{36}$/i);
 
+    const createdRequestClassification = await page.evaluate(async requestId => {
+      const client = window.BUSHO_SUPABASE_CLIENT.createClient(
+        window.BUSHO_SUPABASE_CONFIG
+      );
+      const requests = await client.listMyReplenishments();
+      return requests.find(request => request.id === requestId)?.data_mode;
+    }, requestId);
+    expect(createdRequestClassification).toBe('operational');
+
     // --------------------------------------------------------
     // 4. Supervisor approves and submits to DPDMIS.
     // --------------------------------------------------------
