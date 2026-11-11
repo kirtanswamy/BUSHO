@@ -71,6 +71,12 @@ export async function provisionUser({
     if (!createdUserId) {
       throw new ProvisioningError(502, 'Auth did not return the invited user ID.', 'invite_user_missing_id');
     }
+    // Persist the Auth identity immediately. If execution stops after this
+    // point, a reconciler can locate the exact invited account safely.
+    await repository.updateProvisioningOperation(operation.id, {
+      current_step: 'auth_user_created',
+      auth_user_id: createdUserId
+    });
 
     if (request.role === 'worker') {
       await repository.insertWorker({
