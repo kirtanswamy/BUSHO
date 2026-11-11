@@ -40,6 +40,19 @@ begin
     raise exception 'Anonymous public-table privileges detected: %', v_details;
   end if;
 
+  -- Provisioning operations contain invitation and account metadata.
+  -- They must remain inaccessible to browser-facing roles even with RLS enabled.
+  if has_table_privilege('anon', 'public.provisioning_operations', 'SELECT')
+     or has_table_privilege('anon', 'public.provisioning_operations', 'INSERT')
+     or has_table_privilege('anon', 'public.provisioning_operations', 'UPDATE')
+     or has_table_privilege('anon', 'public.provisioning_operations', 'DELETE')
+     or has_table_privilege('authenticated', 'public.provisioning_operations', 'SELECT')
+     or has_table_privilege('authenticated', 'public.provisioning_operations', 'INSERT')
+     or has_table_privilege('authenticated', 'public.provisioning_operations', 'UPDATE')
+     or has_table_privilege('authenticated', 'public.provisioning_operations', 'DELETE') then
+    raise exception 'Browser-facing roles must not access provisioning operation records';
+  end if;
+
   -- Every authenticated table grant must be protected by RLS.
   select count(*), string_agg(format('%I.%I', n.nspname, c.relname), ', ')
     into v_count, v_details
