@@ -37,13 +37,31 @@ function workerInput(overrides = {}) {
     role: 'worker',
     facilityIds: [FACILITY.id],
     consentConfirmed: true,
+    idempotencyKey: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
     ...overrides
   };
 }
 
 function makeHarness({ failAt = null, facilities = [FACILITY], district = { lgd_code: '101', state_lgd_code: '22' } } = {}) {
   const calls = [];
+  const operations = [];
   const repository = {
+    async createProvisioningOperation(payload) {
+      calls.push(['createProvisioningOperation', payload]);
+      const existing = operations.find(row =>
+        row.requested_by === payload.requested_by && row.idempotency_key === payload.idempotency_key
+      );
+      if (existing) return { ...existing, created: false };
+      const row = { id: '99999999-9999-4999-8999-999999999999', ...payload, result: null };
+      operations.push(row);
+      return { ...row, created: true };
+    },
+    async updateProvisioningOperation(id, payload) {
+      calls.push(['updateProvisioningOperation', id, payload]);
+      const row = operations.find(item => item.id === id);
+      if (!row) throw new Error('operation not found');
+      Object.assign(row, payload);
+    },
     async listFacilities(ids) { calls.push(['listFacilities', ids]); return facilities; },
     async getDistrict(code) { calls.push(['getDistrict', code]); return district; },
     async activateProfile(id, payload) { calls.push(['activateProfile', id, payload]); if (failAt === 'activateProfile') throw new Error('profile update failed'); },
@@ -205,6 +223,56 @@ test('keeps the invited profile pending until worker and facility assignments ar
   assert.equal(result.status, 'invited');
 });
 
+test('returns the completed result for a repeated provisioning idempotency key without inviting twice', async () => {
+  const harness = makeHarness();
+  const args = {
+    ...harness,
+    callerProfile: { id: 'state-1', role: 'state_admin', status: 'active' },
+    callerScopes: [STATE_SCOPE],
+    input: workerInput(),
+    appOrigin: 'https://busho.de5.net',
+    now: FIXED_NOW
+  };
+  const first = await provisionUser(args);
+  const second = await provisionUser(args);
+  assert.deepEqual(second, first);
+  assert.equal(harness.calls.filter(call => call[0] === 'inviteUserByEmail').length, 1);
+  assert.equal(harness.calls.filter(call => call[0] === 'createProvisioningOperation').length, 2);
+});
+
+test('rejects a duplicate in-progress provisioning operation without creating a second Auth invite', async () => {
+  const harness = makeHarness();
+  const args = {
+    ...harness,
+    callerProfile: { id: 'state-1', role: 'state_admin', status: 'active' },
+    callerScopes: [STATE_SCOPE],
+    input: workerInput(),
+    appOrigin: 'https://busho.de5.net',
+    now: FIXED_NOW
+  };
+  await assert.rejects(
+    provisionUser(args),
+    error => error instanceof ProvisioningError && error.code === 'provisioning_operation_conflict'
+  );
+  assert.equal(harness.calls.some(call => call[0] === 'inviteUserByEmail'), false);
+});
+
+test('requires a valid idempotency key before creating an operation', async () => {
+  const harness = makeHarness();
+  await assert.rejects(
+    provisionUser({
+      ...harness,
+      callerProfile: { id: 'state-1', role: 'state_admin', status: 'active' },
+      callerScopes: [STATE_SCOPE],
+      input: workerInput({ idempotencyKey: 'not-a-uuid' }),
+      appOrigin: 'https://busho.de5.net',
+      now: FIXED_NOW
+    }),
+    error => error instanceof ProvisioningError && error.code === 'invalid_idempotency_key'
+  );
+  assert.equal(harness.calls.some(call => call[0] === 'createProvisioningOperation'), false);
+});
+
 test('district admin cannot provision a worker when facility lookup returns no verified facility', async () => {
   const harness = makeHarness({ facilities: [] });
   await assert.rejects(
@@ -230,6 +298,7 @@ test('provisions a district admin with a scoped assignment and no facility worke
     input: {
       email: 'district@example.org',
       displayName: 'District Admin',
+      idempotencyKey: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       role: 'district_admin',
       scope: { level: 'district', stateLgdCode: '22', districtLgdCode: '101' }
     },
