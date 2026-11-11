@@ -17,7 +17,8 @@ $expectedLabels = @(
     "worker-b",
     "supervisor-b",
     "storekeeper-a",
-    "storekeeper-b"
+    "storekeeper-b",
+    "storekeeper-e2e"
 )
 
 if ($credentials.fixture -ne "a204be7a") {
@@ -28,7 +29,7 @@ if ($credentials.api_url -ne "http://127.0.0.1:54321") {
     throw "Credentials file does not target the expected local API."
 }
 
-if (-not $credentials.password -or $credentials.accounts.Count -ne 6) {
+if (-not $credentials.password -or $credentials.accounts.Count -ne 7) {
     throw "Credentials file is incomplete."
 }
 
@@ -39,7 +40,7 @@ foreach ($label in $expectedLabels) {
     }
 }
 
-Write-Host "Six local test accounts verified. Password values hidden."
+Write-Host "Seven local test accounts verified. Password values hidden."
 
 Write-Host "`n--- Checking Git credential protection ---"
 
@@ -94,7 +95,10 @@ catch {
 }
 
 $previousKey = $env:BUSHO_LOCAL_PUBLISHABLE_KEY
+$previousPort = $env:PORT
+
 $env:BUSHO_LOCAL_PUBLISHABLE_KEY = $publishableKey
+$env:PORT = '3000'
 
 try {
     Write-Host "`n--- Running local Playwright browser tests ---"
@@ -108,5 +112,6 @@ try {
 }
 finally {
     $env:BUSHO_LOCAL_PUBLISHABLE_KEY = $previousKey
+    $env:PORT = $previousPort
     Remove-Variable publishableKey, status, statusLines -ErrorAction SilentlyContinue
 }
