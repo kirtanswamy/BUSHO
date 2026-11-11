@@ -437,7 +437,11 @@
 
     async function createReplenishmentRequest(input) {
       input = input || {};
-      await requireActiveProfile(['supervisor']);
+      const profile = await requireActiveProfile(['supervisor']);
+      const submissionKey = String(input.submissionKey || '').trim();
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(submissionKey)) {
+        throw new Error('A valid recommendation submission key is required. Refresh the form and try again.');
+      }
       const payload = {
         facility_id: input.facilityId,
         inventory_item_id: input.inventoryItemId,
@@ -447,17 +451,39 @@
         on_hand_quantity: Number(input.onHandQuantity),
         unit: String(input.unit || '').trim(),
         note: String(input.note || '').trim(),
-        data_mode: input.dataMode || 'synthetic_demo'
+        data_mode: input.dataMode || 'synthetic_demo',
+        submission_key: submissionKey
       };
       if (!payload.facility_id || !payload.inventory_item_id || !payload.source_report_id ||
           !Number.isSafeInteger(payload.requested_quantity) || payload.requested_quantity <= 0 ||
-          !Number.isFinite(payload.on_hand_quantity) || payload.on_hand_quantity < 0 || !payload.unit) {
+          !Number.isSafeInteger(payload.on_hand_quantity) || payload.on_hand_quantity < 0 || !payload.unit) {
         throw new Error('Facility, verified source report, item, unit and valid quantities are required.');
       }
-      const rows = await restRequest('replenishment_requests', {
-        method: 'POST', body: payload, prefer: 'return=representation'
-      });
-      return Array.isArray(rows) ? (rows[0] || null) : rows;
+      try {
+        const rows = await restRequest('replenishment_requests', {
+          method: 'POST', body: payload, prefer: 'return=representation'
+        });
+        return Array.isArray(rows) ? (rows[0] || null) : rows;
+      } catch (error) {
+        if (error?.code !== '23505' && !/duplicate key|unique constraint/i.test(error?.message || '')) throw error;
+        const existingRows = await restRequest(
+          'replenishment_requests?select=id,facility_id,inventory_item_id,requested_quantity,source_report_id,on_hand_quantity,unit,note,data_mode,submission_key,created_by_user_id&created_by_user_id=eq.' +
+          encodeURIComponent(profile.id) + '&submission_key=eq.' + encodeURIComponent(submissionKey)
+        );
+        const existing = Array.isArray(existingRows) ? existingRows[0] : null;
+        if (!existing) throw error;
+        const sameSubmission = existing.facility_id === payload.facility_id &&
+          existing.inventory_item_id === payload.inventory_item_id &&
+          Number(existing.requested_quantity) === payload.requested_quantity &&
+          existing.source_report_id === payload.source_report_id &&
+          Number(existing.on_hand_quantity) === payload.on_hand_quantity &&
+          existing.unit === payload.unit && (existing.note || '') === payload.note &&
+          existing.data_mode === payload.data_mode;
+        if (!sameSubmission) {
+          throw new Error('This submission key is already associated with different recommendation details. Start a new submission.');
+        }
+        return existing;
+      }
     }
 
     async function listMyReplenishments() {
