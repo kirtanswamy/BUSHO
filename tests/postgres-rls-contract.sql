@@ -551,7 +551,7 @@ begin
 end $inventory_item_scope_guard$;
 insert into public.replenishment_requests
   (facility_id, inventory_item_id, requested_quantity, status, source_report_id,
-   on_hand_quantity, unit, note, data_mode)
+   on_hand_quantity, unit, note, data_mode, submission_key)
 select
   r.facility_id,
   '20000000-0000-4000-8000-000000000002',
@@ -561,9 +561,66 @@ select
   2,
   'packets',
   'Synthetic Balod replenishment recommendation',
-  'synthetic_demo'
+  'synthetic_demo',
+  '88888888-8888-4888-8888-888888888888'
 from public.reports r
 where r.original_text = 'worker_report_created synthetic second facility';
+
+-- A repeated browser submission with the same supervisor-scoped key must
+-- fail at the database boundary rather than create a second request.
+do $replenishment_submission_key_duplicate$
+declare
+  v_blocked boolean := false;
+begin
+  begin
+    insert into public.replenishment_requests
+      (facility_id, inventory_item_id, requested_quantity, status, source_report_id,
+       on_hand_quantity, unit, note, data_mode, submission_key)
+    select
+      r.facility_id,
+      '20000000-0000-4000-8000-000000000002',
+      10,
+      'draft',
+      r.id,
+      2,
+      'packets',
+      'Synthetic duplicate Balod recommendation',
+      'synthetic_demo',
+      '88888888-8888-4888-8888-888888888888'
+    from public.reports r
+    where r.original_text = 'worker_report_created synthetic second facility';
+  exception when unique_violation then
+    v_blocked := true;
+  end;
+  if not v_blocked then
+    raise exception 'Duplicate supervisor submission key created a second replenishment request';
+  end if;
+end $replenishment_submission_key_duplicate$;
+
+-- Once persisted, a retry key is immutable even to its creating supervisor.
+do $replenishment_submission_key_immutable$
+declare
+  v_blocked boolean := false;
+begin
+  begin
+    update public.replenishment_requests
+    set submission_key = '99999999-9999-4999-9999-999999999999'
+    where note = 'Synthetic Balod replenishment recommendation';
+  exception when others then
+    v_blocked := true;
+  end;
+  if not v_blocked then
+    raise exception 'Supervisor changed an existing replenishment submission key';
+  end if;
+  if not exists (
+    select 1 from public.replenishment_requests
+    where note = 'Synthetic Balod replenishment recommendation'
+      and submission_key = '88888888-8888-4888-8888-888888888888'
+  ) then
+    raise exception 'Rejected submission-key update changed the original key';
+  end if;
+end $replenishment_submission_key_immutable$;
+
 update public.replenishment_requests
 set status = 'recommended_to_facility_store'
 where note = 'Synthetic Balod replenishment recommendation';
