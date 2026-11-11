@@ -111,7 +111,7 @@ const authenticatedHandler = withSupabase({ auth: 'user' }, async (req, ctx) => 
     async createProvisioningOperation(payload) {
       const inserted = await admin.from('provisioning_operations')
         .insert(payload)
-        .select('id,requested_by,idempotency_key,status,current_step,result,auth_user_id')
+        .select('id,requested_by,idempotency_key,request_fingerprint,status,current_step,result,auth_user_id')
         .maybeSingle();
       if (!inserted.error && inserted.data) return { ...inserted.data, created: true };
       if (inserted.error?.code !== '23505') {
