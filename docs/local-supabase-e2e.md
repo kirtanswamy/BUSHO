@@ -1,4 +1,4 @@
-﻿# BUSHO Local Supabase E2E
+# BUSHO Local Supabase E2E
 
 This document describes the local-only integration and browser test workflows for BUSHO.
 
