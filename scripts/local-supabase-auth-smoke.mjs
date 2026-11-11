@@ -306,13 +306,13 @@ try {
   };
   await expectInvalidReplenishment('inactive item', {
     ...validInsertBase, inventory_item_id: inactiveItemRows[0].id
-  }, /inventory item is inactive/i);
+  }, /Replenishment item must be active, belong to the same facility and use the catalogue item unit/i);
   await expectInvalidReplenishment('foreign facility item', {
     ...validInsertBase, inventory_item_id: facilityBItemRows[0].id
-  }, /must belong to the request facility/i);
+  }, /Replenishment item must be active, belong to the same facility and use the catalogue item unit/i);
   await expectInvalidReplenishment('unit mismatch', {
     ...validInsertBase, inventory_item_id: inventoryItem.id, unit: 'bottles'
-  }, /unit must match/i);
+  }, /Replenishment item must be active, belong to the same facility and use the catalogue item unit/i);
   await expectInvalidReplenishment('fractional requested quantity', {
     ...validInsertBase, inventory_item_id: inventoryItem.id, requested_quantity: 1.5
   }, /positive whole number/i);
