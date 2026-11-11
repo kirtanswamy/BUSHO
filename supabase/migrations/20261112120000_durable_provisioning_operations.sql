@@ -5,6 +5,7 @@ create table if not exists public.provisioning_operations (
   requested_by uuid not null references auth.users(id) on delete restrict,
   idempotency_key uuid not null,
   target_email text not null,
+  request_fingerprint text not null,
   target_role text not null check (target_role in ('worker','supervisor','storekeeper','district_admin','state_admin')),
   status text not null default 'in_progress'
     check (status in ('in_progress','completed','failed','reconciliation_required')),
