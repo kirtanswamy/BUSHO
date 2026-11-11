@@ -1,4 +1,4 @@
-# BUSHO Local Supabase E2E
+﻿# BUSHO Local Supabase E2E
 
 This document describes the local-only integration and browser test workflows for BUSHO.
 
@@ -123,20 +123,20 @@ Run it from the repository root:
 It:
 
 1. Validates `.local-e2e/credentials.json`.
-2. Checks for fixture `a204be7a` and exactly six expected account labels.
-   Expected labels: `worker-a`, `supervisor-a`, `worker-b`, `supervisor-b`, `storekeeper-a`, `storekeeper-b`.
+2. Checks for fixture `a204be7a` and exactly seven expected browser account labels.
+   Expected labels: `worker-a`, `supervisor-a`, `worker-b`, `supervisor-b`, `storekeeper-a`, `storekeeper-b`, `storekeeper-e2e`.
 3. Confirms the credentials file is ignored by Git.
 4. Reads the local publishable key from `npx supabase status --output env`.
 5. Checks the local Supabase Auth health endpoint.
 6. Temporarily sets `BUSHO_LOCAL_PUBLISHABLE_KEY`.
 7. Runs Playwright using `playwright.config.mjs`.
-8. Restores the previous environment variable.
+8. Restores both `BUSHO_LOCAL_PUBLISHABLE_KEY` and `PORT` to their previous values.
 
-The six browser accounts cover two workers, two supervisors and two storekeepers.
+The seven browser accounts cover two workers, two supervisors and three storekeeper identities. The dedicated `storekeeper-e2e` account is used for the replenishment browser journey.
 
 The credentials file is local-only and must never be committed, uploaded, or pasted into logs or messages.
 
-The browser suite covers portal initialization, authentication, role restrictions, suspended-account behavior and the worker-supervisor report correction and verification journey.
+The browser suite covers portal initialization, authentication, role restrictions, suspended-account behavior, report correction and verification, and the synthetic storekeeper replenishment journey.
 
 The operational browser journey verifies:
 
@@ -145,6 +145,17 @@ The operational browser journey verifies:
 - Worker edits and resubmits the same report.
 - Supervisor reviews and verifies the corrected report.
 - Users sign out through the profile menu when switching roles.
+
+The storekeeper replenishment browser journey verifies:
+
+- A synthetic worker report is submitted and verified.
+- A replenishment request is created for the synthetic facility.
+- The supervisor approves the request and records a synthetic DPDMIS reference.
+- The assigned storekeeper allocates and dispatches the requested quantity.
+- The storekeeper records a partial receipt followed by the final cumulative receipt.
+- Inventory movement deltas are reconciled and a repeated final receipt does not create a duplicate movement.
+
+The replenishment request is created through the authenticated application client in the test, rather than through a complete browser-based request-creation flow. The DPDMIS reference is synthetic and recorded only; the test does not submit an order to DPDMIS or contact a government system.
 
 The browser suite uses the local Supabase stack. It must not make requests to a hosted Supabase project.
 
@@ -203,3 +214,4 @@ Never use `--linked` or a remote database target for this workflow.
 - Hosted non-production validation, external-system integration, real facility data verification and operational review require separate authorization and validation.
 
 A passing local run demonstrates behavior against the local Supabase schema, policies, triggers and application workflows only.
+
