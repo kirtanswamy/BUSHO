@@ -264,6 +264,14 @@ test('rejects a duplicate in-progress provisioning operation without creating a 
     id: '99999999-9999-4999-8999-999999999999',
     requested_by: 'state-1',
     idempotency_key: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    request_fingerprint: JSON.stringify({
+      email: 'worker@example.org',
+      displayName: 'Health Worker A',
+      role: 'worker',
+      preferredLanguage: 'hi',
+      facilityIds: [FACILITY.id],
+      scope: null
+    }),
     status: 'in_progress',
     current_step: 'auth_user_created',
     result: null
