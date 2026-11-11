@@ -108,6 +108,32 @@ const authenticatedHandler = withSupabase({ auth: 'user' }, async (req, ctx) => 
   const callerScopes = throwOnError(scopesResult, 'Unable to verify administrator scope') || [];
 
   const repository = {
+    async createProvisioningOperation(payload) {
+      const inserted = await admin.from('provisioning_operations')
+        .insert(payload)
+        .select('id,requested_by,idempotency_key,status,current_step,result,auth_user_id')
+        .maybeSingle();
+      if (!inserted.error && inserted.data) return { ...inserted.data, created: true };
+      if (inserted.error?.code !== '23505') {
+        throwOnError(inserted, 'Unable to record provisioning operation');
+      }
+      const existing = await admin.from('provisioning_operations')
+        .select('id,requested_by,idempotency_key,status,current_step,result,auth_user_id')
+        .eq('requested_by', payload.requested_by)
+        .eq('idempotency_key', payload.idempotency_key)
+        .maybeSingle();
+      const row = throwOnError(existing, 'Unable to inspect existing provisioning operation');
+      return row ? { ...row, created: false } : null;
+    },
+    async updateProvisioningOperation(id, payload) {
+      const result = await admin.from('provisioning_operations')
+        .update(payload)
+        .eq('id', id)
+        .select('id')
+        .maybeSingle();
+      const row = throwOnError(result, 'Unable to update provisioning operation');
+      if (!row?.id) throw new Error('Provisioning operation record was not updated.');
+    },
     async listFacilities(ids) {
       const result = await admin.from('facilities')
         .select('id,name,state_lgd_code,district_lgd_code,verification_status,is_synthetic,is_active')
