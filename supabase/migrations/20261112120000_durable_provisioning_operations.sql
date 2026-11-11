@@ -12,6 +12,7 @@ create table if not exists public.provisioning_operations (
   auth_user_id uuid references auth.users(id) on delete set null,
   error_code text,
   failure_detail text,
+  result jsonb,
   started_at timestamptz not null default now(),
   completed_at timestamptz,
   updated_at timestamptz not null default now(),
