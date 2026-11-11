@@ -245,6 +245,11 @@ test(
     const recommendationForm = page.locator('#supply-recommendation-form');
     await expect(recommendationForm).toBeVisible({ timeout: 20000 });
     const sourceReportSelect = recommendationForm.locator('[name="sourceReportId"]');
+    // The handoff may retain a previously selected verified report when its
+    // source lists refresh. Explicitly select the report created in this run.
+    const targetReportOption = sourceReportSelect.locator(`option[value="${reportId}"]`);
+    await expect(targetReportOption).toHaveCount(1, { timeout: 20000 });
+    await sourceReportSelect.selectOption(reportId);
     await expect(sourceReportSelect).toHaveValue(reportId);
     const itemSelect = recommendationForm.locator('[name="inventoryItemId"]');
     await expect(itemSelect.locator('option').first()).toBeAttached();
