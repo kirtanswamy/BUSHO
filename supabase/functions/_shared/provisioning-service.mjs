@@ -51,6 +51,13 @@ export async function provisionUser({
     request_fingerprint: requestFingerprint,
     target_email: request.email,
     target_role: request.role,
+    request_payload: {
+      display_name: request.displayName,
+      preferred_language: request.preferredLanguage,
+      facility_ids: request.facilityIds,
+      scope: request.scope,
+      consent_confirmed: request.consentConfirmed
+    },
     status: 'in_progress',
     current_step: 'accepted'
   });
