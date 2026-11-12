@@ -86,6 +86,14 @@
           <aside class="admin-side-stack">
             <section class="admin-card"><h2>Provisioning controls</h2><div class="admin-side-note"><strong>Server-enforced hierarchy</strong><p>Platform admins can provision state and district administrators. State admins can provision district admins, supervisors and workers. District admins can provision supervisors and workers only within their district.</p></div><div class="admin-side-note" style="margin-top:10px"><strong>No self-elevation</strong><p>Role, status and geographic scope are validated from the authenticated database profile. Browser metadata is never used as authority.</p></div><div class="admin-side-note" style="margin-top:10px"><strong>Auditable changes</strong><p>Successful invitations create a provisioning audit record. Partial failures trigger account suspension and rollback.</p></div></section>
             <section class="admin-card"><h2>Facility readiness</h2><p id="facility-readiness">Checking verified facilities in your authorised scope…</p><div id="facility-readiness-detail" class="admin-empty">Loading facility directory.</div></section>
+            <section id="provisioning-recovery-card" class="admin-card hidden">
+              <div class="admin-eyebrow">PLATFORM ADMIN · READ-ONLY</div>
+              <h2>Provisioning recovery inspection</h2>
+              <p>Inspect stale or incomplete account provisioning operations. This tool does not invite, activate, suspend or delete accounts.</p>
+              <button id="provisioning-recovery-inspect" class="admin-submit" type="button">Inspect incomplete operations</button>
+              <p id="provisioning-recovery-status" class="admin-status" role="status" aria-live="polite">Inspection has not been run.</p>
+              <div id="provisioning-recovery-results" class="admin-empty" aria-live="polite">Only an active platform administrator can run this inspection.</div>
+            </section>
           </aside>
         </div>
         <section class="admin-card" style="margin-top:18px">
