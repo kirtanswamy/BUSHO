@@ -558,6 +558,19 @@
       return parseResponse(response);
     }
 
+    async function inspectProvisioningOperations() {
+      await requireActiveProfile(['platform_admin']);
+      const session = await getValidSession();
+      const response = await fetchImpl(baseUrl + '/functions/v1/reconcile-provisioning', {
+        method: 'GET',
+        headers: {
+          apikey: publishableKey,
+          Authorization: 'Bearer ' + session.access_token
+        }
+      });
+      return parseResponse(response);
+    }
+
     async function manageFacilityRegistry(input) {
       await requireActiveProfile(['platform_admin','district_admin','state_admin']);
       const session = await getValidSession();
@@ -609,6 +622,7 @@
       transitionReplenishmentRequest,
       listProvisioningOptions,
       provisionUser,
+      inspectProvisioningOperations,
       manageFacilityRegistry,
       listDirectory
     });
