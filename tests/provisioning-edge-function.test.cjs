@@ -55,6 +55,29 @@ test('provisioning operation ledger is server-only and supports durable request 
   assert.match(migration, /revoke all on public\.provisioning_operations from anon, authenticated/);
 });
 
+test('reconciliation endpoint is platform-admin-only, stale-operation bounded and read-only', () => {
+  const source = read('supabase/functions/reconcile-provisioning/index.ts');
+  assert.match(source, /withSupabase\(\{ auth: 'user' \}/);
+  assert.match(source, /caller\.role !== 'platform_admin'/);
+  assert.match(source, /caller\.status !== 'active'/);
+  assert.match(source, /status\.eq\.reconciliation_required/);
+  assert.match(source, /updated_at\.lt\./);
+  assert.match(source, /\.limit\(50\)/);
+  assert.match(source, /getUserById\(authId\)/);
+  assert.match(source, /readOnly: true/);
+  assert.doesNotMatch(source, /\.update\(|\.insert\(|\.delete\(/);
+  assert.match(source, /active_account_relationship_mismatch|account_relationships_appear_complete/);
+});
+
+test('reconciliation payload migration stores validated intent without credentials', () => {
+  const migration = read('supabase/migrations/20261112130000_provisioning_reconciliation_payload.sql');
+  const service = read('supabase/functions/_shared/provisioning-service.mjs');
+  assert.match(migration, /request_payload jsonb not null/);
+  assert.match(service, /request_payload:/);
+  assert.match(service, /facility_ids: request\.facilityIds/);
+  assert.doesNotMatch(service.slice(service.indexOf('request_payload:'), service.indexOf('});', service.indexOf('request_payload:'))), /password|token|secret/i);
+});
+
 test('admin retries preserve the same provisioning request key until success', () => {
   const admin = read('admin-portal.js');
   assert.match(admin, /provisioningRequestKey/);
