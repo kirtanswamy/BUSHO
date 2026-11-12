@@ -118,7 +118,7 @@ const authenticatedHandler = withSupabase({ auth: 'user' }, async (req, ctx) => 
         throwOnError(inserted, 'Unable to record provisioning operation');
       }
       const existing = await admin.from('provisioning_operations')
-        .select('id,requested_by,idempotency_key,status,current_step,result,auth_user_id')
+        .select('id,requested_by,idempotency_key,request_fingerprint,status,current_step,result,auth_user_id')
         .eq('requested_by', payload.requested_by)
         .eq('idempotency_key', payload.idempotency_key)
         .maybeSingle();
