@@ -65,6 +65,7 @@ The endpoint:
 - Checks the Auth identity, profile, worker record, facility assignments and administrative scope assignments.
 - Classifies findings and recommends a manual next step.
 - Performs no insert, update or delete. It does not send invitations, activate accounts, suspend accounts or delete Auth users.
+- Is exposed through a platform-admin-only read-only panel in the administrator console. The browser client independently requires an active platform-admin profile before calling the inspection endpoint.
 
 Important boundary: operations without a checkpointed Auth user ID are flagged for exact-email manual inspection; the endpoint does not search Auth by email or infer identity. A finding that relationships appear complete is not automatically closed; an administrator must separately verify the audit event and make an authorised decision. This is an inspection tool, not an automated repair mechanism.
 
