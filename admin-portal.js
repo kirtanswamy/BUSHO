@@ -15,6 +15,10 @@
   const status = document.getElementById('provision-status');
   const readiness = document.getElementById('facility-readiness');
   const readinessDetail = document.getElementById('facility-readiness-detail');
+  const recoveryCard = document.getElementById('provisioning-recovery-card');
+  const recoveryButton = document.getElementById('provisioning-recovery-inspect');
+  const recoveryStatus = document.getElementById('provisioning-recovery-status');
+  const recoveryResults = document.getElementById('provisioning-recovery-results');
 
   let client = null;
   let profile = null;
@@ -179,8 +183,51 @@
     }
   }
 
+  function renderProvisioningRecovery(findings) {
+    recoveryResults.replaceChildren();
+    if (!findings.length) {
+      const empty = document.createElement('p');
+      empty.className = 'admin-empty';
+      empty.textContent = 'No stale or incomplete provisioning operations were found.';
+      recoveryResults.append(empty);
+      return;
+    }
+    findings.forEach(finding => {
+      const card = document.createElement('article');
+      card.className = 'admin-side-note';
+      const heading = document.createElement('strong');
+      heading.textContent = (finding.email || 'Unknown account') + ' · ' + (finding.role || 'unknown role');
+      const detail = document.createElement('p');
+      detail.textContent = 'Operation ' + finding.operationId + ' · ' + finding.status + ' · ' + finding.currentStep;
+      const classification = document.createElement('p');
+      classification.textContent = 'Finding: ' + finding.classification;
+      const action = document.createElement('p');
+      action.textContent = 'Recommended next step: ' + finding.recommendedAction;
+      card.append(heading, detail, classification, action);
+      recoveryResults.append(card);
+    });
+  }
+
+  async function inspectProvisioningRecovery() {
+    if (!client || profile?.role !== 'platform_admin' || !recoveryButton) return;
+    recoveryButton.disabled = true;
+    recoveryStatus.textContent = 'Inspecting incomplete operations…';
+    recoveryResults.textContent = 'Checking Auth identities and database relationships. No records will be changed.';
+    try {
+      const result = await client.inspectProvisioningOperations();
+      renderProvisioningRecovery(result.findings || []);
+      recoveryStatus.textContent = 'Read-only inspection complete · ' + (result.inspectedCount || 0) + ' operation(s) inspected.';
+    } catch (error) {
+      recoveryStatus.textContent = error.message || 'Unable to inspect provisioning operations.';
+      recoveryResults.textContent = 'No account state was changed. Retry after the inspection service is available.';
+    } finally {
+      recoveryButton.disabled = false;
+    }
+  }
+
   async function onAuthenticated(event) {
     profile = event.detail?.profile || null;
+    if (recoveryCard) recoveryCard.classList.toggle('hidden', profile?.role !== 'platform_admin');
     if (!profile || !['platform_admin','state_admin','district_admin'].includes(profile.role)) return;
     try {
       const factory = window.BUSHO_SUPABASE_CLIENT;
@@ -196,6 +243,7 @@
     }
   }
 
+  if (recoveryButton) recoveryButton.addEventListener('click', inspectProvisioningRecovery);
   roleSelect.addEventListener('change', updateRoleSections);
 
   form.addEventListener('submit', async event => {
