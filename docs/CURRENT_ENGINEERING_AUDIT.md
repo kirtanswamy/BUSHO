@@ -52,6 +52,22 @@ The admin UI retains the same request key when the outcome is uncertain and clea
 
 Important limitation: a process crash can still occur between the external Auth side effect and the next database checkpoint. Such operations remain visibly in progress and require reconciliation; this implementation does not claim automatic crash recovery. A dedicated authorised reconciliation workflow is still required before production provisioning.
 
+## Provisioning reconciliation endpoint
+
+Added migration `20261112130000_provisioning_reconciliation_payload.sql` and a read-only Edge Function at `supabase/functions/reconcile-provisioning/index.ts`.
+
+The migration stores the validated, non-secret provisioning intent (display name, preferred language, facility IDs, geographic scope and consent flag) so an administrator can compare the original request with persisted account relationships. It excludes passwords, invitation tokens and credentials.
+
+The endpoint:
+- Requires an authenticated, active `platform_admin` profile.
+- Inspects `reconciliation_required` operations and `in_progress` operations unchanged for more than five minutes.
+- Limits each inspection to 50 oldest matching operations.
+- Checks the Auth identity, profile, worker record, facility assignments and administrative scope assignments.
+- Classifies findings and recommends a manual next step.
+- Performs no insert, update or delete. It does not send invitations, activate accounts, suspend accounts or delete Auth users.
+
+Important boundary: operations without a checkpointed Auth user ID are flagged for exact-email manual inspection; the endpoint does not search Auth by email or infer identity. A finding that relationships appear complete is not automatically closed; an administrator must separately verify the audit event and make an authorised decision. This is an inspection tool, not an automated repair mechanism.
+
 ## Remaining work — engineering we can complete without government access
 
 ### P0 — Prove the complete operational workflow
