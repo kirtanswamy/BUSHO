@@ -85,6 +85,21 @@ test('admin retries preserve the same provisioning request key until success', (
   assert.match(admin, /provisioningRequestKey = null;[\s\S]*form\.reset\(\)/);
 });
 
+test('admin console exposes read-only reconciliation only to platform administrators', () => {
+  const html = read('admin.html');
+  const portal = read('admin-portal.js');
+  const client = read('supabase-client.js');
+  assert.match(html, /id="provisioning-recovery-card"/);
+  assert.match(html, /id="provisioning-recovery-inspect"/);
+  assert.match(portal, /profile\?\.role !== 'platform_admin'/);
+  assert.match(portal, /client\.inspectProvisioningOperations\(\)/);
+  assert.match(portal, /recoveryResults\.replaceChildren\(\)/);
+  assert.doesNotMatch(portal, /recoveryResults\.innerHTML/);
+  assert.match(client, /async function inspectProvisioningOperations\(\)/);
+  assert.match(client, /requireActiveProfile\(\['platform_admin'\]\)/);
+  assert.match(client, /functions\/v1\/reconcile-provisioning/);
+});
+
 test('provisioning is not exposed as a browser-side direct profile role update', () => {
   const client = read('supabase-client.js');
   assert.match(client, /functions\/v1\/provision-user/);
