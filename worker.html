@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles-v2.css?v=12" />
-    <script src="i18n.js"></script>
+    <script src="i18n.js?v=2"></script>
   </head>
   <body class="worker-portal-body">
     <a href="#main-content" class="skip-link" data-i18n="ui.skipLink">Skip to main content</a>
@@ -26,7 +26,7 @@
         </a>
         <div class="topbar-spacer"></div>
         <div class="topbar-right">
-          <span class="demo-badge">Demo: synthetic data</span>
+          <span class="demo-badge">Secure workspace</span>
           <div class="lang-selector" role="region" aria-label="Language selection" data-i18n-attr="aria-label:ui.languageSelection">
             <label for="lang-select" class="visually-hidden" data-i18n="header.langLabel">Language</label>
             <select id="lang-select" aria-label="Select language" data-i18n-attr="aria-label:ui.selectLanguage">
@@ -39,9 +39,9 @@
             </select>
           </div>
           <div class="profile-menu-wrap">
-            <button class="profile-trigger" id="profile-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu"><span class="profile-avatar">HW</span><span class="profile-trigger-copy"><strong>Health Worker</strong><small>Demo account</small></span><span class="profile-chevron">⌄</span></button>
+            <button class="profile-trigger" id="profile-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu"><span class="profile-avatar">HW</span><span class="profile-trigger-copy"><strong>Health Worker</strong><small>Signed-in account</small></span><span class="profile-chevron">⌄</span></button>
             <div class="profile-dropdown" id="profile-dropdown" hidden>
-              <div class="profile-dropdown-head"><strong>Health Worker</strong><span>worker@busho.demo</span></div>
+              <div class="profile-dropdown-head"><strong>Health Worker</strong><span>Authenticated BUSHO account</span></div>
               <button type="button" data-profile-action="profile">Account details</button>
               <button type="button" data-profile-action="facility">Assigned facility</button>
               <button type="button" data-profile-action="preferences">Language & preferences</button>
@@ -55,18 +55,18 @@
       <main id="main-content" role="main" class="portal-page" data-portal-role="worker">
         <section class="portal-login-section" id="portal-login" aria-labelledby="portal-login-title">
           <div class="portal-login-card">
-            <p class="section-kicker">BUSHO SECURE WORKSPACE · DEMO</p>
+            <p class="section-kicker">BUSHO SECURE WORKSPACE</p>
             <h1 id="portal-login-title">Health Worker Portal</h1>
-            <p>Field reporting and confirmation. Sign in with the synthetic credentials below to explore this prototype.</p>
+            <p>Field reporting and confirmation. Sign in with your BUSHO account; access is granted only after your role and facility assignment are approved.</p>
             <form id="portal-login-form" class="portal-login-form">
               <label for="portal-username">Email</label>
-              <input id="portal-username" name="username" type="email" autocomplete="username" required placeholder="name@busho.demo">
+              <input id="portal-username" name="username" type="email" autocomplete="username" required placeholder="your registered email">
               <label for="portal-password">Password</label>
               <input id="portal-password" name="password" type="password" autocomplete="current-password" required>
               <p class="portal-login-error" id="portal-login-error" role="alert" aria-live="polite"></p>
               <button class="btn btn-primary" type="submit">Sign in to Health Worker Portal</button>
             </form>
-            <div class="demo-credentials"><strong>Synthetic demo credentials</strong><code>worker@busho.demo / worker123</code><span>These credentials are for this local prototype only. This client-side demo gate is not production authentication.</span></div>
+            <div class="demo-credentials"><strong>Health worker access</strong><span>Accounts are provisioned by a BUSHO administrator. New or unassigned accounts remain pending until their role and facility/block scope are approved. This portal uses Supabase Auth and database-controlled access policies.</span></div>
             <a href="index.html" class="portal-back-link">← Back to BUSHO landing page</a>
           </div>
         </section>
@@ -80,22 +80,22 @@
   <p class="sidebar-label">ACCOUNT</p>
   <button class="sidebar-link" data-portal-view="facility"><span>⌂</span> My Facility</button>
   <button class="sidebar-link" data-portal-view="profile"><span>○</span> My Profile</button>
-  <div class="sidebar-bottom"><span class="demo-sidebar-label">SYNTHETIC DEMO · NOT LIVE</span></div>
+  <div class="sidebar-bottom"><span class="demo-sidebar-label">DATABASE CONTROLLED</span></div>
 </aside>
 
                   <!-- Interactive Demo -->
         <section id="demo" class="demo-section" aria-labelledby="demo-title">
           <div class="container">
-            <div class="portal-session-bar"><span>Signed in to the Health Worker demo workspace</span><button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button></div>
+            <div class="portal-session-bar"><span>Signed in to the Health Worker workspace</span><button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button></div>
             <div class="demo-header">
                 <div class="demo-context" aria-label="Active facility" data-i18n-attr="aria-label:ui.activeFacility">
                 <span class="context-kicker" data-i18n="ui.activeFacility">Active facility</span>
-                <strong data-i18n="ui.facility">Rampur HWC</strong>
-                <span data-i18n="ui.location">Rampur block / Synthetic demo data</span>
+                <strong data-i18n="ui.facility">Assigned facility pending</strong>
+                <span data-i18n="ui.location">Your approved facility assignment will appear here.</span>
               </div>
               <div class="demo-status" aria-live="polite">
                 <span class="status-dot" aria-hidden="true"></span>
-                <span data-i18n="header.demoBadge">Demo: synthetic data</span>
+                <span>Awaiting live account data</span>
               </div>
             </div>
 
@@ -106,29 +106,25 @@
               </div>
             </div>
             <section class="portal-module active" data-module="overview">
-              <div class="module-heading"><div><p class="section-kicker">YOUR FIELD WORKSPACE</p><h2>Good morning, Health Worker</h2><p>Here is your reporting activity at Rampur HWC.</p></div><button class="btn btn-primary" data-go-view="new-report">＋ Create new report</button></div>
+              <div class="module-heading"><div><p class="section-kicker">YOUR FIELD WORKSPACE</p><h2>Your reporting workspace</h2><p>Your approved facility activity will appear here once records are synced.</p></div><button class="btn btn-primary" data-go-view="new-report">＋ Create new report</button></div>
               <div class="worker-overview-metrics">
-                <article class="overview-stat"><span>Reports submitted</span><strong>12</strong><small>Demo activity</small></article>
-                <article class="overview-stat"><span>Awaiting confirmation</span><strong>1</strong><small>Needs your review</small></article>
-                <article class="overview-stat"><span>Correction requested</span><strong>0</strong><small>No open requests</small></article>
+                <article class="overview-stat"><span>Reports submitted</span><strong>—</strong><small>Awaiting live report sync</small></article>
+                <article class="overview-stat"><span>Awaiting confirmation</span><strong>—</strong><small>Awaiting live report sync</small></article>
+                <article class="overview-stat"><span>Correction requested</span><strong>—</strong><small>Awaiting live report sync</small></article>
               </div>
               <article class="module-card"><div class="module-card-head"><div><h3>Recent reports</h3><p>Your latest submitted field updates</p></div><button class="text-action" data-go-view="my-reports">View all reports →</button></div>
                 <div class="simple-table"><div class="simple-row simple-header"><span>REPORT</span><span>SUBMITTED</span><span>STATUS</span></div>
-                <div class="simple-row"><span>Routine facility update</span><span>Today, 10:42 AM</span><span><b class="status-pill status-confirmed">Confirmed</b></span></div>
-                <div class="simple-row"><span>Medicine stock observation</span><span>Yesterday</span><span><b class="status-pill status-review">Under review</b></span></div>
-                <div class="simple-row"><span>Weekly field summary</span><span>02 Nov 2026</span><span><b class="status-pill status-confirmed">Confirmed</b></span></div></div>
+                <div class="simple-row"><span>No synced reports yet</span><span>—</span><span><b class="status-pill">Waiting for data</b></span></div></div>
               </article>
             </section>
             <section class="portal-module" data-module="my-reports">
               <div class="module-heading"><div><p class="section-kicker">REPORT HISTORY</p><h2>My Reports</h2><p>Track the reports you have submitted.</p></div><button class="btn btn-primary" data-go-view="new-report">＋ New report</button></div>
               <article class="module-card"><div class="simple-table"><div class="simple-row simple-header"><span>REPORT</span><span>DATE</span><span>STATUS</span></div>
-              <div class="simple-row"><span>Routine facility update</span><span>03 Nov 2026</span><span><b class="status-pill status-confirmed">Confirmed</b></span></div>
-              <div class="simple-row"><span>Medicine stock observation</span><span>02 Nov 2026</span><span><b class="status-pill status-review">Under review</b></span></div>
-              <div class="simple-row"><span>Weekly field summary</span><span>02 Nov 2026</span><span><b class="status-pill status-confirmed">Confirmed</b></span></div></div></article>
+              <div class="simple-row"><span>No reports have been synced for this account yet.</span><span>—</span><span><b class="status-pill">Waiting</b></span></div></div></article>
             </section>
-            <section class="portal-module" data-module="pending"><div class="module-heading"><div><p class="section-kicker">ACTION REQUIRED</p><h2>Pending Confirmation</h2><p>Reports that need your review before submission.</p></div></div><article class="module-card"><p>No additional reports are waiting for confirmation in this synthetic demo. New extracted drafts will appear here when created.</p><button class="btn btn-primary" data-go-view="new-report">Create a report</button></article></section>
-            <section class="portal-module" data-module="facility"><div class="module-heading"><div><p class="section-kicker">ASSIGNED LOCATION</p><h2>My Facility</h2></div></div><article class="module-card"><h3>Rampur Health & Wellness Centre</h3><p>Rampur block · Synthetic demonstration facility</p><p class="muted-copy">Facility details are illustrative and do not represent a connected government facility.</p></article></section>
-            <section class="portal-module" data-module="profile"><div class="module-heading"><div><p class="section-kicker">ACCOUNT</p><h2>My Profile</h2></div></div><article class="module-card"><p><strong>Demo user:</strong> Health Worker</p><p><strong>Assigned facility:</strong> Rampur HWC</p><p><strong>Role:</strong> Health Worker</p></article></section>
+            <section class="portal-module" data-module="pending"><div class="module-heading"><div><p class="section-kicker">ACTION REQUIRED</p><h2>Pending Confirmation</h2><p>Reports that need your review before submission.</p></div></div><article class="module-card"><p>Reports returned by your supervisor for correction will appear here.</p><button class="btn btn-primary" data-go-view="new-report">Create a report</button></article></section>
+            <section class="portal-module" data-module="facility"><div class="module-heading"><div><p class="section-kicker">ASSIGNED LOCATION</p><h2>My Facility</h2></div></div><article class="module-card"><h3>Assigned facility</h3><p>Your administrator-approved facility assignment will appear here.</p><p class="muted-copy">BUSHO does not infer or fabricate facility assignments.</p></article></section>
+            <section class="portal-module" data-module="profile"><div class="module-heading"><div><p class="section-kicker">ACCOUNT</p><h2>My Profile</h2></div></div><article class="module-card"><p><strong>Account:</strong> Signed-in health worker</p><p><strong>Facility:</strong> Loaded from your approved assignment</p><p><strong>Role:</strong> Health Worker</p></article></section>
             <div class="portal-module" data-module="new-report">
 <!-- Worker View -->
             <div class="view-panel active" id="worker-panel" role="tabpanel" aria-labelledby="demo-title">
@@ -401,7 +397,6 @@
           <div class="footer-links">
             <a href="terms.html" data-i18n="footer.terms">Terms</a>
             <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
-            <button class="reset-btn" id="reset-demo" type="button" data-i18n="footer.reset">Reset demo data</button>
             </div>
         </div>
       </footer>
@@ -412,10 +407,16 @@
       <span id="toast-text"></span>
     </div>
 
-    <script src="app-v2.js?v=15"></script>
-    <script src="role-auth.js?v=1"></script>
+    <script src="supabase-config.js?v=1"></script>
+    <script src="supabase-client.js?v=10"></script>
+    <script src="report-persistence.js?v=3"></script>
+    <script src="app-v2.js?v=26"></script>
+    <script src="portal-auth-policy.js?v=1"></script>
+    <script src="role-auth.js?v=9"></script>
     <script src="portal-navigation.js?v=1"></script>
-    <script src="portal-enhancements.js?v=2"></script>
+    <script src="portal-enhancements.js?v=3"></script>
     <script src="portal-redesign.js?v=2"></script>
+    <script src="worker-history.js?v=2"></script>
+    <script src="worker-portal.js?v=1"></script>
   </body>
 </html>

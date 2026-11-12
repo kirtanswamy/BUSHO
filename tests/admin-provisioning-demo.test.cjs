@@ -1,0 +1,213 @@
+'use strict';
+
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const path = require('node:path');
+
+const source = fs.readFileSync(path.join(__dirname, '..', 'admin-portal.js'), 'utf8');
+
+function element(id, tagName = 'div') {
+  const listeners = new Map();
+  const children = [];
+  const classes = new Set();
+  return {
+    id, tagName, value: '', textContent: '', className: '', checked: false,
+    required: false, disabled: false, options: children, children,
+    listeners,
+    classList: {
+      add(name) { classes.add(name); },
+      remove(name) { classes.delete(name); },
+      toggle(name, force) {
+        const enabled = force === undefined ? !classes.has(name) : Boolean(force);
+        if (enabled) classes.add(name); else classes.delete(name);
+        return enabled;
+      },
+      contains(name) { return classes.has(name); }
+    },
+    addEventListener(type, fn) {
+      const list = listeners.get(type) || [];
+      list.push(fn);
+      listeners.set(type, list);
+    },
+    async emit(type, event = {}) {
+      for (const fn of listeners.get(type) || []) await fn({ preventDefault() {}, target: this, ...event });
+    },
+    append(...items) {
+      children.push(...items);
+      if (tagName === 'select' && !this.value && items.length) this.value = items[0].value || '';
+    },
+    replaceChildren(...items) {
+      children.splice(0, children.length, ...items);
+      if (tagName === 'select') this.value = items[0]?.value || '';
+    },
+    querySelectorAll(selector) {
+      if (id === 'facility-options' && selector.startsWith('input[type="checkbox"]')) {
+        const inputs = children.flatMap(child => child.children || []).filter(child => child.type === 'checkbox');
+        return selector.includes(':checked') ? inputs.filter(input => input.checked) : inputs;
+      }
+      return [];
+    },
+    querySelector() { return null; },
+    reset() { this.wasReset = true; }
+  };
+}
+
+function harness(directory = { facilities: [], districts: [] }) {
+  const ids = [
+    'provision-role','facility-section','facility-options','facility-help',
+    'district-section','provision-district','consent-section','provision-consent',
+    'provision-form','provision-submit','provision-status','facility-readiness',
+    'facility-readiness-detail','admin-role-chip','provision-email','provision-name',
+    'provision-language'
+  ];
+  const elements = new Map(ids.map(id => [id, element(id,
+    ['provision-role','provision-district','provision-language'].includes(id) ? 'select' :
+    id === 'provision-form' ? 'form' : 'div'
+  )]));
+  elements.get('provision-language').value = 'hi';
+  const page = element('admin-root');
+  page.dataset = { portalRole: 'admin' };
+  const events = new Map();
+  const document = {
+    querySelector(selector) { return selector === '[data-portal-role="admin"]' ? page : null; },
+    getElementById(id) { return elements.get(id) || null; },
+    createElement(tag) { return element('', tag); },
+    addEventListener(type, fn) {
+      const list = events.get(type) || [];
+      list.push(fn);
+      events.set(type, list);
+    },
+    async dispatchEvent(event) {
+      for (const fn of events.get(event.type) || []) await fn(event);
+      return true;
+    }
+  };
+  const calls = { listOptions: 0, provision: [] };
+  const sandbox = {
+    document,
+    CustomEvent: class CustomEvent { constructor(type, init = {}) { this.type = type; this.detail = init.detail; } },
+    window: {
+      BUSHO_SUPABASE_CONFIG: { url: 'https://example.invalid', publishableKey: 'sb_publishable_test' },
+      BUSHO_SUPABASE_CLIENT: {
+        createClient() {
+          return {
+            async listProvisioningOptions() {
+              calls.listOptions += 1;
+              return directory;
+            },
+            async provisionUser(input) {
+              calls.provision.push(input);
+              return { invitation: { email: input.email } };
+            }
+          };
+        }
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: 'admin-portal.js' });
+  return { elements, calls, document };
+}
+
+test('admin provisioning UI blocks facility-based invitations when verified facilities are absent', async () => {
+  const app = harness();
+  await app.document.dispatchEvent({ type: 'busho:authenticated',
+    detail: { profile: { id: 'synthetic-admin', role: 'platform_admin', status: 'active', display_name: 'Synthetic Admin' } }
+  });
+
+  assert.equal(app.calls.listOptions, 1);
+  assert.match(app.elements.get('facility-readiness').textContent, /0 verified facilities/i);
+  assert.match(app.elements.get('facility-help').textContent, /No assignable facilities/i);
+  const workerOption = app.elements.get('provision-role').children.find(option => option.value === 'worker');
+  assert.equal(workerOption.disabled, true, 'worker role must be disabled without verified facilities');
+  // Simulate a stale or manipulated form value to assert the submit handler
+  // independently refuses the invitation even if the disabled option is forced.
+  app.elements.get('provision-role').value = 'worker';
+
+  await app.elements.get('provision-form').emit('submit');
+  assert.equal(app.calls.provision.length, 0);
+  assert.match(app.elements.get('provision-status').textContent, /No verified facility is available/i);
+});
+
+test('admin provisioning UI submits a worker invitation only with one verified facility and consent', async () => {
+  const facilityId = '11111111-1111-4111-8111-111111111111';
+  const app = harness({
+    facilities: [{
+      id: facilityId,
+      name: 'Synthetic Verified PHC',
+      state_lgd_code: '22',
+      district_lgd_code: '377',
+      block_lgd_code: '12345'
+    }],
+    districts: [{ lgd_code: '377', name: 'Synthetic District' }]
+  });
+  await app.document.dispatchEvent({ type: 'busho:authenticated',
+    detail: { profile: { id: 'synthetic-admin', role: 'platform_admin', status: 'active', display_name: 'Synthetic Admin' } }
+  });
+
+  const workerOption = app.elements.get('provision-role').children.find(option => option.value === 'worker');
+  assert.equal(workerOption.disabled, false);
+  app.elements.get('provision-role').value = 'worker';
+  const facilityCheckbox = app.elements.get('facility-options').children
+    .flatMap(label => label.children || []).find(child => child.type === 'checkbox');
+  assert.ok(facilityCheckbox);
+  facilityCheckbox.checked = true;
+
+  app.elements.get('provision-name').value = 'Synthetic Worker';
+  app.elements.get('provision-email').value = 'worker.synthetic@example.test';
+  app.elements.get('provision-language').value = 'hi';
+  app.elements.get('provision-consent').checked = true;
+  await app.elements.get('provision-form').emit('submit');
+
+  assert.equal(app.calls.provision.length, 1);
+  assert.deepEqual(JSON.parse(JSON.stringify(app.calls.provision[0])), {
+    email: 'worker.synthetic@example.test',
+    displayName: 'Synthetic Worker',
+    preferredLanguage: 'hi',
+    role: 'worker',
+    facilityIds: [facilityId],
+    consentConfirmed: true,
+    idempotencyKey: app.calls.provision[0].idempotencyKey
+  });
+  assert.match(app.calls.provision[0].idempotencyKey, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+  assert.match(app.elements.get('provision-status').textContent, /Invitation created/i);
+});
+
+test('admin provisioning UI does not invent district options when directory is empty', async () => {
+  const app = harness();
+  await app.document.dispatchEvent({ type: 'busho:authenticated',
+    detail: { profile: { id: 'synthetic-state-admin', role: 'state_admin', status: 'active' } }
+  });
+
+  const districtOptions = app.elements.get('provision-district').children;
+  assert.equal(districtOptions.length, 1, 'only the empty placeholder should be rendered');
+  assert.equal(districtOptions[0].value, '');
+  for (const role of app.elements.get('provision-role').children) {
+    assert.equal(role.disabled, true, 'no role requiring a missing facility or district may be selectable');
+  }
+});
+
+
+test('admin provisioning UI exposes storekeeper only with a verified facility and submits facility scope', async () => {
+  const facilityId = '11111111-1111-4111-8111-111111111111';
+  const app = harness({
+    facilities: [{ id: facilityId, name: 'Synthetic Verified PHC', state_lgd_code: '22', district_lgd_code: '377', block_lgd_code: '12345' }],
+    districts: [{ lgd_code: '377', name: 'Synthetic District' }]
+  });
+  await app.document.dispatchEvent({ type: 'busho:authenticated', detail: { profile: { id: 'synthetic-admin', role: 'platform_admin', status: 'active', display_name: 'Synthetic Admin' } } });
+  const option = app.elements.get('provision-role').children.find(item => item.value === 'storekeeper');
+  assert.ok(option, 'storekeeper role must be available to platform administrators');
+  assert.equal(option.disabled, false);
+  app.elements.get('provision-role').value = 'storekeeper';
+  app.elements.get('provision-email').value = 'storekeeper.synthetic@example.test';
+  app.elements.get('provision-name').value = 'Synthetic Storekeeper';
+  app.elements.get('facility-options').children[0].children[0].checked = true;
+  await app.elements.get('provision-form').emit('submit');
+  assert.equal(app.calls.provision.length, 1);
+  assert.deepEqual(JSON.parse(JSON.stringify(app.calls.provision[0])), {
+    email: 'storekeeper.synthetic@example.test', displayName: 'Synthetic Storekeeper', preferredLanguage: 'hi', role: 'storekeeper', facilityIds: [facilityId], consentConfirmed: false,
+    idempotencyKey: app.calls.provision[0].idempotencyKey
+  });
+  assert.match(app.calls.provision[0].idempotencyKey, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+});

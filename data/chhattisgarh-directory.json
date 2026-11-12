@@ -1,0 +1,1307 @@
+{
+  "schemaVersion": 1,
+  "attribution": {
+    "authority": "Ministry of Panchayati Raj — Local Government Directory (LGD)",
+    "sourceDate": "21Oct2026",
+    "ingestedAt": "2026-10-29T17:11:49.883Z",
+    "officialDirectoryUrl": "https://lgdirectory.gov.in/",
+    "publicSnapshotMirror": "https://github.com/ramSeraph/opendata",
+    "mirrorRepository": "https://github.com/shrinivas-sn/india-lgd-index-api",
+    "mirrorLicense": "GODL-India",
+    "note": "Administrative snapshot from an independently normalised mirror of LGD. One duplicate block parent mapping is explicitly flagged for reconciliation against live LGD."
+  },
+  "geography": {
+    "stateCode": "22",
+    "stateName": "Chhattisgarh",
+    "sourceDate": "21Oct2026",
+    "districts": [
+      {
+        "code": "646",
+        "name": "Balod"
+      },
+      {
+        "code": "644",
+        "name": "Balodabazar-Bhatapara"
+      },
+      {
+        "code": "649",
+        "name": "Balrampur-Ramanujganj"
+      },
+      {
+        "code": "374",
+        "name": "Bastar"
+      },
+      {
+        "code": "650",
+        "name": "Bemetara"
+      },
+      {
+        "code": "636",
+        "name": "Bijapur"
+      },
+      {
+        "code": "375",
+        "name": "Bilaspur"
+      },
+      {
+        "code": "376",
+        "name": "Dakshin Bastar Dantewada"
+      },
+      {
+        "code": "377",
+        "name": "Dhamtari"
+      },
+      {
+        "code": "378",
+        "name": "Durg"
+      },
+      {
+        "code": "645",
+        "name": "Gariyaband"
+      },
+      {
+        "code": "734",
+        "name": "Gaurela-Pendra-Marwahi"
+      },
+      {
+        "code": "379",
+        "name": "Janjgir-Champa"
+      },
+      {
+        "code": "380",
+        "name": "Jashpur"
+      },
+      {
+        "code": "382",
+        "name": "Kabeerdham"
+      },
+      {
+        "code": "759",
+        "name": "Khairagarh-Chhuikhadan-Gandai"
+      },
+      {
+        "code": "643",
+        "name": "Kondagaon"
+      },
+      {
+        "code": "383",
+        "name": "Korba"
+      },
+      {
+        "code": "384",
+        "name": "Korea"
+      },
+      {
+        "code": "385",
+        "name": "Mahasamund"
+      },
+      {
+        "code": "760",
+        "name": "Manendragarh-Chirmiri-Bharatpur(M C B)"
+      },
+      {
+        "code": "761",
+        "name": "Mohla-Manpur-Ambagarh Chouki"
+      },
+      {
+        "code": "647",
+        "name": "Mungeli"
+      },
+      {
+        "code": "637",
+        "name": "Narayanpur"
+      },
+      {
+        "code": "386",
+        "name": "Raigarh"
+      },
+      {
+        "code": "387",
+        "name": "Raipur"
+      },
+      {
+        "code": "388",
+        "name": "Rajnandgaon"
+      },
+      {
+        "code": "762",
+        "name": "Sakti"
+      },
+      {
+        "code": "763",
+        "name": "Sarangarh-Bilaigarh"
+      },
+      {
+        "code": "642",
+        "name": "Sukma"
+      },
+      {
+        "code": "648",
+        "name": "Surajpur"
+      },
+      {
+        "code": "389",
+        "name": "Surguja"
+      },
+      {
+        "code": "381",
+        "name": "Uttar Bastar Kanker"
+      }
+    ],
+    "blocks": [
+      {
+        "code": "3708",
+        "name": "A.Chowki (Td)",
+        "nameLocal": "अ.चौकी(तद)",
+        "districtCode": "761",
+        "districtName": "Mohla-Manpur-Ambagarh Chouki"
+      },
+      {
+        "code": "3693",
+        "name": "Abhanpur",
+        "nameLocal": "अभनपुर",
+        "districtCode": "387",
+        "districtName": "Raipur"
+      },
+      {
+        "code": "3641",
+        "name": "Akaltara",
+        "nameLocal": "अकलतरा",
+        "districtCode": "379",
+        "districtName": "Janjgir-Champa"
+      },
+      {
+        "code": "3717",
+        "name": "Ambikapur",
+        "nameLocal": "अंबिकापुर",
+        "districtCode": "389",
+        "districtName": "Surguja"
+      },
+      {
+        "code": "3658",
+        "name": "Antagarh",
+        "nameLocal": "अंतागढ़",
+        "districtCode": "381",
+        "districtName": "Uttar Bastar Kanker"
+      },
+      {
+        "code": "3694",
+        "name": "Arang",
+        "nameLocal": "आरंग",
+        "districtCode": "387",
+        "districtName": "Raipur"
+      },
+      {
+        "code": "3590",
+        "name": "Baderajpur",
+        "nameLocal": "बदेराजपुर",
+        "districtCode": "643",
+        "districtName": "Kondagaon"
+      },
+      {
+        "code": "3679",
+        "name": "Bagbahara",
+        "nameLocal": "बागबाहरा",
+        "districtCode": "385",
+        "districtName": "Mahasamund"
+      },
+      {
+        "code": "3650",
+        "name": "Bagicha",
+        "nameLocal": "बागीचा",
+        "districtCode": "380",
+        "districtName": "Jashpur"
+      },
+      {
+        "code": "7144",
+        "name": "Baikunthpur",
+        "nameLocal": "बैकुंठपुर",
+        "districtCode": "384",
+        "districtName": "Korea"
+      },
+      {
+        "code": "3591",
+        "name": "Bakawand",
+        "nameLocal": "बकावंड",
+        "districtCode": "374",
+        "districtName": "Bastar"
+      },
+      {
+        "code": "3629",
+        "name": "Balod",
+        "nameLocal": "बालोद",
+        "districtCode": "646",
+        "districtName": "Balod"
+      },
+      {
+        "code": "3643",
+        "name": "Baloda",
+        "nameLocal": "बलोदा",
+        "districtCode": "379",
+        "districtName": "Janjgir-Champa"
+      },
+      {
+        "code": "3695",
+        "name": "Baloda Bazar",
+        "nameLocal": "बलोदा बाज़ार",
+        "districtCode": "644",
+        "districtName": "Balodabazar-Bhatapara"
+      },
+      {
+        "code": "3718",
+        "name": "Balrampur",
+        "nameLocal": "बलरामपुर",
+        "districtCode": "649",
+        "districtName": "Balrampur-Ramanujganj"
+      },
+      {
+        "code": "3642",
+        "name": "Bamhindih",
+        "nameLocal": "बम्हनीडीह",
+        "districtCode": "379",
+        "districtName": "Janjgir-Champa"
+      },
+      {
+        "code": "3684",
+        "name": "Baramkela",
+        "nameLocal": "बरमकेला",
+        "districtCode": "763",
+        "districtName": "Sarangarh-Bilaigarh"
+      },
+      {
+        "code": "3680",
+        "name": "Basna",
+        "nameLocal": "बसना",
+        "districtCode": "385",
+        "districtName": "Mahasamund"
+      },
+      {
+        "code": "3592",
+        "name": "Bastanar",
+        "nameLocal": "बस्तानर",
+        "districtCode": "374",
+        "districtName": "Bastar"
+      },
+      {
+        "code": "3593",
+        "name": "Bastar",
+        "nameLocal": "बस्तर",
+        "districtCode": "374",
+        "districtName": "Bastar"
+      },
+      {
+        "code": "3719",
+        "name": "Batauli",
+        "nameLocal": "बतौली",
+        "districtCode": "389",
+        "districtName": "Surguja"
+      },
+      {
+        "code": "3604",
+        "name": "Belha",
+        "nameLocal": "बेल्हा",
+        "districtCode": "375",
+        "districtName": "Bilaspur"
+      },
+      {
+        "code": "3630",
+        "name": "Bemetara",
+        "nameLocal": "बेमेतरा",
+        "districtCode": "650",
+        "districtName": "Bemetara"
+      },
+      {
+        "code": "3631",
+        "name": "Berla",
+        "nameLocal": "बेरला",
+        "districtCode": "650",
+        "districtName": "Bemetara"
+      },
+      {
+        "code": "3614",
+        "name": "Bhairamgarh",
+        "nameLocal": "भैरमगढ़",
+        "districtCode": "636",
+        "districtName": "Bijapur"
+      },
+      {
+        "code": "3720",
+        "name": "Bhaiyathan",
+        "nameLocal": "भैयाथान",
+        "districtCode": "648",
+        "districtName": "Surajpur"
+      },
+      {
+        "code": "3659",
+        "name": "Bhanupratappur",
+        "nameLocal": "भानुप्रतापपुर",
+        "districtCode": "381",
+        "districtName": "Uttar Bastar Kanker"
+      },
+      {
+        "code": "3675",
+        "name": "Bharatpur",
+        "nameLocal": "भरतपुर",
+        "districtCode": "760",
+        "districtName": "Manendragarh-Chirmiri-Bharatpur(M C B)"
+      },
+      {
+        "code": "3696",
+        "name": "Bhatapara",
+        "nameLocal": "भाटापारा",
+        "districtCode": "644",
+        "districtName": "Balodabazar-Bhatapara"
+      },
+      {
+        "code": "3615",
+        "name": "Bhopal Patnam",
+        "nameLocal": "भोपाल पटनम",
+        "districtCode": "636",
+        "districtName": "Bijapur"
+      },
+      {
+        "code": "3616",
+        "name": "Bijapur",
+        "nameLocal": "बीजापुर",
+        "districtCode": "636",
+        "districtName": "Bijapur"
+      },
+      {
+        "code": "3697",
+        "name": "Bilaigarh",
+        "nameLocal": "बिलाईगढ़",
+        "districtCode": "763",
+        "districtName": "Sarangarh-Bilaigarh"
+      },
+      {
+        "code": "3665",
+        "name": "Bodla",
+        "nameLocal": "बोडला",
+        "districtCode": "382",
+        "districtName": "Kabeerdham"
+      },
+      {
+        "code": "3660",
+        "name": "Charama",
+        "nameLocal": "चारामा",
+        "districtCode": "381",
+        "districtName": "Uttar Bastar Kanker"
+      },
+      {
+        "code": "3617",
+        "name": "Chhindgarh",
+        "nameLocal": "छिन्द्गढ़",
+        "districtCode": "642",
+        "districtName": "Sukma"
+      },
+      {
+        "code": "3709",
+        "name": "Chhuikhadan",
+        "nameLocal": "छुईखदान",
+        "districtCode": "759",
+        "districtName": "Khairagarh-Chhuikhadan-Gandai"
+      },
+      {
+        "code": "3710",
+        "name": "Chhuriya",
+        "nameLocal": "छुरिया",
+        "districtCode": "388",
+        "districtName": "Rajnandgaon"
+      },
+      {
+        "code": "3698",
+        "name": "Chhurra",
+        "nameLocal": "छुरा",
+        "districtCode": "645",
+        "districtName": "Gariyaband"
+      },
+      {
+        "code": "3644",
+        "name": "Dabhara",
+        "nameLocal": "डभरा",
+        "districtCode": "762",
+        "districtName": "Sakti"
+      },
+      {
+        "code": "3618",
+        "name": "Dantewada",
+        "nameLocal": "दंतेवाडा",
+        "districtCode": "376",
+        "districtName": "Dakshin Bastar Dantewada"
+      },
+      {
+        "code": "3594",
+        "name": "Darbha",
+        "nameLocal": "दरभा",
+        "districtCode": "374",
+        "districtName": "Bastar"
+      },
+      {
+        "code": "3699",
+        "name": "Deobhog",
+        "nameLocal": "देवभोग",
+        "districtCode": "645",
+        "districtName": "Gariyaband"
+      },
+      {
+        "code": "3632",
+        "name": "Dhamdha",
+        "nameLocal": "धमधा",
+        "districtCode": "378",
+        "districtName": "Durg"
+      },
+      {
+        "code": "3625",
+        "name": "Dhamtari",
+        "nameLocal": "धमतरी",
+        "districtCode": "377",
+        "districtName": "Dhamtari"
+      },
+      {
+        "code": "3685",
+        "name": "Dharamjaigarh",
+        "nameLocal": "धरमजैगढ़",
+        "districtCode": "386",
+        "districtName": "Raigarh"
+      },
+      {
+        "code": "3700",
+        "name": "Dharsiwa",
+        "nameLocal": "धरसीवा",
+        "districtCode": "387",
+        "districtName": "Raipur"
+      },
+      {
+        "code": "3633",
+        "name": "Dondi",
+        "nameLocal": "डोंडी",
+        "districtCode": "646",
+        "districtName": "Balod"
+      },
+      {
+        "code": "3634",
+        "name": "Dondilohara",
+        "nameLocal": "डोंडीलोहरा",
+        "districtCode": "646",
+        "districtName": "Balod"
+      },
+      {
+        "code": "3711",
+        "name": "Dongargaon",
+        "nameLocal": "डोंगरगांव",
+        "districtCode": "388",
+        "districtName": "Rajnandgaon"
+      },
+      {
+        "code": "3712",
+        "name": "Dongarghar",
+        "nameLocal": "दोंगढ़ार",
+        "districtCode": "388",
+        "districtName": "Rajnandgaon"
+      },
+      {
+        "code": "3651",
+        "name": "Duldula",
+        "nameLocal": "दुलदुला",
+        "districtCode": "380",
+        "districtName": "Jashpur"
+      },
+      {
+        "code": "3635",
+        "name": "Durg",
+        "nameLocal": "दुर्ग",
+        "districtCode": "378",
+        "districtName": "Durg"
+      },
+      {
+        "code": "3661",
+        "name": "Durgukondal",
+        "nameLocal": "दुर्गुकोंदल",
+        "districtCode": "381",
+        "districtName": "Uttar Bastar Kanker"
+      },
+      {
+        "code": "3701",
+        "name": "Fingeshwar",
+        "nameLocal": "फिंगेश्वर",
+        "districtCode": "645",
+        "districtName": "Gariyaband"
+      },
+      {
+        "code": "3702",
+        "name": "Gariyaband",
+        "nameLocal": "गरियाबंद",
+        "districtCode": "645",
+        "districtName": "Gariyaband"
+      },
+      {
+        "code": "3605",
+        "name": "Gaurella-1",
+        "nameLocal": "गौरेल्ला-1",
+        "districtCode": "734",
+        "districtName": "Gaurela-Pendra-Marwahi"
+      },
+      {
+        "code": "3606",
+        "name": "Gaurella-2",
+        "nameLocal": "गौरेल्ला-2",
+        "districtCode": "734",
+        "districtName": "Gaurela-Pendra-Marwahi"
+      },
+      {
+        "code": "3619",
+        "name": "Geedam",
+        "nameLocal": "गीदम",
+        "districtCode": "376",
+        "districtName": "Dakshin Bastar Dantewada"
+      },
+      {
+        "code": "3686",
+        "name": "Gharghoda",
+        "nameLocal": "घरघोड़ा",
+        "districtCode": "386",
+        "districtName": "Raigarh"
+      },
+      {
+        "code": "3636",
+        "name": "Gunderdehi",
+        "nameLocal": "गुन्दरदेही",
+        "districtCode": "646",
+        "districtName": "Balod"
+      },
+      {
+        "code": "3637",
+        "name": "Gurur",
+        "nameLocal": "गुरुर",
+        "districtCode": "646",
+        "districtName": "Balod"
+      },
+      {
+        "code": "3595",
+        "name": "Jagdalpur",
+        "nameLocal": "जगदलपुर",
+        "districtCode": "374",
+        "districtName": "Bastar"
+      },
+      {
+        "code": "3645",
+        "name": "Jaijaipur",
+        "nameLocal": "जैजैपुर",
+        "districtCode": "762",
+        "districtName": "Sakti"
+      },
+      {
+        "code": "3652",
+        "name": "Jashpur",
+        "nameLocal": "जशपुर",
+        "districtCode": "380",
+        "districtName": "Jashpur"
+      },
+      {
+        "code": "3662",
+        "name": "Kanker",
+        "nameLocal": "कांकेर",
+        "districtCode": "381",
+        "districtName": "Uttar Bastar Kanker"
+      },
+      {
+        "code": "3653",
+        "name": "Kansabel",
+        "nameLocal": "कांसाबेल",
+        "districtCode": "380",
+        "districtName": "Jashpur"
+      },
+      {
+        "code": "3669",
+        "name": "Kartala",
+        "nameLocal": "करतला",
+        "districtCode": "383",
+        "districtName": "Korba"
+      },
+      {
+        "code": "3703",
+        "name": "Kasdol",
+        "nameLocal": "कसडोल",
+        "districtCode": "644",
+        "districtName": "Balodabazar-Bhatapara"
+      },
+      {
+        "code": "3620",
+        "name": "Katekalyan",
+        "nameLocal": "कटेकल्याण",
+        "districtCode": "376",
+        "districtName": "Dakshin Bastar Dantewada"
+      },
+      {
+        "code": "3670",
+        "name": "Katghora",
+        "nameLocal": "कटघोरा",
+        "districtCode": "383",
+        "districtName": "Korba"
+      },
+      {
+        "code": "3666",
+        "name": "Kawardha",
+        "nameLocal": "कवर्धा",
+        "districtCode": "382",
+        "districtName": "Kabeerdham"
+      },
+      {
+        "code": "3596",
+        "name": "Keshkal",
+        "nameLocal": "केशकाल",
+        "districtCode": "643",
+        "districtName": "Kondagaon"
+      },
+      {
+        "code": "3676",
+        "name": "Khadgawana",
+        "nameLocal": "खडगवां",
+        "districtCode": "384",
+        "districtName": "Korea / Manendragarh-Chirmiri-Bharatpur (duplicate LGD parent mapping)",
+        "districtCodes": [
+          "384",
+          "760"
+        ],
+        "mappingReviewRequired": true
+      },
+      {
+        "code": "3713",
+        "name": "Khairagarh",
+        "nameLocal": "खैरागढ़",
+        "districtCode": "759",
+        "districtName": "Khairagarh-Chhuikhadan-Gandai"
+      },
+      {
+        "code": "3687",
+        "name": "Kharsia",
+        "nameLocal": "खरसिया",
+        "districtCode": "386",
+        "districtName": "Raigarh"
+      },
+      {
+        "code": "3663",
+        "name": "Koilebeda",
+        "nameLocal": "कोइलबेड़ा",
+        "districtCode": "381",
+        "districtName": "Uttar Bastar Kanker"
+      },
+      {
+        "code": "3597",
+        "name": "Kondagaon",
+        "nameLocal": "कोंडागांव",
+        "districtCode": "643",
+        "districtName": "Kondagaon"
+      },
+      {
+        "code": "3621",
+        "name": "Konta",
+        "nameLocal": "कोंटा",
+        "districtCode": "642",
+        "districtName": "Sukma"
+      },
+      {
+        "code": "3671",
+        "name": "Korba",
+        "nameLocal": "कोरबा",
+        "districtCode": "383",
+        "districtName": "Korba"
+      },
+      {
+        "code": "3607",
+        "name": "Kota",
+        "nameLocal": "कोटा",
+        "districtCode": "375",
+        "districtName": "Bilaspur"
+      },
+      {
+        "code": "3654",
+        "name": "Kunkuri",
+        "nameLocal": "कुनकुरी",
+        "districtCode": "380",
+        "districtName": "Jashpur"
+      },
+      {
+        "code": "3626",
+        "name": "Kurud",
+        "nameLocal": "कुरूद",
+        "districtCode": "377",
+        "districtName": "Dhamtari"
+      },
+      {
+        "code": "3721",
+        "name": "Kusmi",
+        "nameLocal": "कुसमी",
+        "districtCode": "649",
+        "districtName": "Balrampur-Ramanujganj"
+      },
+      {
+        "code": "3622",
+        "name": "Kuwakonda",
+        "nameLocal": "कुवाकोंडा",
+        "districtCode": "376",
+        "districtName": "Dakshin Bastar Dantewada"
+      },
+      {
+        "code": "3688",
+        "name": "Lailunga",
+        "nameLocal": "लैलूंगा",
+        "districtCode": "386",
+        "districtName": "Raigarh"
+      },
+      {
+        "code": "3722",
+        "name": "Lakhanpur",
+        "nameLocal": "लखनपुर",
+        "districtCode": "389",
+        "districtName": "Surguja"
+      },
+      {
+        "code": "3598",
+        "name": "Lohandiguda",
+        "nameLocal": "लोहान्दिगुदा",
+        "districtCode": "374",
+        "districtName": "Bastar"
+      },
+      {
+        "code": "3608",
+        "name": "Lormi",
+        "nameLocal": "लोरमी",
+        "districtCode": "647",
+        "districtName": "Mungeli"
+      },
+      {
+        "code": "3723",
+        "name": "Lundra",
+        "nameLocal": "लुन्द्रा",
+        "districtCode": "389",
+        "districtName": "Surguja"
+      },
+      {
+        "code": "3627",
+        "name": "Magarlod",
+        "nameLocal": "मगरलोड",
+        "districtCode": "377",
+        "districtName": "Dhamtari"
+      },
+      {
+        "code": "3681",
+        "name": "Mahasamund",
+        "nameLocal": "महासमुंद",
+        "districtCode": "385",
+        "districtName": "Mahasamund"
+      },
+      {
+        "code": "3724",
+        "name": "Mainpat",
+        "nameLocal": "मैनपाट",
+        "districtCode": "389",
+        "districtName": "Surguja"
+      },
+      {
+        "code": "3704",
+        "name": "Mainpur",
+        "nameLocal": "मैनपुर",
+        "districtCode": "645",
+        "districtName": "Gariyaband"
+      },
+      {
+        "code": "3599",
+        "name": "Makdi",
+        "nameLocal": "माकडी",
+        "districtCode": "643",
+        "districtName": "Kondagaon"
+      },
+      {
+        "code": "3646",
+        "name": "Malkharoda",
+        "nameLocal": "मालखरोदा",
+        "districtCode": "762",
+        "districtName": "Sakti"
+      },
+      {
+        "code": "3677",
+        "name": "Manendragarh",
+        "nameLocal": "मनेन्द्रगढ़",
+        "districtCode": "760",
+        "districtName": "Manendragarh-Chirmiri-Bharatpur(M C B)"
+      },
+      {
+        "code": "3655",
+        "name": "Manora",
+        "nameLocal": "मनोरा",
+        "districtCode": "380",
+        "districtName": "Jashpur"
+      },
+      {
+        "code": "3714",
+        "name": "Manpur (Td)",
+        "nameLocal": "मानपुर(तद)",
+        "districtCode": "761",
+        "districtName": "Mohla-Manpur-Ambagarh Chouki"
+      },
+      {
+        "code": "3609",
+        "name": "Marwahi",
+        "nameLocal": "मरवाही",
+        "districtCode": "734",
+        "districtName": "Gaurela-Pendra-Marwahi"
+      },
+      {
+        "code": "3610",
+        "name": "Masturi",
+        "nameLocal": "मस्तुरी",
+        "districtCode": "375",
+        "districtName": "Bilaspur"
+      },
+      {
+        "code": "3715",
+        "name": "Mohala (Td)",
+        "nameLocal": "मोहला (तद)",
+        "districtCode": "761",
+        "districtName": "Mohla-Manpur-Ambagarh Chouki"
+      },
+      {
+        "code": "3611",
+        "name": "Mungeli",
+        "nameLocal": "मुंगेली",
+        "districtCode": "647",
+        "districtName": "Mungeli"
+      },
+      {
+        "code": "3628",
+        "name": "Nagari",
+        "nameLocal": "नगरी",
+        "districtCode": "377",
+        "districtName": "Dhamtari"
+      },
+      {
+        "code": "3600",
+        "name": "Narayanpur",
+        "nameLocal": "नारायणपुर",
+        "districtCode": "637",
+        "districtName": "Narayanpur"
+      },
+      {
+        "code": "3664",
+        "name": "Narharpur",
+        "nameLocal": "नरहरपुर",
+        "districtCode": "381",
+        "districtName": "Uttar Bastar Kanker"
+      },
+      {
+        "code": "3638",
+        "name": "Nawagarh",
+        "nameLocal": "नवागढ़",
+        "districtCode": "650",
+        "districtName": "Bemetara"
+      },
+      {
+        "code": "3647",
+        "name": "Nawagarh",
+        "nameLocal": "नवागढ़",
+        "districtCode": "379",
+        "districtName": "Janjgir-Champa"
+      },
+      {
+        "code": "3725",
+        "name": "Odagi",
+        "nameLocal": "ओडागी",
+        "districtCode": "648",
+        "districtName": "Surajpur"
+      },
+      {
+        "code": "3601",
+        "name": "Orchha(Abhujmad)",
+        "nameLocal": "ओरछा",
+        "districtCode": "637",
+        "districtName": "Narayanpur"
+      },
+      {
+        "code": "3705",
+        "name": "Palari",
+        "nameLocal": "पलारी",
+        "districtCode": "644",
+        "districtName": "Balodabazar-Bhatapara"
+      },
+      {
+        "code": "3672",
+        "name": "Pali",
+        "nameLocal": "पाली",
+        "districtCode": "383",
+        "districtName": "Korba"
+      },
+      {
+        "code": "3648",
+        "name": "Pamgarh",
+        "nameLocal": "पामगढ़",
+        "districtCode": "379",
+        "districtName": "Janjgir-Champa"
+      },
+      {
+        "code": "3667",
+        "name": "Pandariya",
+        "nameLocal": "पंडरिया",
+        "districtCode": "382",
+        "districtName": "Kabeerdham"
+      },
+      {
+        "code": "3639",
+        "name": "Patan",
+        "nameLocal": "पाटन",
+        "districtCode": "378",
+        "districtName": "Durg"
+      },
+      {
+        "code": "3612",
+        "name": "Pathariya",
+        "nameLocal": "पथरिया",
+        "districtCode": "647",
+        "districtName": "Mungeli"
+      },
+      {
+        "code": "3656",
+        "name": "Patthalgaon",
+        "nameLocal": "पत्थलगांव",
+        "districtCode": "380",
+        "districtName": "Jashpur"
+      },
+      {
+        "code": "3602",
+        "name": "Pharasgaon",
+        "nameLocal": "फरसगांव",
+        "districtCode": "643",
+        "districtName": "Kondagaon"
+      },
+      {
+        "code": "3657",
+        "name": "Pharsabahar",
+        "nameLocal": "फरसाबहार",
+        "districtCode": "380",
+        "districtName": "Jashpur"
+      },
+      {
+        "code": "3682",
+        "name": "Pithora",
+        "nameLocal": "पिथोरा",
+        "districtCode": "385",
+        "districtName": "Mahasamund"
+      },
+      {
+        "code": "3673",
+        "name": "Podi Uparoda",
+        "nameLocal": "पोड़ी उपरोड़ा",
+        "districtCode": "383",
+        "districtName": "Korba"
+      },
+      {
+        "code": "3726",
+        "name": "Pratappur",
+        "nameLocal": "प्रतापपुर",
+        "districtCode": "648",
+        "districtName": "Surajpur"
+      },
+      {
+        "code": "3727",
+        "name": "Premnagar",
+        "nameLocal": "प्रेमनगर",
+        "districtCode": "648",
+        "districtName": "Surajpur"
+      },
+      {
+        "code": "3689",
+        "name": "Pussore",
+        "nameLocal": "पुससौर",
+        "districtCode": "386",
+        "districtName": "Raigarh"
+      },
+      {
+        "code": "3690",
+        "name": "Raigarh",
+        "nameLocal": "रायगढ़",
+        "districtCode": "386",
+        "districtName": "Raigarh"
+      },
+      {
+        "code": "3716",
+        "name": "Rajnandgaon",
+        "nameLocal": "राजनांदगांव",
+        "districtCode": "388",
+        "districtName": "Rajnandgaon"
+      },
+      {
+        "code": "3728",
+        "name": "Rajpur",
+        "nameLocal": "राजपुर",
+        "districtCode": "649",
+        "districtName": "Balrampur-Ramanujganj"
+      },
+      {
+        "code": "3729",
+        "name": "Ramanujnagar",
+        "nameLocal": "रामानुजनगर",
+        "districtCode": "648",
+        "districtName": "Surajpur"
+      },
+      {
+        "code": "3730",
+        "name": "Ramchandrapur",
+        "nameLocal": "रामचन्द्रपुर",
+        "districtCode": "649",
+        "districtName": "Balrampur-Ramanujganj"
+      },
+      {
+        "code": "3668",
+        "name": "S.Lohara",
+        "nameLocal": "स.लोहरा",
+        "districtCode": "382",
+        "districtName": "Kabeerdham"
+      },
+      {
+        "code": "3640",
+        "name": "Saja",
+        "nameLocal": "साजा",
+        "districtCode": "650",
+        "districtName": "Bemetara"
+      },
+      {
+        "code": "3649",
+        "name": "Sakti",
+        "nameLocal": "सकती",
+        "districtCode": "762",
+        "districtName": "Sakti"
+      },
+      {
+        "code": "3683",
+        "name": "Saraipali",
+        "nameLocal": "सरईपाली",
+        "districtCode": "385",
+        "districtName": "Mahasamund"
+      },
+      {
+        "code": "3691",
+        "name": "Sarangarh",
+        "nameLocal": "सारंगगढ़",
+        "districtCode": "763",
+        "districtName": "Sarangarh-Bilaigarh"
+      },
+      {
+        "code": "3731",
+        "name": "Shankargarh",
+        "nameLocal": "शंकरगढ़",
+        "districtCode": "649",
+        "districtName": "Balrampur-Ramanujganj"
+      },
+      {
+        "code": "3706",
+        "name": "Simga",
+        "nameLocal": "सिमगा",
+        "districtCode": "644",
+        "districtName": "Balodabazar-Bhatapara"
+      },
+      {
+        "code": "3732",
+        "name": "Sitapur",
+        "nameLocal": "सीतापुर",
+        "districtCode": "389",
+        "districtName": "Surguja"
+      },
+      {
+        "code": "3678",
+        "name": "Sonhat",
+        "nameLocal": "सोनहत",
+        "districtCode": "384",
+        "districtName": "Korea"
+      },
+      {
+        "code": "3623",
+        "name": "Sukma",
+        "nameLocal": "सुकमा",
+        "districtCode": "642",
+        "districtName": "Sukma"
+      },
+      {
+        "code": "3733",
+        "name": "Surajpur",
+        "nameLocal": "सूरजपुर",
+        "districtCode": "648",
+        "districtName": "Surajpur"
+      },
+      {
+        "code": "3613",
+        "name": "Takhatpur",
+        "nameLocal": "तखतपुर",
+        "districtCode": "375",
+        "districtName": "Bilaspur"
+      },
+      {
+        "code": "3692",
+        "name": "Tamnar",
+        "nameLocal": "तमनार",
+        "districtCode": "386",
+        "districtName": "Raigarh"
+      },
+      {
+        "code": "3707",
+        "name": "Tilda",
+        "nameLocal": "तिल्दा",
+        "districtCode": "387",
+        "districtName": "Raipur"
+      },
+      {
+        "code": "3603",
+        "name": "Tokapal",
+        "nameLocal": "तोकापाल",
+        "districtCode": "374",
+        "districtName": "Bastar"
+      },
+      {
+        "code": "3734",
+        "name": "Udaipur",
+        "nameLocal": "उदयपुर",
+        "districtCode": "389",
+        "districtName": "Surguja"
+      },
+      {
+        "code": "3624",
+        "name": "Usoor",
+        "nameLocal": "उसूर",
+        "districtCode": "636",
+        "districtName": "Bijapur"
+      },
+      {
+        "code": "3735",
+        "name": "Wadrafnagar",
+        "nameLocal": "वाड्रफनगर",
+        "districtCode": "649",
+        "districtName": "Balrampur-Ramanujganj"
+      }
+    ]
+  },
+  "facilityRegistry": {
+    "loaded": false,
+    "source": null,
+    "note": "No validated block-wise Ayushman Arogya Mandir facility register has been imported. Unseeded blocks intentionally show no operational demo records; a block is not a facility."
+  },
+  "demoSeed": {
+    "blockCode": "3625",
+    "facilityId": "FAC-DHAMTARI-DEMO",
+    "facilityName": "Dhamtari synthetic demo HWC",
+    "isSynthetic": true,
+    "workerId": "HW-DEMO-001",
+    "workerName": "Demo CHO",
+    "stock": [
+      {
+        "id": "ors",
+        "name": "ORS packets",
+        "onHand": 20,
+        "unit": "packets",
+        "source": "synthetic starter stock",
+        "asOf": "2026-11-06"
+      }
+    ]
+  },
+  "janaushadhi": {
+    "schemeName": "Pradhan Mantri Bhartiya Janaushadhi Pariyojana",
+    "latestStateCount": 371,
+    "latestStateCountAsOf": "2026-06-30",
+    "districtCountsAsOf": "2026-02-28",
+    "districtCounts": {
+      "Bastar": 11,
+      "Bilaspur": 20,
+      "Dakshin Bastar Dantewada": 2,
+      "Dhamtari": 10,
+      "Durg": 61,
+      "Janjgir-Champa": 10,
+      "Jashpur": 9,
+      "Uttar Bastar Kanker": 4,
+      "Kabeerdham": 7,
+      "Korba": 12,
+      "Korea": 3,
+      "Mahasamund": 11,
+      "Raigarh": 12,
+      "Raipur": 42,
+      "Rajnandgaon": 19,
+      "Surguja": 5,
+      "Bijapur": 3,
+      "Narayanpur": 3,
+      "Sukma": 1,
+      "Kondagaon": 7,
+      "Balodabazar-Bhatapara": 22,
+      "Gariyaband": 7,
+      "Balod": 8,
+      "Mungeli": 8,
+      "Surajpur": 7,
+      "Balrampur-Ramanujganj": 7,
+      "Bemetara": 10,
+      "Gaurela-Pendra-Marwahi": 5,
+      "Khairagarh-Chhuikhadan-Gandai": 7,
+      "Manendragarh-Chirmiri-Bharatpur(M C B)": 6,
+      "Mohla-Manpur-Ambagarh Chouki": 4,
+      "Sakti": 5,
+      "Sarangarh-Bilaigarh": 4
+    },
+    "districtSourceUrl": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2246064&lang=1&reg=3",
+    "latestStateAggregateSourceUrl": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2297561&lang=1&reg=48",
+    "locatorUrl": "https://janaushadhi.gov.in/",
+    "note": "PMBJK is a different scheme and supply chain from AAM/CGMSC. The latest state aggregate and earlier district-level snapshot have separate dates and must not be combined as one time series."
+  },
+  "publicReferences": {
+    "lgd": {
+      "title": "Local Government Directory",
+      "url": "https://lgdirectory.gov.in/"
+    },
+    "dpdmisAam": {
+      "title": "Chhattisgarh DPDMIS AAM portal",
+      "url": "https://dpdmis.in/shcangm/"
+    },
+    "dpdmisFacilityStore": {
+      "title": "Chhattisgarh DPDMIS facility store portal",
+      "url": "https://dpdmis.in/faconline/"
+    },
+    "cgmsc": {
+      "title": "Chhattisgarh Medical Services Corporation",
+      "url": "https://cgmsc.gov.in/"
+    },
+    "janaushadhi": {
+      "title": "PMBJP district-wise count (28 Feb 2026)",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2246064&lang=1&reg=3",
+      "asOf": "2026-02-28",
+      "districtCounts": {
+        "Bastar": 11,
+        "Bilaspur": 20,
+        "Dakshin Bastar Dantewada": 2,
+        "Dhamtari": 10,
+        "Durg": 61,
+        "Janjgir-Champa": 10,
+        "Jashpur": 9,
+        "Uttar Bastar Kanker": 4,
+        "Kabeerdham": 7,
+        "Korba": 12,
+        "Korea": 3,
+        "Mahasamund": 11,
+        "Raigarh": 12,
+        "Raipur": 42,
+        "Rajnandgaon": 19,
+        "Surguja": 5,
+        "Bijapur": 3,
+        "Narayanpur": 3,
+        "Sukma": 1,
+        "Kondagaon": 7,
+        "Balodabazar-Bhatapara": 22,
+        "Gariyaband": 7,
+        "Balod": 8,
+        "Mungeli": 8,
+        "Surajpur": 7,
+        "Balrampur-Ramanujganj": 7,
+        "Bemetara": 10,
+        "Gaurela-Pendra-Marwahi": 5,
+        "Khairagarh-Chhuikhadan-Gandai": 7,
+        "Manendragarh-Chirmiri-Bharatpur(M C B)": 6,
+        "Mohla-Manpur-Ambagarh Chouki": 4,
+        "Sakti": 5,
+        "Sarangarh-Bilaigarh": 4
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
-const STORAGE_KEY = 'busho-demo-state-v1';
+const STORAGE_PREFIX = 'busho-worker-state-v1:';
+let activeAuthUserId = null;
 const PORTAL_ROLE = document.querySelector('[data-portal-role]')?.dataset.portalRole || null;
 
 function t(key, vars) {
@@ -12,6 +13,12 @@ function currentLanguage() {
 
 function localizedSample(kind) { return t(`sample.${kind}`); }
 function updateReportInput(value) {
+  if (['submitted', 'resubmitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
+    state.reportId = null;
+    state.serverStatus = null;
+    state.reportLanguageCode = null;
+    state.syncStatus = 'idle';
+  }
   state.rawReport = value;
   reportInput.value = value;
   messageText.textContent = value || t('worker.emptyReport');
@@ -37,12 +44,13 @@ const inventoryDrawer = document.getElementById('inventory-drawer');
 let lastFocusedElement = null;
 
 function initialState() {
-  return { version: 1, view: 'worker', sample: 'routine', rawReport: localizedSample('routine'), extracted: false, confirmed: false, draft: [], replenishment: { status: 'none', medicineId: null, source: null } };
+  return { version: 1, view: 'worker', sample: 'routine', rawReport: localizedSample('routine'), extracted: false, confirmed: false, draft: [], reportId: null, serverStatus: null, reportLanguageCode: null, syncStatus: 'idle', replenishment: { status: 'none', medicineId: null, source: null } };
 }
 
-function loadState() {
+function loadState(userId) {
+  if (!userId) return initialState();
   try {
-    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || 'null');
+    const stored = JSON.parse(window.localStorage.getItem(STORAGE_PREFIX + userId) || 'null');
     if (!stored || stored.version !== 1 || typeof stored.rawReport !== 'string') return initialState();
     const next = initialState();
     next.view = PORTAL_ROLE === 'supervisor' ? 'supervisor' : 'worker';
@@ -50,6 +58,10 @@ function loadState() {
     next.rawReport = stored.rawReport.slice(0, 4000);
     next.extracted = Boolean(stored.extracted);
     next.confirmed = Boolean(stored.confirmed && stored.extracted);
+    next.reportId = typeof stored.reportId === 'string' && stored.reportId.length <= 80 ? stored.reportId : null;
+    next.serverStatus = typeof stored.serverStatus === 'string' ? stored.serverStatus : null;
+    next.reportLanguageCode = typeof stored.reportLanguageCode === 'string' && /^[a-z]{2}(?:-[A-Z]{2})?$/.test(stored.reportLanguageCode) ? stored.reportLanguageCode : null;
+    next.syncStatus = ['idle', 'saving', 'draft_saved', 'submitted', 'error'].includes(stored.syncStatus) ? stored.syncStatus : 'idle';
     next.draft = Array.isArray(stored.draft) ? stored.draft.filter(item => item && typeof item.id === 'string' && typeof item.value === 'string') : [];
     if (next.extracted && (!next.draft.length || !next.draft.some(item => item.id === 'disease-table') || !next.draft.some(item => item.id === 'medicine-table'))) { next.extracted = false; next.confirmed = false; next.draft = []; }
     const replenishment = stored.replenishment || {};
@@ -58,12 +70,37 @@ function loadState() {
   } catch { return initialState(); }
 }
 
-let state = loadState();
+let state = initialState();
+
+function persistState() {
+  if (!activeAuthUserId) throw new Error('No authenticated BUSHO account is available for draft storage.');
+  const key = STORAGE_PREFIX + activeAuthUserId;
+  if (['submitted', 'resubmitted', 'supervisor_verified', 'closed', 'rejected'].includes(state.serverStatus)) {
+    window.localStorage.removeItem(key);
+    return;
+  }
+  window.localStorage.setItem(key, JSON.stringify(state));
+}
 
 function saveState() {
-  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  if (!activeAuthUserId) return;
+  try { persistState(); }
   catch { showToast(t('worker.toast.save')); }
 }
+
+document.addEventListener('busho:authenticated', event => {
+  const userId = event.detail?.profile?.id;
+  if (!userId) return;
+  activeAuthUserId = userId;
+  state = loadState(userId);
+  renderAll();
+});
+
+document.addEventListener('busho:unauthenticated', () => {
+  activeAuthUserId = null;
+  state = initialState();
+  renderAll();
+});
 
 function escapeHtml(value) { return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char])); }
 function showToast(message) { document.getElementById('toast-text').textContent = message; toast.classList.add('show'); window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 3200); }
@@ -80,6 +117,10 @@ function extractionWords(lang) { return ({
 }[lang] || {}); }
 
 function setSample(type) {
+  state.reportId = null;
+  state.serverStatus = null;
+  state.reportLanguageCode = null;
+  state.syncStatus = 'idle';
   state.sample = type === 'ambiguous' ? 'ambiguous' : 'routine'; state.rawReport = localizedSample(state.sample); state.extracted = false; state.confirmed = false; state.draft = [];
   reportInput.value = state.rawReport; messageText.textContent = state.rawReport; renderAll(); saveState(); showToast(t(`worker.toast.${state.sample}`));
 }
@@ -191,7 +232,96 @@ function renderDraftStatus() {
 }
 
 function validationForDraft() { return state.draft.filter(item => item.confidence === 'review' && (!item.value.trim() || item.id === 'symptoms' && item.value === t('draft.symptomsUnclear') || item.id !== 'symptoms' && item.id !== 'clinical-status' && item.value === t('draft.quantityUnclear'))); }
-function confirmReport() { if (!state.extracted) return showToast(t('worker.toast.extractFirst')); const invalid = validationForDraft(); extractionList.querySelectorAll('.field-edit').forEach(input => input.classList.remove('invalid')); if (invalid.length) { feedback.textContent = `${t('draft.needsClarify')}: ${invalid.map(item => item.label).join(', ')}.`; invalid.forEach(item => document.getElementById(`field-${item.id}`)?.classList.add('invalid')); document.getElementById(`field-${invalid[0].id}`)?.focus(); showToast(t('worker.toast.validate')); return; } state.confirmed = true; renderAll(); saveState(); document.getElementById('post-confirm')?.classList.remove('hidden'); showToast(t('worker.toast.confirm')); }
+async function confirmReport() {
+  if (!state.extracted) return showToast(t('worker.toast.extractFirst'));
+  const invalid = validationForDraft();
+  extractionList.querySelectorAll('.field-edit').forEach(input => input.classList.remove('invalid'));
+  if (invalid.length) {
+    feedback.textContent = `${t('draft.needsClarify')}: ${invalid.map(item => item.label).join(', ')}.`;
+    invalid.forEach(item => document.getElementById(`field-${item.id}`)?.classList.add('invalid'));
+    document.getElementById(`field-${invalid[0].id}`)?.focus();
+    showToast(t('worker.toast.validate'));
+    return;
+  }
+
+  const button = document.getElementById('confirm-btn');
+  const submittingUserId = activeAuthUserId;
+  const submittingState = state;
+  const reportLanguageCode = state.reportLanguageCode || currentLanguage();
+  state.reportLanguageCode = reportLanguageCode;
+  const logoutButton = document.getElementById('portal-logout');
+  const persistence = window.BUSHO_REPORT_PERSISTENCE;
+  const clientFactory = window.BUSHO_SUPABASE_CLIENT;
+  const config = window.BUSHO_SUPABASE_CONFIG;
+  if (!activeAuthUserId || !persistence || !clientFactory || !config) {
+    feedback.textContent = 'Sign in with an approved BUSHO worker account before submitting this report.';
+    showToast('Secure report submission is unavailable. Your draft has not been submitted.');
+    return;
+  }
+
+  button.disabled = true;
+  if (logoutButton) logoutButton.disabled = true;
+  button.setAttribute('aria-busy', 'true');
+  let draftCheckpointSaved = Boolean(state.reportId);
+  state.syncStatus = 'saving';
+  feedback.textContent = 'Saving your report securely…';
+  saveState();
+
+  try {
+    const client = clientFactory.createClient(config);
+    await client.requireActiveProfile(['worker']);
+    const result = await persistence.persistConfirmedReport({
+      client,
+      reportId: state.reportId,
+      originalText: state.rawReport,
+      languageCode: reportLanguageCode,
+      draft: state.draft,
+      onDraftCreated: async reportId => {
+        if (activeAuthUserId !== submittingUserId || state !== submittingState) {
+          throw new Error('The signed-in account changed before the draft checkpoint could be saved.');
+        }
+        state.reportId = reportId;
+        state.syncStatus = 'draft_saved';
+        persistState();
+        draftCheckpointSaved = true;
+      }
+    });
+    if (activeAuthUserId !== submittingUserId || state !== submittingState) {
+      throw new Error('The signed-in account changed while the report was being submitted. Sign in again to reconcile its server status.');
+    }
+    state.reportId = result.report.id;
+    state.serverStatus = result.report.status;
+    state.syncStatus = 'submitted';
+    state.confirmed = true;
+    renderAll();
+    saveState();
+    const postConfirm = document.getElementById('post-confirm');
+    if (postConfirm) {
+      const statusLabel = state.serverStatus === 'supervisor_verified' ? 'Supervisor verified'
+        : state.serverStatus === 'closed' ? 'Report closed'
+        : state.serverStatus === 'resubmitted' ? 'Resubmitted for supervisor review'
+        : 'Submitted for supervisor review';
+      postConfirm.textContent = statusLabel + ' · Reference ' + state.reportId;
+      postConfirm.classList.remove('hidden');
+    }
+    feedback.textContent = 'Report submitted. Reference: ' + state.reportId;
+    showToast('Report submitted successfully.');
+  } catch (cause) {
+    state.confirmed = false;
+    state.syncStatus = state.reportId ? 'draft_saved' : 'error';
+    saveState();
+    feedback.textContent = state.reportId && draftCheckpointSaved
+      ? 'Submission not confirmed. Your saved draft is preserved; retry to continue. ' + cause.message
+      : state.reportId
+        ? 'A server draft was created, but this browser could not save its recovery checkpoint. Keep this tab open and retry before leaving. ' + cause.message
+        : 'Report not submitted. No saved report ID was returned. ' + cause.message;
+    showToast('Report not submitted. Please review the message and retry.');
+  } finally {
+    button.disabled = false;
+    if (logoutButton) logoutButton.disabled = false;
+    button.removeAttribute('aria-busy');
+  }
+}
 function editFields() { if (!state.extracted) return; const first=extractionList.querySelector('.clinical-edit-input'); first?.focus(); first?.select(); if(first) first.scrollIntoView({behavior:'smooth',block:'center'}); else showToast('Use Add condition or Add medicine to enter a missing item.'); }
 function renderDashboard() { const pending = state.confirmed ? 0 : 1; document.getElementById('reports-count').textContent = String(baseReportCount + (state.confirmed ? 1 : 0)); document.getElementById('reports-trend').textContent = t(state.confirmed ? 'supervisor.metric.trend.positive' : 'supervisor.metric.trend.baseline'); document.getElementById('pending-count').textContent = String(pending); document.getElementById('pending-trend').textContent = t(pending ? 'supervisor.metric.trend.warning' : 'supervisor.metric.trend.allReviewed'); document.getElementById('pending-trend').className = `metric-trend ${pending ? 'warning' : 'positive'}`; const badge = document.getElementById('admin-badge'); if (badge) badge.textContent = String(pending); }
 function renderAdminResponse() { const response = document.getElementById('admin-response'); const approve = document.getElementById('approve-replenishment'); if (!state.confirmed) { response.classList.add('hidden'); return; } response.classList.remove('hidden'); const title = document.getElementById('admin-action-title'); const copy = document.getElementById('admin-action-copy'); const status = document.getElementById('admin-action-status'); const medicine = inventory.find(item => item.id === state.replenishment.medicineId); if (state.replenishment.status === 'approved' && medicine) { title.textContent = t('supervisor.responseTitleApproved'); copy.textContent = t('supervisor.responseCopyApproved', { name: t(medicine.nameKey) }); status.textContent = t('supervisor.statusApproved'); approve.disabled = true; approve.textContent = t('supervisor.approvedBtn'); } else if (state.replenishment.status === 'draft' && medicine) { title.textContent = t('supervisor.responseTitleDraft'); copy.textContent = t('supervisor.responseCopyDraft', { name: t(medicine.nameKey), qty: medicine.capacity - medicine.stock, unit: t(medicine.unitKey), source: state.replenishment.source }); status.textContent = t('supervisor.statusPending'); approve.disabled = false; approve.textContent = t('supervisor.approveBtn'); } else { title.textContent = t('supervisor.responseTitle'); copy.textContent = t('supervisor.responseCopy'); status.textContent = t('supervisor.statusAwaiting'); approve.disabled = true; approve.textContent = t('supervisor.approveBtn'); } }
@@ -216,7 +346,7 @@ document.querySelectorAll('.role-btn').forEach(button => {
 });
 document.querySelectorAll('.quick-btn').forEach(button => button.addEventListener('click', () => setSample(button.dataset.sample)));
 document.getElementById('extract-btn').addEventListener('click', makeExtraction); document.getElementById('confirm-btn').addEventListener('click', confirmReport); document.getElementById('edit-btn').addEventListener('click', editFields); document.getElementById('view-inventory').addEventListener('click', openInventory); document.getElementById('close-inventory').addEventListener('click', closeInventory); document.getElementById('approve-replenishment').addEventListener('click', approveReplenishment);
-document.getElementById('reset-demo').addEventListener('click', () => { try { window.localStorage.removeItem(STORAGE_KEY); } catch {} state = initialState(); closeInventory(); renderAll(); showToast(t('footer.reset')); });
+document.getElementById('reset-demo')?.addEventListener('click', () => { try { if (activeAuthUserId) window.localStorage.removeItem(STORAGE_PREFIX + activeAuthUserId); } catch {} state = initialState(); closeInventory(); renderAll(); showToast(t('footer.reset')); });
 // Voice input using the browser Web Speech API.
 const voiceButton = document.querySelector('.voice-button');
 let recognition = null;
@@ -375,6 +505,48 @@ if (voiceButton) {
   });
 }
 reportInput.addEventListener('input', () => updateReportInput(reportInput.value));
+document.addEventListener('click', event => {
+  if (!event.target.closest('[data-go-view="new-report"]')) return;
+  if (!state.reportId) return;
+  // Starting a new report must never overwrite a saved draft or a returned report.
+  state = initialState();
+  state.rawReport = '';
+  state.reportLanguageCode = null;
+  reportInput.value = '';
+  messageText.textContent = t('worker.emptyReport');
+  renderAll();
+  saveState();
+});
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && !inventoryDrawer.classList.contains('hidden')) closeInventory(); if (event.key === 'Tab' && !inventoryDrawer.classList.contains('hidden')) { const focusable = [...inventoryDrawer.querySelectorAll('button:not([disabled]), [href], input, select, textarea')]; if (!focusable.length) return; if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1).focus(); } else if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0].focus(); } } });
 if (window.BUSHO_I18N && window.BUSHO_I18N.onLanguageChange) window.BUSHO_I18N.onLanguageChange(() => { if (!state.extracted) state.rawReport = localizedSample(state.sample); renderAll(); renderInventory(); });
+function openExistingWorkerReport(report) {
+  const adapter = window.BUSHO_REPORT_PERSISTENCE;
+  if (!activeAuthUserId || !adapter || !report || !report.id) {
+    throw new Error('Sign in to the worker portal before opening a saved report.');
+  }
+  if (!['draft', 'correction_requested'].includes(report.status)) {
+    throw new Error('Only a draft or a report returned for correction can be edited.');
+  }
+  const narrative = String(report.original_text || '');
+  if (!narrative.trim()) throw new Error('This report has no original field narrative to resume.');
+  state.rawReport = narrative;
+  state.draft = adapter.fromDatabaseItems(report.report_items || [], narrative);
+  state.extracted = true;
+  state.confirmed = false;
+  state.reportId = report.id;
+  state.serverStatus = report.status;
+  state.reportLanguageCode = report.language_code || currentLanguage();
+  state.syncStatus = 'draft_saved';
+  state.replenishment = { status: 'none', medicineId: null, source: null };
+  reportInput.value = narrative;
+  messageText.textContent = narrative;
+  renderAll();
+  saveState();
+  document.querySelector('[data-portal-view="new-report"]')?.click();
+  showToast(report.status === 'correction_requested'
+    ? 'Returned report reopened. Review the supervisor note and update the fields.'
+    : 'Saved draft reopened. Review the fields before submitting.');
+}
+window.BUSHO_WORKER_REPORT_EDITOR = Object.freeze({ openReport: openExistingWorkerReport });
+
 renderInventory(); renderAll();

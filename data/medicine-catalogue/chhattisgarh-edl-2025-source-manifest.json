@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "title": "Essential Drug List – 2025",
+    "authority": "Department of Health and Family Welfare, Government of Chhattisgarh",
+    "notificationDate": "2025-11-12",
+    "eofficeGeneratedAt": "2025-11-13T16:16:00+05:30",
+    "fileNumber": "GENS-2101/4186/2025-HEALTH SECTION-2",
+    "url": "https://dpdmis.in/faconline/Common/Document/EDL_2025.pdf"
+  },
+  "annexures": {
+    "phc_phc_aam_uphc": {
+      "label": "Annexure 4",
+      "facilityLevel": "phc_aam",
+      "firstItem": 1,
+      "lastItem": 172,
+      "printedPageRanges": [
+        {
+          "firstItem": 1,
+          "lastItem": 25,
+          "page": 47
+        },
+        {
+          "firstItem": 26,
+          "lastItem": 55,
+          "page": 48
+        },
+        {
+          "firstItem": 56,
+          "lastItem": 84,
+          "page": 49
+        },
+        {
+          "firstItem": 85,
+          "lastItem": 118,
+          "page": 50
+        },
+        {
+          "firstItem": 119,
+          "lastItem": 150,
+          "page": 51
+        },
+        {
+          "firstItem": 151,
+          "lastItem": 172,
+          "page": 52
+        }
+      ]
+    },
+    "shc_aam": {
+      "label": "Annexure 5",
+      "facilityLevel": "shc_aam",
+      "firstItem": 1,
+      "lastItem": 106,
+      "printedPageRanges": [
+        {
+          "firstItem": 1,
+          "lastItem": 19,
+          "page": 53
+        },
+        {
+          "firstItem": 20,
+          "lastItem": 47,
+          "page": 54
+        },
+        {
+          "firstItem": 48,
+          "lastItem": 85,
+          "page": 55
+        },
+        {
+          "firstItem": 86,
+          "lastItem": 106,
+          "page": 56
+        }
+      ]
+    }
+  },
+  "currentTranscription": {
+    "sampleRows": 24,
+    "phcRows": 10,
+    "shcRows": 14,
+    "complete": false
+  },
+  "notes": [
+    "Annexure numbering is confirmed by the contents page and section headings in the official PDF: Annexure 4 is PHC/PHC-AAM/UPHC; Annexure 5 is SHC-AAM.",
+    "The 172 and 106 counts are numbered source rows, not counts of normalized SKUs or dosage forms.",
+    "Printed page ranges are reconciled against the official PDF page footers and row boundaries.",
+    "A different EDL document found in search uses a different annexure numbering scheme; it is not the source used for this dataset.",
+    "Page references use the page footer printed on each annexure sheet. The contents index and printed footer labels agree; page mapping uses the printed footer shown on each annexure sheet.",
+    "A separate 106-row SHC-AAM transcription file covers every numbered source row, but has targeted rendered-PDF checks recorded, with the remaining rows still pending individual reconciliation and is not an operational medicine catalogue.",
+    "Both AAM annexure source transcriptions now cover all 278 numbered rows: 172 PHC-AAM/UPHC and 106 SHC-AAM. Both remain source-text transcriptions pending human reconciliation against rendered PDF pages and pharmacist/CGMSC review.",
+    "Printed page ranges were corrected after inspection of the uploaded PDF: Annexure 4 pages 47–52; Annexure 5 pages 53–56. These are the footer labels visible on the rendered sheets."
+  ],
+  "annexureTranscriptions": {
+    "phc_phc_aam_uphc": {
+      "rows": 172,
+      "expectedRows": 172,
+      "status": "source_text_transcribed_unreviewed",
+      "humanReconciled": false
+    },
+    "shc_aam": {
+      "rows": 106,
+      "expectedRows": 106,
+      "status": "source_text_transcribed_unreviewed",
+      "humanReconciled": false
+    }
+  }
+}

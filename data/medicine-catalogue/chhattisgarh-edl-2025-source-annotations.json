@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "title": "Essential Drug List – 2025",
+    "authority": "Department of Health and Family Welfare, Government of Chhattisgarh",
+    "notificationDate": "2025-11-12",
+    "url": "https://dpdmis.in/faconline/Common/Document/EDL_2025.pdf",
+    "uploadedPdfSha256": "6e9b8e83d93fcd613328214dde4f979d592d8af0e01c3d4e41a26b0d0ee1c72e",
+    "pageConvention": "Printed footer page number; physical PDF page is printed page + 2."
+  },
+  "highlightedSpans": [
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 13,
+      "printedPage": 47,
+      "span": "Diclofenac Gel 1%W/W",
+      "note": "Yellow highlighting visible in source PDF."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 58,
+      "printedPage": 49,
+      "span": "As per NVBDCP Guideline",
+      "note": "Yellow highlighting visible in source PDF."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 66,
+      "printedPage": 49,
+      "span": "As per Anemia Mukt Bharat Abhiyan; [Pink Color]; [Blue Color]; [Red color]",
+      "note": "Yellow highlighting visible on programme reference and colour labels."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 119,
+      "printedPage": 51,
+      "span": "10mg in Bisacodyl Tablet and 10mg in Bisacodyl Suppository",
+      "note": "Both 10mg spans visibly highlighted yellow."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 4,
+      "printedPage": 53,
+      "span": "Diclofenac Gel 1%W/W",
+      "note": "Yellow highlighting visible in source PDF."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 32,
+      "printedPage": 54,
+      "span": "As per NVBDCP Guideline",
+      "note": "Yellow highlighting visible in source PDF."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 35,
+      "printedPage": 54,
+      "span": "As per Anemia Mukt Bharat Abhiyan; [Pink Color]; [Blue Color]; [Red color]",
+      "note": "Yellow highlighting visible on programme reference and colour labels."
+    }
+  ],
+  "sourceNotes": [
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 6,
+      "printedPage": 47,
+      "sourceNote": "Should be stored in lock and key. Schedule X: prescription shall be in duplicate and one copy retained by the licensee for 2 years."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 12,
+      "printedPage": 47,
+      "sourceNote": "Not to be used in suspected dengue patients and other clinical conditions without prescription."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 14,
+      "printedPage": 47,
+      "sourceNote": "Not to be used in suspected dengue patients and other clinical conditions without prescription."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 15,
+      "printedPage": 47,
+      "sourceNote": "Not to be used in suspected dengue patients and other clinical conditions without prescription. Recommended by RBSK Program Division."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 33,
+      "printedPage": 48,
+      "sourceNote": "For emergency purpose."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 61,
+      "printedPage": 49,
+      "sourceNote": "Should be stored in double lock and key."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 66,
+      "printedPage": 49,
+      "sourceNote": "As per Anemia Mukt Bharat Abhiyan; source includes age bands, elemental iron/folic-acid quantities and pink/blue/red colour labels. Preserve the complete source note."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 135,
+      "printedPage": 51,
+      "sourceNote": "As per current National programme guidelines."
+    },
+    {
+      "annexure": "phc_phc_aam_uphc",
+      "item": 138,
+      "printedPage": 51,
+      "sourceNote": "Only where deliveries are conducted."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 2,
+      "printedPage": 53,
+      "sourceNote": "Plain Lignocaine Injection can be kept at SC if enough case load is there."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 3,
+      "printedPage": 53,
+      "sourceNote": "Not to be used in suspected dengue patients and other clinical conditions without prescription."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 5,
+      "printedPage": 53,
+      "sourceNote": "Not to be used in suspected dengue patients and other clinical conditions without prescription."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 10,
+      "printedPage": 53,
+      "sourceNote": "Should be part of all emergency drugs."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 11,
+      "printedPage": 53,
+      "sourceNote": "Ampoules should be made available."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 14,
+      "printedPage": 53,
+      "sourceNote": "Controlled medicine."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 15,
+      "printedPage": 53,
+      "sourceNote": "For emergency purpose."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 32,
+      "printedPage": 54,
+      "sourceNote": "As per Program Guidelines (Adults and Pediatrics); As per NVBDCP Guideline."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 35,
+      "printedPage": 54,
+      "sourceNote": "As per Anemia Mukt Bharat Abhiyan; source includes age bands, elemental iron/folic-acid quantities and pink/blue/red colour labels. Preserve the complete source note."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 82,
+      "printedPage": 55,
+      "sourceNote": "FP Commodities: PTK."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 87,
+      "printedPage": 56,
+      "sourceNote": "As per Current National Programme Guidelines."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 89,
+      "printedPage": 56,
+      "sourceNote": "Should be use with caution."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 90,
+      "printedPage": 56,
+      "sourceNote": "Nebulizer Essential."
+    },
+    {
+      "annexure": "shc_aam",
+      "item": 91,
+      "printedPage": 56,
+      "sourceNote": "Nebulizer Essential."
+    }
+  ],
+  "asteriskMarkedRows": {
+    "phc_phc_aam_uphc": [
+      11,
+      29,
+      33,
+      42,
+      50,
+      51,
+      61,
+      141
+    ],
+    "shc_aam": [
+      14,
+      15
+    ],
+    "interpretation": "Asterisk marks are transcribed as printed. No general explanatory legend for all asterisks was identified in the reviewed annexure pages. Do not infer a legal or clinical meaning from the marker alone."
+  },
+  "provenanceLimitations": [
+    "These are source annotations, not normalized medicine attributes or instructions for use.",
+    "Highlighted text is recorded as a visual property of the source; no interpretation of why it was highlighted is made.",
+    "Source notes and asterisk markers must be reviewed by an authorised pharmacist/CGMSC reviewer before operational use."
+  ]
+}

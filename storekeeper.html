@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BUSHO | Storekeeper Workspace</title>
+<meta name="description" content="Facility-scoped replenishment fulfilment and receipt tracking.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles-v2.css?v=12">
+<style>
+.storekeeper-shell{max-width:1180px;margin:0 auto;padding:32px 24px 64px}.storekeeper-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:24px 0}.storekeeper-request{margin:18px 0}.storekeeper-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}.storekeeper-facts div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px}.storekeeper-facts dt{font-size:12px;color:var(--muted)}.storekeeper-facts dd{margin:4px 0 0;font-weight:700;overflow-wrap:anywhere}.storekeeper-action{display:flex;align-items:end;gap:12px;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--line)}.storekeeper-action label{display:grid;gap:5px;flex:1;min-width:220px;font-size:13px;font-weight:700}.storekeeper-action input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:white}.storekeeper-action small{width:100%;color:var(--muted)}.storekeeper-history{padding:12px 0;color:var(--muted)}.storekeeper-history summary{cursor:pointer;font-weight:700;color:var(--ink)}.storekeeper-notice{padding:12px 16px;border-radius:10px;background:#e9f5ef;color:#176444}.storekeeper-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--surface)}.storekeeper-brand{font-weight:800;letter-spacing:.08em;color:var(--teal-dark)}.storekeeper-login{max-width:440px;margin:10vh auto;padding:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.storekeeper-login input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin:6px 0 14px}.storekeeper-login label{display:block;font-weight:700}.storekeeper-login button{width:100%}@media(max-width:760px){.storekeeper-summary,.storekeeper-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.storekeeper-shell{padding:22px 14px 48px}.storekeeper-action{align-items:stretch}.storekeeper-action button{width:100%}}
+</style>
+<script src="i18n.js?v=2"></script>
+</head>
+<body data-portal-role="storekeeper">
+<header class="storekeeper-topbar"><a class="storekeeper-brand" href="index.html">BUSHO <span style="font-weight:500;letter-spacing:0">/ Storekeeper</span></a><span class="portal-session-bar"><span>Secure facility workspace</span></span></header>
+<section id="portal-login" class="storekeeper-login">
+<p class="section-kicker">SECURE ACCESS</p><h1 id="demo-title">Storekeeper sign in</h1><p>Use your provisioned BUSHO account. Storekeeper access requires an active profile and facility assignment.</p>
+<form id="portal-login-form"><label for="portal-username">Email address</label><input id="portal-username" type="email" autocomplete="username" required><label for="portal-password">Password</label><input id="portal-password" type="password" autocomplete="current-password" required><p id="portal-login-error" class="portal-login-error" role="alert"></p><button class="btn btn-primary" type="submit">Sign in securely</button></form>
+</section>
+<section id="portal-app" class="portal-app hidden" aria-hidden="true">
+<main class="storekeeper-shell">
+<div class="module-heading"><div><p class="section-kicker">FACILITY SUPPLY OPERATIONS</p><h1>Storekeeper workspace</h1><p>Record allocation, dispatch and goods receipts for requests visible within your assigned facility scope.</p></div><div><strong id="storekeeper-name">Storekeeper</strong><button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button></div></div>
+<div id="storekeeper-summary" class="storekeeper-summary" aria-live="polite"></div>
+<div class="module-card"><div class="module-card-head"><div><h2>Replenishment requests</h2><p>All records are fetched through authenticated database policies.</p></div><button class="btn btn-quiet" id="storekeeper-refresh" type="button">Refresh</button></div><div id="storekeeper-message" aria-live="polite"></div></div>
+<div id="storekeeper-requests" aria-live="polite"><p class="empty-state">Sign in to load requests.</p></div>
+<section class="module-card" aria-labelledby="inventory-reconciliation-title">
+  <div class="module-card-head"><div><h2 id="inventory-reconciliation-title">Inventory reconciliation</h2><p>Facility-scoped observations and inbound receipt ledger, shown separately.</p></div><button class="btn btn-quiet" id="inventory-reconciliation-refresh" type="button">Refresh inventory</button></div>
+  <div id="inventory-reconciliation-message" aria-live="polite"></div>
+  <div id="inventory-reconciliation-list"><p class="empty-state">Sign in to load inventory evidence.</p></div>
+</section>
+<p class="muted-copy">BUSHO records external references supplied by authorised staff. It does not place orders, dispatch medicines or connect to DPDMIS automatically. Stock movements shown here are receipt records, not independently verified physical stock balances.</p>
+</main>
+</section>
+<script src="supabase-config.js?v=1"></script><script src="supabase-client.js?v=10"></script>
+<script src="portal-auth-policy.js?v=1"></script><script src="role-auth.js?v=8"></script>
+<script src="storekeeper-portal.js?v=2"></script>
+<script src="storekeeper-inventory-reconciliation.js?v=1"></script>
+</body></html>
