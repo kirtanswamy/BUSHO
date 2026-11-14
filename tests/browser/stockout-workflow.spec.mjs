@@ -1,0 +1,105 @@
+import { test, expect } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
+const LOCAL_API_URL='http://127.0.0.1:54321';
+const credentials=JSON.parse(await readFile(new URL('../../.local-e2e/credentials.json',import.meta.url),'utf8'));
+if(credentials.fixture!=='a204be7a'||credentials.api_url!==LOCAL_API_URL||!credentials.password)throw new Error('Invalid local synthetic credentials for stockout browser E2E.');
+const accounts=new Map(credentials.accounts.map(a=>[a.label,a]));
+for(const label of ['stockout-worker','stockout-supervisor','stockout-storekeeper','stockout-storekeeper-other'])if(!accounts.get(label)?.email)throw new Error('Missing local stockout E2E account: '+label);
+const account=label=>accounts.get(label);
+const originalClientSource=await readFile(new URL('../../supabase-client.js',import.meta.url),'utf8');
+const originalGuard="if (!/^https:\\/\\//i.test(baseUrl)) throw new Error('A valid Supabase HTTPS URL is required.');";
+const localOnlyGuard="if (!/^https:\\/\\//i.test(baseUrl) && !/^http:\\/\\/(?:127\\.0\\.0\\.1|localhost)(?::\\d+)?$/i.test(baseUrl)) throw new Error('A valid Supabase HTTPS URL is required.');";
+if(!originalClientSource.includes(originalGuard))throw new Error('Expected Supabase HTTPS guard was not found.');
+const testClientSource=originalClientSource.replace(originalGuard,localOnlyGuard);
+test.beforeEach(async({page})=>{
+ const key=process.env.BUSHO_LOCAL_PUBLISHABLE_KEY;
+ if(!key||!key.startsWith('sb_publishable_'))throw new Error('Missing local Supabase publishable key.');
+ await page.route('**/supabase-config.js*',route=>route.fulfill({status:200,contentType:'text/javascript',body:"window.BUSHO_SUPABASE_CONFIG = Object.freeze({url:'"+LOCAL_API_URL+"',publishableKey:"+JSON.stringify(key)+"});"}));
+ await page.route('**/supabase-client.js*',route=>route.fulfill({status:200,contentType:'text/javascript',body:testClientSource}));
+ await page.route('https://**.supabase.co/**',route=>route.abort('blockedbyclient'));
+});
+function localDateTime(){const now=new Date();return new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,16);}
+function trackHostedRequests(page){const requests=[];page.on('request',request=>{try{const u=new URL(request.url());if(u.protocol==='https:'&&u.hostname.endsWith('.supabase.co'))requests.push(request.method()+' '+u.hostname+u.pathname);}catch{}});return requests;}
+async function login(page,portal,label){await page.goto(portal);await expect(page.locator('#portal-login-form')).toBeVisible();await page.locator('#portal-username').fill(account(label).email);await page.locator('#portal-password').fill(credentials.password);await page.locator('#portal-login-form button[type="submit"]').click();await expect(page.locator('#portal-app')).toBeVisible({timeout:20000});}
+async function signOutProfile(page){await page.getByRole('button',{name:'Open profile menu'}).click();await page.locator('#profile-dropdown [data-profile-action="signout"]').click();await expect(page.locator('#portal-login-form')).toBeVisible({timeout:15000});}
+async function signOutStorekeeper(page){await page.locator('#portal-logout').click();await expect(page.locator('#portal-login-form')).toBeVisible({timeout:15000});}
+test('SHC worker, PHC reviewer and storekeeper complete direct issue, discrepancy, cumulative receipt and closure',async({page})=>{
+ test.setTimeout(180000);
+ const hosted=trackHostedRequests(page),stamp=Date.now(),medicine='BUSHO synthetic E2E medicine '+stamp;
+ await login(page,'/worker.html','stockout-worker');
+ await page.locator('[data-portal-view="stockouts"]').click();
+ const create=page.locator('#stockout-create-form');
+ await expect(create).toBeVisible();
+ await create.locator('[name="medicineName"]').fill(medicine);
+ await create.locator('[name="medicineStrengthForm"]').fill('5 mg tablet');
+ await create.locator('[name="medicineSourceReference"]').fill('E2E-EDL-'+stamp);
+ await create.locator('[name="reportedQuantity"]').fill('0');
+ await create.locator('[name="requestedQuantity"]').fill('10');
+ await create.locator('[name="quantityUnit"]').fill('tablets');
+ await create.locator('[name="observationSource"]').selectOption('physical_count');
+ await create.locator('[name="note"]').fill('Synthetic E2E physical count; no patient information.');
+ await create.locator('#stockout-submit').click();
+ const workerCard=page.locator('.stockout-case-card').filter({hasText:medicine});
+ await expect(workerCard).toContainText(/sent to PHC|submitted to PHC/i,{timeout:20000});
+ await signOutProfile(page);
+ await login(page,'/supervisor.html','stockout-supervisor');
+ await page.locator('[data-portal-view="stockout-review"]').click();
+ let supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
+ await expect(supervisorCard).toBeVisible({timeout:20000});
+ for(const status of ['acknowledged_by_phc','under_phc_review','accepted_for_phc_action']){
+  const form=supervisorCard.locator('form.phc-stockout-review-form');
+  await form.locator('[name="status"]').selectOption(status);
+  await form.locator('button[type="submit"]').click();
+  await expect(supervisorCard).toContainText(status==='acknowledged_by_phc'?'Acknowledged by PHC':status==='under_phc_review'?'Under PHC review':'Accepted for PHC action');
+  supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
+ }
+ await signOutProfile(page);
+ await login(page,'/storekeeper.html','stockout-storekeeper');
+ const storeCard=page.locator('.phc-storekeeper-stockout-card').filter({hasText:medicine});
+ await expect(storeCard).toBeVisible({timeout:20000});
+ const availability=storeCard.locator('form[data-action="availability"]');
+ await availability.locator('[name="quantity"]').fill('10');
+ await availability.locator('[name="at"]').fill(localDateTime());
+ await availability.locator('button[type="submit"]').click();
+ await expect(storeCard.locator('form[data-action="handover"]')).toBeVisible({timeout:20000});
+ const handover=storeCard.locator('form[data-action="handover"]');
+ await handover.locator('[name="quantity"]').fill('10');
+ await handover.locator('[name="reference"]').fill('E2E-PHC-ISSUE-'+stamp);
+ await handover.locator('[name="at"]').fill(localDateTime());
+ await handover.locator('button[type="submit"]').click();
+ await expect(storeCard).toContainText(/PHC handover recorded/i,{timeout:20000});
+ await signOutStorekeeper(page);
+ await login(page,'/storekeeper.html','stockout-storekeeper-other');
+ await expect(page.locator('.phc-storekeeper-stockout-card').filter({hasText:medicine})).toHaveCount(0);
+ await signOutStorekeeper(page);
+ await login(page,'/worker.html','stockout-worker');
+ await page.locator('[data-portal-view="stockouts"]').click();
+ const receiving=page.locator('.stockout-case-card').filter({hasText:medicine});
+ const collection=receiving.locator('form[data-case-form="collect"]');
+ await expect(collection).toBeVisible({timeout:20000});
+ await collection.locator('[name="reference"]').fill('E2E-SHC-COLLECT-'+stamp);
+ await collection.locator('button[type="submit"]').click();
+ let receipt=receiving.locator('form[data-case-form="receipt"]');
+ await expect(receipt).toBeVisible({timeout:15000});
+ await receipt.locator('[name="quantity"]').fill('4');
+ await receipt.locator('[name="reference"]').fill('E2E-SHC-PART-'+stamp);
+ await receipt.locator('[name="discrepancy"]').fill('Synthetic short receipt: 4 of 10 tablets received at first collection.');
+ await receipt.locator('button[type="submit"]').click();
+ await expect(receiving).toContainText(/discrepancy recorded/i,{timeout:20000});
+ receipt=receiving.locator('form[data-case-form="receipt"]');
+ await receipt.locator('[name="quantity"]').fill('10');
+ await receipt.locator('[name="reference"]').fill('E2E-SHC-FINAL-'+stamp);
+ await receipt.locator('button[type="submit"]').click();
+ await expect(receiving).toContainText(/received at SHC/i,{timeout:20000});
+ await expect(receiving).toContainText('10 tablets');
+ await signOutProfile(page);
+ await login(page,'/supervisor.html','stockout-supervisor');
+ await page.locator('[data-portal-view="stockout-review"]').click();
+ supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
+ const closure=supervisorCard.locator('form.phc-stockout-review-form');
+ await expect(closure.locator('[name="status"]')).toHaveValue('closed');
+ await closure.locator('[name="note"]').fill('Synthetic short receipt reconciled by subsequent physical receipt; official register updated.');
+ await closure.locator('button[type="submit"]').click();
+ await expect(supervisorCard).toContainText(/closed/i,{timeout:20000});
+ expect(hosted).toEqual([]);
+});
