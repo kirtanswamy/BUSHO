@@ -30,7 +30,7 @@ begin
   if v_shc.id is null or v_phc.id is null then raise exception 'Both linked facilities must exist'; end if;
   if v_shc.facility_type <> 'aam_shc' or v_phc.facility_type <> 'phc' then raise exception 'Link must connect an AAM-SHC to a PHC'; end if;
   if v_shc.is_synthetic is distinct from v_phc.is_synthetic then raise exception 'Synthetic and operational facilities cannot be linked'; end if;
-  if new.data_mode='synthetic_demo' and not (v_shc.is_synthetic and v_phc.is_synthetic) then raise exception 'Synthetic links require two synthetic facilities'; end if;
+  if new.data_mode <> case when v_shc.is_synthetic then 'synthetic_demo' else 'operational' end then raise exception 'Facility link data mode must match facility classification'; end if;
   if new.verification_status='verified' and (nullif(btrim(new.source_authority),'') is null or new.verified_at is null) then raise exception 'Verified links require source authority and timestamp'; end if;
   return new;
 end; $$;
@@ -114,6 +114,56 @@ begin
     or new.data_mode is distinct from old.data_mode
     or new.created_at is distinct from old.created_at then
     raise exception 'Case identity and original observation fields are immutable';
+  end if;
+
+  -- Enforce field ownership as well as transition ownership. Column grants are
+  -- shared by authenticated users, so the trigger must prevent cross-role edits.
+  if v_role='worker' then
+    if new.phc_review_note is distinct from old.phc_review_note
+      or new.phc_available_quantity is distinct from old.phc_available_quantity
+      or new.official_system_name is distinct from old.official_system_name
+      or new.official_indent_reference is distinct from old.official_indent_reference
+      or new.official_indent_submitted_at is distinct from old.official_indent_submitted_at
+      or new.upstream_receipt_reference is distinct from old.upstream_receipt_reference
+      or new.upstream_received_at is distinct from old.upstream_received_at
+      or new.phc_handover_quantity is distinct from old.phc_handover_quantity
+      or new.phc_handover_reference is distinct from old.phc_handover_reference
+      or new.phc_handover_at is distinct from old.phc_handover_at then
+      raise exception 'Worker cannot edit PHC review, official indent, upstream receipt or PHC handover fields';
+    end if;
+    if old.status not in ('draft','clarification_requested') and new.worker_note is distinct from old.worker_note then
+      raise exception 'Worker note is immutable after submission';
+    end if;
+  elsif v_role='supervisor' then
+    if new.worker_note is distinct from old.worker_note
+      or new.official_system_name is distinct from old.official_system_name
+      or new.official_indent_reference is distinct from old.official_indent_reference
+      or new.official_indent_submitted_at is distinct from old.official_indent_submitted_at
+      or new.upstream_receipt_reference is distinct from old.upstream_receipt_reference
+      or new.upstream_received_at is distinct from old.upstream_received_at
+      or new.phc_handover_quantity is distinct from old.phc_handover_quantity
+      or new.phc_handover_reference is distinct from old.phc_handover_reference
+      or new.phc_handover_at is distinct from old.phc_handover_at
+      or new.shc_collection_reference is distinct from old.shc_collection_reference
+      or new.shc_collected_at is distinct from old.shc_collected_at
+      or new.shc_received_quantity is distinct from old.shc_received_quantity
+      or new.shc_receipt_reference is distinct from old.shc_receipt_reference
+      or new.shc_received_at is distinct from old.shc_received_at
+      or new.discrepancy_note is distinct from old.discrepancy_note then
+      raise exception 'Supervisor cannot edit worker, storekeeper or SHC receipt fields';
+    end if;
+  elsif v_role='storekeeper' then
+    if new.worker_note is distinct from old.worker_note
+      or new.phc_review_note is distinct from old.phc_review_note
+      or new.phc_available_quantity is distinct from old.phc_available_quantity
+      or new.shc_collection_reference is distinct from old.shc_collection_reference
+      or new.shc_collected_at is distinct from old.shc_collected_at
+      or new.shc_received_quantity is distinct from old.shc_received_quantity
+      or new.shc_receipt_reference is distinct from old.shc_receipt_reference
+      or new.shc_received_at is distinct from old.shc_received_at
+      or new.discrepancy_note is distinct from old.discrepancy_note then
+      raise exception 'Storekeeper cannot edit worker, supervisor review or SHC receipt fields';
+    end if;
   end if;
 
   if v_role='worker' and new.submitted_by_worker_id=v_worker_id
