@@ -28,12 +28,40 @@ $serviceKey = $envValues["SERVICE_ROLE_KEY"]
 if (-not $serviceKey) { throw "Local SERVICE_ROLE_KEY was not returned by Supabase CLI." }
 
 $headers = @{ apikey=$serviceKey; Authorization="Bearer $serviceKey"; Prefer="return=representation" }
+
 function Invoke-LocalRest {
-    param([Parameter(Mandatory)][string]$Path,[string]$Method="GET",$Body=$null,[hashtable]$ExtraHeaders=@{})
-    $params = @{ Uri="$apiUrl$Path"; Method=$Method; Headers=($headers + $ExtraHeaders); ContentType="application/json" }
-    if ($null -ne $Body) { $params.Body = ConvertTo-Json -InputObject $Body -Depth 12 }
+    param(
+        [Parameter(Mandatory)][string]$Path,
+        [string]$Method = "GET",
+        $Body = $null,
+        [hashtable]$ExtraHeaders = @{}
+    )
+
+    # Copy base headers, then safely override matching keys.
+    $requestHeaders = @{}
+
+    foreach ($key in $headers.Keys) {
+        $requestHeaders[$key] = $headers[$key]
+    }
+
+    foreach ($key in $ExtraHeaders.Keys) {
+        $requestHeaders[$key] = $ExtraHeaders[$key]
+    }
+
+    $params = @{
+        Uri         = "$apiUrl$Path"
+        Method      = $Method
+        Headers     = $requestHeaders
+        ContentType = "application/json"
+    }
+
+    if ($null -ne $Body) {
+        $params.Body = ConvertTo-Json -InputObject $Body -Depth 12
+    }
+
     Invoke-RestMethod @params
 }
+
 function Ensure-User {
     param([string]$Label,[string]$Email,[string]$Role,[string]$FacilityId)
     $listed = Invoke-RestMethod -Uri "$apiUrl/auth/v1/admin/users?page=1&per_page=1000" -Headers $headers
@@ -93,7 +121,7 @@ $linkBody = @{
     shc_facility_id=$facilities[0].id; phc_facility_id=$facilities[1].id
     verification_status="verified"; source_authority="BUSHO local synthetic E2E fixture"
     source_reference="BUSHO-E2E-SHC-PHC-a204be7a"; verified_at=(Get-Date).ToUniversalTime().ToString("o")
-    effective_from=(Get-Date).ToString("yyyy-MM-dd"); data_mode="synthetic_demo"
+    effective_from=(Get-Date).ToUniversalTime().ToString("yyyy-MM-dd"); data_mode="synthetic_demo"
 }
 if (@($links).Count -eq 0) {
     Invoke-LocalRest -Path "/rest/v1/facility_service_links" -Method POST -Body $linkBody | Out-Null
@@ -109,7 +137,14 @@ for ($i=0; $i -lt $labels.Count; $i++) {
     $accounts += [pscustomobject]@{label=$labels[$i];email=$emails[$i]}
 }
 $credentials.accounts = $accounts
-$credentials | ConvertTo-Json -Depth 12 | Set-Content -Path $credentialPath -Encoding utf8
+$credentialsJson = $credentials | ConvertTo-Json -Depth 12
+$utf8NoBom = New-Object System.Text.UTF8Encoding -ArgumentList $false
+
+[System.IO.File]::WriteAllText(
+    $credentialPath,
+    $credentialsJson,
+    $utf8NoBom
+)
 
 Write-Host "Synthetic SHC-to-PHC E2E fixtures are ready in local Supabase."
 Write-Host "Accounts added: stockout-worker, stockout-supervisor, stockout-storekeeper, stockout-storekeeper-other."

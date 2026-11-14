@@ -39,6 +39,7 @@ test('SHC worker, PHC reviewer and storekeeper complete direct issue, discrepanc
  await create.locator('[name="observationSource"]').selectOption('physical_count');
  await create.locator('[name="note"]').fill('Synthetic E2E physical count; no patient information.');
  await create.locator('#stockout-submit').click();
+
  const workerCard=page.locator('.stockout-case-card').filter({hasText:medicine});
  await expect(workerCard).toContainText(/sent to PHC|submitted to PHC/i,{timeout:20000});
  await signOutProfile(page);
@@ -128,11 +129,11 @@ test('SHC worker, PHC supervisor and storekeeper complete the no-stock, official
  await page.locator('[data-portal-view="stockout-review"]').click();
  let supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  await expect(supervisorCard).toBeVisible({timeout:20000});
- for(const status of ['acknowledged_by_phc','under_phc_review']){
+  for(const status of ['acknowledged_by_phc','under_phc_review','accepted_for_phc_action']){
   const form=supervisorCard.locator('form.phc-stockout-review-form');
   await form.locator('[name="status"]').selectOption(status);
   await form.locator('button[type="submit"]').click();
-  await expect(supervisorCard).toContainText(status==='acknowledged_by_phc'?'Acknowledged by PHC':'Under PHC review');
+  await expect(supervisorCard).toContainText(status==='acknowledged_by_phc'?'Acknowledged by PHC':status==='under_phc_review'?'Under PHC review':'Accepted for PHC action');
   supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  }
  await signOutProfile(page);
