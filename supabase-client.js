@@ -317,10 +317,11 @@
         throw new Error('No current verified parent PHC is linked to your assigned SHC. Contact the facility registry administrator; BUSHO will not guess the PHC.');
       }
       const medicineName = String(input.medicineName || '').trim();
+      const medicineStrengthForm = String(input.medicineStrengthForm || '').trim();
       const unit = String(input.quantityUnit || '').trim();
       const requested = Number(input.requestedQuantity);
       const reported = Number(input.reportedQuantity);
-      if (!medicineName || !unit || !Number.isFinite(requested) || requested <= 0 ||
+      if (!medicineName || !medicineStrengthForm || !unit || !Number.isFinite(requested) || requested <= 0 ||
           !Number.isFinite(reported) || reported < 0) {
         throw new Error('Enter a medicine name, a non-negative observed quantity, a positive requested quantity and a unit.');
       }
@@ -331,6 +332,7 @@
           phc_facility_id: context.phc.id,
           submitted_by_worker_id: context.worker.id,
           medicine_name: medicineName,
+          medicine_strength_form: medicineStrengthForm,
           medicine_source_reference: String(input.medicineSourceReference || '').trim() || null,
           reported_quantity: reported,
           requested_quantity: requested,
@@ -350,7 +352,7 @@
       input = input || {};
       if (!input.id || !input.status) throw new Error('Stockout case ID and next status are required.');
       await requireActiveProfile(['worker']);
-      const allowed = new Set(['resubmitted','collected_by_shc','partially_received_at_shc','received_at_shc']);
+      const allowed = new Set(['resubmitted','collected_by_shc','partially_received_at_shc','discrepancy_recorded','received_at_shc']);
       if (!allowed.has(input.status)) throw new Error('This transition is not available to the SHC worker.');
       const fields = ['status','worker_note','shc_collection_reference','shc_collected_at','shc_received_quantity','shc_receipt_reference','shc_received_at','discrepancy_note'];
       const payload = {};
@@ -377,14 +379,14 @@
       input = input || {};
       await requireActiveProfile(['supervisor']);
       if (!input.id) throw new Error('Stockout case ID is required.');
-      const allowed = new Set(['acknowledged_by_phc','under_phc_review','clarification_requested','accepted_for_phc_action','phc_cannot_fulfil']);
+      const allowed = new Set(['acknowledged_by_phc','under_phc_review','clarification_requested','accepted_for_phc_action','phc_cannot_fulfil','closed']);
       if (!allowed.has(input.status)) throw new Error('This action is not available to the PHC supervisor.');
       const note = String(input.note || '').trim();
-      if (['clarification_requested','phc_cannot_fulfil'].includes(input.status) && !note) {
-        throw new Error('A reason is required for clarification or PHC non-fulfilment.');
+      if (['clarification_requested','phc_cannot_fulfil','closed'].includes(input.status) && !note) {
+        throw new Error(input.status==='closed'?'A resolution note is required to close the SHC request.':'A reason is required for clarification or PHC non-fulfilment.');
       }
       const payload = { status: input.status };
-      if (note) payload.phc_review_note = note;
+      if (note) payload[input.status==='closed'?'closure_note':'phc_review_note'] = note;
       if (input.availableQuantity !== undefined && input.availableQuantity !== null && input.availableQuantity !== '') {
         throw new Error('The PHC storekeeper records PHC physical availability; the supervisor records the review decision only.');
       }
