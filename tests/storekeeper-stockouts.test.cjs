@@ -29,14 +29,10 @@ test('PHC storekeeper records a non-negative physical availability observation a
  assert.deepEqual(payload,{status:'accepted_for_phc_action',phc_available_quantity:0,phc_available_observed_at:'2026-11-14T08:00:00Z'});
 });
 
-test('PHC storekeeper records a non-negative physical availability observation after PHC accepts the case',async()=>{
+test('PHC storekeeper cannot record physical availability without an observation timestamp',async()=>{
  const calls=[],c=clientFor(fakeFetch(calls));
- await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'accepted_for_phc_action',phcAvailableQuantity:-1,phcAvailableObservedAt:'2026-11-14T08:00:00Z'}),/non-negative PHC availability observation/i);
+ await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'accepted_for_phc_action',phcAvailableQuantity:0}),/timestamp|observed at/i);
  assert.equal(calls.some(x=>x.options.method==='PATCH'),false);
- const result=await c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'accepted_for_phc_action',phcAvailableQuantity:0,phcAvailableObservedAt:'2026-11-14T08:00:00Z'});
- assert.equal(result.status,'accepted_for_phc_action');
- const payload=JSON.parse(calls.find(x=>x.options.method==='PATCH').options.body);
- assert.deepEqual(payload,{status:'accepted_for_phc_action',phc_available_quantity:0,phc_available_observed_at:'2026-11-14T08:00:00Z'});
 });
 
 test('official indent record requires real system, external reference and valid timestamp before write',async()=>{
