@@ -113,20 +113,8 @@ set local role authenticated;
 select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
 update public.stockout_cases set status='collected_by_shc',shc_collection_reference='DEMO-SHC-COLLECT-002',shc_collected_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
-update public.stockout_cases set status='partially_received_at_shc',shc_received_quantity=40,
- shc_receipt_reference='DEMO-SHC-PART-001',shc_received_at=now()
+update public.stockout_cases set status='collected_by_shc',shc_collection_reference='DEMO-SHC-COLLECT-002',shc_collected_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
-update public.stockout_cases set status='received_at_shc',shc_received_quantity=60,
- shc_receipt_reference='DEMO-SHC-FINAL-001',shc_received_at=now()
-where medicine_source_reference='DEMO-EDL-ROW-002';
-do $assert_upstream_branch$
-declare v_events integer; v_status text; v_ref text;
-begin
- select status,official_indent_reference into v_status,v_ref from public.stockout_cases where medicine_source_reference='DEMO-EDL-ROW-002';
- select count(*) into v_events from public.stockout_case_events e join public.stockout_cases c on c.id=e.stockout_case_id where c.medicine_source_reference='DEMO-EDL-ROW-002';
- if v_status<>'received_at_shc' or v_ref<>'DEMO-DPDMIS-001' or v_events<7 then raise exception 'Upstream fulfilment branch did not reconcile'; end if;
-end $assert_upstream_branch$;
-commit;
 
 -- Workers cannot overwrite PHC-owned official references, even if they can
 -- update their own SHC receipt fields.
@@ -143,6 +131,21 @@ begin
  end;
  if not v_blocked then raise exception 'Worker changed PHC official indent reference'; end if;
 end $worker_cannot_edit_phc$;
+commit;
+
+update public.stockout_cases set status='partially_received_at_shc',shc_received_quantity=40,
+ shc_receipt_reference='DEMO-SHC-PART-001',shc_received_at=now()
+where medicine_source_reference='DEMO-EDL-ROW-002';
+update public.stockout_cases set status='received_at_shc',shc_received_quantity=60,
+ shc_receipt_reference='DEMO-SHC-FINAL-001',shc_received_at=now()
+where medicine_source_reference='DEMO-EDL-ROW-002';
+do $assert_upstream_branch$
+declare v_events integer; v_status text; v_ref text;
+begin
+ select status,official_indent_reference into v_status,v_ref from public.stockout_cases where medicine_source_reference='DEMO-EDL-ROW-002';
+ select count(*) into v_events from public.stockout_case_events e join public.stockout_cases c on c.id=e.stockout_case_id where c.medicine_source_reference='DEMO-EDL-ROW-002';
+ if v_status<>'received_at_shc' or v_ref<>'DEMO-DPDMIS-001' or v_events<7 then raise exception 'Upstream fulfilment branch did not reconcile'; end if;
+end $assert_upstream_branch$;
 commit;
 
 -- Event history must reject authenticated mutation.
