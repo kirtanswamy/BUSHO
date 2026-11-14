@@ -2,6 +2,7 @@
 -- Additive correction: PHC physical availability is observed by the PHC storekeeper.
 begin;
 alter table public.stockout_cases add column if not exists phc_available_observed_at timestamptz;
+grant update (phc_available_observed_at) on public.stockout_cases to authenticated;
 create unique index if not exists facility_service_links_one_current_parent_uidx
   on public.facility_service_links(shc_facility_id)
   where verification_status='verified' and effective_until is null;
@@ -235,13 +236,13 @@ begin
     v_action:=case
       when new.status=old.status and (new.phc_available_quantity is distinct from old.phc_available_quantity
         or new.phc_available_observed_at is distinct from old.phc_available_observed_at) then 'phc_availability_observed'
-      when new.status='submitted_to_phc' then 'worker_submitted_to_phc' when 'acknowledged_by_phc' then 'phc_acknowledged'
-      when 'under_phc_review' then 'phc_review_started' when 'clarification_requested' then 'phc_clarification_requested'
-      when 'resubmitted' then 'worker_resubmitted' when 'accepted_for_phc_action' then 'phc_accepted_for_action'
-      when 'phc_cannot_fulfil' then 'phc_marked_unavailable' when 'official_indent_submitted' then 'official_indent_reference_recorded'
-      when 'upstream_supply_received_at_phc' then 'upstream_supply_receipt_recorded' when 'phc_handover_recorded' then 'phc_handover_recorded'
-      when 'collected_by_shc' then 'shc_collection_recorded' when 'partially_received_at_shc' then 'shc_partial_receipt_recorded'
-      when 'received_at_shc' then 'shc_receipt_completed' when 'closed' then 'case_closed' when 'cancelled' then 'case_cancelled'
+      when new.status='submitted_to_phc' then 'worker_submitted_to_phc' when new.status='acknowledged_by_phc' then 'phc_acknowledged'
+      when new.status='under_phc_review' then 'phc_review_started' when new.status='clarification_requested' then 'phc_clarification_requested'
+      when new.status='resubmitted' then 'worker_resubmitted' when new.status='accepted_for_phc_action' then 'phc_accepted_for_action'
+      when new.status='phc_cannot_fulfil' then 'phc_marked_unavailable' when new.status='official_indent_submitted' then 'official_indent_reference_recorded'
+      when new.status='upstream_supply_received_at_phc' then 'upstream_supply_receipt_recorded' when new.status='phc_handover_recorded' then 'phc_handover_recorded'
+      when new.status='collected_by_shc' then 'shc_collection_recorded' when new.status='partially_received_at_shc' then 'shc_partial_receipt_recorded'
+      when new.status='received_at_shc' then 'shc_receipt_completed' when new.status='closed' then 'case_closed' when new.status='cancelled' then 'case_cancelled'
       else 'stockout_case_updated' end; v_from:=old.status;
   end if;
   v_ref:=coalesce(new.official_indent_reference,new.upstream_receipt_reference,new.phc_handover_reference,new.shc_collection_reference,new.shc_receipt_reference);
