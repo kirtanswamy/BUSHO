@@ -286,8 +286,7 @@
       const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(now()));
       const current = (Array.isArray(links) ? links : []).filter(link =>
         (!link.effective_from || link.effective_from <= today) &&
-        (!link.effective_until || link.effective_until >= today) &&
-        true
+        (!link.effective_until || link.effective_until >= today)
       );
       if (current.length > 1) {
         throw new Error('More than one current SHC-to-PHC relationship is verified. Ask the facility registry administrator to resolve the mapping.');
