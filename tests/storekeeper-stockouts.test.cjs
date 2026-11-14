@@ -29,9 +29,9 @@ test('PHC storekeeper records a non-negative physical availability observation a
  assert.deepEqual(payload,{status:'accepted_for_phc_action',phc_available_quantity:0,phc_available_observed_at:'2026-11-14T08:00:00Z'});
 });
 
-test('PHC storekeeper cannot record physical availability without an observation timestamp',async()=>{
+test('PHC storekeeper rejects a malformed physical availability timestamp',async()=>{
  const calls=[],c=clientFor(fakeFetch(calls));
- await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'accepted_for_phc_action',phcAvailableQuantity:0}),/valid date and time/i);
+ await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'accepted_for_phc_action',phcAvailableQuantity:0,phcAvailableObservedAt:'not-a-date'}),/valid date and time/i);
  assert.equal(calls.some(x=>x.options.method==='PATCH'),false);
 });
 
