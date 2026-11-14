@@ -44,8 +44,32 @@ set local role authenticated;
 select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
 update public.stockout_cases set status='acknowledged_by_phc'
 where medicine_source_reference='DEMO-EDL-ROW-001';
-update public.stockout_cases set status='accepted_for_phc_action',phc_available_quantity=100,phc_review_note='Synthetic PHC availability observation'
+update public.stockout_cases set status='accepted_for_phc_action',phc_review_note='Synthetic PHC reviewer accepted the request for stock action'
 where medicine_source_reference='DEMO-EDL-ROW-001';
+commit;
+
+-- The PHC storekeeper, not the supervisor, records the physical stock observation.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','88888888-8888-4888-8888-888888888888',true);
+update public.stockout_cases set phc_available_quantity=100,phc_available_observed_at=now()
+where medicine_source_reference='DEMO-EDL-ROW-001';
+commit;
+
+-- A supervisor cannot overwrite the storekeeper's physical availability evidence.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
+do $supervisor_cannot_edit_availability$
+declare v_blocked boolean:=false;
+begin
+ begin
+  update public.stockout_cases set phc_available_quantity=99
+  where medicine_source_reference='DEMO-EDL-ROW-001';
+ exception when others then v_blocked:=true;
+ end;
+ if not v_blocked then raise exception 'Supervisor changed PHC storekeeper availability evidence'; end if;
+end $supervisor_cannot_edit_availability$;
 commit;
 
 begin;
@@ -69,7 +93,7 @@ declare v_events integer; v_status text; v_qty numeric;
 begin
  select status,shc_received_quantity into v_status,v_qty from public.stockout_cases where medicine_source_reference='DEMO-EDL-ROW-001';
  select count(*) into v_events from public.stockout_case_events e join public.stockout_cases c on c.id=e.stockout_case_id where c.medicine_source_reference='DEMO-EDL-ROW-001';
- if v_status<>'received_at_shc' or v_qty<>100 or v_events<5 then raise exception 'SHC-to-PHC direct fulfilment did not reconcile'; end if;
+ if v_status<>'received_at_shc' or v_qty<>100 or v_events<7 then raise exception 'SHC-to-PHC direct fulfilment did not reconcile'; end if;
 end $assert_full_receipt$;
 commit;
 
@@ -90,7 +114,23 @@ commit;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
-update public.stockout_cases set status='phc_cannot_fulfil',phc_available_quantity=0,phc_review_note='Synthetic PHC stock unavailable'
+update public.stockout_cases set status='accepted_for_phc_action',phc_review_note='Synthetic PHC reviewer accepted the request for stock action'
+where medicine_source_reference='DEMO-EDL-ROW-002';
+commit;
+
+-- The PHC storekeeper physically checks stock and records zero available.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','88888888-8888-4888-8888-888888888888',true);
+update public.stockout_cases set phc_available_quantity=0,phc_available_observed_at=now()
+where medicine_source_reference='DEMO-EDL-ROW-002';
+commit;
+
+-- The supervisor records the PHC non-fulfilment decision based on that observation.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
+update public.stockout_cases set status='phc_cannot_fulfil',phc_review_note='Synthetic PHC stock unavailable'
 where medicine_source_reference='DEMO-EDL-ROW-002';
 commit;
 

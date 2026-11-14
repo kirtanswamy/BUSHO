@@ -19,6 +19,16 @@ test('non-storekeeper cannot access storekeeper stockout listing or action',asyn
  assert.equal(calls.some(x=>x.options.method==='PATCH'),false);
 });
 
+test('PHC storekeeper records a non-negative physical availability observation after PHC accepts the case',async()=>{
+ const calls=[],c=clientFor(fakeFetch(calls));
+ await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'accepted_for_phc_action',phcAvailableQuantity:-1,phcAvailableObservedAt:'2026-11-14T08:00:00Z'}),/non-negative PHC availability observation/i);
+ assert.equal(calls.some(x=>x.options.method==='PATCH'),false);
+ const result=await c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'accepted_for_phc_action',phcAvailableQuantity:0,phcAvailableObservedAt:'2026-11-14T08:00:00Z'});
+ assert.equal(result.status,'accepted_for_phc_action');
+ const payload=JSON.parse(calls.find(x=>x.options.method==='PATCH').options.body);
+ assert.deepEqual(payload,{status:'accepted_for_phc_action',phc_available_quantity:0,phc_available_observed_at:'2026-11-14T08:00:00Z'});
+});
+
 test('official indent record requires real system, external reference and valid timestamp before write',async()=>{
  const calls=[],c=clientFor(fakeFetch(calls));
  await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'official_indent_submitted',officialSystemName:'DPDMIS',officialIndentReference:''}),/external indent reference is required/i);
@@ -53,7 +63,7 @@ test('PHC-to-SHC handover requires positive quantity, register reference and tim
 test('storekeeper portal exposes separate stockout workspace and keeps official portal handoff explicit',()=>{
  const root=path.join(__dirname,'..'),html=fs.readFileSync(path.join(root,'storekeeper.html'),'utf8'),js=fs.readFileSync(path.join(root,'storekeeper-stockouts.js'),'utf8'),css=fs.readFileSync(path.join(root,'styles-v2.css'),'utf8'),client=fs.readFileSync(path.join(root,'supabase-client.js'),'utf8');
  assert.match(html,/phc-stockout-storekeeper-list/);assert.match(html,/storekeeper-stockouts\.js/);
- assert.match(js,/busho:authenticated/);assert.match(js,/busho:unauthenticated/);assert.match(js,/transitionPHCStorekeeperStockoutCase/);assert.match(js,/BUSHO does not submit it/);assert.match(js,/upstreamReceivedQuantity/);
+ assert.match(js,/busho:authenticated/);assert.match(js,/busho:unauthenticated/);assert.match(js,/transitionPHCStorekeeperStockoutCase/);assert.match(js,/BUSHO does not submit it/);assert.match(js,/upstreamReceivedQuantity/);assert.match(js,/phcAvailableObservedAt/);assert.match(js,/data-action=\\?"availability/);
  assert.match(css,/\.phc-storekeeper-action/);
  assert.match(client,/listPHCStorekeeperStockoutCases/);assert.match(client,/transitionPHCStorekeeperStockoutCase/);
 });
