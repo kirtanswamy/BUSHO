@@ -143,3 +143,8 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-rls-contract.sql
+
+      - name: Verify SHC-to-PHC stockout workflow under RLS
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-stockout-workflow-contract.sql
