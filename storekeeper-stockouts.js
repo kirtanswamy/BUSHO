@@ -5,7 +5,7 @@
   const host=$('phc-stockout-storekeeper-list'),message=$('phc-stockout-storekeeper-message'),refresh=$('phc-stockout-storekeeper-refresh');
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const date=v=>{if(!v)return'—';const d=new Date(v);return Number.isNaN(d.getTime())?'—':d.toLocaleString();};
-  const labels={accepted_for_phc_action:'Accepted by PHC · handover pending',phc_cannot_fulfil:'PHC unable to fulfil · indent pending',official_indent_submitted:'Official indent reference recorded',upstream_supply_received_at_phc:'Upstream supply received at PHC',phc_handover_recorded:'PHC handover recorded',collected_by_shc:'Collected by SHC',partially_received_at_shc:'Partially received at SHC',received_at_shc:'Received at SHC',closed:'Closed'};
+  const labels={accepted_for_phc_action:'Accepted by PHC · handover pending',phc_cannot_fulfil:'PHC unable to fulfil · indent pending',official_indent_submitted:'Official indent reference recorded',upstream_supply_received_at_phc:'Upstream supply received at PHC',phc_handover_recorded:'PHC handover recorded',collected_by_shc:'Collected by SHC',partially_received_at_shc:'Partially received at SHC',discrepancy_recorded:'SHC discrepancy recorded · supervisor review',received_at_shc:'Received at SHC',closed:'Closed'};
   let client=null,rows=[],busy=false,refreshRequired=false,active=false,error='',notice='',generation=0;
   function render(){
     if(message)message.innerHTML=(error?'<p class="portal-login-error" role="alert">'+esc(error)+'</p>':'')+(notice?'<p class="storekeeper-notice" role="status">'+esc(notice)+'</p>':'');

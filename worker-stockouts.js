@@ -162,6 +162,7 @@
         const handover = Number(row?.phc_handover_quantity);
         if (!Number.isFinite(qty) || qty <= Number(row?.shc_received_quantity || 0) || qty > handover) throw new Error('Receipt quantity must be greater than the previous receipt and no more than the PHC handover quantity.');
         const discrepancy=String(data.get('discrepancy')||'').trim();
+        if(discrepancy && qty>=handover) throw new Error('A quantity discrepancy must be recorded against a partial receipt. If the full handover quantity arrived, record it as fully received.');
         const receipt={id,status:discrepancy?'discrepancy_recorded':(qty===handover?'received_at_shc':'partially_received_at_shc'),
           shc_received_quantity:qty,shc_receipt_reference:String(data.get('reference')).trim(),
           shc_received_at:new Date().toISOString()};
