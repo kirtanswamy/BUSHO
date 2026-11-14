@@ -287,7 +287,7 @@
       const current = (Array.isArray(links) ? links : []).filter(link =>
         (!link.effective_from || link.effective_from <= today) &&
         (!link.effective_until || link.effective_until >= today) &&
-        link.data_mode === (worker.facilities?.is_synthetic ? 'synthetic_demo' : 'operational')
+        true
       );
       if (current.length > 1) {
         throw new Error('More than one current SHC-to-PHC relationship is verified. Ask the facility registry administrator to resolve the mapping.');
@@ -353,7 +353,7 @@
       await requireActiveProfile(['worker']);
       const allowed = new Set(['resubmitted','collected_by_shc','partially_received_at_shc','received_at_shc']);
       if (!allowed.has(input.status)) throw new Error('This transition is not available to the SHC worker.');
-      const fields = ['status','shc_collection_reference','shc_collected_at','shc_received_quantity','shc_receipt_reference','shc_received_at','discrepancy_note'];
+      const fields = ['status','worker_note','shc_collection_reference','shc_collected_at','shc_received_quantity','shc_receipt_reference','shc_received_at','discrepancy_note'];
       const payload = {};
       for (const field of fields) {
         if (Object.prototype.hasOwnProperty.call(input, field)) payload[field] = input[field];
