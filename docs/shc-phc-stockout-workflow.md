@@ -46,3 +46,22 @@ The worker screen intentionally uses a free-text medicine label rather than impl
 - These new Node tests are included by the repository's existing `node --test` script.
 - The database-contract CI run that passed covered the Milestone 1 migration and PostgreSQL RLS contract. It predates the worker UI/client additions.
 - A fresh CI run and browser-level interaction test are still required for this UI/client change. The Vercel preview check is separate and is not a production deployment.
+
+## PHC supervisor experience — Milestone 3 draft
+
+The supervisor portal now includes an SHC stockout queue that relies on the existing facility-scoped RLS policies. A signed-in `supervisor` can:
+- View cases visible to the PHC assignment, with event history and SHC-submitted quantities/notes.
+- Acknowledge a request and start PHC review.
+- Request clarification, with a required reason.
+- Record an observed PHC available quantity and accept for PHC action only when a positive quantity is entered.
+- Mark PHC unable to fulfil, with a required reason.
+
+The PHC available quantity is explicitly an observed value, not an authoritative balance. This screen does not record an official indent, stock receipt or handover; those belong to the PHC storekeeper milestone.
+
+Validation added:
+- Authenticated supervisor case-list client test.
+- Worker-role denial test for supervisor review.
+- Required-reason and positive-quantity validation tests.
+- Supervisor portal wiring/authentication test.
+
+Fresh CI is required before this milestone is called verified.
