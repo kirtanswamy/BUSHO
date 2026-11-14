@@ -437,6 +437,9 @@
         payload.official_indent_reference = requiredText(input.officialIndentReference, 'Official external indent reference');
         payload.official_indent_submitted_at = requiredTime(input.submittedAt);
       } else if (input.status === 'upstream_supply_received_at_phc') {
+        const quantity = Number(input.upstreamReceivedQuantity);
+        if (!Number.isFinite(quantity) || quantity <= 0) throw new Error('Enter a positive physical upstream receipt quantity.');
+        payload.upstream_received_quantity = quantity;
         payload.upstream_receipt_reference = requiredText(input.upstreamReceiptReference, 'PHC upstream goods receipt reference');
         payload.upstream_received_at = requiredTime(input.receivedAt);
       } else {
