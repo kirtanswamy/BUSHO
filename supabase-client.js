@@ -404,6 +404,57 @@
       return updated;
     }
 
+    async function listPHCStorekeeperStockoutCases() {
+      await requireActiveProfile(['storekeeper']);
+      return restRequest(
+        'stockout_cases?select=*,stockout_case_events(*)&order=created_at.desc'
+      );
+    }
+
+    async function transitionPHCStorekeeperStockoutCase(input) {
+      input = input || {};
+      await requireActiveProfile(['storekeeper']);
+      if (!input.id) throw new Error('Stockout case ID is required.');
+      const allowed = new Set([
+        'official_indent_submitted',
+        'upstream_supply_received_at_phc',
+        'phc_handover_recorded'
+      ]);
+      if (!allowed.has(input.status)) throw new Error('This transition is not available to the PHC storekeeper.');
+      const payload = { status: input.status };
+      const requiredText = (value, label) => {
+        const result = String(value || '').trim();
+        if (!result) throw new Error(label + ' is required.');
+        return result;
+      };
+      const requiredTime = value => {
+        const result = value || new Date(now()).toISOString();
+        if (!Number.isFinite(Date.parse(result))) throw new Error('A valid date and time are required.');
+        return result;
+      };
+      if (input.status === 'official_indent_submitted') {
+        payload.official_system_name = requiredText(input.officialSystemName, 'Official system name');
+        payload.official_indent_reference = requiredText(input.officialIndentReference, 'Official external indent reference');
+        payload.official_indent_submitted_at = requiredTime(input.submittedAt);
+      } else if (input.status === 'upstream_supply_received_at_phc') {
+        payload.upstream_receipt_reference = requiredText(input.upstreamReceiptReference, 'PHC upstream goods receipt reference');
+        payload.upstream_received_at = requiredTime(input.receivedAt);
+      } else {
+        const quantity = Number(input.handoverQuantity);
+        if (!Number.isFinite(quantity) || quantity <= 0) throw new Error('Enter a positive physical handover quantity.');
+        payload.phc_handover_quantity = quantity;
+        payload.phc_handover_reference = requiredText(input.handoverReference, 'PHC issue / handover register reference');
+        payload.phc_handover_at = requiredTime(input.handoverAt);
+      }
+      const rows = await restRequest(
+        'stockout_cases?id=eq.' + encodeURIComponent(input.id),
+        { method: 'PATCH', body: payload, prefer: 'return=representation' }
+      );
+      const updated = Array.isArray(rows) ? (rows[0] || null) : rows;
+      if (!updated) throw new Error('The case was not updated. Check the case status and your PHC storekeeper assignment.');
+      return updated;
+    }
+
     async function listMyReports() {
       await requireActiveProfile(['worker']);
       return restRequest(
@@ -739,6 +790,8 @@
       listMyStockoutCases,
       listPHCStockoutCases,
       reviewPHCStockoutCase,
+      listPHCStorekeeperStockoutCases,
+      transitionPHCStorekeeperStockoutCase,
       createStockoutCase,
       transitionMyStockoutCase,
       getReport,
