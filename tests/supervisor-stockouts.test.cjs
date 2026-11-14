@@ -22,7 +22,7 @@ test('PHC review requires reasons for clarification/non-fulfilment and cannot en
  const calls=[];const c=clientFor('supervisor',async(url,options={})=>{calls.push({url,options});if(url.includes('/rest/v1/profiles?'))return response([{id:'user-1',role:'supervisor',status:'active'}]);if(url.includes('/rest/v1/stockout_cases?id=eq.case-1'))return response([{id:'case-1',status:'under_phc_review'}]);throw Error('Unexpected '+url);});
  await assert.rejects(c.reviewPHCStockoutCase({id:'case-1',status:'clarification_requested'}),/reason is required/i);
  await assert.rejects(c.reviewPHCStockoutCase({id:'case-1',status:'phc_cannot_fulfil'}),/reason is required/i);
- await assert.rejects(c.reviewPHCStockoutCase({id:'case-1',status:'accepted_for_phc_action',availableQuantity:12}),/physical availability is recorded separately by the PHC storekeeper/i);
+ await assert.rejects(c.reviewPHCStockoutCase({id:'case-1',status:'accepted_for_phc_action',availableQuantity:12}),/PHC storekeeper records PHC physical availability/i);
  assert.equal(calls.some(x=>x.options.method==='PATCH'),false);
 });
 
@@ -36,6 +36,6 @@ test('PHC supervisor review sends only the operational decision and review note'
 test('supervisor portal exposes the SHC stockout queue only after authenticated supervisor sign-in',()=>{
  const root=path.join(__dirname,'..');const html=fs.readFileSync(path.join(root,'supervisor.html'),'utf8');const js=fs.readFileSync(path.join(root,'supervisor-stockouts.js'),'utf8');const css=fs.readFileSync(path.join(root,'styles-v2.css'),'utf8');
  assert.match(html,/data-portal-view="stockout-review"/);assert.match(html,/data-module="stockout-review"/);assert.match(html,/supervisor-stockouts\.js/);
- assert.match(js,/busho:authenticated/);assert.match(js,/busho:unauthenticated/);assert.match(js,/listPHCStockoutCases/);assert.match(js,/reviewPHCStockoutCase/);assert.match(js,/textContent/);assert.doesNotMatch(js,/availableQuantity/);assert.match(js,/storekeeper records PHC physical availability/i);
+ assert.match(js,/busho:authenticated/);assert.match(js,/busho:unauthenticated/);assert.match(js,/listPHCStockoutCases/);assert.match(js,/reviewPHCStockoutCase/);assert.match(js,/textContent/);assert.doesNotMatch(js,/availableQuantity/);assert.match(js,/PHC storekeeper/i);
  assert.match(css,/\.stockout-supervisor-case/);
 });
