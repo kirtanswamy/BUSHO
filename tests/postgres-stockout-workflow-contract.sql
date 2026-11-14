@@ -29,6 +29,44 @@ values
 on conflict do nothing;
 reset role;
 
+-- An assigned SHC worker can read only the verified parent PHC through the
+-- narrowly scoped facility policy; an unrelated PHC remains invisible.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+do $parent_phc_read_policy$
+declare v_parent_count integer; v_unrelated_count integer;
+begin
+ select count(*) into v_parent_count from public.facilities
+ where id='dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+ select count(*) into v_unrelated_count from public.facilities
+ where id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+ if v_parent_count<>1 then raise exception 'Assigned SHC worker cannot read verified parent PHC'; end if;
+ if v_unrelated_count<>0 then raise exception 'Assigned SHC worker can read unrelated PHC'; end if;
+end $parent_phc_read_policy$;
+commit;
+
+-- A second overlapping verified parent must be rejected even when both
+-- effective_until values are finite (the previous partial unique index missed this).
+begin;
+set local role service_role;
+do $overlapping_parent_rejected$
+declare v_blocked boolean:=false;
+begin
+ begin
+  insert into public.facility_service_links
+   (shc_facility_id,phc_facility_id,verification_status,source_authority,source_reference,
+    verified_at,effective_from,effective_until,data_mode)
+  values
+   ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+    'verified','Synthetic overlap regression','DEMO-OVERLAP-001',now(),
+    date '2026-11-01',date '2026-11-30','synthetic_demo');
+ exception when exclusion_violation then v_blocked:=true;
+ end;
+ if not v_blocked then raise exception 'Overlapping verified SHC parent-PHC link was accepted'; end if;
+end $overlapping_parent_rejected$;
+rollback;
+
 -- Branch A: PHC has stock; SHC collects and confirms full receipt.
 begin;
 set local role authenticated;
