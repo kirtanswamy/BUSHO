@@ -283,7 +283,7 @@
         'facility_service_links?select=id,shc_facility_id,phc_facility_id,verification_status,effective_from,effective_until,data_mode&shc_facility_id=eq.' +
         encodeURIComponent(worker.facility_id) + '&verification_status=eq.verified&order=effective_from.desc'
       );
-      const today = new Date(now()).toISOString().slice(0, 10);
+      const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(now()));
       const current = (Array.isArray(links) ? links : []).filter(link =>
         (!link.effective_from || link.effective_from <= today) &&
         (!link.effective_until || link.effective_until >= today) &&
