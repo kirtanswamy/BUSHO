@@ -23,6 +23,8 @@ jobs:
         run: npm ci
       - name: Check
         run: npm run check
+      - name: Syntax-check SHC-to-PHC browser acceptance test
+        run: node --check tests/browser/stockout-workflow.spec.mjs
 
   database-contract:
     runs-on: ubuntu-latest

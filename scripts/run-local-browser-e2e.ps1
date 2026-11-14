@@ -29,7 +29,7 @@ if ($credentials.api_url -ne "http://127.0.0.1:54321") {
     throw "Credentials file does not target the expected local API."
 }
 
-if (-not $credentials.password -or $credentials.accounts.Count -ne 7) {
+if (-not $credentials.password -or $credentials.accounts.Count -lt 7 -or $credentials.accounts.Count -gt 11) {
     throw "Credentials file is incomplete."
 }
 
