@@ -1,20 +1,23 @@
 -- Synthetic-only contract for the SHC-to-PHC stockout exception workflow.
 -- Run after the main PostgreSQL RLS contract in disposable CI.
 insert into auth.users(id,raw_user_meta_data) values
- ('88888888-8888-4888-8888-888888888888','{"full_name":"Synthetic PHC Storekeeper"}')
+ ('88888888-8888-4888-8888-888888888888','{"full_name":"Synthetic PHC Storekeeper"}'),
+ ('99999999-9999-4999-8999-999999999999','{"full_name":"Synthetic Other PHC Storekeeper"}')
 on conflict(id) do nothing;
-update public.profiles set role='storekeeper',status='active' where id='88888888-8888-4888-8888-888888888888';
+update public.profiles set role='storekeeper',status='active' where id in ('88888888-8888-4888-8888-888888888888','99999999-9999-4999-8999-999999999999');
 
 insert into public.facilities
  (id,name,district,state,state_lgd_code,district_lgd_code,block_lgd_code,facility_type,verification_status,is_synthetic)
 values
- ('dddddddd-dddd-4ddd-8ddd-dddddddddddd','Synthetic Dhamtari PHC','Dhamtari','Chhattisgarh','22','377','3625','phc','verified',true)
+ ('dddddddd-dddd-4ddd-8ddd-dddddddddddd','Synthetic Dhamtari PHC','Dhamtari','Chhattisgarh','22','377','3625','phc','verified',true),
+ ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee','Synthetic Other PHC','Dhamtari','Chhattisgarh','22','377','3625','phc','verified',true)
 on conflict(id) do nothing;
 
 insert into public.user_facility_assignments(user_id,facility_id,assignment_role)
 values
  ('33333333-3333-4333-8333-333333333333','dddddddd-dddd-4ddd-8ddd-dddddddddddd','supervisor'),
- ('88888888-8888-4888-8888-888888888888','dddddddd-dddd-4ddd-8ddd-dddddddddddd','storekeeper')
+ ('88888888-8888-4888-8888-888888888888','dddddddd-dddd-4ddd-8ddd-dddddddddddd','storekeeper'),
+ ('99999999-9999-4999-8999-999999999999','eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee','storekeeper')
 on conflict(user_id,facility_id,assignment_role) do nothing;
 
 set role service_role;
@@ -191,8 +194,9 @@ begin
  if not v_blocked then raise exception 'Worker changed PHC official indent reference'; end if;
 end $worker_cannot_edit_phc$;
 
-update public.stockout_cases set status='partially_received_at_shc',shc_received_quantity=40,
- shc_receipt_reference='DEMO-SHC-PART-001',shc_received_at=now()
+update public.stockout_cases set status='discrepancy_recorded',shc_received_quantity=40,
+ shc_receipt_reference='DEMO-SHC-PART-001',shc_received_at=now(),
+ discrepancy_note='Synthetic short receipt: 20 tablets remain outstanding after the first collection'
 where medicine_source_reference='DEMO-EDL-ROW-002';
 update public.stockout_cases set status='received_at_shc',shc_received_quantity=60,
  shc_receipt_reference='DEMO-SHC-FINAL-001',shc_received_at=now()
@@ -202,8 +206,47 @@ declare v_events integer; v_status text; v_ref text;
 begin
  select status,official_indent_reference into v_status,v_ref from public.stockout_cases where medicine_source_reference='DEMO-EDL-ROW-002';
  select count(*) into v_events from public.stockout_case_events e join public.stockout_cases c on c.id=e.stockout_case_id where c.medicine_source_reference='DEMO-EDL-ROW-002';
- if v_status<>'received_at_shc' or v_ref<>'DEMO-DPDMIS-001' or v_events<7 then raise exception 'Upstream fulfilment branch did not reconcile'; end if;
+ if v_status<>'received_at_shc' or v_ref<>'DEMO-DPDMIS-001' or v_events<8 then raise exception 'Upstream fulfilment branch did not reconcile'; end if;
 end $assert_upstream_branch$;
+commit;
+
+-- A storekeeper assigned to another PHC must not see this SHC request.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','99999999-9999-4999-8999-999999999999',true);
+do $cross_facility_isolation$
+declare v_count integer;
+begin
+ select count(*) into v_count from public.stockout_cases where medicine_source_reference='DEMO-EDL-ROW-002';
+ if v_count<>0 then raise exception 'Cross-facility storekeeper can see another PHC request'; end if;
+end $cross_facility_isolation$;
+commit;
+
+-- Exact receipt replay must not add a second event or alter the cumulative quantity.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+do $receipt_replay$
+declare v_blocked boolean:=false; v_events integer;
+begin
+ select count(*) into v_events from public.stockout_case_events e join public.stockout_cases c on c.id=e.stockout_case_id where c.medicine_source_reference='DEMO-EDL-ROW-002';
+ begin
+  update public.stockout_cases set status='received_at_shc',shc_received_quantity=60,
+   shc_receipt_reference='DEMO-SHC-FINAL-001',shc_received_at=now()
+  where medicine_source_reference='DEMO-EDL-ROW-002';
+ exception when others then v_blocked:=true;
+ end;
+ if not v_blocked then raise exception 'Exact final receipt replay was not rejected'; end if;
+ if (select shc_received_quantity from public.stockout_cases where medicine_source_reference='DEMO-EDL-ROW-002')<>60 then raise exception 'Replay changed cumulative receipt'; end if;
+ if (select count(*) from public.stockout_case_events e join public.stockout_cases c on c.id=e.stockout_case_id where c.medicine_source_reference='DEMO-EDL-ROW-002')<>v_events then raise exception 'Replay created a duplicate event'; end if;
+end $receipt_replay$;
+commit;
+
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
+update public.stockout_cases set status='closed',closure_note='Synthetic short receipt resolved through follow-up supply; official register updated'
+where medicine_source_reference='DEMO-EDL-ROW-002';
 commit;
 
 -- Event history must reject authenticated mutation.
