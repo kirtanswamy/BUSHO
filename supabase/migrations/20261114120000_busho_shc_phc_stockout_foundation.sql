@@ -65,6 +65,8 @@ create table if not exists public.stockout_cases (
   constraint stockout_case_receipt_not_over_handover check (phc_handover_quantity is null or shc_received_quantity<=phc_handover_quantity),
   constraint stockout_case_facilities_distinct check (shc_facility_id<>phc_facility_id)
 );
+alter table public.stockout_cases add column if not exists upstream_received_quantity numeric check (upstream_received_quantity is null or upstream_received_quantity>0);
+
 create index if not exists stockout_cases_shc_status_created_idx on public.stockout_cases(shc_facility_id,status,created_at desc);
 create index if not exists stockout_cases_phc_status_created_idx on public.stockout_cases(phc_facility_id,status,created_at desc);
 create index if not exists stockout_cases_worker_created_idx on public.stockout_cases(submitted_by_worker_id,created_at desc);
@@ -250,7 +252,7 @@ create trigger stockout_case_events_no_update_delete before update or delete on 
 revoke all on public.facility_service_links,public.stockout_cases,public.stockout_case_events from anon,authenticated;
 grant select on public.facility_service_links,public.stockout_cases,public.stockout_case_events to authenticated;
 grant insert (shc_facility_id,phc_facility_id,submitted_by_worker_id,medicine_name,medicine_source_reference,reported_quantity,requested_quantity,quantity_unit,observation_source,observed_at,worker_note,status,data_mode) on public.stockout_cases to authenticated;
-grant update (status,phc_review_note,phc_available_quantity,official_system_name,official_indent_reference,official_indent_submitted_at,upstream_receipt_reference,upstream_received_at,phc_handover_quantity,phc_handover_reference,phc_handover_at,shc_collection_reference,shc_collected_at,shc_received_quantity,shc_receipt_reference,shc_received_at,discrepancy_note) on public.stockout_cases to authenticated;
+grant update (status,phc_review_note,phc_available_quantity,upstream_received_quantity,official_system_name,official_indent_reference,official_indent_submitted_at,upstream_receipt_reference,upstream_received_at,phc_handover_quantity,phc_handover_reference,phc_handover_at,shc_collection_reference,shc_collected_at,shc_received_quantity,shc_receipt_reference,shc_received_at,discrepancy_note) on public.stockout_cases to authenticated;
 grant all on public.facility_service_links,public.stockout_cases,public.stockout_case_events to service_role;
 
 alter table public.facility_service_links enable row level security;
