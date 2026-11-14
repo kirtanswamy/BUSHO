@@ -275,6 +275,98 @@
       return Array.isArray(rows) ? (rows[0] || null) : null;
     }
 
+    async function getMyStockoutContext() {
+      await requireActiveProfile(['worker']);
+      const worker = await getMyWorker();
+      if (!worker) throw new Error('No active worker record is linked to this Auth account.');
+      const links = await restRequest(
+        'facility_service_links?select=id,shc_facility_id,phc_facility_id,verification_status,effective_from,effective_until,data_mode&shc_facility_id=eq.' +
+        encodeURIComponent(worker.facility_id) + '&verification_status=eq.verified&order=effective_from.desc'
+      );
+      const today = new Date(now()).toISOString().slice(0, 10);
+      const current = (Array.isArray(links) ? links : []).filter(link =>
+        (!link.effective_from || link.effective_from <= today) &&
+        (!link.effective_until || link.effective_until >= today) &&
+        link.data_mode === (worker.facilities?.is_synthetic ? 'synthetic_demo' : 'operational')
+      );
+      if (current.length > 1) {
+        throw new Error('More than one current SHC-to-PHC relationship is verified. Ask the facility registry administrator to resolve the mapping.');
+      }
+      let phc = null;
+      if (current[0]) {
+        const rows = await restRequest(
+          'facilities?id=eq.' + encodeURIComponent(current[0].phc_facility_id) +
+          '&select=id,name,district,facility_type,is_synthetic'
+        );
+        phc = Array.isArray(rows) ? (rows[0] || null) : null;
+      }
+      return { worker, link: current[0] || null, phc };
+    }
+
+    async function listMyStockoutCases() {
+      await requireActiveProfile(['worker']);
+      return restRequest(
+        'stockout_cases?select=*,stockout_case_events(*)&order=created_at.desc'
+      );
+    }
+
+    async function createStockoutCase(input) {
+      input = input || {};
+      await requireActiveProfile(['worker']);
+      const context = await getMyStockoutContext();
+      if (!context.link || !context.phc) {
+        throw new Error('No current verified parent PHC is linked to your assigned SHC. Contact the facility registry administrator; BUSHO will not guess the PHC.');
+      }
+      const medicineName = String(input.medicineName || '').trim();
+      const unit = String(input.quantityUnit || '').trim();
+      const requested = Number(input.requestedQuantity);
+      const reported = Number(input.reportedQuantity);
+      if (!medicineName || !unit || !Number.isFinite(requested) || requested <= 0 ||
+          !Number.isFinite(reported) || reported < 0) {
+        throw new Error('Enter a medicine name, a non-negative observed quantity, a positive requested quantity and a unit.');
+      }
+      const rows = await restRequest('stockout_cases', {
+        method: 'POST',
+        body: {
+          shc_facility_id: context.worker.facility_id,
+          phc_facility_id: context.phc.id,
+          submitted_by_worker_id: context.worker.id,
+          medicine_name: medicineName,
+          medicine_source_reference: String(input.medicineSourceReference || '').trim() || null,
+          reported_quantity: reported,
+          requested_quantity: requested,
+          quantity_unit: unit,
+          observation_source: input.observationSource || 'physical_count',
+          observed_at: input.observedAt || new Date(now()).toISOString(),
+          worker_note: String(input.note || '').trim() || null,
+          status: 'submitted_to_phc',
+          data_mode: context.link.data_mode
+        },
+        prefer: 'return=representation'
+      });
+      return Array.isArray(rows) ? (rows[0] || null) : rows;
+    }
+
+    async function transitionMyStockoutCase(input) {
+      input = input || {};
+      if (!input.id || !input.status) throw new Error('Stockout case ID and next status are required.');
+      await requireActiveProfile(['worker']);
+      const allowed = new Set(['resubmitted','collected_by_shc','partially_received_at_shc','received_at_shc']);
+      if (!allowed.has(input.status)) throw new Error('This transition is not available to the SHC worker.');
+      const fields = ['status','shc_collection_reference','shc_collected_at','shc_received_quantity','shc_receipt_reference','shc_received_at','discrepancy_note'];
+      const payload = {};
+      for (const field of fields) {
+        if (Object.prototype.hasOwnProperty.call(input, field)) payload[field] = input[field];
+      }
+      const rows = await restRequest(
+        'stockout_cases?id=eq.' + encodeURIComponent(input.id),
+        { method: 'PATCH', body: payload, prefer: 'return=representation' }
+      );
+      const updated = Array.isArray(rows) ? (rows[0] || null) : rows;
+      if (!updated) throw new Error('The stockout case was not updated. Check its current status and your SHC assignment.');
+      return updated;
+    }
+
     async function listMyReports() {
       await requireActiveProfile(['worker']);
       return restRequest(
@@ -606,6 +698,10 @@
       requireActiveProfile,
       getMyWorker,
       listMyReports,
+      getMyStockoutContext,
+      listMyStockoutCases,
+      createStockoutCase,
+      transitionMyStockoutCase,
       getReport,
       createReportDraft,
       saveReportItems,
