@@ -21,7 +21,7 @@
     phc_cannot_fulfil:'PHC cannot fulfil', official_indent_submitted:'External indent reference recorded',
     upstream_supply_received_at_phc:'Upstream supply received at PHC',
     phc_handover_recorded:'PHC handover recorded', collected_by_shc:'Collected by SHC',
-    partially_received_at_shc:'Partially received at SHC', received_at_shc:'Received at SHC',
+    partially_received_at_shc:'Partially received at SHC', discrepancy_recorded:'Discrepancy recorded', received_at_shc:'Received at SHC',
     closed:'Closed', cancelled:'Cancelled'
   };
   const date = value => {
@@ -59,7 +59,7 @@
         '<label>Collection reference <input name="reference" required maxlength="120" placeholder="PHC issue / collection register ref"></label>' +
         '<button class="btn btn-secondary" type="submit">Confirm SHC collection</button></form>';
     }
-    if (['collected_by_shc','partially_received_at_shc'].includes(row.status)) {
+    if (['collected_by_shc','partially_received_at_shc','discrepancy_recorded'].includes(row.status)) {
       return '<form class="stockout-action-form" data-case-form="receipt" data-case-id="' + esc(row.id) + '">' +
         '<label>Quantity physically received <input name="quantity" type="number" min="0.01" step="0.01" required value="' +
         esc(row.shc_received_quantity || '') + '"></label><label>Receipt reference <input name="reference" required maxlength="120" placeholder="SHC receipt / register ref"></label>' +
@@ -89,7 +89,7 @@
       ).join('') + '</ol>' : '<p class="muted-copy">No event history is available.</p>';
       return '<article class="stockout-case-card"><div class="stockout-case-head"><div><small>REQUEST · ' +
         esc(String(row.id).slice(0,8).toUpperCase()) + '</small><h4>' + esc(row.medicine_name) +
-        '</h4></div><span class="stockout-status">' + esc(labels[row.status] || row.status) +
+        '</h4><p>'+esc(row.medicine_strength_form||'Strength/form not recorded')+'</p></div><span class="stockout-status">' + esc(labels[row.status] || row.status) +
         '</span></div><div class="stockout-case-facts"><span>Observed: <b>' + esc(row.reported_quantity) + ' ' + esc(row.quantity_unit) +
         '</b></span><span>Requested: <b>' + esc(row.requested_quantity) + ' ' + esc(row.quantity_unit) +
         '</b></span><span>SHC received: <b>' + esc(row.shc_received_quantity || 0) + ' ' + esc(row.quantity_unit) +
@@ -138,7 +138,7 @@
       const data = new FormData(form);
       withBusy(async () => {
         await client.createStockoutCase({
-          medicineName:data.get('medicineName'), medicineSourceReference:data.get('medicineSourceReference'),
+          medicineName:data.get('medicineName'), medicineStrengthForm:data.get('medicineStrengthForm'), medicineSourceReference:data.get('medicineSourceReference'),
           reportedQuantity:data.get('reportedQuantity'), requestedQuantity:data.get('requestedQuantity'),
           quantityUnit:data.get('quantityUnit'), observationSource:data.get('observationSource'), note:data.get('note')
         });
@@ -161,11 +161,12 @@
         const qty = Number(data.get('quantity'));
         const handover = Number(row?.phc_handover_quantity);
         if (!Number.isFinite(qty) || qty <= Number(row?.shc_received_quantity || 0) || qty > handover) throw new Error('Receipt quantity must be greater than the previous receipt and no more than the PHC handover quantity.');
-        await client.transitionMyStockoutCase({
-          id,status:qty===handover?'received_at_shc':'partially_received_at_shc',
+        const discrepancy=String(data.get('discrepancy')||'').trim();
+        const receipt={id,status:discrepancy?'discrepancy_recorded':(qty===handover?'received_at_shc':'partially_received_at_shc'),
           shc_received_quantity:qty,shc_receipt_reference:String(data.get('reference')).trim(),
-          shc_received_at:new Date().toISOString(),discrepancy_note:String(data.get('discrepancy')||'').trim()||null
-        });
+          shc_received_at:new Date().toISOString()};
+        if(discrepancy)receipt.discrepancy_note=discrepancy;
+        await client.transitionMyStockoutCase(receipt);
       } else if (form.dataset.caseForm === 'resubmit') {
         await client.transitionMyStockoutCase({id,status:'resubmitted',worker_note:String(data.get('note')).trim()});
       }
