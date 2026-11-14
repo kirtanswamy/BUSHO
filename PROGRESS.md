@@ -44,7 +44,7 @@ The additive SHC-to-PHC exception-coordination module is now integrated into the
   git log --oneline --left-right HEAD...origin/feat/shc-phc-stockout-foundation
   git diff --check
   ```
-  Stop after these read-only inventory checks and review the output before switching branches. The earlier handover reported local uncommitted classifier work and retained fixtures; do not switch, pull, stash, reset or overwrite anything until the exact local-vs-remote state is reconciled. Once a safe switch/merge plan is agreed, run `\scripts\run-local-browser-e2e.ps1` on the stockout branch. Do not paste credentials, tokens or secret files into chat.
+  Stop after these read-only inventory checks and review the output before switching branches. The earlier handover reported local uncommitted classifier work and retained fixtures; do not switch, pull, stash, reset or overwrite anything until the exact local-vs-remote state is reconciled. Once a safe switch/merge plan is agreed, run `.\scripts\run-local-browser-e2e.ps1` on the stockout branch. Do not paste credentials, tokens or secret files into chat.
 - If browser tests fail, inspect Playwright traces/screenshots and fix the exact failed interaction before marking the stockout UI milestone complete. Do not claim local browser acceptance from CI syntax checks.
 - Keep PR #6 draft/open/unmerged until browser acceptance, visual review, cross-facility isolation and the remaining portal audit are complete. Do not deploy hosted migrations or touch production without explicit approval.
 
