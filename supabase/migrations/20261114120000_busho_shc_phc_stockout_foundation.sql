@@ -231,7 +231,7 @@ begin
       else 'stockout_case_updated' end; v_from:=old.status;
   end if;
   v_ref:=coalesce(new.official_indent_reference,new.upstream_receipt_reference,new.phc_handover_reference,new.shc_collection_reference,new.shc_receipt_reference);
-  v_qty:=case when new.status in ('partially_received_at_shc','received_at_shc') then new.shc_received_quantity when new.status='phc_handover_recorded' then new.phc_handover_quantity else null end;
+  v_qty:=case when new.status in ('partially_received_at_shc','received_at_shc') then new.shc_received_quantity when new.status='phc_handover_recorded' then new.phc_handover_quantity when new.status='upstream_supply_received_at_phc' then new.upstream_received_quantity else null end;
   v_note:=coalesce(new.phc_review_note,new.discrepancy_note,new.worker_note);
   insert into public.stockout_case_events(stockout_case_id,actor_user_id,actor_role,action,status_from,status_to,note,external_reference,quantity,metadata)
   values(new.id,auth.uid(),app_private.current_profile_role(),v_action,v_from,new.status,v_note,v_ref,v_qty,jsonb_build_object('data_mode',new.data_mode));
