@@ -195,8 +195,14 @@ begin
   if new.status='official_indent_submitted' and (nullif(btrim(new.official_system_name),'') is null or nullif(btrim(new.official_indent_reference),'') is null or new.official_indent_submitted_at is null) then
     raise exception 'Official system name, external reference and submission time required';
   end if;
-  if new.status='upstream_supply_received_at_phc' and (nullif(btrim(new.upstream_receipt_reference),'') is null or new.upstream_received_at is null) then
-    raise exception 'Upstream PHC receipt reference and time required';
+  if new.status='upstream_supply_received_at_phc' and (nullif(btrim(new.upstream_receipt_reference),'') is null or new.upstream_received_at is null or new.upstream_received_quantity is null or new.upstream_received_quantity<=0) then
+    raise exception 'Upstream PHC receipt quantity, reference and time required';
+  end if;
+  if new.status='phc_handover_recorded' and new.phc_handover_quantity > coalesce(new.upstream_received_quantity,new.phc_available_quantity,0) then
+    raise exception 'PHC handover cannot exceed the recorded upstream receipt or PHC observed available quantity';
+  end if;
+  if new.phc_handover_quantity > new.requested_quantity then
+    raise exception 'PHC handover cannot exceed the SHC requested quantity';
   end if;
   if new.status='phc_handover_recorded' and (new.phc_handover_quantity is null or new.phc_handover_quantity<=0 or nullif(btrim(new.phc_handover_reference),'') is null or new.phc_handover_at is null) then
     raise exception 'PHC handover quantity, reference and time required';
