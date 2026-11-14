@@ -139,6 +139,11 @@ jobs:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114150000_busho_shc_phc_role_boundary_hardening.sql
 
+      - name: Apply BUSHO SHC-to-PHC closure and discrepancy migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114160000_busho_shc_phc_closure_discrepancy.sql
+
       - name: Audit exposed-schema RLS, grants and SECURITY DEFINER helpers
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
