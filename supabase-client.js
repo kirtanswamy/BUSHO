@@ -366,6 +366,44 @@
       return updated;
     }
 
+    async function listPHCStockoutCases() {
+      await requireActiveProfile(['supervisor']);
+      return restRequest(
+        'stockout_cases?select=*,stockout_case_events(*)&order=created_at.desc'
+      );
+    }
+
+    async function reviewPHCStockoutCase(input) {
+      input = input || {};
+      await requireActiveProfile(['supervisor']);
+      if (!input.id) throw new Error('Stockout case ID is required.');
+      const allowed = new Set(['acknowledged_by_phc','under_phc_review','clarification_requested','accepted_for_phc_action','phc_cannot_fulfil']);
+      if (!allowed.has(input.status)) throw new Error('This action is not available to the PHC supervisor.');
+      const note = String(input.note || '').trim();
+      if (['clarification_requested','phc_cannot_fulfil'].includes(input.status) && !note) {
+        throw new Error('A reason is required for clarification or PHC non-fulfilment.');
+      }
+      const payload = { status: input.status };
+      if (note) payload.phc_review_note = note;
+      if (input.availableQuantity !== undefined && input.availableQuantity !== null && input.availableQuantity !== '') {
+        const quantity = Number(input.availableQuantity);
+        if (!Number.isFinite(quantity) || quantity < 0) throw new Error('PHC observed available quantity must be zero or greater.');
+        payload.phc_available_quantity = quantity;
+      }
+      if (input.status === 'accepted_for_phc_action' &&
+          (payload.phc_available_quantity === undefined || payload.phc_available_quantity <= 0)) {
+        throw new Error('Record a positive PHC quantity observed as available before accepting for PHC action.');
+      }
+      if (input.status === 'phc_cannot_fulfil') payload.phc_available_quantity = 0;
+      const rows = await restRequest(
+        'stockout_cases?id=eq.' + encodeURIComponent(input.id),
+        { method: 'PATCH', body: payload, prefer: 'return=representation' }
+      );
+      const updated = Array.isArray(rows) ? (rows[0] || null) : rows;
+      if (!updated) throw new Error('The case was not updated. It may be outside your PHC assignment or no longer in a reviewable state.');
+      return updated;
+    }
+
     async function listMyReports() {
       await requireActiveProfile(['worker']);
       return restRequest(
