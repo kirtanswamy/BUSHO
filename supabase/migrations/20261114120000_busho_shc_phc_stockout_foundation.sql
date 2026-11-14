@@ -128,6 +128,7 @@ begin
       or new.official_indent_submitted_at is distinct from old.official_indent_submitted_at
       or new.upstream_receipt_reference is distinct from old.upstream_receipt_reference
       or new.upstream_received_at is distinct from old.upstream_received_at
+      or new.upstream_received_quantity is distinct from old.upstream_received_quantity
       or new.phc_handover_quantity is distinct from old.phc_handover_quantity
       or new.phc_handover_reference is distinct from old.phc_handover_reference
       or new.phc_handover_at is distinct from old.phc_handover_at then
@@ -143,6 +144,7 @@ begin
       or new.official_indent_submitted_at is distinct from old.official_indent_submitted_at
       or new.upstream_receipt_reference is distinct from old.upstream_receipt_reference
       or new.upstream_received_at is distinct from old.upstream_received_at
+      or new.upstream_received_quantity is distinct from old.upstream_received_quantity
       or new.phc_handover_quantity is distinct from old.phc_handover_quantity
       or new.phc_handover_reference is distinct from old.phc_handover_reference
       or new.phc_handover_at is distinct from old.phc_handover_at
