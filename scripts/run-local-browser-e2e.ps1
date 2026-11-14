@@ -17,8 +17,7 @@ $expectedLabels = @(
     "worker-b",
     "supervisor-b",
     "storekeeper-a",
-    "storekeeper-b",
-    "storekeeper-e2e"
+    "storekeeper-b"
 )
 
 if ($credentials.fixture -ne "a204be7a") {
@@ -29,7 +28,7 @@ if ($credentials.api_url -ne "http://127.0.0.1:54321") {
     throw "Credentials file does not target the expected local API."
 }
 
-if (-not $credentials.password -or $credentials.accounts.Count -lt 7 -or $credentials.accounts.Count -gt 11) {
+if (-not $credentials.password -or $credentials.accounts.Count -lt 6 -or $credentials.accounts.Count -gt 11) {
     throw "Credentials file is incomplete."
 }
 
@@ -40,7 +39,7 @@ foreach ($label in $expectedLabels) {
     }
 }
 
-Write-Host "Seven local test accounts verified. Password values hidden."
+Write-Host "Six baseline local test accounts verified. Password values hidden."
 
 Write-Host "`n--- Checking Git credential protection ---"
 
@@ -93,6 +92,15 @@ try {
 catch {
     throw "Local Auth API is not responding at 127.0.0.1:54321."
 }
+
+Write-Host "`n--- Provisioning dedicated replenishment storekeeper ---"
+& .\scripts\provision-storekeeper-e2e.ps1
+$credentials = Get-Content $credentialPath -Raw | ConvertFrom-Json
+$storekeeperMatches = @($credentials.accounts | Where-Object { $_.label -eq "storekeeper-e2e" })
+if ($storekeeperMatches.Count -ne 1) {
+    throw "Expected exactly one provisioned dedicated storekeeper account."
+}
+Write-Host "Dedicated replenishment storekeeper verified."
 
 Write-Host "`n--- Provisioning isolated SHC-to-PHC browser fixtures ---"
 & .\scripts\provision-stockout-e2e.ps1

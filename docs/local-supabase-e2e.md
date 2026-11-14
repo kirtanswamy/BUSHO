@@ -53,7 +53,10 @@ $env:SERVICE_ROLE_KEY = "<local service role key>"
 node .\scripts\local-supabase-auth-smoke.mjs
 ```
 
-The runner creates six synthetic Auth users across two synthetic facilities:
+The runner creates six synthetic Auth users across two synthetic facilities. After all API assertions pass, it writes the exact account emails, shared synthetic password, and generated Facility A/Facility B IDs to the Git-ignored `.local-e2e/credentials.json` file. The password is never printed. The runner refuses any `API_URL` other than `http://127.0.0.1:54321`.
+
+The credentials file is the handoff between the API process and the separate browser-provisioning process. It is local-only and must not be committed, uploaded, or pasted into logs or messages.
+
 
 - Worker A and Supervisor A, assigned to Facility A.
 - Worker B and Supervisor B, assigned to Facility B.
@@ -114,7 +117,7 @@ The browser runner is:
 
 `scripts/run-local-browser-e2e.ps1`
 
-Run it from the repository root:
+Run the API integration runner successfully first so it creates `.local-e2e/credentials.json`. Then run the browser runner from the repository root:
 
 ```powershell
 .\scripts\run-local-browser-e2e.ps1
@@ -122,17 +125,16 @@ Run it from the repository root:
 
 It:
 
-1. Validates `.local-e2e/credentials.json`.
-2. Checks for fixture `a204be7a` and exactly seven expected browser account labels.
-   Expected labels: `worker-a`, `supervisor-a`, `worker-b`, `supervisor-b`, `storekeeper-a`, `storekeeper-b`, `storekeeper-e2e`.
-3. Confirms the credentials file is ignored by Git.
-4. Reads the local publishable key from `npx supabase status --output env`.
-5. Checks the local Supabase Auth health endpoint.
-6. Temporarily sets `BUSHO_LOCAL_PUBLISHABLE_KEY`.
-7. Runs Playwright using `playwright.config.mjs`.
+1. Validates `.local-e2e/credentials.json`, fixture `a204be7a`, the exact local API URL, and the six baseline account labels created by the API runner: `worker-a`, `supervisor-a`, `worker-b`, `supervisor-b`, `storekeeper-a`, and `storekeeper-b`.
+2. Confirms the credentials file is ignored by Git.
+3. Reads the local publishable key from `npx supabase status --output env` and checks the local Supabase Auth health endpoint.
+4. Runs `scripts/provision-storekeeper-e2e.ps1`. This derives the current run suffix and Facility A ID from the credentials file, then creates or reuses The dedicated `storekeeper-e2e` identity and verifies its active storekeeper profile and Facility A assignment.
+5. Runs `scripts/provision-stockout-e2e.ps1` to create or reuse the four SHC-to-PHC synthetic accounts and facilities. When reusing its fixed `.example.test` accounts, the provisioner reapplies the current run's generated password so a fresh API fixture run does not leave stale browser credentials.
+6. Verifies all seven baseline and four stockout account labels.
+7. Temporarily sets `BUSHO_LOCAL_PUBLISHABLE_KEY` and runs Playwright using `playwright.config.mjs`.
 8. Restores both `BUSHO_LOCAL_PUBLISHABLE_KEY` and `PORT` to their previous values.
 
-The seven browser accounts cover two workers, two supervisors and three storekeeper identities. The dedicated `storekeeper-e2e` account is used for the replenishment browser journey.
+The seven browser accounts cover two workers, two supervisors and three storekeeper identities. The dedicated `storekeeper-e2e` account is generated for the same API fixture run and assigned to its actual synthetic Facility A; no hardcoded facility UUID is used.
 
 The credentials file is local-only and must never be committed, uploaded, or pasted into logs or messages.
 
@@ -173,10 +175,16 @@ Run browser E2E separately:
 .\scripts\run-local-browser-e2e.ps1
 ```
 
-The API integration runner can be run separately after its three environment variables have been set:
+The API integration runner must be run first after its three environment variables have been set. A successful run writes the Git-ignored credentials handoff used by the browser provisioners:
 
 ```powershell
 node .\scripts\local-supabase-auth-smoke.mjs
+```
+
+Then run the browser runner to provision The dedicated replenishment account, the SHC-to-PHC accounts, and execute Playwright:
+
+```powershell
+.\scripts\run-local-browser-e2e.ps1
 ```
 
 Review Playwright output and `test-results` when browser tests fail.

@@ -1,7 +1,27 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { mkdir, rename, writeFile, chmod } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
-const apiUrl = (process.env.API_URL || 'http://127.0.0.1:54321').replace(/\/$/, '');
+const expectedLocalApiUrl = 'http://127.0.0.1:54321';
+const configuredApiUrl = (process.env.API_URL || expectedLocalApiUrl).replace(/\/$/, '');
+let parsedApiUrl;
+try {
+  parsedApiUrl = new URL(configuredApiUrl);
+} catch {
+  throw new Error('API_URL must be the local Supabase API at http://127.0.0.1:54321.');
+}
+if (
+  parsedApiUrl.origin !== expectedLocalApiUrl ||
+  parsedApiUrl.username ||
+  parsedApiUrl.password ||
+  parsedApiUrl.pathname !== '/' ||
+  parsedApiUrl.search ||
+  parsedApiUrl.hash
+) {
+  throw new Error('Refusing to run local E2E fixtures against a non-local API_URL. Expected http://127.0.0.1:54321.');
+}
+const apiUrl = expectedLocalApiUrl;
 const anonKey = process.env.ANON_KEY;
 const serviceKey = process.env.SERVICE_ROLE_KEY;
 if (!anonKey || !serviceKey) {
@@ -33,7 +53,7 @@ async function createUser(label) {
   users.push(user.id);
   const login = await request('/auth/v1/token?grant_type=password', { key: anonKey, method: 'POST', body: { email, password }});
   assert.equal(login.user.id, user.id, 'password sign-in returns the created local user');
-  return { id: user.id, token: login.access_token, email };
+  return { id: user.id, token: login.access_token, email, label };
 }
 async function createFacility(label) {
   const rows = await request('/rest/v1/facilities?select=id,name', { method: 'POST', prefer: 'return=representation', body: [{
@@ -968,6 +988,32 @@ try {
   } else {
     assert([401, 403].includes(anonymous.status), 'anonymous profile access is denied');
   }
+
+  // Persist the exact synthetic identities and shared password needed by the
+  // separate Playwright process. Never print this file or its password.
+  const credentialsDirectory = resolve('.local-e2e');
+  const credentialsPath = resolve(credentialsDirectory, 'credentials.json');
+  const temporaryCredentialsPath = credentialsPath + '.tmp-' + suffix;
+  const browserCredentials = {
+    fixture: 'a204be7a',
+    api_url: expectedLocalApiUrl,
+    password,
+    facility_a_id: facilityA.id,
+    facility_b_id: facilityB.id,
+    accounts: [workerA, supervisorA, workerB, supervisorB, storekeeperA, storekeeperB]
+      .map(({ label, email, id }) => ({ label, email, user_id: id }))
+  };
+  await mkdir(credentialsDirectory, { recursive: true });
+  await writeFile(temporaryCredentialsPath, JSON.stringify(browserCredentials, null, 2) + '\n', {
+    encoding: 'utf8',
+    mode: 0o600,
+    flag: 'wx'
+  });
+  await rename(temporaryCredentialsPath, credentialsPath);
+  // POSIX permissions are tightened where supported; Windows relies on the
+  // user's local profile ACLs and the Git ignore rule.
+  await chmod(credentialsPath, 0o600).catch(() => {});
+  console.log('PASS local browser credentials written to Git-ignored .local-e2e/credentials.json');
 
   console.log('PASS local Supabase Auth health');
   console.log('PASS six synthetic Auth accounts created and password-authenticated');

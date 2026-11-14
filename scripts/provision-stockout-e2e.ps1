@@ -72,7 +72,15 @@ function Ensure-User {
             user_metadata=@{ full_name="BUSHO synthetic $Label"; preferred_language="en" }
         } -Depth 5)
         $userId = $created.id
-    } else { $userId = $user[0].id }
+    } else {
+        $userId = $user[0].id
+        # These fixed .example.test identities are local synthetic fixtures.
+        # Reapply the current API-run password so browser logins remain valid
+        # after a fresh API smoke run replaces credentials.json.
+        Invoke-RestMethod -Uri "$apiUrl/auth/v1/admin/users/$userId" -Method PUT -Headers $headers -ContentType "application/json" -Body (ConvertTo-Json @{
+            password=$credentials.password; email_confirm=$true
+        } -Depth 5) | Out-Null
+    }
     if (-not $userId) { throw "Could not provision local synthetic account $Label." }
 
     $profile = Invoke-LocalRest -Path "/rest/v1/profiles?id=eq.$userId&select=id" -Method PATCH -Body @{role=$Role;status="active"}
