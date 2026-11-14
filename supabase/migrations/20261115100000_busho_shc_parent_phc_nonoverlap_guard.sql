@@ -2,11 +2,11 @@
 -- NULL effective dates are unbounded; date intervals are inclusive.
 begin;
 create extension if not exists btree_gist;
-create index if not exists facility_service_links_one_current_parent_no_overlap_gist
-  on public.facility_service_links
-  using gist (
-    shc_facility_id,
-    daterange(effective_from, effective_until, '[]')
+alter table public.facility_service_links
+  add constraint facility_service_links_verified_parent_no_overlap
+  exclude using gist (
+    shc_facility_id with =,
+    daterange(effective_from, effective_until, '[]') with &&
   )
-  where verification_status='verified';
+  where (verification_status='verified');
 commit;
