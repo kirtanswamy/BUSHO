@@ -31,7 +31,7 @@ test('PHC storekeeper records a non-negative physical availability observation a
 
 test('PHC storekeeper cannot record physical availability without an observation timestamp',async()=>{
  const calls=[],c=clientFor(fakeFetch(calls));
- await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'accepted_for_phc_action',phcAvailableQuantity:0}),/timestamp|observed at/i);
+ await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'accepted_for_phc_action',phcAvailableQuantity:0}),/valid date and time/i);
  assert.equal(calls.some(x=>x.options.method==='PATCH'),false);
 });
 
