@@ -26,6 +26,14 @@ test('PHC review requires reasons for clarification/non-fulfilment and cannot en
  assert.equal(calls.some(x=>x.options.method==='PATCH'),false);
 });
 
+test('PHC supervisor closure requires and sends a resolution note to the closure field',async()=>{
+ const calls=[];const c=clientFor('supervisor',async(url,options={})=>{calls.push({url,options});if(url.includes('/rest/v1/profiles?'))return response([{id:'user-1',role:'supervisor',status:'active'}]);if(url.includes('/rest/v1/stockout_cases?id=eq.case-1'))return response([{id:'case-1',status:'closed'}]);throw Error('Unexpected '+url);});
+ await assert.rejects(c.reviewPHCStockoutCase({id:'case-1',status:'closed'}),/resolution note is required/i);
+ const result=await c.reviewPHCStockoutCase({id:'case-1',status:'closed',note:'Synthetic discrepancy resolved with alternate supply'});
+ assert.equal(result.status,'closed');
+ const patch=calls.find(x=>x.options.method==='PATCH');assert.deepEqual(JSON.parse(patch.options.body),{status:'closed',closure_note:'Synthetic discrepancy resolved with alternate supply'});
+});
+
 test('PHC supervisor review sends only the operational decision and review note',async()=>{
  const calls=[];const c=clientFor('supervisor',async(url,options={})=>{calls.push({url,options});if(url.includes('/rest/v1/profiles?'))return response([{id:'user-1',role:'supervisor',status:'active'}]);if(url.includes('/rest/v1/stockout_cases?id=eq.case-1'))return response([{id:'case-1',status:JSON.parse(options.body||'{}').status}]);throw Error('Unexpected '+url);});
  const result=await c.reviewPHCStockoutCase({id:'case-1',status:'accepted_for_phc_action',note:'Synthetic PHC review decision'});

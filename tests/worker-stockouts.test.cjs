@@ -39,11 +39,12 @@ test('worker stockout submission uses only the current verified parent-PHC link 
     throw new Error('Unexpected request: '+url+' '+options.method);
   };
   const client=signedInClient(fetch);
-  const result=await client.createStockoutCase({medicineName:'Synthetic medicine',medicineSourceReference:'DEMO-001',
+  const result=await client.createStockoutCase({medicineName:'Synthetic medicine',medicineStrengthForm:'5 mg tablet',medicineSourceReference:'DEMO-001',
     reportedQuantity:0,requestedQuantity:50,quantityUnit:'tablets',observationSource:'physical_count',note:'Synthetic fixture'});
   assert.equal(result.id,'case-1');
   const post=calls.find(call=>call.options.method==='POST');
   const payload=JSON.parse(post.options.body);
+  assert.equal(payload.medicine_strength_form,'5 mg tablet');
   assert.equal(payload.shc_facility_id,'shc-1');
   assert.equal(payload.phc_facility_id,'phc-1');
   assert.equal(payload.submitted_by_worker_id,'worker-row');
@@ -62,7 +63,7 @@ test('worker stockout submission refuses to guess a parent PHC when no verified 
     if(url.includes('/rest/v1/facility_service_links?')) return jsonResponse([]);
     throw new Error('Unexpected request: '+url);
   });
-  await assert.rejects(client.createStockoutCase({medicineName:'Medicine',reportedQuantity:0,requestedQuantity:4,quantityUnit:'packs'}),/No current verified parent PHC/i);
+  await assert.rejects(client.createStockoutCase({medicineName:'Medicine',medicineStrengthForm:'5 mg tablet',reportedQuantity:0,requestedQuantity:4,quantityUnit:'packs'}),/No current verified parent PHC/i);
   assert.equal(calls.some(call=>call.options.method==='POST'),false);
 });
 
@@ -92,6 +93,7 @@ test('worker stockout workspace is authenticated, accessible from navigation and
   assert.match(html,/data-module="stockouts"/);
   assert.match(html,/worker-stockouts\.js/);
   assert.match(html,/medicine name as written on the pack\/register/i);
+  assert.match(html,/medicineStrengthForm/);
   assert.match(js,/busho:authenticated/);
   assert.match(js,/busho:unauthenticated/);
   assert.match(js,/createStockoutCase/);

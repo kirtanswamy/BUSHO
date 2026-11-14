@@ -31,11 +31,11 @@ begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
 insert into public.stockout_cases
- (shc_facility_id,phc_facility_id,submitted_by_worker_id,medicine_name,medicine_source_reference,
+ (shc_facility_id,phc_facility_id,submitted_by_worker_id,medicine_name,medicine_strength_form,medicine_source_reference,
   reported_quantity,requested_quantity,quantity_unit,observation_source,observed_at,status,data_mode)
 values
  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','dddddddd-dddd-4ddd-8ddd-dddddddddddd',
-  '10000000-0000-4000-8000-000000000001','Synthetic hypertension medicine','DEMO-EDL-ROW-001',
+  '10000000-0000-4000-8000-000000000001','Synthetic hypertension medicine','5 mg tablet','DEMO-EDL-ROW-001',
   0,100,'tablets','dispensing_box_check',now(),'submitted_to_phc','synthetic_demo');
 commit;
 
@@ -97,17 +97,30 @@ begin
 end $assert_full_receipt$;
 commit;
 
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
+update public.stockout_cases set status='closed',closure_note='Synthetic full receipt confirmed; no discrepancy reported'
+where medicine_source_reference='DEMO-EDL-ROW-001';
+do $assert_closed$
+begin
+ if not exists(select 1 from public.stockout_cases where medicine_source_reference='DEMO-EDL-ROW-001' and status='closed' and closure_note is not null) then
+  raise exception 'Supervisor closure did not preserve its resolution note';
+ end if;
+end $assert_closed$;
+commit;
+
 -- Branch B: PHC cannot fulfil; storekeeper records only an external hand-off,
 -- upstream PHC receipt and then the separate SHC handover.
 begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
 insert into public.stockout_cases
- (shc_facility_id,phc_facility_id,submitted_by_worker_id,medicine_name,medicine_source_reference,
+ (shc_facility_id,phc_facility_id,submitted_by_worker_id,medicine_name,medicine_strength_form,medicine_source_reference,
   reported_quantity,requested_quantity,quantity_unit,observation_source,observed_at,status,data_mode)
 values
  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','dddddddd-dddd-4ddd-8ddd-dddddddddddd',
-  '10000000-0000-4000-8000-000000000001','Synthetic hypertension medicine','DEMO-EDL-ROW-002',
+  '10000000-0000-4000-8000-000000000001','Synthetic hypertension medicine','5 mg tablet','DEMO-EDL-ROW-002',
   0,60,'tablets','paper_register',now(),'submitted_to_phc','synthetic_demo');
 commit;
 
