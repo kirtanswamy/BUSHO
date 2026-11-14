@@ -30,7 +30,7 @@ begin
   if v_shc.id is null or v_phc.id is null then raise exception 'Both linked facilities must exist'; end if;
   if v_shc.facility_type <> 'aam_shc' or v_phc.facility_type <> 'phc' then raise exception 'Link must connect an AAM-SHC to a PHC'; end if;
   if v_shc.is_synthetic is distinct from v_phc.is_synthetic then raise exception 'Synthetic and operational facilities cannot be linked'; end if;
-  if new.data_mode <> case when v_shc.is_synthetic then 'synthetic_demo' else 'operational' end then raise exception 'Facility link data mode must match facility classification'; end if;
+  if new.data_mode <> (case when v_shc.is_synthetic then 'synthetic_demo' else 'operational' end) then raise exception 'Facility link data mode must match facility classification'; end if;
   if new.verification_status='verified' and (nullif(btrim(new.source_authority),'') is null or new.verified_at is null) then raise exception 'Verified links require source authority and timestamp'; end if;
   return new;
 end; $$;
