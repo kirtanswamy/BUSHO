@@ -151,6 +151,16 @@ jobs:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114170000_busho_shc_phc_discrepancy_short_receipt_guard.sql
 
+      - name: Apply SHC parent-PHC facility read policy
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114181000_busho_shc_parent_phc_facility_read_policy.sql
+
+      - name: Enforce non-overlapping verified SHC parent-PHC relationships
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261115100000_busho_shc_parent_phc_nonoverlap_guard.sql
+
       - name: Audit exposed-schema RLS, grants and SECURITY DEFINER helpers
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
