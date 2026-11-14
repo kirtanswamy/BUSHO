@@ -94,6 +94,26 @@ catch {
     throw "Local Auth API is not responding at 127.0.0.1:54321."
 }
 
+Write-Host "`n--- Provisioning isolated SHC-to-PHC browser fixtures ---"
+& .\scripts\provision-stockout-e2e.ps1
+if ($LASTEXITCODE -ne 0) {
+    throw "Local SHC-to-PHC E2E fixture provisioning failed."
+}
+$credentials = Get-Content $credentialPath -Raw | ConvertFrom-Json
+$stockoutLabels = @(
+    "stockout-worker",
+    "stockout-supervisor",
+    "stockout-storekeeper",
+    "stockout-storekeeper-other"
+)
+foreach ($label in $stockoutLabels) {
+    $matches = @($credentials.accounts | Where-Object { $_.label -eq $label })
+    if ($matches.Count -ne 1) {
+        throw "Expected exactly one provisioned local account for $label."
+    }
+}
+Write-Host "Four isolated SHC-to-PHC accounts verified. Credentials remain hidden."
+
 $previousKey = $env:BUSHO_LOCAL_PUBLISHABLE_KEY
 $previousPort = $env:PORT
 
