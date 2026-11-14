@@ -167,8 +167,9 @@ begin
       or (old.status='collected_by_shc' and new.status in ('partially_received_at_shc','received_at_shc'))
       or (old.status='partially_received_at_shc' and new.status in ('partially_received_at_shc','received_at_shc')));
   elsif v_role='supervisor' and app_private.has_facility_access(old.phc_facility_id,array['supervisor']::text[]) then
-    v_allowed:=(old.status in ('submitted_to_phc','resubmitted','acknowledged_by_phc','under_phc_review')
-      and new.status in ('acknowledged_by_phc','under_phc_review','clarification_requested','accepted_for_phc_action','phc_cannot_fulfil'));
+    v_allowed:=((old.status in ('submitted_to_phc','resubmitted','acknowledged_by_phc','under_phc_review')
+      and new.status in ('acknowledged_by_phc','under_phc_review','clarification_requested','accepted_for_phc_action','phc_cannot_fulfil'))
+      or (old.status='accepted_for_phc_action' and new.status='phc_cannot_fulfil'));
   elsif v_role='storekeeper' and app_private.has_facility_access(old.phc_facility_id,array['storekeeper']::text[]) then
     v_allowed:=((old.status='accepted_for_phc_action' and new.status='accepted_for_phc_action'
         and (new.phc_available_quantity is distinct from old.phc_available_quantity
