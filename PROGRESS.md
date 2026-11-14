@@ -1,52 +1,23 @@
-# BUSHO — Current continuation checkpoint (2026-11-14)
+# BUSHO — Current continuation checkpoint (2026-11-15)
 
 Repository: https://github.com/kirtanswamy/BUSHO
 Active implementation branch: `feat/shc-phc-stockout-foundation`
-Layered base branch: `feature/chhattisgarh-operational-workflow`
 Pull request: https://github.com/kirtanswamy/BUSHO/pull/6 (OPEN · DRAFT · UNMERGED)
-Latest implementation commit: `3e039035e83ca7306d36e01708fdcbc0a74a0fd7`
-Latest documentation checkpoint commit: `0b686c5642cc8d455145b6211be664839f9d92af`
-CI for the implementation SHA: https://github.com/kirtanswamy/BUSHO/actions/runs/43578166847 — PASS (Node 18/22/24 and PostgreSQL 17 database-contract)
-Vercel preview: https://busho-q7zthftwi-saturn-789b.vercel.app — deployment READY for the exact commit above; interactive portal acceptance is still pending.
-Production: unchanged. No hosted Supabase migration, hosted account/facility provisioning, Edge Function deployment, merge or production release was performed.
+Previous verified head: `3dddad5db5f44474f2053bbfa675cabfd7b34417`
+Previous-head CI: 9/9 checks passed, including both PostgreSQL 17 database-contract jobs.
+Local browser evidence: developer-reported Playwright 19/19 passing on two consecutive runs against local Supabase synthetic fixtures.
+Production: unchanged. No hosted Supabase migration, live account/facility provisioning, merge or production release was performed.
 
-## SHC-to-PHC stockout workflow continuation
+## Current event-history hardening
 
-The additive SHC-to-PHC exception-coordination module is now integrated into the worker, supervisor and storekeeper pages.
+- Corrected the stockout event writer so each event stores only the external reference associated with that action; SHC receipt events no longer inherit an earlier official indent reference.
+- Discrepancy events now retain the cumulative SHC receipt quantity and the matching SHC receipt reference.
+- Added PostgreSQL contract assertions for discrepancy, final SHC receipt, official indent, upstream PHC receipt and PHC handover event evidence.
+- Added the corrective migration to the PostgreSQL 17 CI sequence. The new commit's CI result must be checked before this correction is called verified.
+- Browser acceptance was run locally before this event-history correction. Re-run the local browser suite after pulling the new commit.
+- Visual review, cross-facility portal review and the remaining portal audit are still outstanding.
 
-- Worker: medicine name and strength/form, physical observation source, observed/requested quantity, source reference, SHC-to-PHC context, submission, clarification resubmission, collection reference, cumulative receipts and event history.
-- Supervisor: PHC-scoped request queue, acknowledgement/review, clarification, acceptance, evidence-based PHC non-fulfilment, and closure with a required resolution note.
-- Storekeeper: PHC physical availability observation, external DPDMIS/CGMSC indent reference, upstream PHC receipt, and PHC-to-SHC handover. The UI records completed external actions; it does not submit government indents or dispatch stock.
-- Database: role-owned fields, facility-scoped RLS, verified SHC-parent-PHC relationship, transition guard, append-only event history, cumulative receipt guards, discrepancy recording and closure.
-- A short-receipt discrepancy must be strictly less than the recorded PHC handover quantity. A full receipt must use the full-receipt status, preventing a case from becoming stranded in discrepancy state.
-- Storekeeper portal includes responsive case facts and activity-history styling. The supervisor queue exposes a non-fulfilment action only after the assigned storekeeper has recorded a timestamped zero-availability observation.
-
-## Latest implementation commits
-
-- `1e12f79a` — clarify SHC discrepancy and zero-stock supervisor review
-- `db8d9fea` — cover stockout discrepancy and supervisor availability actions
-- `d85b42d2` — enforce short-receipt discrepancy semantics
-- `3e039035` — exercise SHC-to-PHC upstream replenishment branch and apply the new migration in CI
-
-## Verification and next action
-
-- Latest exact-SHA CI run passed all three Node matrix jobs and the PostgreSQL 17 database-contract job, including migrations, security audit, existing RLS contract and SHC-to-PHC workflow contract.
-- The browser acceptance spec now contains two end-to-end journeys: direct PHC availability/handover with a short receipt and subsequent reconciliation; and zero-stock → external indent reference → upstream PHC receipt → handover → SHC receipt.
-- CI currently syntax-checks the browser spec; it does not run the Playwright journey. The local browser run remains the next acceptance gate.
-- Run the existing local-only harness from the developer's Windows PowerShell in `C:\Users\pcs\Downloads\BUSHO-local-e2e` after fetching this branch. The harness provisions only synthetic local Supabase fixtures and blocks hosted Supabase requests. Preserve the local credentials file and existing fixtures; do not reset the local database.
-- Next local reconciliation (PowerShell, in `C:\Users\pcs\Downloads\BUSHO-local-e2e`):
-  ```powershell
-  git status --short --branch
-  git branch --show-current
-  git log -5 --oneline --decorate
-  git rev-parse HEAD
-  git fetch origin
-  git log --oneline --left-right HEAD...origin/feat/shc-phc-stockout-foundation
-  git diff --check
-  ```
-  Stop after these read-only inventory checks and review the output before switching branches. The earlier handover reported local uncommitted classifier work and retained fixtures; do not switch, pull, stash, reset or overwrite anything until the exact local-vs-remote state is reconciled. Once a safe switch/merge plan is agreed, run `.\scripts\run-local-browser-e2e.ps1` on the stockout branch. Do not paste credentials, tokens or secret files into chat.
-- If browser tests fail, inspect Playwright traces/screenshots and fix the exact failed interaction before marking the stockout UI milestone complete. Do not claim local browser acceptance from CI syntax checks.
-- Keep PR #6 draft/open/unmerged until browser acceptance, visual review, cross-facility isolation and the remaining portal audit are complete. Do not deploy hosted migrations or touch production without explicit approval.
+Do not apply migrations to hosted Supabase, provision operational accounts/facilities, merge, or deploy without separate explicit approval.
 
 ---
 

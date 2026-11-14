@@ -214,6 +214,64 @@ where medicine_source_reference='DEMO-EDL-ROW-002';
 update public.stockout_cases set status='received_at_shc',shc_received_quantity=60,
  shc_receipt_reference='DEMO-SHC-FINAL-001',shc_received_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
+do $assert_stockout_event_evidence$
+declare
+  v_qty numeric;
+  v_ref text;
+begin
+  select quantity, external_reference into v_qty, v_ref
+  from public.stockout_case_events e
+  join public.stockout_cases c on c.id = e.stockout_case_id
+  where c.medicine_source_reference = 'DEMO-EDL-ROW-002'
+    and e.action = 'shc_discrepancy_recorded'
+    and e.status_to = 'discrepancy_recorded';
+  if v_qty is distinct from 40 or v_ref is distinct from 'DEMO-SHC-PART-001' then
+    raise exception 'Discrepancy event did not preserve its cumulative quantity and SHC receipt reference';
+  end if;
+
+  select quantity, external_reference into v_qty, v_ref
+  from public.stockout_case_events e
+  join public.stockout_cases c on c.id = e.stockout_case_id
+  where c.medicine_source_reference = 'DEMO-EDL-ROW-002'
+    and e.action = 'shc_receipt_completed'
+    and e.status_to = 'received_at_shc';
+  if v_qty is distinct from 60 or v_ref is distinct from 'DEMO-SHC-FINAL-001' then
+    raise exception 'Final SHC receipt event inherited the wrong reference or quantity';
+  end if;
+
+  if not exists (
+    select 1 from public.stockout_case_events e
+    join public.stockout_cases c on c.id = e.stockout_case_id
+    where c.medicine_source_reference = 'DEMO-EDL-ROW-002'
+      and e.action = 'official_indent_reference_recorded'
+      and e.external_reference = 'DEMO-DPDMIS-001'
+  ) then
+    raise exception 'Official indent event did not preserve the DPDMIS reference';
+  end if;
+
+  if not exists (
+    select 1 from public.stockout_case_events e
+    join public.stockout_cases c on c.id = e.stockout_case_id
+    where c.medicine_source_reference = 'DEMO-EDL-ROW-002'
+      and e.action = 'upstream_supply_receipt_recorded'
+      and e.external_reference = 'DEMO-PHC-WH-GRN-001'
+      and e.quantity = 60
+  ) then
+    raise exception 'Upstream PHC receipt event did not preserve its own reference and quantity';
+  end if;
+
+  if not exists (
+    select 1 from public.stockout_case_events e
+    join public.stockout_cases c on c.id = e.stockout_case_id
+    where c.medicine_source_reference = 'DEMO-EDL-ROW-002'
+      and e.action = 'phc_handover_recorded'
+      and e.external_reference = 'DEMO-PHC-ISSUE-002'
+      and e.quantity = 60
+  ) then
+    raise exception 'PHC handover event did not preserve its own issue reference and quantity';
+  end if;
+end $assert_stockout_event_evidence$;
+
 do $assert_upstream_branch$
 declare v_events integer; v_status text; v_ref text;
 begin
