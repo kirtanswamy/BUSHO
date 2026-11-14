@@ -23,6 +23,8 @@ jobs:
         run: npm ci
       - name: Check
         run: npm run check
+      - name: Syntax-check SHC-to-PHC browser acceptance test
+        run: node --check tests/browser/stockout-workflow.spec.mjs
 
   database-contract:
     runs-on: ubuntu-latest
@@ -129,6 +131,26 @@ jobs:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261112130000_provisioning_reconciliation_payload.sql
 
+      - name: Apply BUSHO SHC-to-PHC stockout workflow migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114120000_busho_shc_phc_stockout_foundation.sql
+
+      - name: Apply BUSHO SHC-to-PHC role-boundary hardening migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114150000_busho_shc_phc_role_boundary_hardening.sql
+
+      - name: Apply BUSHO SHC-to-PHC closure and discrepancy migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114160000_busho_shc_phc_closure_discrepancy.sql
+
+      - name: Enforce short-receipt discrepancy semantics
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114170000_busho_shc_phc_discrepancy_short_receipt_guard.sql
+
       - name: Audit exposed-schema RLS, grants and SECURITY DEFINER helpers
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
@@ -138,3 +160,8 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-rls-contract.sql
+
+      - name: Verify SHC-to-PHC stockout workflow under RLS
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-stockout-workflow-contract.sql

@@ -275,6 +275,190 @@
       return Array.isArray(rows) ? (rows[0] || null) : null;
     }
 
+    async function getMyStockoutContext() {
+      await requireActiveProfile(['worker']);
+      const worker = await getMyWorker();
+      if (!worker) throw new Error('No active worker record is linked to this Auth account.');
+      const links = await restRequest(
+        'facility_service_links?select=id,shc_facility_id,phc_facility_id,verification_status,effective_from,effective_until,data_mode&shc_facility_id=eq.' +
+        encodeURIComponent(worker.facility_id) + '&verification_status=eq.verified&order=effective_from.desc'
+      );
+      const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(now()));
+      const current = (Array.isArray(links) ? links : []).filter(link =>
+        (!link.effective_from || link.effective_from <= today) &&
+        (!link.effective_until || link.effective_until >= today)
+      );
+      if (current.length > 1) {
+        throw new Error('More than one current SHC-to-PHC relationship is verified. Ask the facility registry administrator to resolve the mapping.');
+      }
+      let phc = null;
+      if (current[0]) {
+        const rows = await restRequest(
+          'facilities?id=eq.' + encodeURIComponent(current[0].phc_facility_id) +
+          '&select=id,name,district,facility_type,is_synthetic'
+        );
+        phc = Array.isArray(rows) ? (rows[0] || null) : null;
+      }
+      return { worker, link: current[0] || null, phc };
+    }
+
+    async function listMyStockoutCases() {
+      await requireActiveProfile(['worker']);
+      return restRequest(
+        'stockout_cases?select=*,stockout_case_events(*)&order=created_at.desc'
+      );
+    }
+
+    async function createStockoutCase(input) {
+      input = input || {};
+      await requireActiveProfile(['worker']);
+      const context = await getMyStockoutContext();
+      if (!context.link || !context.phc) {
+        throw new Error('No current verified parent PHC is linked to your assigned SHC. Contact the facility registry administrator; BUSHO will not guess the PHC.');
+      }
+      const medicineName = String(input.medicineName || '').trim();
+      const medicineStrengthForm = String(input.medicineStrengthForm || '').trim();
+      const unit = String(input.quantityUnit || '').trim();
+      const requested = Number(input.requestedQuantity);
+      const reported = Number(input.reportedQuantity);
+      if (!medicineName || !medicineStrengthForm || !unit || !Number.isFinite(requested) || requested <= 0 ||
+          !Number.isFinite(reported) || reported < 0) {
+        throw new Error('Enter a medicine name, a non-negative observed quantity, a positive requested quantity and a unit.');
+      }
+      const rows = await restRequest('stockout_cases', {
+        method: 'POST',
+        body: {
+          shc_facility_id: context.worker.facility_id,
+          phc_facility_id: context.phc.id,
+          submitted_by_worker_id: context.worker.id,
+          medicine_name: medicineName,
+          medicine_strength_form: medicineStrengthForm,
+          medicine_source_reference: String(input.medicineSourceReference || '').trim() || null,
+          reported_quantity: reported,
+          requested_quantity: requested,
+          quantity_unit: unit,
+          observation_source: input.observationSource || 'physical_count',
+          observed_at: input.observedAt || new Date(now()).toISOString(),
+          worker_note: String(input.note || '').trim() || null,
+          status: 'submitted_to_phc',
+          data_mode: context.link.data_mode
+        },
+        prefer: 'return=representation'
+      });
+      return Array.isArray(rows) ? (rows[0] || null) : rows;
+    }
+
+    async function transitionMyStockoutCase(input) {
+      input = input || {};
+      if (!input.id || !input.status) throw new Error('Stockout case ID and next status are required.');
+      await requireActiveProfile(['worker']);
+      const allowed = new Set(['resubmitted','collected_by_shc','partially_received_at_shc','discrepancy_recorded','received_at_shc']);
+      if (!allowed.has(input.status)) throw new Error('This transition is not available to the SHC worker.');
+      const fields = ['status','worker_note','shc_collection_reference','shc_collected_at','shc_received_quantity','shc_receipt_reference','shc_received_at','discrepancy_note'];
+      const payload = {};
+      for (const field of fields) {
+        if (Object.prototype.hasOwnProperty.call(input, field)) payload[field] = input[field];
+      }
+      const rows = await restRequest(
+        'stockout_cases?id=eq.' + encodeURIComponent(input.id),
+        { method: 'PATCH', body: payload, prefer: 'return=representation' }
+      );
+      const updated = Array.isArray(rows) ? (rows[0] || null) : rows;
+      if (!updated) throw new Error('The stockout case was not updated. Check its current status and your SHC assignment.');
+      return updated;
+    }
+
+    async function listPHCStockoutCases() {
+      await requireActiveProfile(['supervisor']);
+      return restRequest(
+        'stockout_cases?select=*,stockout_case_events(*)&order=created_at.desc'
+      );
+    }
+
+    async function reviewPHCStockoutCase(input) {
+      input = input || {};
+      await requireActiveProfile(['supervisor']);
+      if (!input.id) throw new Error('Stockout case ID is required.');
+      const allowed = new Set(['acknowledged_by_phc','under_phc_review','clarification_requested','accepted_for_phc_action','phc_cannot_fulfil','closed']);
+      if (!allowed.has(input.status)) throw new Error('This action is not available to the PHC supervisor.');
+      const note = String(input.note || '').trim();
+      if (['clarification_requested','phc_cannot_fulfil','closed'].includes(input.status) && !note) {
+        throw new Error(input.status==='closed'?'A resolution note is required to close the SHC request.':'A reason is required for clarification or PHC non-fulfilment.');
+      }
+      const payload = { status: input.status };
+      if (note) payload[input.status==='closed'?'closure_note':'phc_review_note'] = note;
+      if (input.availableQuantity !== undefined && input.availableQuantity !== null && input.availableQuantity !== '') {
+        throw new Error('The PHC storekeeper records PHC physical availability; the supervisor records the review decision only.');
+      }
+      const rows = await restRequest(
+        'stockout_cases?id=eq.' + encodeURIComponent(input.id),
+        { method: 'PATCH', body: payload, prefer: 'return=representation' }
+      );
+      const updated = Array.isArray(rows) ? (rows[0] || null) : rows;
+      if (!updated) throw new Error('The case was not updated. It may be outside your PHC assignment or no longer in a reviewable state.');
+      return updated;
+    }
+
+    async function listPHCStorekeeperStockoutCases() {
+      await requireActiveProfile(['storekeeper']);
+      return restRequest(
+        'stockout_cases?select=*,stockout_case_events(*)&order=created_at.desc'
+      );
+    }
+
+    async function transitionPHCStorekeeperStockoutCase(input) {
+      input = input || {};
+      await requireActiveProfile(['storekeeper']);
+      if (!input.id) throw new Error('Stockout case ID is required.');
+      const allowed = new Set([
+        'accepted_for_phc_action',
+        'official_indent_submitted',
+        'upstream_supply_received_at_phc',
+        'phc_handover_recorded'
+      ]);
+      if (!allowed.has(input.status)) throw new Error('This transition is not available to the PHC storekeeper.');
+      const payload = { status: input.status };
+      const requiredText = (value, label) => {
+        const result = String(value || '').trim();
+        if (!result) throw new Error(label + ' is required.');
+        return result;
+      };
+      const requiredTime = value => {
+        const result = value || new Date(now()).toISOString();
+        if (!Number.isFinite(Date.parse(result))) throw new Error('A valid date and time are required.');
+        return result;
+      };
+      if (input.status === 'accepted_for_phc_action') {
+        const quantity = Number(input.phcAvailableQuantity);
+        if (!Number.isFinite(quantity) || quantity < 0) throw new Error('Enter a non-negative PHC availability observation.');
+        payload.phc_available_quantity = quantity;
+        payload.phc_available_observed_at = requiredTime(input.phcAvailableObservedAt);
+      } else if (input.status === 'official_indent_submitted') {
+        payload.official_system_name = requiredText(input.officialSystemName, 'Official system name');
+        payload.official_indent_reference = requiredText(input.officialIndentReference, 'Official external indent reference');
+        payload.official_indent_submitted_at = requiredTime(input.submittedAt);
+      } else if (input.status === 'upstream_supply_received_at_phc') {
+        const quantity = Number(input.upstreamReceivedQuantity);
+        if (!Number.isFinite(quantity) || quantity <= 0) throw new Error('Enter a positive physical upstream receipt quantity.');
+        payload.upstream_received_quantity = quantity;
+        payload.upstream_receipt_reference = requiredText(input.upstreamReceiptReference, 'PHC upstream goods receipt reference');
+        payload.upstream_received_at = requiredTime(input.receivedAt);
+      } else {
+        const quantity = Number(input.handoverQuantity);
+        if (!Number.isFinite(quantity) || quantity <= 0) throw new Error('Enter a positive physical handover quantity.');
+        payload.phc_handover_quantity = quantity;
+        payload.phc_handover_reference = requiredText(input.handoverReference, 'PHC issue / handover register reference');
+        payload.phc_handover_at = requiredTime(input.handoverAt);
+      }
+      const rows = await restRequest(
+        'stockout_cases?id=eq.' + encodeURIComponent(input.id),
+        { method: 'PATCH', body: payload, prefer: 'return=representation' }
+      );
+      const updated = Array.isArray(rows) ? (rows[0] || null) : rows;
+      if (!updated) throw new Error('The case was not updated. Check the case status and your PHC storekeeper assignment.');
+      return updated;
+    }
+
     async function listMyReports() {
       await requireActiveProfile(['worker']);
       return restRequest(
@@ -606,6 +790,14 @@
       requireActiveProfile,
       getMyWorker,
       listMyReports,
+      getMyStockoutContext,
+      listMyStockoutCases,
+      listPHCStockoutCases,
+      reviewPHCStockoutCase,
+      listPHCStorekeeperStockoutCases,
+      transitionPHCStorekeeperStockoutCase,
+      createStockoutCase,
+      transitionMyStockoutCase,
       getReport,
       createReportDraft,
       saveReportItems,
