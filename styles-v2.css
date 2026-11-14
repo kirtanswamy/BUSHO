@@ -1458,3 +1458,24 @@ html, body { overflow-x: hidden; }
 .stockout-timeline p{margin:5px 0 0;font-size:10px;color:#56677e}
 @media(max-width:900px){.stockout-layout{grid-template-columns:1fr}}
 @media(max-width:540px){.stockout-field-grid{grid-template-columns:1fr}.stockout-context-grid{grid-template-columns:1fr}.stockout-case-head{display:grid}.stockout-status{justify-self:start}.stockout-case-facts{grid-template-columns:1fr 1fr}}
+
+
+/* PHC supervisor stockout review */
+.stockout-supervisor-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+.stockout-supervisor-metric{display:grid;gap:4px;padding:13px;border:1px solid #e5ebf3;border-radius:10px;background:#f8fafd}
+.stockout-supervisor-metric strong{font-size:20px;color:#26364d}.stockout-supervisor-metric span{font-size:10px;color:#718097}
+.stockout-supervisor-list{display:grid;gap:13px}
+.stockout-supervisor-case{padding:16px;border:1px solid #e3eaf3;border-radius:13px;background:#fff}
+.stockout-supervisor-case>header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.stockout-supervisor-case header small{font-size:9px;letter-spacing:.08em;color:#77869a;font-weight:800}
+.stockout-supervisor-case header h3{margin:5px 0;color:#26364d;font-size:15px}
+.stockout-supervisor-case header p{margin:0;color:#718097;font-size:10px}
+.stockout-supervisor-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:13px 0;color:#6c7b90;font-size:10px}
+.stockout-supervisor-facts b{color:#344963}
+.phc-stockout-review-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:13px;margin-top:13px;border:1px solid #e1e9f3;border-radius:10px;background:#f8faff}
+.phc-stockout-review-form label{display:grid;gap:5px;color:#40536e;font-size:10px;font-weight:700}
+.phc-stockout-review-form label:nth-child(3){grid-column:1/-1}
+.phc-stockout-review-form input,.phc-stockout-review-form select,.phc-stockout-review-form textarea{width:100%;border:1px solid #d8e1ed;border-radius:8px;padding:9px 10px;background:#fff;color:#23344d;font:inherit;font-size:11px}
+.phc-stockout-review-form button{justify-self:start}
+.phc-stockout-feedback{grid-column:1/-1;min-height:16px;margin:0;color:#a33d37;font-size:10px}
+@media(max-width:720px){.stockout-supervisor-summary{grid-template-columns:1fr}.stockout-supervisor-case>header{display:grid}.stockout-supervisor-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.phc-stockout-review-form{grid-template-columns:1fr}.phc-stockout-review-form label:nth-child(3){grid-column:auto}}
