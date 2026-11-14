@@ -184,6 +184,8 @@ begin
   end if;
   if not v_allowed then raise exception 'Transition is not allowed for the assigned role'; end if;
 
+  if new.status='accepted_for_phc_action' and (new.phc_available_quantity is null or new.phc_available_quantity<=0) then raise exception 'PHC acceptance requires a positive observed available quantity'; end if;
+  if new.status='phc_cannot_fulfil' and new.phc_available_quantity is distinct from 0 then raise exception 'PHC non-fulfilment must record zero observed available quantity'; end if;
   if new.status='clarification_requested' and nullif(btrim(new.phc_review_note),'') is null then raise exception 'Clarification reason required'; end if;
   if new.status='phc_cannot_fulfil' and nullif(btrim(new.phc_review_note),'') is null then raise exception 'PHC non-fulfilment reason required'; end if;
   if new.status='official_indent_submitted' and (nullif(btrim(new.official_system_name),'') is null or nullif(btrim(new.official_indent_reference),'') is null or new.official_indent_submitted_at is null) then
