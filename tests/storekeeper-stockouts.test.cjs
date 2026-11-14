@@ -31,10 +31,12 @@ test('official indent record requires real system, external reference and valid 
 
 test('PHC upstream receipt requires a receipt reference and valid date',async()=>{
  const calls=[],c=clientFor(fakeFetch(calls));
- await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'upstream_supply_received_at_phc',upstreamReceiptReference:'DEMO-GRN',upstreamReceivedQuantity:0,receivedAt:'2026-11-14T08:00:00Z'}),/positive physical upstream receipt quantity/i);\n await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'upstream_supply_received_at_phc',upstreamReceiptReference:'',upstreamReceivedQuantity:12,receivedAt:'2026-11-14T08:00:00Z'}),/receipt reference is required/i);
+ await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'upstream_supply_received_at_phc',upstreamReceiptReference:'DEMO-GRN',upstreamReceivedQuantity:0,receivedAt:'2026-11-14T08:00:00Z'}),/positive physical upstream receipt quantity/i);
+ await assert.rejects(c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'upstream_supply_received_at_phc',upstreamReceiptReference:'',upstreamReceivedQuantity:12,receivedAt:'2026-11-14T08:00:00Z'}),/receipt reference is required/i);
  assert.equal(calls.some(x=>x.options.method==='PATCH'),false);
  const result=await c.transitionPHCStorekeeperStockoutCase({id:'case-1',status:'upstream_supply_received_at_phc',upstreamReceiptReference:'DEMO-PHC-GRN-001',upstreamReceivedQuantity:40,receivedAt:'2026-11-14T08:00:00Z'});
- assert.equal(result.status,'upstream_supply_received_at_phc');\n const payload=JSON.parse(calls.find(x=>x.options.method==='PATCH').options.body);assert.deepEqual(payload,{status:'upstream_supply_received_at_phc',upstream_received_quantity:40,upstream_receipt_reference:'DEMO-PHC-GRN-001',upstream_received_at:'2026-11-14T08:00:00Z'});
+ assert.equal(result.status,'upstream_supply_received_at_phc');
+ const payload=JSON.parse(calls.find(x=>x.options.method==='PATCH').options.body);assert.deepEqual(payload,{status:'upstream_supply_received_at_phc',upstream_received_quantity:40,upstream_receipt_reference:'DEMO-PHC-GRN-001',upstream_received_at:'2026-11-14T08:00:00Z'});
 });
 
 test('PHC-to-SHC handover requires positive quantity, register reference and timestamp',async()=>{
