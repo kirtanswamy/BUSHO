@@ -227,16 +227,14 @@ begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
 do $receipt_replay$
-declare v_blocked boolean:=false; v_events integer;
+declare v_rows integer; v_events integer;
 begin
  select count(*) into v_events from public.stockout_case_events e join public.stockout_cases c on c.id=e.stockout_case_id where c.medicine_source_reference='DEMO-EDL-ROW-002';
- begin
-  update public.stockout_cases set status='received_at_shc',shc_received_quantity=60,
-   shc_receipt_reference='DEMO-SHC-FINAL-001',shc_received_at=now()
-  where medicine_source_reference='DEMO-EDL-ROW-002';
- exception when others then v_blocked:=true;
- end;
- if not v_blocked then raise exception 'Exact final receipt replay was not rejected'; end if;
+ update public.stockout_cases set status='received_at_shc',shc_received_quantity=60,
+  shc_receipt_reference='DEMO-SHC-FINAL-001',shc_received_at=now()
+ where medicine_source_reference='DEMO-EDL-ROW-002';
+ get diagnostics v_rows = row_count;
+ if v_rows<>0 then raise exception 'Exact final receipt replay unexpectedly changed the case'; end if;
  if (select shc_received_quantity from public.stockout_cases where medicine_source_reference='DEMO-EDL-ROW-002')<>60 then raise exception 'Replay changed cumulative receipt'; end if;
  if (select count(*) from public.stockout_case_events e join public.stockout_cases c on c.id=e.stockout_case_id where c.medicine_source_reference='DEMO-EDL-ROW-002')<>v_events then raise exception 'Replay created a duplicate event'; end if;
 end $receipt_replay$;
