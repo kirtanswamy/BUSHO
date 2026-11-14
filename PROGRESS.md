@@ -4,8 +4,9 @@ Repository: https://github.com/kirtanswamy/BUSHO
 Active implementation branch: `feat/shc-phc-stockout-foundation`
 Layered base branch: `feature/chhattisgarh-operational-workflow`
 Pull request: https://github.com/kirtanswamy/BUSHO/pull/6 (OPEN · DRAFT · UNMERGED)
-Latest verified commit: `3e039035e83ca7306d36e01708fdcbc0a74a0fd7`
-CI: https://github.com/kirtanswamy/BUSHO/actions/runs/43578166847 — PASS (Node 18/22/24 and PostgreSQL 17 database-contract)
+Latest implementation commit: `3e039035e83ca7306d36e01708fdcbc0a74a0fd7`
+Latest documentation checkpoint commit: `0b686c5642cc8d455145b6211be664839f9d92af`
+CI for the implementation SHA: https://github.com/kirtanswamy/BUSHO/actions/runs/43578166847 — PASS (Node 18/22/24 and PostgreSQL 17 database-contract)
 Vercel preview: https://busho-q7zthftwi-saturn-789b.vercel.app — deployment READY for the exact commit above; interactive portal acceptance is still pending.
 Production: unchanged. No hosted Supabase migration, hosted account/facility provisioning, Edge Function deployment, merge or production release was performed.
 
@@ -33,14 +34,17 @@ The additive SHC-to-PHC exception-coordination module is now integrated into the
 - The browser acceptance spec now contains two end-to-end journeys: direct PHC availability/handover with a short receipt and subsequent reconciliation; and zero-stock → external indent reference → upstream PHC receipt → handover → SHC receipt.
 - CI currently syntax-checks the browser spec; it does not run the Playwright journey. The local browser run remains the next acceptance gate.
 - Run the existing local-only harness from the developer's Windows PowerShell in `C:\Users\pcs\Downloads\BUSHO-local-e2e` after fetching this branch. The harness provisions only synthetic local Supabase fixtures and blocks hosted Supabase requests. Preserve the local credentials file and existing fixtures; do not reset the local database.
-- Next command sequence:
+- Next local reconciliation (PowerShell, in `C:\Users\pcs\Downloads\BUSHO-local-e2e`):
   ```powershell
+  git status --short --branch
+  git branch --show-current
+  git log -5 --oneline --decorate
+  git rev-parse HEAD
   git fetch origin
-  git switch feat/shc-phc-stockout-foundation
-  git pull --ff-only origin feat/shc-phc-stockout-foundation
-  .\scripts\run-local-browser-e2e.ps1
+  git log --oneline --left-right HEAD...origin/feat/shc-phc-stockout-foundation
+  git diff --check
   ```
-  This must be run in the local BUSHO repository PowerShell terminal. Do not paste credentials, tokens or secret files into chat.
+  Stop after these read-only inventory checks and review the output before switching branches. The earlier handover reported local uncommitted classifier work and retained fixtures; do not switch, pull, stash, reset or overwrite anything until the exact local-vs-remote state is reconciled. Once a safe switch/merge plan is agreed, run `.\\scripts\\run-local-browser-e2e.ps1` on the stockout branch. Do not paste credentials, tokens or secret files into chat.
 - If browser tests fail, inspect Playwright traces/screenshots and fix the exact failed interaction before marking the stockout UI milestone complete. Do not claim local browser acceptance from CI syntax checks.
 - Keep PR #6 draft/open/unmerged until browser acceptance, visual review, cross-facility isolation and the remaining portal audit are complete. Do not deploy hosted migrations or touch production without explicit approval.
 
