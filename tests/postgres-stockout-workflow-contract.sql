@@ -103,6 +103,18 @@ where medicine_source_reference='DEMO-EDL-ROW-002';
 update public.stockout_cases set status='upstream_supply_received_at_phc',
  upstream_received_quantity=60,upstream_receipt_reference='DEMO-PHC-WH-GRN-001',upstream_received_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
+do $handover_cannot_exceed_upstream$
+declare v_blocked boolean:=false;
+begin
+ begin
+  update public.stockout_cases set status='phc_handover_recorded',phc_handover_quantity=61,
+   phc_handover_reference='DEMO-PHC-ISSUE-TOO-LARGE',phc_handover_at=now()
+  where medicine_source_reference='DEMO-EDL-ROW-002';
+ exception when others then v_blocked:=true;
+ end;
+ if not v_blocked then raise exception 'PHC handover exceeded physically received upstream quantity'; end if;
+end $handover_cannot_exceed_upstream$;
+
 update public.stockout_cases set status='phc_handover_recorded',phc_handover_quantity=60,
  phc_handover_reference='DEMO-PHC-ISSUE-002',phc_handover_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
