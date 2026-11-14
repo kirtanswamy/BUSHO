@@ -101,7 +101,7 @@ update public.stockout_cases set status='official_indent_submitted',official_sys
  official_indent_reference='DEMO-DPDMIS-001',official_indent_submitted_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
 update public.stockout_cases set status='upstream_supply_received_at_phc',
- upstream_receipt_reference='DEMO-PHC-WH-GRN-001',upstream_received_at=now()
+ upstream_received_quantity=60,upstream_receipt_reference='DEMO-PHC-WH-GRN-001',upstream_received_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
 update public.stockout_cases set status='phc_handover_recorded',phc_handover_quantity=60,
  phc_handover_reference='DEMO-PHC-ISSUE-002',phc_handover_at=now()
