@@ -27,3 +27,22 @@ BUSHO records an SHC stockout observation, routes it to its verified parent PHC,
 
 ## Safety gate
 Proposal only. Do not apply to live Supabase, create live facility links, deploy, merge PR #5 or claim a working live workflow without separate review and explicit approval.
+
+## Worker experience — Milestone 2 draft
+
+The worker portal now has a Medicine Stockout workspace with:
+- Authenticated worker-only loading after the existing `busho:authenticated` event.
+- Assigned SHC and current verified parent-PHC context; it refuses to infer a parent PHC.
+- A stockout form that captures medicine label, optional source reference, observed quantity, requested quantity, unit, observation source and an operational note.
+- A case list with status and event history.
+- Worker actions limited to clarification resubmission, confirmation of SHC collection and cumulative partial/final physical receipt.
+- Client-side escaping for displayed data; server-side role checks, RLS and transition triggers remain authoritative.
+
+The worker screen intentionally uses a free-text medicine label rather than implying that unreviewed EDL transcription rows are approved catalogue choices. The form asks for operational evidence only and warns against entering patient identifiers.
+
+## Validation status of worker experience
+
+- Added client tests for verified parent-PHC routing, refusal when no verified link exists, role-limited worker transitions and portal wiring.
+- These new Node tests are included by the repository's existing `node --test` script.
+- The database-contract CI run that passed covered the Milestone 1 migration and PostgreSQL RLS contract. It predates the worker UI/client additions.
+- A fresh CI run and browser-level interaction test are still required for this UI/client change. The Vercel preview check is separate and is not a production deployment.
