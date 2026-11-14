@@ -73,7 +73,7 @@ test('PHC-to-SHC handover requires positive quantity, register reference and tim
 test('storekeeper portal exposes separate stockout workspace and keeps official portal handoff explicit',()=>{
  const root=path.join(__dirname,'..'),html=fs.readFileSync(path.join(root,'storekeeper.html'),'utf8'),js=fs.readFileSync(path.join(root,'storekeeper-stockouts.js'),'utf8'),css=fs.readFileSync(path.join(root,'styles-v2.css'),'utf8'),client=fs.readFileSync(path.join(root,'supabase-client.js'),'utf8');
  assert.match(html,/phc-stockout-storekeeper-list/);assert.match(html,/storekeeper-stockouts\.js/);
- assert.match(js,/busho:authenticated/);assert.match(js,/busho:unauthenticated/);assert.match(js,/transitionPHCStorekeeperStockoutCase/);assert.match(js,/BUSHO does not submit it/);assert.match(js,/upstreamReceivedQuantity/);assert.match(js,/phcAvailableObservedAt/);assert.match(js,/data-action="availability"/);assert.match(js,/phcAvailableObservedAt/);assert.match(js,/data-action=\\?"availability/);
- assert.match(css,/\.phc-storekeeper-action/);
+ assert.match(js,/busho:authenticated/);assert.match(js,/busho:unauthenticated/);assert.match(js,/transitionPHCStorekeeperStockoutCase/);assert.match(js,/BUSHO does not submit it/);assert.match(js,/discrepancy_recorded:'SHC discrepancy recorded/);assert.match(js,/upstreamReceivedQuantity/);assert.match(js,/phcAvailableObservedAt/);assert.match(js,/data-action="availability"/);assert.match(js,/phcAvailableObservedAt/);assert.match(js,/data-action=\\?"availability/);
+ assert.match(css,/\.phc-storekeeper-action/);assert.match(css,/\.storekeeper-facts/);
  assert.match(client,/listPHCStorekeeperStockoutCases/);assert.match(client,/transitionPHCStorekeeperStockoutCase/);
 });

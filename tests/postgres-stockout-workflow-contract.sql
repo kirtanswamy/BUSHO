@@ -194,6 +194,19 @@ begin
  if not v_blocked then raise exception 'Worker changed PHC official indent reference'; end if;
 end $worker_cannot_edit_phc$;
 
+do $reject_full_quantity_discrepancy$
+declare v_blocked boolean:=false;
+begin
+ begin
+  update public.stockout_cases set status='discrepancy_recorded',shc_received_quantity=60,
+   shc_receipt_reference='DEMO-SHC-FULL-DISCREPANCY',shc_received_at=now(),
+   discrepancy_note='Synthetic note on a full receipt; this must be rejected'
+  where medicine_source_reference='DEMO-EDL-ROW-002';
+ exception when check_violation then v_blocked:=true;
+ end;
+ if not v_blocked then raise exception 'A full handover quantity was incorrectly accepted as a short-receipt discrepancy'; end if;
+end $reject_full_quantity_discrepancy$;
+
 update public.stockout_cases set status='discrepancy_recorded',shc_received_quantity=40,
  shc_receipt_reference='DEMO-SHC-PART-001',shc_received_at=now(),
  discrepancy_note='Synthetic short receipt: 20 tablets remain outstanding after the first collection'
