@@ -386,15 +386,8 @@
       const payload = { status: input.status };
       if (note) payload.phc_review_note = note;
       if (input.availableQuantity !== undefined && input.availableQuantity !== null && input.availableQuantity !== '') {
-        const quantity = Number(input.availableQuantity);
-        if (!Number.isFinite(quantity) || quantity < 0) throw new Error('PHC observed available quantity must be zero or greater.');
-        payload.phc_available_quantity = quantity;
+        throw new Error('The PHC storekeeper records PHC physical availability; the supervisor records the review decision only.');
       }
-      if (input.status === 'accepted_for_phc_action' &&
-          (payload.phc_available_quantity === undefined || payload.phc_available_quantity <= 0)) {
-        throw new Error('Record a positive PHC quantity observed as available before accepting for PHC action.');
-      }
-      if (input.status === 'phc_cannot_fulfil') payload.phc_available_quantity = 0;
       const rows = await restRequest(
         'stockout_cases?id=eq.' + encodeURIComponent(input.id),
         { method: 'PATCH', body: payload, prefer: 'return=representation' }
@@ -416,6 +409,7 @@
       await requireActiveProfile(['storekeeper']);
       if (!input.id) throw new Error('Stockout case ID is required.');
       const allowed = new Set([
+        'accepted_for_phc_action',
         'official_indent_submitted',
         'upstream_supply_received_at_phc',
         'phc_handover_recorded'
@@ -432,7 +426,12 @@
         if (!Number.isFinite(Date.parse(result))) throw new Error('A valid date and time are required.');
         return result;
       };
-      if (input.status === 'official_indent_submitted') {
+      if (input.status === 'accepted_for_phc_action') {
+        const quantity = Number(input.phcAvailableQuantity);
+        if (!Number.isFinite(quantity) || quantity < 0) throw new Error('Enter a non-negative PHC availability observation.');
+        payload.phc_available_quantity = quantity;
+        payload.phc_available_observed_at = requiredTime(input.phcAvailableObservedAt);
+      } else if (input.status === 'official_indent_submitted') {
         payload.official_system_name = requiredText(input.officialSystemName, 'Official system name');
         payload.official_indent_reference = requiredText(input.officialIndentReference, 'Official external indent reference');
         payload.official_indent_submitted_at = requiredTime(input.submittedAt);
