@@ -85,3 +85,11 @@ Validation added:
 - Portal wiring and authenticated-only loading checks.
 
 Fresh CI and browser-level verification are required before this milestone is called complete.
+
+### Milestone 4 validation refinement — physical upstream receipt quantity
+
+The PHC upstream receipt now captures a positive physical quantity as a separate fact, in addition to its goods-receipt reference and timestamp. PHC-to-SHC handover is constrained by the SHC requested quantity and by the relevant PHC evidence:
+- Direct PHC fulfilment: handover cannot exceed the PHC observed available quantity.
+- Upstream replenishment branch: handover cannot exceed the quantity recorded as physically received at PHC.
+
+The quantity is not a running balance and does not create a full stock ledger. Worker and supervisor roles cannot edit this storekeeper-owned receipt quantity. Synthetic PostgreSQL workflow fixtures now supply the received quantity explicitly.
