@@ -29,6 +29,44 @@ values
 on conflict do nothing;
 reset role;
 
+-- An assigned SHC worker can read only the verified parent PHC through the
+-- narrowly scoped facility policy; an unrelated PHC remains invisible.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+do $parent_phc_read_policy$
+declare v_parent_count integer; v_unrelated_count integer;
+begin
+ select count(*) into v_parent_count from public.facilities
+ where id='dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+ select count(*) into v_unrelated_count from public.facilities
+ where id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+ if v_parent_count<>1 then raise exception 'Assigned SHC worker cannot read verified parent PHC'; end if;
+ if v_unrelated_count<>0 then raise exception 'Assigned SHC worker can read unrelated PHC'; end if;
+end $parent_phc_read_policy$;
+commit;
+
+-- A second overlapping verified parent must be rejected even when both
+-- effective_until values are finite (the previous partial unique index missed this).
+begin;
+set local role service_role;
+do $overlapping_parent_rejected$
+declare v_blocked boolean:=false;
+begin
+ begin
+  insert into public.facility_service_links
+   (shc_facility_id,phc_facility_id,verification_status,source_authority,source_reference,
+    verified_at,effective_from,effective_until,data_mode)
+  values
+   ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+    'verified','Synthetic overlap regression','DEMO-OVERLAP-001',now(),
+    date '2026-11-01',date '2026-11-30','synthetic_demo');
+ exception when exclusion_violation then v_blocked:=true;
+ end;
+ if not v_blocked then raise exception 'Overlapping verified SHC parent-PHC link was accepted'; end if;
+end $overlapping_parent_rejected$;
+rollback;
+
 -- Branch A: PHC has stock; SHC collects and confirms full receipt.
 begin;
 set local role authenticated;
@@ -211,6 +249,19 @@ update public.stockout_cases set status='discrepancy_recorded',shc_received_quan
  shc_receipt_reference='DEMO-SHC-PART-001',shc_received_at=now(),
  discrepancy_note='Synthetic short receipt: 20 tablets remain outstanding after the first collection'
 where medicine_source_reference='DEMO-EDL-ROW-002';
+do $assert_discrepancy_event_evidence$
+declare v_ref text; v_qty numeric;
+begin
+ select external_reference,quantity into v_ref,v_qty
+ from public.stockout_case_events e
+ join public.stockout_cases c on c.id=e.stockout_case_id
+ where c.medicine_source_reference='DEMO-EDL-ROW-002'
+   and e.action='shc_discrepancy_recorded'
+ order by e.created_at desc limit 1;
+ if v_ref<>'DEMO-SHC-PART-001' or v_qty<>40 then
+  raise exception 'Discrepancy event lost its receipt reference or cumulative quantity';
+ end if;
+end $assert_discrepancy_event_evidence$;
 update public.stockout_cases set status='received_at_shc',shc_received_quantity=60,
  shc_receipt_reference='DEMO-SHC-FINAL-001',shc_received_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';

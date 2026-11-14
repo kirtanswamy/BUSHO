@@ -34,8 +34,8 @@ begin
     end if;
     if not exists(select 1 from public.facility_service_links l where l.shc_facility_id=new.shc_facility_id
       and l.phc_facility_id=new.phc_facility_id and l.verification_status='verified'
-      and (l.effective_from is null or l.effective_from<=current_date)
-      and (l.effective_until is null or l.effective_until>=current_date) and l.data_mode=new.data_mode) then
+      and (l.effective_from is null or l.effective_from<=(now() at time zone 'Asia/Kolkata')::date)
+      and (l.effective_until is null or l.effective_until>=(now() at time zone 'Asia/Kolkata')::date) and l.data_mode=new.data_mode) then
       raise exception 'A current verified SHC-to-PHC relationship is required';
     end if;
     if new.status not in ('draft','submitted_to_phc') then raise exception 'New case must begin as draft or submission'; end if;
@@ -211,8 +211,17 @@ begin
       when new.status='received_at_shc' then 'shc_receipt_completed' when new.status='discrepancy_recorded' then 'shc_discrepancy_recorded' when new.status='closed' then 'case_closed' when new.status='cancelled' then 'case_cancelled'
       else 'stockout_case_updated' end; v_from:=old.status;
   end if;
-  v_ref:=coalesce(new.official_indent_reference,new.upstream_receipt_reference,new.phc_handover_reference,new.shc_collection_reference,new.shc_receipt_reference);
-  v_qty:=case when new.status in ('partially_received_at_shc','received_at_shc') then new.shc_received_quantity when new.status='phc_handover_recorded' then new.phc_handover_quantity when new.status='upstream_supply_received_at_phc' then new.upstream_received_quantity when new.phc_available_quantity is distinct from old.phc_available_quantity then new.phc_available_quantity else null end;
+  v_ref:=case new.status
+    when 'official_indent_submitted' then new.official_indent_reference
+    when 'upstream_supply_received_at_phc' then new.upstream_receipt_reference
+    when 'phc_handover_recorded' then new.phc_handover_reference
+    when 'collected_by_shc' then new.shc_collection_reference
+    when 'partially_received_at_shc' then new.shc_receipt_reference
+    when 'discrepancy_recorded' then new.shc_receipt_reference
+    when 'received_at_shc' then new.shc_receipt_reference
+    else null
+  end;
+  v_qty:=case when new.status in ('partially_received_at_shc','discrepancy_recorded','received_at_shc') then new.shc_received_quantity when new.status='phc_handover_recorded' then new.phc_handover_quantity when new.status='upstream_supply_received_at_phc' then new.upstream_received_quantity when new.phc_available_quantity is distinct from old.phc_available_quantity then new.phc_available_quantity else null end;
   v_note:=coalesce(new.closure_note,new.phc_review_note,new.discrepancy_note,new.worker_note);
   insert into public.stockout_case_events(stockout_case_id,actor_user_id,actor_role,action,status_from,status_to,note,external_reference,quantity,metadata)
   values(new.id,auth.uid(),app_private.current_profile_role(),v_action,v_from,new.status,v_note,v_ref,v_qty,jsonb_build_object('data_mode',new.data_mode));

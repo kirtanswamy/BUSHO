@@ -53,7 +53,7 @@ The supervisor portal now includes an SHC stockout queue that relies on the exis
 - View cases visible to the PHC assignment, with event history and SHC-submitted quantities/notes.
 - Acknowledge a request and start PHC review.
 - Request clarification, with a required reason.
-- Record an observed PHC available quantity and accept for PHC action only when a positive quantity is entered.
+- Review the storekeeper's timestamped physical PHC availability observation, accept for PHC action when a positive quantity is available, or record non-fulfilment after a timestamped zero-availability observation.
 - Mark PHC unable to fulfil, with a required reason.
 
 The PHC available quantity is explicitly an observed value, not an authoritative balance. This screen does not record an official indent, stock receipt or handover; those belong to the PHC storekeeper milestone.
@@ -93,3 +93,12 @@ The PHC upstream receipt now captures a positive physical quantity as a separate
 - Upstream replenishment branch: handover cannot exceed the quantity recorded as physically received at PHC.
 
 The quantity is not a running balance and does not create a full stock ledger. Worker and supervisor roles cannot edit this storekeeper-owned receipt quantity. Synthetic PostgreSQL workflow fixtures now supply the received quantity explicitly.
+
+
+## Review follow-up — validation and event evidence
+
+- The database contract applies and tests every stockout migration, including the assigned-worker parent-PHC read policy and the non-overlapping verified SHC-to-PHC relationship guard.
+- A verified SHC may have only one current parent PHC at a time; overlapping effective-date intervals are rejected at the database layer, including finite-ended intervals.
+- SHC-to-PHC relationship effective-date checks use the India-local calendar date consistently in the transition guard and parent-PHC read policy.
+- Event history selects the external reference belonging to the action being recorded. A discrepancy event retains its cumulative SHC-received quantity and receipt reference instead of inheriting an earlier indent reference.
+- CI runs database migration and RLS contracts. The browser acceptance spec is syntax-checked there; that is not equivalent to executing the Playwright browser workflow. A fresh browser run remains a separate validation requirement.
