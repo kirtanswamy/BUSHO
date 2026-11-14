@@ -113,14 +113,8 @@ set local role authenticated;
 select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
 update public.stockout_cases set status='collected_by_shc',shc_collection_reference='DEMO-SHC-COLLECT-002',shc_collected_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
-update public.stockout_cases set status='collected_by_shc',shc_collection_reference='DEMO-SHC-COLLECT-002',shc_collected_at=now()
-where medicine_source_reference='DEMO-EDL-ROW-002';
 
--- Workers cannot overwrite PHC-owned official references, even if they can
--- update their own SHC receipt fields.
-begin;
-set local role authenticated;
-select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+-- Workers cannot overwrite PHC-owned official references, even while recording SHC receipt.
 do $worker_cannot_edit_phc$
 declare v_blocked boolean:=false;
 begin
@@ -131,7 +125,6 @@ begin
  end;
  if not v_blocked then raise exception 'Worker changed PHC official indent reference'; end if;
 end $worker_cannot_edit_phc$;
-commit;
 
 update public.stockout_cases set status='partially_received_at_shc',shc_received_quantity=40,
  shc_receipt_reference='DEMO-SHC-PART-001',shc_received_at=now()
