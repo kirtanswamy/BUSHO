@@ -87,6 +87,7 @@ test('worker stockout workspace is authenticated, accessible from navigation and
   const html=fs.readFileSync(path.join(root,'worker.html'),'utf8');
   const js=fs.readFileSync(path.join(root,'worker-stockouts.js'),'utf8');
   const css=fs.readFileSync(path.join(root,'styles-v2.css'),'utf8');
+  const client=fs.readFileSync(path.join(root,'supabase-client.js'),'utf8');
   assert.match(html,/data-portal-view="stockouts"/);
   assert.match(html,/data-module="stockouts"/);
   assert.match(html,/worker-stockouts\.js/);
@@ -97,5 +98,5 @@ test('worker stockout workspace is authenticated, accessible from navigation and
   assert.match(js,/transitionMyStockoutCase/);
   assert.match(js,/textContent = message/);
   assert.match(css,/\.stockout-layout/);
-  assert.match(js,/No current verified parent PHC/);
+  assert.match(client,/No current verified parent PHC/);
 });
