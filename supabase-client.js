@@ -737,6 +737,8 @@
       listMyReports,
       getMyStockoutContext,
       listMyStockoutCases,
+      listPHCStockoutCases,
+      reviewPHCStockoutCase,
       createStockoutCase,
       transitionMyStockoutCase,
       getReport,
