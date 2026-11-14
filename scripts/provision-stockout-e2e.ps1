@@ -72,7 +72,20 @@ function Ensure-User {
             user_metadata=@{ full_name="BUSHO synthetic $Label"; preferred_language="en" }
         } -Depth 5)
         $userId = $created.id
-    } else { $userId = $user[0].id }
+    } else {
+        $userId = $user[0].id
+
+        # Keep existing synthetic accounts aligned with the current
+        # password in the local, Git-ignored credentials handoff.
+        $null = Invoke-RestMethod `
+            -Uri "$apiUrl/auth/v1/admin/users/$userId" `
+            -Method PUT `
+            -Headers $headers `
+            -ContentType "application/json" `
+            -Body (ConvertTo-Json @{
+                password = $credentials.password
+            } -Depth 5)
+    }
     if (-not $userId) { throw "Could not provision local synthetic account $Label." }
 
     $profile = Invoke-LocalRest -Path "/rest/v1/profiles?id=eq.$userId&select=id" -Method PATCH -Body @{role=$Role;status="active"}
