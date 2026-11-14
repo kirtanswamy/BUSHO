@@ -57,6 +57,20 @@ set local role authenticated;
 select set_config('request.jwt.claim.sub','88888888-8888-4888-8888-888888888888',true);
 update public.stockout_cases set phc_available_quantity=100,phc_available_observed_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-001';
+do $assert_positive_availability_event$
+declare v_qty numeric;
+begin
+ select e.quantity into v_qty
+ from public.stockout_case_events e
+ join public.stockout_cases c on c.id=e.stockout_case_id
+ where c.medicine_source_reference='DEMO-EDL-ROW-001'
+   and e.action='phc_availability_observed'
+   and e.status_from='accepted_for_phc_action'
+   and e.status_to='accepted_for_phc_action';
+ if v_qty is distinct from 100 then
+  raise exception 'PHC positive availability observation event did not preserve its quantity';
+ end if;
+end $assert_positive_availability_event$;
 commit;
 
 -- A supervisor cannot overwrite the storekeeper's physical availability evidence.
@@ -140,6 +154,20 @@ set local role authenticated;
 select set_config('request.jwt.claim.sub','88888888-8888-4888-8888-888888888888',true);
 update public.stockout_cases set phc_available_quantity=0,phc_available_observed_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
+do $assert_zero_availability_event$
+declare v_qty numeric;
+begin
+ select e.quantity into v_qty
+ from public.stockout_case_events e
+ join public.stockout_cases c on c.id=e.stockout_case_id
+ where c.medicine_source_reference='DEMO-EDL-ROW-002'
+   and e.action='phc_availability_observed'
+   and e.status_from='accepted_for_phc_action'
+   and e.status_to='accepted_for_phc_action';
+ if v_qty is distinct from 0 then
+  raise exception 'PHC zero-availability observation event did not preserve its quantity';
+ end if;
+end $assert_zero_availability_event$;
 commit;
 
 -- The supervisor records the PHC non-fulfilment decision based on that observation.
