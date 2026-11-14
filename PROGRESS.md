@@ -1,3 +1,51 @@
+# BUSHO — Current continuation checkpoint (2026-11-14)
+
+Repository: https://github.com/kirtanswamy/BUSHO
+Active implementation branch: `feat/shc-phc-stockout-foundation`
+Layered base branch: `feature/chhattisgarh-operational-workflow`
+Pull request: https://github.com/kirtanswamy/BUSHO/pull/6 (OPEN · DRAFT · UNMERGED)
+Latest verified commit: `3e039035e83ca7306d36e01708fdcbc0a74a0fd7`
+CI: https://github.com/kirtanswamy/BUSHO/actions/runs/43578166847 — PASS (Node 18/22/24 and PostgreSQL 17 database-contract)
+Vercel preview: https://busho-q7zthftwi-saturn-789b.vercel.app — deployment READY for the exact commit above; interactive portal acceptance is still pending.
+Production: unchanged. No hosted Supabase migration, hosted account/facility provisioning, Edge Function deployment, merge or production release was performed.
+
+## SHC-to-PHC stockout workflow continuation
+
+The additive SHC-to-PHC exception-coordination module is now integrated into the worker, supervisor and storekeeper pages.
+
+- Worker: medicine name and strength/form, physical observation source, observed/requested quantity, source reference, SHC-to-PHC context, submission, clarification resubmission, collection reference, cumulative receipts and event history.
+- Supervisor: PHC-scoped request queue, acknowledgement/review, clarification, acceptance, evidence-based PHC non-fulfilment, and closure with a required resolution note.
+- Storekeeper: PHC physical availability observation, external DPDMIS/CGMSC indent reference, upstream PHC receipt, and PHC-to-SHC handover. The UI records completed external actions; it does not submit government indents or dispatch stock.
+- Database: role-owned fields, facility-scoped RLS, verified SHC-parent-PHC relationship, transition guard, append-only event history, cumulative receipt guards, discrepancy recording and closure.
+- A short-receipt discrepancy must be strictly less than the recorded PHC handover quantity. A full receipt must use the full-receipt status, preventing a case from becoming stranded in discrepancy state.
+- Storekeeper portal includes responsive case facts and activity-history styling. The supervisor queue exposes a non-fulfilment action only after the assigned storekeeper has recorded a timestamped zero-availability observation.
+
+## Latest implementation commits
+
+- `1e12f79a` — clarify SHC discrepancy and zero-stock supervisor review
+- `db8d9fea` — cover stockout discrepancy and supervisor availability actions
+- `d85b42d2` — enforce short-receipt discrepancy semantics
+- `3e039035` — exercise SHC-to-PHC upstream replenishment branch and apply the new migration in CI
+
+## Verification and next action
+
+- Latest exact-SHA CI run passed all three Node matrix jobs and the PostgreSQL 17 database-contract job, including migrations, security audit, existing RLS contract and SHC-to-PHC workflow contract.
+- The browser acceptance spec now contains two end-to-end journeys: direct PHC availability/handover with a short receipt and subsequent reconciliation; and zero-stock → external indent reference → upstream PHC receipt → handover → SHC receipt.
+- CI currently syntax-checks the browser spec; it does not run the Playwright journey. The local browser run remains the next acceptance gate.
+- Run the existing local-only harness from the developer's Windows PowerShell in `C:\Users\pcs\Downloads\BUSHO-local-e2e` after fetching this branch. The harness provisions only synthetic local Supabase fixtures and blocks hosted Supabase requests. Preserve the local credentials file and existing fixtures; do not reset the local database.
+- Next command sequence:
+  ```powershell
+  git fetch origin
+  git switch feat/shc-phc-stockout-foundation
+  git pull --ff-only origin feat/shc-phc-stockout-foundation
+  .\scripts\run-local-browser-e2e.ps1
+  ```
+  This must be run in the local BUSHO repository PowerShell terminal. Do not paste credentials, tokens or secret files into chat.
+- If browser tests fail, inspect Playwright traces/screenshots and fix the exact failed interaction before marking the stockout UI milestone complete. Do not claim local browser acceptance from CI syntax checks.
+- Keep PR #6 draft/open/unmerged until browser acceptance, visual review, cross-facility isolation and the remaining portal audit are complete. Do not deploy hosted migrations or touch production without explicit approval.
+
+---
+
 # BUSHO Development Progress
 
 Last updated: 2026-11-08
