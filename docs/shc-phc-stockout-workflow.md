@@ -65,3 +65,23 @@ Validation added:
 - Supervisor portal wiring/authentication test.
 
 Fresh CI is required before this milestone is called verified.
+
+## PHC storekeeper experience — Milestone 4 draft
+
+The existing storekeeper portal now has a separate SHC stockout fulfilment queue. It does not reuse the warehouse replenishment request state machine. It exposes only cases within the assigned PHC scope through RLS.
+
+Storekeeper actions are split into distinct steps:
+- For a PHC-unavailable case, record the official system name, external indent reference and submission timestamp after the authorised person has actually submitted the indent in the official portal.
+- Record the upstream goods receipt reference and timestamp only after the goods physically arrive at PHC.
+- Record the PHC-to-SHC handover quantity, issue-register reference and timestamp only after the physical handover.
+
+The storekeeper cannot alter SHC collection/receipt fields or supervisor review observations. The worker remains responsible for recording SHC collection and physical receipt. The application does not submit official indents, infer supply arrival, or calculate stock balances.
+
+Validation added:
+- Storekeeper-only client role checks.
+- Required external indent system/reference/timestamp validation.
+- Required upstream PHC receipt reference/timestamp validation.
+- Positive PHC handover quantity and issue-register reference validation.
+- Portal wiring and authenticated-only loading checks.
+
+Fresh CI and browser-level verification are required before this milestone is called complete.
