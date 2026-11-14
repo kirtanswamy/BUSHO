@@ -1491,3 +1491,15 @@ html, body { overflow-x: hidden; }
 .phc-storekeeper-action small{color:var(--muted);line-height:1.5}
 .phc-storekeeper-action button{justify-self:start}
 @media(max-width:720px){.phc-storekeeper-action{grid-template-columns:1fr}.phc-storekeeper-action h4,.phc-storekeeper-action small{grid-column:auto}.phc-storekeeper-action button{width:100%}}
+
+/* SHC-to-PHC storekeeper case facts and audit history */
+.storekeeper-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0;padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.storekeeper-facts>div{min-width:0;display:grid;gap:4px}
+.storekeeper-facts dt{font-size:10px;font-weight:700;color:var(--muted)}
+.storekeeper-facts dd{margin:0;color:var(--ink);font-size:12px;overflow-wrap:anywhere}
+.storekeeper-history{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.storekeeper-history summary{cursor:pointer;color:var(--accent);font-size:12px;font-weight:700}
+.storekeeper-history ol{padding-left:20px;color:var(--muted);font-size:11px;line-height:1.65}
+.storekeeper-history li{padding:3px 0;overflow-wrap:anywhere}
+.storekeeper-notice{padding:10px 12px;border-radius:9px;background:var(--surface);color:var(--ink);font-size:12px}
+@media(max-width:600px){.storekeeper-facts{grid-template-columns:1fr}}

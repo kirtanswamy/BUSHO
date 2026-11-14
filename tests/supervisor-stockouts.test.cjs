@@ -44,6 +44,6 @@ test('PHC supervisor review sends only the operational decision and review note'
 test('supervisor portal exposes the SHC stockout queue only after authenticated supervisor sign-in',()=>{
  const root=path.join(__dirname,'..');const html=fs.readFileSync(path.join(root,'supervisor.html'),'utf8');const js=fs.readFileSync(path.join(root,'supervisor-stockouts.js'),'utf8');const css=fs.readFileSync(path.join(root,'styles-v2.css'),'utf8');
  assert.match(html,/data-portal-view="stockout-review"/);assert.match(html,/data-module="stockout-review"/);assert.match(html,/supervisor-stockouts\.js/);
- assert.match(js,/busho:authenticated/);assert.match(js,/busho:unauthenticated/);assert.match(js,/listPHCStockoutCases/);assert.match(js,/reviewPHCStockoutCase/);assert.match(js,/textContent/);assert.doesNotMatch(js,/availableQuantity/);assert.match(js,/PHC storekeeper/i);
+ assert.match(js,/busho:authenticated/);assert.match(js,/busho:unauthenticated/);assert.match(js,/listPHCStockoutCases/);assert.match(js,/reviewPHCStockoutCase/);assert.match(js,/accepted_for_phc_action.*canMarkUnavailable/);assert.match(js,/medicine_strength_form/);assert.match(js,/textContent/);assert.doesNotMatch(js,/availableQuantity/);assert.match(js,/PHC storekeeper/i);
  assert.match(css,/\.stockout-supervisor-case/);
 });

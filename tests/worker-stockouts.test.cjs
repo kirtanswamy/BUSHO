@@ -98,6 +98,7 @@ test('worker stockout workspace is authenticated, accessible from navigation and
   assert.match(js,/busho:unauthenticated/);
   assert.match(js,/createStockoutCase/);
   assert.match(js,/transitionMyStockoutCase/);
+  assert.match(js,/discrepancy && qty>=handover/);
   assert.match(js,/textContent = message/);
   assert.match(css,/\.stockout-layout/);
   assert.match(client,/No current verified parent PHC/);
