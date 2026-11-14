@@ -346,6 +346,82 @@ update public.stockout_cases set status='closed',closure_note='Synthetic short r
 where medicine_source_reference='DEMO-EDL-ROW-002';
 commit;
 
+
+-- Branch C: SHC collects the PHC handover but physically receives zero units.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+insert into public.stockout_cases
+ (shc_facility_id,phc_facility_id,submitted_by_worker_id,medicine_name,medicine_strength_form,medicine_source_reference,
+  reported_quantity,requested_quantity,quantity_unit,observation_source,observed_at,status,data_mode)
+values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+ '10000000-0000-4000-8000-000000000001','Synthetic hypertension medicine','5 mg tablet','DEMO-EDL-ROW-003',
+ 0,30,'tablets','paper_register',now(),'submitted_to_phc','synthetic_demo');
+commit;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
+update public.stockout_cases set status='accepted_for_phc_action',phc_review_note='Synthetic direct fulfilment accepted'
+where medicine_source_reference='DEMO-EDL-ROW-003';
+commit;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','88888888-8888-4888-8888-888888888888',true);
+update public.stockout_cases set phc_available_quantity=30,phc_available_observed_at=now()
+where medicine_source_reference='DEMO-EDL-ROW-003';
+update public.stockout_cases set status='phc_handover_recorded',phc_handover_quantity=30,
+ phc_handover_reference='DEMO-PHC-ISSUE-003',phc_handover_at=now()
+where medicine_source_reference='DEMO-EDL-ROW-003';
+commit;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+update public.stockout_cases set status='collected_by_shc',
+ shc_collection_reference='DEMO-SHC-COLLECT-003',shc_collected_at=now()
+where medicine_source_reference='DEMO-EDL-ROW-003';
+update public.stockout_cases set status='no_receipt_recorded',shc_received_quantity=0,
+ shc_receipt_reference='DEMO-SHC-NO-RECEIPT-003',shc_received_at=now(),
+ discrepancy_note='Synthetic test: collection confirmed but no physical units were received'
+where medicine_source_reference='DEMO-EDL-ROW-003';
+do $assert_no_receipt_event$
+declare v_qty numeric; v_ref text; v_note text; v_status text;
+begin
+ select c.status,e.quantity,e.external_reference,e.note into v_status,v_qty,v_ref,v_note
+ from public.stockout_cases c join public.stockout_case_events e on e.stockout_case_id=c.id
+ where c.medicine_source_reference='DEMO-EDL-ROW-003' and e.action='shc_no_receipt_recorded';
+ if v_status<>'no_receipt_recorded' or v_qty is distinct from 0
+ or v_ref is distinct from 'DEMO-SHC-NO-RECEIPT-003' or v_note not like 'Synthetic test:%' then
+  raise exception 'Zero-receipt event evidence did not reconcile';
+ end if;
+end $assert_no_receipt_event$;
+commit;
+-- Later follow-up receipt must preserve the original immutable zero-receipt event.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+update public.stockout_cases set status='received_at_shc',shc_received_quantity=30,
+ shc_receipt_reference='DEMO-SHC-FOLLOWUP-003',shc_received_at=now()
+where medicine_source_reference='DEMO-EDL-ROW-003';
+do $assert_no_receipt_followup$
+declare v_status text; v_qty numeric; v_events integer;
+begin
+ select status,shc_received_quantity into v_status,v_qty from public.stockout_cases
+ where medicine_source_reference='DEMO-EDL-ROW-003';
+ select count(*) into v_events from public.stockout_case_events e join public.stockout_cases c on c.id=e.stockout_case_id
+ where c.medicine_source_reference='DEMO-EDL-ROW-003' and e.action='shc_no_receipt_recorded';
+ if v_status<>'received_at_shc' or v_qty<>30 or v_events<>1 then
+  raise exception 'Follow-up receipt did not preserve the zero-receipt audit event';
+ end if;
+end $assert_no_receipt_followup$;
+commit;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
+update public.stockout_cases set status='closed',
+ closure_note='Synthetic zero-receipt outcome resolved by documented follow-up supply'
+where medicine_source_reference='DEMO-EDL-ROW-003';
+commit;
+
 -- Event history must reject authenticated mutation.
 begin;
 set local role authenticated;

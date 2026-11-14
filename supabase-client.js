@@ -352,7 +352,7 @@
       input = input || {};
       if (!input.id || !input.status) throw new Error('Stockout case ID and next status are required.');
       await requireActiveProfile(['worker']);
-      const allowed = new Set(['resubmitted','collected_by_shc','partially_received_at_shc','discrepancy_recorded','received_at_shc']);
+      const allowed = new Set(['resubmitted','collected_by_shc','partially_received_at_shc','discrepancy_recorded','no_receipt_recorded','received_at_shc']);
       if (!allowed.has(input.status)) throw new Error('This transition is not available to the SHC worker.');
       const fields = ['status','worker_note','shc_collection_reference','shc_collected_at','shc_received_quantity','shc_receipt_reference','shc_received_at','discrepancy_note'];
       const payload = {};

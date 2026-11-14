@@ -3,19 +3,18 @@
 Repository: https://github.com/kirtanswamy/BUSHO
 Active implementation branch: `feat/shc-phc-stockout-foundation`
 Pull request: https://github.com/kirtanswamy/BUSHO/pull/6 (OPEN · DRAFT · UNMERGED)
-Previous verified head: `3dddad5db5f44474f2053bbfa675cabfd7b34417`
-Previous-head CI: 9/9 checks passed, including both PostgreSQL 17 database-contract jobs.
-Local browser evidence: developer-reported Playwright 19/19 passing on two consecutive runs against local Supabase synthetic fixtures.
+Previous verified head: `6574d17c751b5aeab7a2f022c8aec5e93512c000`
+Latest change in progress: explicit SHC zero-receipt outcome and immutable event evidence.
 Production: unchanged. No hosted Supabase migration, live account/facility provisioning, merge or production release was performed.
 
-## Current event-history hardening
+## SHC zero-receipt outcome
 
-- Corrected the stockout event writer so each event stores only the external reference associated with that action; SHC receipt events no longer inherit an earlier official indent reference.
-- Discrepancy events now retain the cumulative SHC receipt quantity and the matching SHC receipt reference.
-- Added PostgreSQL contract assertions for discrepancy, final SHC receipt, official indent, upstream PHC receipt and PHC handover event evidence.
-- Added the corrective migration to the PostgreSQL 17 CI sequence. The new commit's CI result must be checked before this correction is called verified.
-- Browser acceptance was run locally before this event-history correction. Re-run the local browser suite after pulling the new commit.
-- Visual review, cross-facility portal review and the remaining portal audit are still outstanding.
+- Added `no_receipt_recorded` for a confirmed SHC collection where zero units are physically received, distinct from a positive short receipt.
+- Database validation requires a positive PHC handover, cumulative SHC receipt of exactly zero, a SHC register reference, timestamp and explanation.
+- The worker may record this outcome only immediately after collection. A later positive cumulative receipt may progress to partial/final receipt while preserving the original zero-receipt event.
+- The PHC supervisor can close the no-receipt case with a resolution note. Worker and supervisor UI/client paths are updated.
+- Added a synthetic PostgreSQL contract branch covering zero receipt, event evidence, later receipt and supervisor closure. CI/local tests are pending; do not call the feature verified until latest-head checks pass.
+- No hosted Supabase migration, production deployment or PR merge was performed.
 
 Do not apply migrations to hosted Supabase, provision operational accounts/facilities, merge, or deploy without separate explicit approval.
 

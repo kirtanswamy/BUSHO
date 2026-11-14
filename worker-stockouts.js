@@ -21,7 +21,7 @@
     phc_cannot_fulfil:'PHC cannot fulfil', official_indent_submitted:'External indent reference recorded',
     upstream_supply_received_at_phc:'Upstream supply received at PHC',
     phc_handover_recorded:'PHC handover recorded', collected_by_shc:'Collected by SHC',
-    partially_received_at_shc:'Partially received at SHC', discrepancy_recorded:'Discrepancy recorded', received_at_shc:'Received at SHC',
+    partially_received_at_shc:'Partially received at SHC', discrepancy_recorded:'Discrepancy recorded', no_receipt_recorded:'No SHC receipt recorded', received_at_shc:'Received at SHC',
     closed:'Closed', cancelled:'Cancelled'
   };
   const date = value => {
@@ -59,11 +59,11 @@
         '<label>Collection reference <input name="reference" required maxlength="120" placeholder="PHC issue / collection register ref"></label>' +
         '<button class="btn btn-secondary" type="submit">Confirm SHC collection</button></form>';
     }
-    if (['collected_by_shc','partially_received_at_shc','discrepancy_recorded'].includes(row.status)) {
+    if (['collected_by_shc','partially_received_at_shc','discrepancy_recorded','no_receipt_recorded'].includes(row.status)) {
       return '<form class="stockout-action-form" data-case-form="receipt" data-case-id="' + esc(row.id) + '">' +
-        '<label>Quantity physically received <input name="quantity" type="number" min="0.01" step="0.01" required value="' +
-        esc(row.shc_received_quantity || '') + '"></label><label>Receipt reference <input name="reference" required maxlength="120" placeholder="SHC receipt / register ref"></label>' +
-        '<label>Discrepancy note (optional) <input name="discrepancy" maxlength="500"></label>' +
+        '<label>Cumulative quantity physically received (enter 0 if none) <input name="quantity" type="number" min="0" step="0.01" required value="' +
+        esc(row.shc_received_quantity ?? 0) + '"></label><label>Receipt / no-receipt reference <input name="reference" required maxlength="120" placeholder="SHC receipt register ref"></label>' +
+        '<label>Discrepancy / no-receipt explanation (required when zero or short) <input name="discrepancy" maxlength="500"></label>' +
         '<button class="btn btn-secondary" type="submit">Record physical receipt</button></form>';
     }
     if (row.status === 'clarification_requested') {
@@ -160,10 +160,17 @@
         const row = cases.find(item => item.id === id);
         const qty = Number(data.get('quantity'));
         const handover = Number(row?.phc_handover_quantity);
-        if (!Number.isFinite(qty) || qty <= Number(row?.shc_received_quantity || 0) || qty > handover) throw new Error('Receipt quantity must be greater than the previous receipt and no more than the PHC handover quantity.');
+        const previous=Number(row?.shc_received_quantity || 0);
+        if (!Number.isFinite(qty) || qty < 0 || qty > handover) throw new Error('Enter a cumulative receipt from zero up to the PHC handover quantity.');
         const discrepancy=String(data.get('discrepancy')||'').trim();
-        if(discrepancy && qty>=handover) throw new Error('A quantity discrepancy must be recorded against a partial receipt. If the full handover quantity arrived, record it as fully received.');
-        const receipt={id,status:discrepancy?'discrepancy_recorded':(qty===handover?'received_at_shc':'partially_received_at_shc'),
+        if(qty===0){
+          if(row?.status!=='collected_by_shc'||previous!==0) throw new Error('A zero-receipt outcome can only be recorded once, immediately after SHC collection.');
+          if(!discrepancy) throw new Error('Explain why no stock was physically received.');
+        } else {
+          if(qty<=previous) throw new Error('Cumulative receipt must be greater than the previously recorded quantity.');
+          if(discrepancy && qty>=handover) throw new Error('A quantity discrepancy must be recorded against a short receipt. If the full handover quantity arrived, record it as fully received.');
+        }
+        const receipt={id,status:qty===0?'no_receipt_recorded':(discrepancy?'discrepancy_recorded':(qty===handover?'received_at_shc':'partially_received_at_shc')),
           shc_received_quantity:qty,shc_receipt_reference:String(data.get('reference')).trim(),
           shc_received_at:new Date().toISOString()};
         if(discrepancy)receipt.discrepancy_note=discrepancy;

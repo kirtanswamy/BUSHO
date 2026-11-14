@@ -4,7 +4,7 @@
   let client=null,active=false,busy=false,rows=[],generation=0;
   const $=s=>page.querySelector(s);
   const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-  const labels={submitted_to_phc:'New · awaiting acknowledgement',acknowledged_by_phc:'Acknowledged by PHC',under_phc_review:'Under PHC review',clarification_requested:'Clarification requested',resubmitted:'Resubmitted by SHC',accepted_for_phc_action:'Accepted for PHC action',phc_cannot_fulfil:'PHC cannot fulfil',official_indent_submitted:'External indent reference recorded',upstream_supply_received_at_phc:'Upstream supply received at PHC',phc_handover_recorded:'PHC handover recorded',collected_by_shc:'Collected by SHC',partially_received_at_shc:'Partially received at SHC',received_at_shc:'Received at SHC',discrepancy_recorded:'Discrepancy recorded',closed:'Closed'};
+  const labels={submitted_to_phc:'New · awaiting acknowledgement',acknowledged_by_phc:'Acknowledged by PHC',under_phc_review:'Under PHC review',clarification_requested:'Clarification requested',resubmitted:'Resubmitted by SHC',accepted_for_phc_action:'Accepted for PHC action',phc_cannot_fulfil:'PHC cannot fulfil',official_indent_submitted:'External indent reference recorded',upstream_supply_received_at_phc:'Upstream supply received at PHC',phc_handover_recorded:'PHC handover recorded',collected_by_shc:'Collected by SHC',partially_received_at_shc:'Partially received at SHC',received_at_shc:'Received at SHC',discrepancy_recorded:'Discrepancy recorded',no_receipt_recorded:'No SHC receipt recorded',closed:'Closed'};
   const date=v=>{if(!v)return'—';const d=new Date(v);return Number.isNaN(d.getTime())?'—':d.toLocaleString();};
   function render(){
     const list=$('#phc-stockout-list'),summary=$('#phc-stockout-summary');
@@ -15,11 +15,11 @@
     list.innerHTML=rows.map(row=>{
       const events=Array.isArray(row.stockout_case_events)?[...row.stockout_case_events].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)):[];
       const canMarkUnavailable=Number(row.phc_available_quantity)===0&&Boolean(row.phc_available_observed_at);
-      const reviewable=['submitted_to_phc','resubmitted','acknowledged_by_phc','under_phc_review','received_at_shc','discrepancy_recorded'].includes(row.status)
+      const reviewable=['submitted_to_phc','resubmitted','acknowledged_by_phc','under_phc_review','received_at_shc','discrepancy_recorded','no_receipt_recorded'].includes(row.status)
         ||(row.status==='accepted_for_phc_action'&&canMarkUnavailable);
       const reviewOptions=[['clarification_requested','Request clarification'],['accepted_for_phc_action','Accept for PHC stock action']];
       if(canMarkUnavailable)reviewOptions.push(['phc_cannot_fulfil','PHC cannot fulfil (storekeeper observed zero)']);
-      const options=(row.status==='received_at_shc'||row.status==='discrepancy_recorded')?[['closed','Close with resolution note']]:row.status==='submitted_to_phc'||row.status==='resubmitted'
+      const options=(row.status==='received_at_shc'||row.status==='discrepancy_recorded'||row.status==='no_receipt_recorded')?[['closed','Close with resolution note']]:row.status==='submitted_to_phc'||row.status==='resubmitted'
         ?[['acknowledged_by_phc','Acknowledge receipt'],['under_phc_review','Start PHC review'],...reviewOptions]
         :row.status==='acknowledged_by_phc'
         ?[['under_phc_review','Start PHC review'],...reviewOptions]
