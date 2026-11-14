@@ -90,7 +90,7 @@ commit;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
-update public.stockout_cases set status='phc_cannot_fulfil',phc_review_note='Synthetic PHC stock unavailable'
+update public.stockout_cases set status='phc_cannot_fulfil',phc_available_quantity=0,phc_review_note='Synthetic PHC stock unavailable'
 where medicine_source_reference='DEMO-EDL-ROW-002';
 commit;
 
