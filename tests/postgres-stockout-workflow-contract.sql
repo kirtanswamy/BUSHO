@@ -249,6 +249,19 @@ update public.stockout_cases set status='discrepancy_recorded',shc_received_quan
  shc_receipt_reference='DEMO-SHC-PART-001',shc_received_at=now(),
  discrepancy_note='Synthetic short receipt: 20 tablets remain outstanding after the first collection'
 where medicine_source_reference='DEMO-EDL-ROW-002';
+do $assert_discrepancy_event_evidence$
+declare v_ref text; v_qty numeric;
+begin
+ select external_reference,quantity into v_ref,v_qty
+ from public.stockout_case_events e
+ join public.stockout_cases c on c.id=e.stockout_case_id
+ where c.medicine_source_reference='DEMO-EDL-ROW-002'
+   and e.action='shc_discrepancy_recorded'
+ order by e.created_at desc limit 1;
+ if v_ref<>'DEMO-SHC-PART-001' or v_qty<>40 then
+  raise exception 'Discrepancy event lost its receipt reference or cumulative quantity';
+ end if;
+end $assert_discrepancy_event_evidence$;
 update public.stockout_cases set status='received_at_shc',shc_received_quantity=60,
  shc_receipt_reference='DEMO-SHC-FINAL-001',shc_received_at=now()
 where medicine_source_reference='DEMO-EDL-ROW-002';
