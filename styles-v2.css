@@ -1578,3 +1578,18 @@ body[data-portal-role="storekeeper"] .storekeeper-shell h3 {
   body[data-portal-role="storekeeper"] .storekeeper-facts { grid-template-columns: 1fr; }
   body[data-portal-role="storekeeper"] .storekeeper-topbar { align-items: flex-start; flex-wrap: wrap; }
 }
+
+
+.password-field{position:relative;display:block;width:100%}
+.password-field input{width:100%;padding-right:48px!important}
+.password-visibility-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:34px;height:34px;padding:6px;border:0;border-radius:7px;background:transparent;color:#63738a;cursor:pointer}
+.password-visibility-toggle:hover{background:#eef2f8;color:#244c9e}
+.password-visibility-toggle svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.password-visibility-toggle:focus-visible{outline:3px solid rgba(49,92,186,.3);outline-offset:2px}
+.storekeeper-guide{display:grid;gap:14px;padding-left:24px}
+.storekeeper-guide li{padding-left:5px;color:#2c3d55}
+.storekeeper-guide li strong{display:block;font-size:13px}
+.storekeeper-guide li span{display:block;margin-top:4px;color:#68788e;font-size:12px;line-height:1.65}
+.storekeeper-sidebar .sidebar-brand{padding:0 10px 24px;color:#fff}
+.storekeeper-sidebar .sidebar-brand strong{font-size:16px;letter-spacing:.08em}
+.storekeeper-sidebar .sidebar-brand small{display:block;margin-top:3px;color:#aab9d1;font:9px var(--font-mono);letter-spacing:.1em}
