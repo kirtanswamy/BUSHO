@@ -1,3 +1,30 @@
+# BUSHO — Current continuation checkpoint (2026-11-15)
+
+Repository: https://github.com/kirtanswamy/BUSHO
+Active implementation branch: `feat/shc-phc-stockout-foundation`
+Pull request: https://github.com/kirtanswamy/BUSHO/pull/6 (OPEN · READY FOR REVIEW · UNMERGED)
+Latest reviewed implementation commit: `44bc72d17a176d47e1254c1efb874a8dd441cb3b`
+Audit-fix scope: parent-PHC facility visibility in CI, explicit RLS regression assertions and synchronized workflow documentation.
+Production: unchanged. No hosted Supabase migration, live account/facility provisioning, merge or production release was performed.
+
+## Latest verified SHC-to-PHC checkpoint
+
+- The workflow supports worker submission through a verified SHC-to-PHC relationship; PHC supervisor review; storekeeper-recorded physical availability, external indent evidence, upstream PHC receipt and PHC-to-SHC handover; and worker-recorded SHC collection/receipt.
+- Receipt outcomes distinguish full receipt, positive short receipt/discrepancy and `no_receipt_recorded` after confirmed collection with zero physical units received.
+- The zero-receipt outcome requires positive PHC handover quantity, zero cumulative SHC receipt, a SHC receipt reference/time and an explanation. A later positive cumulative receipt can progress the case while retaining the original zero-receipt event; the PHC supervisor closes with a resolution note.
+- Synthetic PostgreSQL workflow contract covers direct fulfilment, upstream replenishment, event-specific evidence, role boundaries, cross-facility isolation, receipt replay and zero-receipt follow-up.
+- Owner-reported local Playwright browser run: 20/20 passed against local Supabase and synthetic fixtures, including the zero-receipt follow-up journey. This is local-only evidence, not hosted Auth or production validation.
+- GitHub Actions run [#1562](https://github.com/kirtanswamy/BUSHO/actions/runs/43662629656) passed on PR head `1c8994ba6d08417989098589fe0c514859208b55`: Node 18/22/24 checks and PostgreSQL 17 database-contract. The audit found CI omitted migration `20261114181000_busho_shc_parent_phc_facility_read_policy.sql`. The migration is now included in CI, and the PostgreSQL contract explicitly asserts assigned-parent visibility and unrelated-PHC denial. Audit-fix CI runs [#1572](https://github.com/kirtanswamy/BUSHO/actions/runs/43687506557) and [#1574](https://github.com/kirtanswamy/BUSHO/actions/runs/43687536404) both completed successfully: Node 18/22/24 checks, migration application, exposed-schema security audit, main RLS contract and SHC-to-PHC workflow contract all passed.
+- Documentation is synchronized across this checkpoint, `docs/local-supabase-e2e.md` and `docs/shc-phc-stockout-workflow.md`; the workflow guide now reflects the implemented PR #6 scope and passing validation evidence.
+- PR #6 is open for maintainer review and remains unmerged. GitHub mergeability and passing CI do not establish production readiness.
+- No hosted Supabase migration, live Auth/facility provisioning, official external-system submission, merge or production deployment has been performed.
+
+## Current safety boundary
+
+Use local Supabase and synthetic identities/records for validation. Preserve existing local fixtures; do not run `supabase db reset`. Do not link to or mutate hosted Supabase, provision operational accounts/facilities, merge, or deploy without separate explicit approval.
+
+---
+
 # BUSHO Development Progress
 
 Last updated: 2026-11-08

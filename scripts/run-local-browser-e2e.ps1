@@ -17,8 +17,7 @@ $expectedLabels = @(
     "worker-b",
     "supervisor-b",
     "storekeeper-a",
-    "storekeeper-b",
-    "storekeeper-e2e"
+    "storekeeper-b"
 )
 
 if ($credentials.fixture -ne "a204be7a") {
@@ -29,7 +28,7 @@ if ($credentials.api_url -ne "http://127.0.0.1:54321") {
     throw "Credentials file does not target the expected local API."
 }
 
-if (-not $credentials.password -or $credentials.accounts.Count -ne 7) {
+if (-not $credentials.password -or $credentials.accounts.Count -lt 6 -or $credentials.accounts.Count -gt 11) {
     throw "Credentials file is incomplete."
 }
 
@@ -40,7 +39,7 @@ foreach ($label in $expectedLabels) {
     }
 }
 
-Write-Host "Seven local test accounts verified. Password values hidden."
+Write-Host "Six baseline local test accounts verified. Password values hidden."
 
 Write-Host "`n--- Checking Git credential protection ---"
 
@@ -93,6 +92,49 @@ try {
 catch {
     throw "Local Auth API is not responding at 127.0.0.1:54321."
 }
+
+Write-Host "`n--- Applying pending migrations to local Supabase ---"
+# PowerShell 7.3+ may surface native stderr as NativeCommandError under Stop.
+# Capture CLI output with Continue, then rely on the process exit code.
+$previousPreference = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+$migrationOutput = & npx.cmd supabase migration up 2>&1
+$migrationExitCode = $LASTEXITCODE
+$ErrorActionPreference = $previousPreference
+$migrationOutput | ForEach-Object { Write-Host "$_" }
+if ($migrationExitCode -ne 0) {
+    throw "Pending local Supabase migrations could not be applied. No database reset was attempted."
+}
+Write-Host "Local migration check/application completed. Existing local Auth users and fixtures were preserved."
+
+Write-Host "`n--- Provisioning dedicated replenishment storekeeper ---"
+& .\scripts\provision-storekeeper-e2e.ps1
+$credentials = Get-Content $credentialPath -Raw | ConvertFrom-Json
+$storekeeperMatches = @($credentials.accounts | Where-Object { $_.label -eq "storekeeper-e2e" })
+if ($storekeeperMatches.Count -ne 1) {
+    throw "Expected exactly one provisioned dedicated storekeeper account."
+}
+Write-Host "Dedicated replenishment storekeeper verified."
+
+Write-Host "`n--- Provisioning isolated SHC-to-PHC browser fixtures ---"
+& .\scripts\provision-stockout-e2e.ps1
+if ($LASTEXITCODE -ne 0) {
+    throw "Local SHC-to-PHC E2E fixture provisioning failed."
+}
+$credentials = Get-Content $credentialPath -Raw | ConvertFrom-Json
+$stockoutLabels = @(
+    "stockout-worker",
+    "stockout-supervisor",
+    "stockout-storekeeper",
+    "stockout-storekeeper-other"
+)
+foreach ($label in $stockoutLabels) {
+    $matches = @($credentials.accounts | Where-Object { $_.label -eq $label })
+    if ($matches.Count -ne 1) {
+        throw "Expected exactly one provisioned local account for $label."
+    }
+}
+Write-Host "Four isolated SHC-to-PHC accounts verified. Credentials remain hidden."
 
 $previousKey = $env:BUSHO_LOCAL_PUBLISHABLE_KEY
 $previousPort = $env:PORT
