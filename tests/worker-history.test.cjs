@@ -74,7 +74,7 @@ test('worker report item detail preserves quantity, uncertainty and source phras
   });
 });
 
-test('worker history renders server-backed records, supervisor feedback and assigned facility context', async () => {
+test('worker history renders server-backed records and leaves profile and facility presentation to portal redesign', async () => {
   const doc = makeDocument();
   const controller = history.createController({
     client: {
@@ -92,11 +92,11 @@ test('worker history renders server-backed records, supervisor feedback and assi
   assert.match(doc.modules.get('overview').innerHTML, /Reports saved/);
   assert.match(doc.modules.get('my-reports').innerHTML, /Facility A/);
   assert.match(doc.modules.get('pending').innerHTML, /Please verify the patient count and stock unit/);
-  assert.match(doc.modules.get('facility').innerHTML, /Block LGD code 1234/);
-  assert.match(doc.modules.get('profile').innerHTML, /Worker A/);
+  assert.equal(doc.modules.get('facility').innerHTML, '');
+  assert.equal(doc.modules.get('profile').innerHTML, '');
 });
 
-test('worker history uses honest empty states when there is no assignment or report history', async () => {
+test('worker history keeps honest report empty states without taking ownership of profile or facility views', async () => {
   const doc = makeDocument();
   const controller = history.createController({
     client: {
@@ -109,7 +109,8 @@ test('worker history uses honest empty states when there is no assignment or rep
   });
   await controller.load();
   assert.match(doc.modules.get('my-reports').innerHTML, /No reports match this filter/);
-  assert.match(doc.modules.get('facility').innerHTML, /No active worker record/);
+  assert.equal(doc.modules.get('facility').innerHTML, '');
+  assert.equal(doc.modules.get('profile').innerHTML, '');
   assert.match(doc.modules.get('pending').innerHTML, /No drafts or correction requests/);
 });
 
