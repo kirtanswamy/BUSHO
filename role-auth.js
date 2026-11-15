@@ -32,6 +32,16 @@
     showError(cause.message || 'Secure sign-in is not configured for this environment.');
   }
 
+  if (passwordInput && !passwordInput.parentElement?.classList.contains('password-field')) {
+    const wrap=document.createElement('div');wrap.className='password-field';
+    passwordInput.parentNode.insertBefore(wrap,passwordInput);wrap.append(passwordInput);
+    const toggle=document.createElement('button');toggle.type='button';toggle.className='password-visibility-toggle';
+    toggle.setAttribute('aria-label','Show password');toggle.setAttribute('aria-pressed','false');
+    toggle.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    toggle.addEventListener('click',()=>{const visible=passwordInput.type==='password';passwordInput.type=visible?'text':'password';toggle.setAttribute('aria-label',visible?'Hide password':'Show password');toggle.setAttribute('aria-pressed',String(visible));});
+    wrap.append(toggle);
+  }
+
   function showError(message) {
     if (error) error.textContent = String(message ?? '');
   }
