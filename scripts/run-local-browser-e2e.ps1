@@ -94,8 +94,13 @@ catch {
 }
 
 Write-Host "`n--- Applying pending migrations to local Supabase ---"
-$migrationOutput = & npx.cmd supabase migration up --local 2>&1
+# PowerShell 7.3+ may surface native stderr as NativeCommandError under Stop.
+# Capture CLI output with Continue, then rely on the process exit code.
+$previousPreference = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+$migrationOutput = & npx.cmd supabase migration up 2>&1
 $migrationExitCode = $LASTEXITCODE
+$ErrorActionPreference = $previousPreference
 $migrationOutput | ForEach-Object { Write-Host "$_" }
 if ($migrationExitCode -ne 0) {
     throw "Pending local Supabase migrations could not be applied. No database reset was attempted."

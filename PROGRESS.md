@@ -16,6 +16,8 @@ Production: unchanged. No hosted Supabase migration, live account/facility provi
 - Added a synthetic PostgreSQL contract branch covering zero receipt, event evidence, later receipt and supervisor closure. Latest PostgreSQL 17 contract and Node 18/22/24 CI checks pass on commit `e6ad05ad866376138690ca97107cb9b7d4f50130`.
 - Local browser run on `e8da6d9021471909fd687bd28c0c8bba62c55724`: 19 passed, the new zero-receipt UI test failed while the case remained `collected_by_shc`. Investigation found the local E2E runner never applied pending migrations to an already-running Supabase instance; pulling migration files alone does not update the local database.
 - Updated `scripts/run-local-browser-e2e.ps1` to run `supabase migration up --local` before fixture provisioning. This applies pending migrations without resetting local Auth users or synthetic fixtures. The corrected runner and zero-receipt browser test must be rerun before acceptance is complete.
+- Local rerun on `f93787865d53144c19e522c4aed42f7c125ff810` stopped at the migration command because PowerShell treated Supabase CLI's deprecated `--local` warning on stderr as a native-command error under `$ErrorActionPreference = 'Stop'`. The runner now omits the unnecessary flag, captures native output under a temporary `Continue` preference, restores the prior preference, and checks `$LASTEXITCODE` explicitly. Browser suite has not yet rerun after this runner correction.
+
 - Owner-reported local Playwright baseline: 19/19 passed on that commit. Those 19 tests did not yet exercise the new zero-receipt portal interaction, so a dedicated browser test is now being added before declaring the UI path verified.
 - No hosted Supabase migration, production deployment or PR merge was performed.
 
