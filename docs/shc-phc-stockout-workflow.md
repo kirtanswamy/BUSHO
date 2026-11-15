@@ -1,6 +1,6 @@
-# SHC-to-PHC stockout exception workflow — Milestone 1
+# SHC-to-PHC stockout exception workflow
 
-Status: additive database foundation drafted on feat/shc-phc-stockout-foundation.
+Status: implemented in draft PR #6 on `feat/shc-phc-stockout-foundation`. The Node 18/22/24 checks and PostgreSQL 17 database-contract (including the exposed-schema security audit and SHC-to-PHC RLS/workflow assertions) pass in GitHub Actions. The owner-reported local synthetic Playwright run passed 20/20 tests. These results validate the tested CI/local environments only; they do not establish hosted or production readiness.
 
 ## Product boundary
 BUSHO records an SHC stockout observation, routes it to its verified parent PHC, records PHC review and physical last-mile handover/receipt. Official registers and DVDMS/DPDMIS remain authoritative. BUSHO does not calculate authoritative stock balance, place a purchase order, approve clinical treatment or claim a government transaction occurred merely because a reference was typed.
@@ -23,10 +23,10 @@ BUSHO records an SHC stockout observation, routes it to its verified parent PHC,
 4. No full stock ledger or batch accounting is added.
 5. Local SOP confirmation remains necessary for reviewer delegation and handover sign-off.
 6. No facility, user, link, stock count or case is seeded.
-7. The migration requires PostgreSQL 17 migration and RLS contract verification before it can be considered validated.
+7. The PostgreSQL 17 CI job applies the feature migrations and passes the structural security and RLS/workflow contracts. This does not validate hosted Supabase, live facility data, external integrations or production readiness.
 
 ## Safety gate
-Proposal only. Do not apply to live Supabase, create live facility links, deploy, merge PR #5 or claim a working live workflow without separate review and explicit approval.
+PR #6 remains a draft. Do not apply migrations to live Supabase, create live facility links, mark the PR ready, merge or deploy without separate explicit approval and the required operational review.
 
 ## Worker experience — Milestone 2 draft
 
@@ -44,8 +44,8 @@ The worker screen intentionally uses a free-text medicine label rather than impl
 
 - Added client tests for verified parent-PHC routing, refusal when no verified link exists, role-limited worker transitions and portal wiring.
 - These new Node tests are included by the repository's existing `node --test` script.
-- The database-contract CI run that passed covered the Milestone 1 migration and PostgreSQL RLS contract. It predates the worker UI/client additions.
-- A fresh CI run and browser-level interaction test are still required for this UI/client change. The Vercel preview check is separate and is not a production deployment.
+- GitHub Actions Node 18/22/24 checks and the PostgreSQL 17 database-contract pass on the current audited PR revision, including the parent-PHC facility-read policy and stockout workflow RLS contract.
+- Owner-reported local synthetic Playwright browser acceptance passed 20/20 tests. The browser suite is not currently executed by GitHub Actions; this local result is not hosted or production validation.
 
 ## PHC supervisor experience — Milestone 3 draft
 
@@ -64,7 +64,7 @@ Validation added:
 - Required-reason and positive-quantity validation tests.
 - Supervisor portal wiring/authentication test.
 
-Fresh CI is required before this milestone is called verified.
+The Node CI matrix, PostgreSQL 17 security/RLS/workflow contracts and owner-reported local browser journeys have passed for the current draft PR. No hosted or production validation is implied.
 
 ## PHC storekeeper experience — Milestone 4 draft
 
@@ -84,7 +84,7 @@ Validation added:
 - Positive PHC handover quantity and issue-register reference validation.
 - Portal wiring and authenticated-only loading checks.
 
-Fresh CI and browser-level verification are required before this milestone is called complete.
+The Node CI matrix, PostgreSQL 17 security/RLS/workflow contracts and owner-reported local browser journeys cover this milestone. The browser suite remains local-only and is not a hosted or production acceptance test.
 
 ### Milestone 4 validation refinement — physical upstream receipt quantity
 
@@ -109,6 +109,6 @@ This is distinct from a positive short receipt (`discrepancy_recorded`). The ori
 Validation recorded for this milestone:
 - PostgreSQL contract assertions for zero receipt, event reference/quantity, follow-up receipt, immutable event preservation and supervisor closure.
 - Local synthetic browser acceptance for the worker → supervisor → storekeeper → worker → supervisor journey.
-- Node 18/22/24 CI and PostgreSQL 17 database-contract checks passed on the previous audited PR head. The CI sequence is being extended to apply and assert the parent-PHC facility read policy migration.
+- GitHub Actions runs [#1572](https://github.com/kirtanswamy/BUSHO/actions/runs/43687506557), [#1574](https://github.com/kirtanswamy/BUSHO/actions/runs/43687536404) and [#1576](https://github.com/kirtanswamy/BUSHO/actions/runs/43688211485) passed. The PostgreSQL job applied the parent-PHC facility-read policy migration and passed the exposed-schema security audit, main RLS contract and SHC-to-PHC workflow contract, including the explicit assigned-parent visibility and unrelated-PHC denial assertions.
 
 The local browser result validates the local synthetic environment only. No hosted Supabase migration, live facility provisioning, official-system submission, merge or production release is implied.
