@@ -138,7 +138,19 @@ The seven browser accounts cover two workers, two supervisors and three storekee
 
 The credentials file is local-only and must never be committed, uploaded, or pasted into logs or messages.
 
-The browser suite covers portal initialization, authentication, role restrictions, suspended-account behavior, report correction and verification, and the synthetic storekeeper replenishment journey.
+The browser suite covers portal initialization, authentication, role restrictions, suspended-account behavior, report correction and verification, the synthetic storekeeper replenishment journey, and the SHC-to-PHC stockout workflow.
+
+### SHC-to-PHC stockout browser journeys
+
+The stockout browser fixtures provision synthetic SHC worker, PHC supervisor and PHC storekeeper identities, plus a separate storekeeper assigned to another PHC. The browser tests exercise:
+
+- Worker submission routes to the current verified parent PHC; the application refuses to guess a parent PHC when no verified link exists.
+- Direct PHC fulfilment: supervisor review, storekeeper physical availability observation and handover, worker collection and cumulative physical receipt, then supervisor closure.
+- Upstream fulfilment: PHC non-fulfilment, a synthetic official-indent reference, a separately recorded physical upstream receipt at PHC, PHC-to-SHC handover, SHC receipt and supervisor closure.
+- Zero physical receipt after confirmed collection: worker records a zero-receipt register reference and explanation, then a later positive cumulative receipt is recorded while the original zero-receipt event remains in history, followed by supervisor closure.
+- Role and facility boundaries, including denial of access to cases assigned to another PHC.
+
+All identities, facilities, medicines and external references in these journeys are synthetic. The DPDMIS/official-indent references are evidence entered after a hypothetical external action; BUSHO does not submit an indent to DPDMIS or contact a government system. These tests run against local Supabase only and do not validate hosted Auth or production configuration.
 
 The operational browser journey verifies:
 
