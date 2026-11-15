@@ -129,7 +129,7 @@
       const account=event.detail?.profile;
       if(!account || account.role!=='worker') return;
       const name=String(account.display_name||'Health Worker').trim();
-      const initials=name.split(/\\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'HW';
+      const initials=name.split(' ').filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'HW';
       const nameNode=app.querySelector('[data-worker-name]');
       const initialsNode=app.querySelector('[data-worker-initials]');
       const workerNode=app.querySelector('[data-assigned-worker]');
