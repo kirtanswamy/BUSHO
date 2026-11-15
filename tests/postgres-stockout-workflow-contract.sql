@@ -468,3 +468,16 @@ end $events_append_only$;
 rollback;
 
 select 'BUSHO SHC-to-PHC stockout workflow contract passed' as result;
+
+-- Facility-link effectiveness must use India-local calendar dates, not the DB session timezone.
+do $assert_india_local_facility_link_date$
+declare
+  v_definition text;
+begin
+  select pg_get_functiondef('app_private.guard_stockout_case_transition()'::regprocedure)
+    into v_definition;
+  if position('Asia/Kolkata' in v_definition)=0
+     or position('current_date' in lower(v_definition))>0 then
+    raise exception 'Stockout transition guard is not aligned to the India-local facility-link date';
+  end if;
+end $assert_india_local_facility_link_date$;
