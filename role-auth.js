@@ -32,7 +32,7 @@
     showError(cause.message || 'Secure sign-in is not configured for this environment.');
   }
 
-  if (passwordInput && !passwordInput.parentElement?.classList.contains('password-field')) {
+  if (passwordInput && typeof document.createElement === 'function' && !passwordInput.parentElement?.classList.contains('password-field')) {
     const wrap=document.createElement('div');wrap.className='password-field';
     passwordInput.parentNode.insertBefore(wrap,passwordInput);wrap.append(passwordInput);
     const toggle=document.createElement('button');toggle.type='button';toggle.className='password-visibility-toggle';
