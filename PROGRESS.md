@@ -3,25 +3,25 @@
 Repository: https://github.com/kirtanswamy/BUSHO
 Active implementation branch: `feat/shc-phc-stockout-foundation`
 Pull request: https://github.com/kirtanswamy/BUSHO/pull/6 (OPEN · DRAFT · UNMERGED)
-Previous verified head: `6574d17c751b5aeab7a2f022c8aec5e93512c000`
-Latest change in progress: explicit SHC zero-receipt outcome and immutable event evidence.
+Last audited PR head: `1c8994ba6d08417989098589fe0c514859208b55`
+Current focus: close the PR audit findings for parent-PHC facility visibility, CI migration coverage and synchronized workflow documentation.
 Production: unchanged. No hosted Supabase migration, live account/facility provisioning, merge or production release was performed.
 
-## SHC zero-receipt outcome
+## Latest verified SHC-to-PHC checkpoint
 
-- Added `no_receipt_recorded` for a confirmed SHC collection where zero units are physically received, distinct from a positive short receipt.
-- Database validation requires a positive PHC handover, cumulative SHC receipt of exactly zero, a SHC register reference, timestamp and explanation.
-- The worker may record this outcome only immediately after collection. A later positive cumulative receipt may progress to partial/final receipt while preserving the original zero-receipt event.
-- The PHC supervisor can close the no-receipt case with a resolution note. Worker and supervisor UI/client paths are updated.
-- Added a synthetic PostgreSQL contract branch covering zero receipt, event evidence, later receipt and supervisor closure. Latest PostgreSQL 17 contract and Node 18/22/24 CI checks pass on commit `e6ad05ad866376138690ca97107cb9b7d4f50130`.
-- Local browser run on `e8da6d9021471909fd687bd28c0c8bba62c55724`: 19 passed, the new zero-receipt UI test failed while the case remained `collected_by_shc`. Investigation found the local E2E runner never applied pending migrations to an already-running Supabase instance; pulling migration files alone does not update the local database.
-- Updated `scripts/run-local-browser-e2e.ps1` to run `supabase migration up --local` before fixture provisioning. This applies pending migrations without resetting local Auth users or synthetic fixtures. The corrected runner and zero-receipt browser test must be rerun before acceptance is complete.
-- Local rerun on `f93787865d53144c19e522c4aed42f7c125ff810` stopped at the migration command because PowerShell treated Supabase CLI's deprecated `--local` warning on stderr as a native-command error under `$ErrorActionPreference = 'Stop'`. The runner now omits the unnecessary flag, captures native output under a temporary `Continue` preference, restores the prior preference, and checks `$LASTEXITCODE` explicitly. Browser suite has not yet rerun after this runner correction.
+- The workflow supports worker submission through a verified SHC-to-PHC relationship; PHC supervisor review; storekeeper-recorded physical availability, external indent evidence, upstream PHC receipt and PHC-to-SHC handover; and worker-recorded SHC collection/receipt.
+- Receipt outcomes distinguish full receipt, positive short receipt/discrepancy and `no_receipt_recorded` after confirmed collection with zero physical units received.
+- The zero-receipt outcome requires positive PHC handover quantity, zero cumulative SHC receipt, a SHC receipt reference/time and an explanation. A later positive cumulative receipt can progress the case while retaining the original zero-receipt event; the PHC supervisor closes with a resolution note.
+- Synthetic PostgreSQL workflow contract covers direct fulfilment, upstream replenishment, event-specific evidence, role boundaries, cross-facility isolation, receipt replay and zero-receipt follow-up.
+- Owner-reported local Playwright browser run: 20/20 passed against local Supabase and synthetic fixtures, including the zero-receipt follow-up journey. This is local-only evidence, not hosted Auth or production validation.
+- GitHub Actions run [#1562](https://github.com/kirtanswamy/BUSHO/actions/runs/43662629656) passed on PR head `1c8994ba6d08417989098589fe0c514859208b55`: Node 18/22/24 checks and PostgreSQL 17 database-contract. The audit then identified that CI omitted migration `20261114181000_busho_shc_parent_phc_facility_read_policy.sql`; this omission is being corrected with an explicit RLS assertion for assigned-parent visibility and unrelated-PHC denial.
+- Documentation is being synchronized across this checkpoint, `docs/local-supabase-e2e.md` and `docs/shc-phc-stockout-workflow.md`.
+- PR #6 remains draft and unmerged. GitHub mergeability and passing CI do not establish production readiness.
+- No hosted Supabase migration, live Auth/facility provisioning, official external-system submission, merge or production deployment has been performed.
 
-- Owner-reported local Playwright baseline: 19/19 passed on that commit. Those 19 tests did not yet exercise the new zero-receipt portal interaction, so a dedicated browser test is now being added before declaring the UI path verified.
-- No hosted Supabase migration, production deployment or PR merge was performed.
+## Current safety boundary
 
-Do not apply migrations to hosted Supabase, provision operational accounts/facilities, merge, or deploy without separate explicit approval.
+Use local Supabase and synthetic identities/records for validation. Preserve existing local fixtures; do not run `supabase db reset`. Do not link to or mutate hosted Supabase, provision operational accounts/facilities, mark the PR ready, merge, or deploy without separate explicit approval.
 
 ---
 
