@@ -258,7 +258,7 @@ begin
     end;
 
     v_qty := case
-      when new.status in ('partially_received_at_shc', 'discrepancy_recorded', 'received_at_shc')
+      when new.status in ('partially_received_at_shc', 'discrepancy_recorded', 'no_receipt_recorded', 'received_at_shc')
         then new.shc_received_quantity
       when new.status = 'phc_handover_recorded' then new.phc_handover_quantity
       when new.status = 'upstream_supply_received_at_phc' then new.upstream_received_quantity
