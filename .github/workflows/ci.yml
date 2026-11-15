@@ -171,6 +171,11 @@ jobs:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114181000_busho_shc_parent_phc_facility_read_policy.sql
 
+      - name: Align SHC-PHC effective dates to India local time
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261115120000_busho_shc_phc_india_local_effective_date.sql
+
       - name: Audit exposed-schema RLS, grants and SECURITY DEFINER helpers
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
