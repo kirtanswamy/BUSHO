@@ -1,3 +1,45 @@
+## Release integration checkpoint — 2026-11-15 (updated)
+
+Repository: https://github.com/kirtanswamy/BUSHO
+Integration PR: https://github.com/kirtanswamy/BUSHO/pull/5
+Operational branch: `feature/chhattisgarh-operational-workflow`
+Checkpoint HEAD before this documentation commit: `6209ba65be35cbda4bd0de27ae0a2876ecb4cf64`
+Main HEAD: `89e57ec1e9e9b24f8ff1cce6d01fd11069d5f475`
+Production: unchanged.
+
+### Verified engineering status
+- PR #8 (worker identity and portal navigation) is merged into the operational branch.
+- Current operational head passed GitHub Actions Node 18/22/24 checks and PostgreSQL 17 database-contract/RLS checks.
+- The current operational branch has a READY Vercel preview deployment. A READY preview is not a production release.
+- The current PR #5 diff is 137 files and the branch is 796 commits ahead of `main`; this is a large integration, not a routine small merge.
+- The local developer-reported Playwright run for the worker profile fix passed 23/23 browser tests. One browser console 400 response appeared during a passing test; its request and response have not yet been identified, so it remains an investigation item.
+- The local E2E run output did not establish that the full `npm run check` Node suite and the full local API integration suite were rerun in the same run. Do not claim those additional suites passed based only on the Playwright output.
+
+### External environment status
+- The connected hosted Supabase project `BUSHO` (`vufnjwkaaqtyukjcvknu`, region `eu-central-1`) reports `INACTIVE`.
+- A read-only migration-ledger request timed out. No hosted migration, SQL write, Auth provisioning or Edge Function deployment was attempted.
+- The repository documents that operational migrations and Edge Functions have not been deployed to hosted Supabase and that no live multi-role workforce workflow has been demonstrated.
+- The repository's EDL transcription and facility registry are reference/review material, not authorised operational master data. All 278 EDL source rows remain pending authorised pharmacist/CGMSC review; current authoritative facility data and verified assignments remain outstanding.
+- No documented approval from the relevant healthcare authority, facility owner, pharmacist/CGMSC reviewer, privacy/security reviewer or operational owner is recorded here. Engineering cannot self-certify those approvals.
+
+### Release gate decision
+**Release remains BLOCKED.** A request to proceed does not create missing external approvals, verified source data, a working hosted environment, or evidence of operational acceptance. Do not mark these gates complete by inference.
+
+Required before a production release:
+1. Confirm the intended Supabase project/environment is active and identify an approved non-production target.
+2. Reconcile every feature migration against the hosted migration ledger; rehearse on a clean non-production project; review backup, restore and rollback.
+3. Deploy and verify Edge Functions in non-production; test invited identities and role/facility isolation using approved synthetic accounts.
+4. Obtain current authoritative Chhattisgarh facility data and authorised facility assignment review.
+5. Obtain authorised pharmacist/CGMSC review before normalising or operationalising any EDL rows.
+6. Complete full browser/API/database acceptance, including investigating the remaining browser-console 400 response.
+7. Obtain privacy, security, accessibility, monitoring, incident-response and operational-owner sign-off.
+8. Only then convert PR #5 from draft, obtain code review, merge to `main`, and separately approve Vercel production promotion.
+
+### Change control
+This checkpoint is documentation only. No hosted Supabase mutation, operational account/facility provisioning, PR merge, production deployment, production data change or government-system integration was performed.
+
+---
+
 # BUSHO — Current continuation checkpoint (2026-11-15)
 
 Repository: https://github.com/kirtanswamy/BUSHO
