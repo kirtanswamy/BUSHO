@@ -135,10 +135,6 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114120000_busho_shc_phc_stockout_foundation.sql
-      - name: Prevent overlapping verified SHC parent-PHC assignments
-        env:
-          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
-        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261115100000_busho_shc_parent_phc_nonoverlap_guard.sql
 
       - name: Apply BUSHO SHC-to-PHC role-boundary hardening migration
         env:
@@ -159,6 +155,11 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114170000_busho_shc_phc_discrepancy_short_receipt_guard.sql
+
+      - name: Prevent overlapping verified SHC parent-PHC assignments
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261115100000_busho_shc_parent_phc_nonoverlap_guard.sql
 
       - name: Apply BUSHO SHC-to-PHC zero-receipt outcome migration
         env:
