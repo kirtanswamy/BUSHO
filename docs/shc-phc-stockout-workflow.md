@@ -1,6 +1,6 @@
 # SHC-to-PHC stockout exception workflow
 
-Status: implemented in draft PR #6 on `feat/shc-phc-stockout-foundation`. The Node 18/22/24 checks and PostgreSQL 17 database-contract (including the exposed-schema security audit and SHC-to-PHC RLS/workflow assertions) pass in GitHub Actions. The owner-reported local synthetic Playwright run passed 20/20 tests. These results validate the tested CI/local environments only; they do not establish hosted or production readiness.
+Status: implemented and submitted for maintainer review in open PR #6 on `feat/shc-phc-stockout-foundation`. The Node 18/22/24 checks and PostgreSQL 17 database-contract (including the exposed-schema security audit and SHC-to-PHC RLS/workflow assertions) pass in GitHub Actions. The owner-reported local synthetic Playwright run passed 20/20 tests. These results validate the tested CI/local environments only; they do not establish hosted or production readiness.
 
 ## Product boundary
 BUSHO records an SHC stockout observation, routes it to its verified parent PHC, records PHC review and physical last-mile handover/receipt. Official registers and DVDMS/DPDMIS remain authoritative. BUSHO does not calculate authoritative stock balance, place a purchase order, approve clinical treatment or claim a government transaction occurred merely because a reference was typed.
@@ -26,9 +26,9 @@ BUSHO records an SHC stockout observation, routes it to its verified parent PHC,
 7. The PostgreSQL 17 CI job applies the feature migrations and passes the structural security and RLS/workflow contracts. This does not validate hosted Supabase, live facility data, external integrations or production readiness.
 
 ## Safety gate
-PR #6 remains a draft. Do not apply migrations to live Supabase, create live facility links, mark the PR ready, merge or deploy without separate explicit approval and the required operational review.
+PR #6 is open for maintainer review. Do not apply migrations to live Supabase, create live facility links, merge or deploy without separate explicit approval and the required operational review.
 
-## Worker experience — Milestone 2 draft
+## Worker experience — Milestone 2
 
 The worker portal now has a Medicine Stockout workspace with:
 - Authenticated worker-only loading after the existing `busho:authenticated` event.
@@ -47,7 +47,7 @@ The worker screen intentionally uses a free-text medicine label rather than impl
 - GitHub Actions Node 18/22/24 checks and the PostgreSQL 17 database-contract pass on the current audited PR revision, including the parent-PHC facility-read policy and stockout workflow RLS contract.
 - Owner-reported local synthetic Playwright browser acceptance passed 20/20 tests. The browser suite is not currently executed by GitHub Actions; this local result is not hosted or production validation.
 
-## PHC supervisor experience — Milestone 3 draft
+## PHC supervisor experience — Milestone 3
 
 The supervisor portal now includes an SHC stockout queue that relies on the existing facility-scoped RLS policies. A signed-in `supervisor` can:
 - View cases visible to the PHC assignment, with event history and SHC-submitted quantities/notes.
@@ -64,9 +64,9 @@ Validation added:
 - Required-reason and positive-quantity validation tests.
 - Supervisor portal wiring/authentication test.
 
-The Node CI matrix, PostgreSQL 17 security/RLS/workflow contracts and owner-reported local browser journeys have passed for the current draft PR. No hosted or production validation is implied.
+The Node CI matrix, PostgreSQL 17 security/RLS/workflow contracts and owner-reported local browser journeys have passed for the current PR. No hosted or production validation is implied.
 
-## PHC storekeeper experience — Milestone 4 draft
+## PHC storekeeper experience — Milestone 4
 
 The existing storekeeper portal now has a separate SHC stockout fulfilment queue. It does not reuse the warehouse replenishment request state machine. It exposes only cases within the assigned PHC scope through RLS.
 
@@ -94,7 +94,7 @@ The PHC upstream receipt now captures a positive physical quantity as a separate
 
 The quantity is not a running balance and does not create a full stock ledger. Worker and supervisor roles cannot edit this storekeeper-owned receipt quantity. Synthetic PostgreSQL workflow fixtures now supply the received quantity explicitly.
 
-## SHC zero-receipt outcome — Milestone 5 draft
+## SHC zero-receipt outcome — Milestone 5
 
 The worker can now record an explicit `no_receipt_recorded` outcome after confirming collection of a positive PHC handover but physically receiving zero units at the SHC.
 
