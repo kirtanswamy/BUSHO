@@ -93,3 +93,22 @@ The PHC upstream receipt now captures a positive physical quantity as a separate
 - Upstream replenishment branch: handover cannot exceed the quantity recorded as physically received at PHC.
 
 The quantity is not a running balance and does not create a full stock ledger. Worker and supervisor roles cannot edit this storekeeper-owned receipt quantity. Synthetic PostgreSQL workflow fixtures now supply the received quantity explicitly.
+
+## SHC zero-receipt outcome — Milestone 5 draft
+
+The worker can now record an explicit `no_receipt_recorded` outcome after confirming collection of a positive PHC handover but physically receiving zero units at the SHC.
+
+Required evidence includes:
+- A positive PHC handover quantity.
+- Cumulative SHC received quantity of exactly zero.
+- SHC receipt/register reference and timestamp.
+- A non-empty explanation of the zero-receipt outcome.
+
+This is distinct from a positive short receipt (`discrepancy_recorded`). The original zero-receipt event is appended to the case history. A later positive cumulative receipt can move the case to partial/final receipt without deleting or rewriting that earlier event. The assigned PHC supervisor can close the case with a resolution note.
+
+Validation recorded for this milestone:
+- PostgreSQL contract assertions for zero receipt, event reference/quantity, follow-up receipt, immutable event preservation and supervisor closure.
+- Local synthetic browser acceptance for the worker → supervisor → storekeeper → worker → supervisor journey.
+- Node 18/22/24 CI and PostgreSQL 17 database-contract checks passed on the previous audited PR head. The CI sequence is being extended to apply and assert the parent-PHC facility read policy migration.
+
+The local browser result validates the local synthetic environment only. No hosted Supabase migration, live facility provisioning, official-system submission, merge or production release is implied.
