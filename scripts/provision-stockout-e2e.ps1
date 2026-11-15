@@ -214,12 +214,21 @@ $tempCredentialPath = "$credentialPath.$([guid]::NewGuid().ToString('N')).tmp"
 try {
     [System.IO.File]::WriteAllText($tempCredentialPath,$credentialsJson,$utf8NoBom)
     if (Test-Path $credentialPath) {
-        [System.IO.File]::Replace($tempCredentialPath,$credentialPath,$null)
+        # File.Replace requires a valid backup path on Windows/.NET Framework.
+        # Keep the backup beside the target and remove it after replacement.
+        $backupCredentialPath = "$credentialPath.$([guid]::NewGuid().ToString('N')).bak"
+        [System.IO.File]::Replace($tempCredentialPath,$credentialPath,$backupCredentialPath)
+        if (Test-Path $backupCredentialPath) {
+            Remove-Item -LiteralPath $backupCredentialPath -Force
+        }
     } else {
         [System.IO.File]::Move($tempCredentialPath,$credentialPath)
     }
 } finally {
     if (Test-Path $tempCredentialPath) { Remove-Item -LiteralPath $tempCredentialPath -Force }
+    if ($backupCredentialPath -and (Test-Path $backupCredentialPath)) {
+        Remove-Item -LiteralPath $backupCredentialPath -Force
+    }
 }
 
 Write-Host "Synthetic SHC-to-PHC E2E fixtures are ready in local Supabase."
