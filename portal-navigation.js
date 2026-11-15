@@ -40,7 +40,7 @@
     const heading = module?.querySelector('h1, h2, h3');
     if (heading) {
       if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1');
-      if (focus) heading.focus({ preventScroll: true });
+      if (focus) heading.focus();
     }
   }
 
