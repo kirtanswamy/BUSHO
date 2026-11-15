@@ -29,6 +29,33 @@ values
 on conflict do nothing;
 reset role;
 
+-- A worker can read the current verified parent PHC required by the SHC stockout form,
+-- but must not gain visibility into an unrelated PHC facility.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+do $worker_parent_phc_facility_visibility$
+declare
+  v_parent_count integer;
+  v_unrelated_count integer;
+begin
+  select count(*) into v_parent_count
+  from public.facilities
+  where id='dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+
+  select count(*) into v_unrelated_count
+  from public.facilities
+  where id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+
+  if v_parent_count<>1 then
+    raise exception 'Assigned SHC worker cannot read the verified parent PHC facility';
+  end if;
+  if v_unrelated_count<>0 then
+    raise exception 'Assigned SHC worker can read an unrelated PHC facility';
+  end if;
+end $worker_parent_phc_facility_visibility$;
+commit;
+
 -- Branch A: PHC has stock; SHC collects and confirms full receipt.
 begin;
 set local role authenticated;
