@@ -780,3 +780,117 @@ test('worker and supervisor complete a correction and verification cycle', async
   // No request in this journey may reach a hosted Supabase project.
   expect(externalRequests).toEqual([]);
 });
+
+
+// ------------------------------------------------------------
+// 13. Authenticated worker identity, assignment and navigation regressions
+// ------------------------------------------------------------
+
+async function mockAuthenticatedWorkerPresentation(page, workerRows) {
+  await page.route('**/rest/v1/profiles?*', async route => {
+    const response = await route.fetch();
+    const rows = await response.json();
+    const updated = Array.isArray(rows)
+      ? rows.map(profile => ({ ...profile, display_name: 'Regression Worker' }))
+      : rows;
+    await route.fulfill({
+      response,
+      contentType: 'application/json',
+      body: JSON.stringify(updated)
+    });
+  });
+
+  await page.route('**/rest/v1/workers?*', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(workerRows)
+    });
+  });
+}
+
+test('worker identity and facility views use the authenticated profile and active worker assignment', async ({ page }) => {
+  const externalRequests = trackExternalSupabaseRequests(page);
+
+  await mockAuthenticatedWorkerPresentation(page, [{
+    id: 'synthetic-worker-regression',
+    auth_user_id: 'synthetic-auth-regression',
+    facility_id: 'synthetic-facility-regression',
+    display_name: 'Regression Worker',
+    role: 'worker',
+    is_active: true,
+    facilities: {
+      name: 'Regression Health and Wellness Centre',
+      district: 'Synthetic Dhamtari',
+      block_lgd_code: '3625'
+    }
+  }]);
+
+  await login(page, '/worker.html', 'worker-a');
+  await expect(page.locator('#portal-app')).toBeVisible();
+
+  await expect(page.locator('#profile-trigger .profile-trigger-copy strong'))
+    .toHaveText('Regression Worker');
+  await expect(page.locator('#profile-trigger .profile-avatar'))
+    .toHaveText('RW');
+
+  await page.locator('[data-portal-view="profile"]').click();
+  await expect(page.locator('[data-module="profile"] [data-worker-name]'))
+    .toHaveText('Regression Worker');
+  await expect(page.locator('[data-module="profile"] [data-worker-initials]'))
+    .toHaveText('RW');
+  await expect(page.locator('[data-module="profile"] [data-worker-facility]'))
+    .toHaveText('Regression Health and Wellness Centre');
+  await expect(page.locator('[data-module="profile"] [data-worker-district]'))
+    .toHaveText('Synthetic Dhamtari');
+
+  await page.locator('[data-portal-view="facility"]').click();
+  await expect(page.locator('[data-module="facility"] [data-assigned-facility]'))
+    .toHaveText('Regression Health and Wellness Centre');
+  await expect(page.locator('[data-module="facility"] [data-assigned-location]'))
+    .toHaveText('Synthetic Dhamtari');
+  expect(externalRequests).toEqual([]);
+});
+
+test('worker with no active assignment sees an explicit unavailable state and no fabricated facility', async ({ page }) => {
+  const externalRequests = trackExternalSupabaseRequests(page);
+  await mockAuthenticatedWorkerPresentation(page, []);
+
+  await login(page, '/worker.html', 'worker-a');
+  await expect(page.locator('#portal-app')).toBeVisible();
+
+  await page.locator('[data-portal-view="profile"]').click();
+  await expect(page.locator('[data-module="profile"] [data-worker-facility]'))
+    .toHaveText('No active facility assignment');
+  await expect(page.locator('[data-module="profile"] [data-worker-district]'))
+    .toHaveText('Not available');
+
+  await page.locator('[data-portal-view="facility"]').click();
+  await expect(page.locator('[data-module="facility"] [data-assigned-facility]'))
+    .toHaveText('No active facility assignment');
+  await expect(page.locator('[data-module="facility"] [data-assigned-location]'))
+    .toHaveText('Not available');
+  expect(externalRequests).toEqual([]);
+});
+
+test('worker navigation exposes stable accessible relationships and focuses the selected heading', async ({ page }) => {
+  await login(page, '/worker.html', 'worker-a');
+  await expect(page.locator('#portal-app')).toBeVisible();
+
+  const nav = page.locator('[data-portal-view="profile"]');
+  const panel = page.locator('[data-module="profile"]');
+  await nav.click();
+
+  const panelId = await panel.getAttribute('id');
+  expect(panelId).toBeTruthy();
+  await expect(nav).toHaveAttribute('aria-controls', panelId);
+  await expect(nav).toHaveAttribute('aria-current', 'page');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('h2')).toBeFocused();
+
+  const otherNav = page.locator('[data-portal-view="facility"]');
+  await otherNav.click();
+  await expect(otherNav).toHaveAttribute('aria-current', 'page');
+  await expect(nav).not.toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('[data-module="facility"] h2')).toBeFocused();
+});
