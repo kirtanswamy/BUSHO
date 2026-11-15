@@ -97,14 +97,10 @@
       const overview = doc.querySelector('[data-module="overview"]');
       const history = doc.querySelector('[data-module="my-reports"]');
       const pending = doc.querySelector('[data-module="pending"]');
-      const facilityModule = doc.querySelector('[data-module="facility"]');
-      const profileModule = doc.querySelector('[data-module="profile"]');
 
       if (overview) overview.innerHTML = renderOverview(summary);
       if (history) history.innerHTML = renderHistory(selected);
       if (pending) pending.innerHTML = renderPending();
-      if (facilityModule) facilityModule.innerHTML = renderFacility();
-      if (profileModule) profileModule.innerHTML = renderProfile();
 
       const facility = worker?.facilities || null;
       const name = facility?.name || 'Facility assignment pending';
@@ -188,16 +184,6 @@
       const actionable = reports.filter(report => ['draft','correction_requested'].includes(report.status));
       return `<div class="module-heading"><div><p class="section-kicker">ACTION REQUIRED</p><h2>Pending reports</h2><p>Drafts and supervisor-returned reports that can be continued.</p></div><button class="btn btn-quiet" data-refresh-worker-reports>Refresh</button></div>
         <article class="module-card">${actionable.length ? actionable.map(report => `<div class="simple-row"><span><strong>${escapeHtml(report.facilities?.name || 'Assigned facility')}</strong><small>${escapeHtml(statusLabel(report.status))} · ${escapeHtml(formatDate(report.updated_at || report.created_at))}</small>${report.review_note ? `<small>Supervisor: ${escapeHtml(report.review_note)}</small>` : ''}</span><button type="button" class="text-action" data-resume-worker-report="${escapeHtml(report.id)}">Continue →</button></div>`).join('') : '<p class="empty-state">No drafts or correction requests need your attention.</p>'}</article>`;
-    }
-
-    function renderFacility() {
-      const facility = worker?.facilities;
-      if (!worker) return '<div class="module-heading"><div><p class="section-kicker">ASSIGNED LOCATION</p><h2>My facility</h2></div></div><article class="module-card"><p class="empty-state">No active worker record is linked to this account. Ask an authorised administrator to provision your worker profile and facility assignment.</p></article>';
-      return `<div class="module-heading"><div><p class="section-kicker">ASSIGNED LOCATION</p><h2>My facility</h2><p>Loaded from your approved worker assignment.</p></div></div><article class="module-card"><h3>${escapeHtml(facility?.name || 'Facility name not available')}</h3><p>${escapeHtml(facility?.district || 'District not available')}</p><p class="muted-copy">${escapeHtml(facility?.block_lgd_code ? 'Block LGD code ' + facility.block_lgd_code : 'Block reference not available')}</p><p class="muted-copy">BUSHO does not infer or create facility assignments from the administrative directory.</p></article>`;
-    }
-
-    function renderProfile() {
-      return `<div class="module-heading"><div><p class="section-kicker">ACCOUNT</p><h2>My profile</h2></div></div><article class="module-card"><p><strong>Account:</strong> ${escapeHtml(profile.display_name || worker?.display_name || 'Health worker')}</p><p><strong>Role:</strong> Health Worker</p><p><strong>Preferred language:</strong> ${escapeHtml(profile.preferred_language || worker?.preferred_language || '—')}</p><p><strong>Assigned facility:</strong> ${escapeHtml(worker?.facilities?.name || 'Pending assignment')}</p></article>`;
     }
 
     async function load() {

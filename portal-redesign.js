@@ -116,13 +116,65 @@
   }
 
   if (role === 'worker') {
-    const greeting=app.querySelector('[data-module="overview"] .module-heading h2'); if(greeting) greeting.textContent='Good afternoon, Anita Verma';
+    const greeting=app.querySelector('[data-module="overview"] .module-heading h2');
+    if(greeting) greeting.textContent='Your field workspace';
+
     const profile=app.querySelector('[data-module="profile"] .module-card');
-    if(profile) profile.innerHTML='<div class="profile-summary"><div class="profile-avatar">AV</div><div><h3>Anita Verma</h3><p>Health Worker · Synthetic demo account</p></div><span class="status-pill status-confirmed">Active demo</span></div><div class="profile-details"><div><small>Assigned facility</small><strong>Rampur HWC</strong></div><div><small>Block / District</small><strong>Rampur · Chhattisgarh</strong></div><div><small>Demo worker ID</small><strong>BUSHO-HW-0042</strong></div><div><small>Reporting scope</small><strong>Facility-level updates</strong></div></div><p class="muted-copy">Fictional profile details for product testing. No real worker identity is represented.</p>';
+    if(profile) profile.innerHTML='<div class="profile-summary"><div class="profile-avatar" data-worker-initials>HW</div><div><h3 data-worker-name>Health Worker</h3><p>Authenticated BUSHO worker account</p></div><span class="status-pill status-confirmed">Role verified</span></div><div class="profile-details"><div><small>Assigned facility</small><strong data-worker-facility>Loading approved assignment…</strong></div><div><small>District</small><strong data-worker-district>Loading approved assignment…</strong></div><div><small>Application role</small><strong>Health Worker</strong></div><div><small>Access source</small><strong>Supabase profile and facility assignment</strong></div></div><p class="muted-copy">Identity and facility scope are read from the authenticated account. BUSHO does not infer a facility or cadre.</p>';
+
     const facility=app.querySelector('[data-module="facility"] .module-card');
-    if(facility) facility.innerHTML='<div class="facility-hero"><span class="facility-icon">⌂</span><div><h3>Rampur Health & Wellness Centre</h3><p>Rampur block · Chhattisgarh</p><span class="status-pill status-confirmed">Synthetic demo facility</span></div></div><div class="profile-details"><div><small>Assigned health worker</small><strong>Anita Verma</strong></div><div><small>Demo reporting period</small><strong>03 Nov 2026</strong></div><div><small>Facility category</small><strong>Health & Wellness Centre</strong></div></div><p class="muted-copy">Facility details are illustrative and do not represent a connected government facility.</p>';
+    if(facility) facility.innerHTML='<div class="facility-hero"><span class="facility-icon">⌂</span><div><h3 data-assigned-facility>Assigned facility</h3><p data-assigned-location>Loading your approved facility assignment…</p><span class="status-pill status-confirmed">Server-controlled assignment</span></div></div><div class="profile-details"><div><small>Assigned worker</small><strong data-assigned-worker>Authenticated account</strong></div><div><small>Facility category</small><strong data-facility-category>Loaded from facility registry</strong></div></div><p class="muted-copy">Only an active, administrator-approved facility assignment is displayed here.</p>';
+
+    document.addEventListener('busho:authenticated', async event => {
+      const account=event.detail?.profile;
+      if(!account || account.role!=='worker') return;
+      const name=String(account.display_name||'Health Worker').trim();
+      const initials=name.split(' ').filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'HW';
+      const nameNode=app.querySelector('[data-worker-name]');
+      const initialsNode=app.querySelector('[data-worker-initials]');
+      const workerNode=app.querySelector('[data-assigned-worker]');
+      if(nameNode) nameNode.textContent=name;
+      if(initialsNode) initialsNode.textContent=initials;
+      if(workerNode) workerNode.textContent=name;
+      const trigger= document.getElementById('profile-trigger');
+      const triggerName=trigger?.querySelector('.profile-trigger-copy strong');
+      const dropdownName=document.querySelector('#profile-dropdown .profile-dropdown-head strong');
+      const avatar=trigger?.querySelector('.profile-avatar');
+      if(triggerName) triggerName.textContent=name;
+      if(dropdownName) dropdownName.textContent=name;
+      if(avatar) avatar.textContent=initials;
+      if(greeting) greeting.textContent='Welcome, '+name;
+
+      try {
+        const factory=window.BUSHO_SUPABASE_CLIENT, config=window.BUSHO_SUPABASE_CONFIG;
+        if(!factory||!config) throw new Error('Secure data access is not configured.');
+        const worker=await factory.createClient(config).getMyWorker();
+        const facility=worker?.facilities||null;
+        const facilityName=facility?.name||'No active facility assignment';
+        const district=facility?.district||'Not available';
+        const facilityNode=app.querySelector('[data-worker-facility]');
+        const districtNode=app.querySelector('[data-worker-district]');
+        const assignedNode=app.querySelector('[data-assigned-facility]');
+        const locationNode=app.querySelector('[data-assigned-location]');
+        if(facilityNode) facilityNode.textContent=facilityName;
+        if(districtNode) districtNode.textContent=district;
+        if(assignedNode) assignedNode.textContent=facilityName;
+        if(locationNode) locationNode.textContent=district;
+      } catch(error) {
+        const facilityNode=app.querySelector('[data-worker-facility]');
+        const districtNode=app.querySelector('[data-worker-district]');
+        const assignedNode=app.querySelector('[data-assigned-facility]');
+        const locationNode=app.querySelector('[data-assigned-location]');
+        const message=error?.message||'Could not load the approved assignment.';
+        if(facilityNode) facilityNode.textContent=message;
+        if(districtNode) districtNode.textContent='Unavailable';
+        if(assignedNode) assignedNode.textContent='Assignment unavailable';
+        if(locationNode) locationNode.textContent=message;
+      }
+    });
+
     const pending=app.querySelector('[data-module="pending"] .module-card');
-    if(pending) pending.innerHTML='<div class="empty-state-icon">✓</div><h3>You are all caught up</h3><p>No additional reports are waiting for confirmation in this synthetic demo. New extracted drafts will appear here when created.</p><button class="btn btn-primary" data-go-view="new-report">＋ Create a report</button>';
+    if(pending) pending.innerHTML='<div class="empty-state-icon">✓</div><h3>No pending local drafts</h3><p>Reports returned by your supervisor will appear here after they are loaded from your authenticated report history.</p><button class="btn btn-primary" data-go-view="new-report">＋ Create a report</button>';
     const intro=app.querySelector('[data-module="new-report"] .panel-intro');
     if(intro){ const h=intro.querySelector('h3'); if(h) h.textContent='Create a field update'; }
   }

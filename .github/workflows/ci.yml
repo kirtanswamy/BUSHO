@@ -25,6 +25,8 @@ jobs:
         run: npm run check
       - name: Syntax-check SHC-to-PHC browser acceptance test
         run: node --check tests/browser/stockout-workflow.spec.mjs
+      - name: Syntax-check portal browser regression tests
+        run: node --check tests/browser/portal-smoke.spec.mjs
 
   database-contract:
     runs-on: ubuntu-latest
