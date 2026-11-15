@@ -13,7 +13,8 @@ Production: unchanged. No hosted Supabase migration, live account/facility provi
 - Database validation requires a positive PHC handover, cumulative SHC receipt of exactly zero, a SHC register reference, timestamp and explanation.
 - The worker may record this outcome only immediately after collection. A later positive cumulative receipt may progress to partial/final receipt while preserving the original zero-receipt event.
 - The PHC supervisor can close the no-receipt case with a resolution note. Worker and supervisor UI/client paths are updated.
-- Added a synthetic PostgreSQL contract branch covering zero receipt, event evidence, later receipt and supervisor closure. CI/local tests are pending; do not call the feature verified until latest-head checks pass.
+- Added a synthetic PostgreSQL contract branch covering zero receipt, event evidence, later receipt and supervisor closure. Latest PostgreSQL 17 contract and Node 18/22/24 CI checks pass on commit `e6ad05ad866376138690ca97107cb9b7d4f50130`.
+- Owner-reported local Playwright baseline: 19/19 passed on that commit. Those 19 tests did not yet exercise the new zero-receipt portal interaction, so a dedicated browser test is now being added before declaring the UI path verified.
 - No hosted Supabase migration, production deployment or PR merge was performed.
 
 Do not apply migrations to hosted Supabase, provision operational accounts/facilities, merge, or deploy without separate explicit approval.
