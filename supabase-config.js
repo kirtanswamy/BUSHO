@@ -2,7 +2,7 @@
 (function (root) {
   if (!root) return;
   root.BUSHO_SUPABASE_CONFIG = Object.freeze({
-    url: 'https://vufnjwkaaqtyukjcvknu.supabase.co',
-    publishableKey: 'sb_publishable_p6_ZGFQfA-zjbjDl7HwOLw_HnTM3hBB'
+    url: 'https://qalfoqhtyrtenkuitvvt.supabase.co',
+    publishableKey: 'sb_publishable_P6Xq3Ys8c8LPjTptxxslJA_0Wz_QbR-'
   });
 })(typeof globalThis !== 'undefined' ? globalThis : this);
