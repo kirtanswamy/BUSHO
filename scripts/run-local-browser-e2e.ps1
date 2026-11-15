@@ -93,6 +93,15 @@ catch {
     throw "Local Auth API is not responding at 127.0.0.1:54321."
 }
 
+Write-Host "`n--- Applying pending migrations to local Supabase ---"
+$migrationOutput = & npx.cmd supabase migration up --local 2>&1
+$migrationExitCode = $LASTEXITCODE
+$migrationOutput | ForEach-Object { Write-Host "$_" }
+if ($migrationExitCode -ne 0) {
+    throw "Pending local Supabase migrations could not be applied. No database reset was attempted."
+}
+Write-Host "Local migration check/application completed. Existing local Auth users and fixtures were preserved."
+
 Write-Host "`n--- Provisioning dedicated replenishment storekeeper ---"
 & .\scripts\provision-storekeeper-e2e.ps1
 $credentials = Get-Content $credentialPath -Raw | ConvertFrom-Json
