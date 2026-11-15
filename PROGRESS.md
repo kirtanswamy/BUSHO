@@ -3,7 +3,7 @@
 Repository: https://github.com/kirtanswamy/BUSHO
 Active implementation branch: `feat/shc-phc-stockout-foundation`
 Pull request: https://github.com/kirtanswamy/BUSHO/pull/6 (OPEN · DRAFT · UNMERGED)
-Latest audit-fix commit: `f0e9adeeaa0077c726bb5ee390a6567476ea1f23`
+Latest reviewed commit: `d98d771081ee6152d72b04ec4d27686ff85ea536`
 Audit-fix scope: parent-PHC facility visibility in CI, explicit RLS regression assertions and synchronized workflow documentation.
 Production: unchanged. No hosted Supabase migration, live account/facility provisioning, merge or production release was performed.
 
@@ -15,7 +15,7 @@ Production: unchanged. No hosted Supabase migration, live account/facility provi
 - Synthetic PostgreSQL workflow contract covers direct fulfilment, upstream replenishment, event-specific evidence, role boundaries, cross-facility isolation, receipt replay and zero-receipt follow-up.
 - Owner-reported local Playwright browser run: 20/20 passed against local Supabase and synthetic fixtures, including the zero-receipt follow-up journey. This is local-only evidence, not hosted Auth or production validation.
 - GitHub Actions run [#1562](https://github.com/kirtanswamy/BUSHO/actions/runs/43662629656) passed on PR head `1c8994ba6d08417989098589fe0c514859208b55`: Node 18/22/24 checks and PostgreSQL 17 database-contract. The audit found CI omitted migration `20261114181000_busho_shc_parent_phc_facility_read_policy.sql`. The migration is now included in CI, and the PostgreSQL contract explicitly asserts assigned-parent visibility and unrelated-PHC denial. Audit-fix CI runs [#1572](https://github.com/kirtanswamy/BUSHO/actions/runs/43687506557) and [#1574](https://github.com/kirtanswamy/BUSHO/actions/runs/43687536404) both completed successfully: Node 18/22/24 checks, migration application, exposed-schema security audit, main RLS contract and SHC-to-PHC workflow contract all passed.
-- Documentation is being synchronized across this checkpoint, `docs/local-supabase-e2e.md` and `docs/shc-phc-stockout-workflow.md`.
+- Documentation is synchronized across this checkpoint, `docs/local-supabase-e2e.md` and `docs/shc-phc-stockout-workflow.md`; the workflow guide now reflects the implemented PR #6 scope and passing validation evidence.
 - PR #6 remains draft and unmerged. GitHub mergeability and passing CI do not establish production readiness.
 - No hosted Supabase migration, live Auth/facility provisioning, official external-system submission, merge or production deployment has been performed.
 
