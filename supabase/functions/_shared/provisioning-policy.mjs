@@ -66,8 +66,8 @@ export function validateProvisioningInput(input) {
     if (role === 'worker' && facilityIds.length !== 1) {
       throw new ProvisioningError(400, 'A health worker must be assigned to exactly one facility.', 'worker_facility_count');
     }
-    if (role === 'worker' && input.consentConfirmed !== true) {
-      throw new ProvisioningError(400, 'Worker data-processing consent must be confirmed before provisioning.', 'worker_consent_required');
+    if (role === 'worker' && input.privacyNoticeSharedConfirmed !== true) {
+      throw new ProvisioningError(400, 'The current privacy notice must be shared with the invitee before provisioning.', 'privacy_notice_not_shared');
     }
   } else {
     if (facilityIds.length) {
@@ -91,7 +91,8 @@ export function validateProvisioningInput(input) {
     preferredLanguage,
     facilityIds,
     scope,
-    consentConfirmed: input.consentConfirmed === true
+    privacyNoticeVersion: '1.1',
+    privacyNoticeSharedConfirmed: input.privacyNoticeSharedConfirmed === true
   });
 }
 

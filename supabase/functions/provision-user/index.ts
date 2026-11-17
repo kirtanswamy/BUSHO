@@ -2,13 +2,13 @@ import { withSupabase } from 'npm:@supabase/server';
 import { provisionUser } from '../_shared/provisioning-service.mjs';
 import { ProvisioningError } from '../_shared/provisioning-policy.mjs';
 
-const APP_ORIGIN = (Deno.env.get('BUSHO_APP_ORIGIN') || 'https://busho.de5.net').replace(/\/+$/, '');
-const ALLOWED_ORIGINS = new Set(
-  (Deno.env.get('BUSHO_ALLOWED_ORIGINS') || APP_ORIGIN)
-    .split(',')
-    .map(value => value.trim().replace(/\/+$/, ''))
-    .filter(Boolean)
-);
+const APP_ORIGIN = 'https://busho.de5.net';
+const ALLOWED_ORIGINS = new Set([
+  APP_ORIGIN,
+  'https://busho.de5.net',
+  'https://busho-chi.vercel.app',
+  ...(Deno.env.get('BUSHO_ALLOWED_ORIGINS') || '').split(',')
+].map(value => value.trim().replace(/\/+$/, '')).filter(Boolean));
 
 function corsHeaders(origin) {
   const headers = new Headers({

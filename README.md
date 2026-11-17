@@ -150,9 +150,9 @@ India and Chhattisgarh have existing health-information and medicine-supply init
 | Browser-native voice input and six interface languages | Native-speaker validation and a BUSHO-operated transcription service |
 | Automated Node and PostgreSQL 17 database-contract tests | Field validation, measured outcomes and security sign-off |
 
-**Live project boundary:** The connected Supabase project currently has no Auth users, profiles, facilities, workers, assignments, reports or audit records. The provisioning Edge Function is present in the development branch but is not deployed. No real workforce workflow has been demonstrated. Do not enter patient-identifiable information.
+**Live project boundary (reviewed 17 November 2026):** The application configuration points to the Supabase project `BUSHO-Demo` (`qalfoqhtyrtenkuitvvt`, ap-south-1), not the separate Supabase project named `BUSHO`. The demo project currently has four active role profiles (worker, supervisor, platform administrator and storekeeper), two facility records flagged as synthetic, one worker record, one closed report and four audit records. These are development/demo records, not evidence of a live government workflow. The separate `BUSHO` project has a different and much smaller schema history and is not the project's configured backend. Do not enter patient-identifiable information or real clinical records.
 
-**Voice privacy:** Voice input uses the browser's speech-recognition service, which may send audio to the browser vendor. BUSHO does not store audio recordings. Manual text entry remains available. Do not speak names, phone numbers, diagnoses, government IDs, or other identifying patient details.
+**Privacy and third-party services:** The web client uses direct HTTPS requests to Supabase Auth/REST/Edge Functions; it does not bundle the Supabase JavaScript SDK. Google Fonts is loaded remotely for typography. Optional browser-native speech recognition may send microphone audio to the browser's speech provider; BUSHO does not operate a transcription service or intentionally store raw audio. Manual text entry remains available. No analytics, advertising, session-replay or marketing SDK was identified in the audited source tree. This is a source-code audit, not proof about platform-level logs or future deployment changes. Do not speak or enter names, phone numbers, diagnoses, government IDs or other identifying patient details.
 
 ## Website portals
 
@@ -165,7 +165,7 @@ The development branch contains one public landing page and three separate role-
 
 Account roles and assignments are derived from the database, not browser-supplied metadata. New accounts are invited by an authorised administrator; users set their own password through the invitation link. The browser never receives the Supabase service-role / secret key.
 
-**Release status:** These changes are on the draft pull request [#5](https://github.com/kirtanswamy/BUSHO/pull/5), not on the production branch. The production domain remains attached to `main`. Do not treat the current production website as the deployed version of these development-branch workflows.
+**Release status:** The Storekeeper workflow and privacy/accessibility foundation are being reviewed in [PR #9](https://github.com/kirtanswamy/BUSHO/pull/9) and [PR #10](https://github.com/kirtanswamy/BUSHO/pull/10). These changes are not yet the production release. Do not treat a preview deployment as the production website.
 
 ## Medicine catalogue validation
 
