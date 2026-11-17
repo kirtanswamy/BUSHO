@@ -91,7 +91,7 @@ export function validateProvisioningInput(input) {
     preferredLanguage,
     facilityIds,
     scope,
-    privacyNoticeVersion: '1.0',
+    privacyNoticeVersion: '1.1',
     privacyNoticeSharedConfirmed: input.privacyNoticeSharedConfirmed === true
   });
 }
