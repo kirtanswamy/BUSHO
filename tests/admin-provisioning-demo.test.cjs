@@ -57,7 +57,7 @@ function element(id, tagName = 'div') {
 function harness(directory = { facilities: [], districts: [] }) {
   const ids = [
     'provision-role','facility-section','facility-options','facility-help',
-    'district-section','provision-district','consent-section','provision-notice-shared',
+    'district-section','provision-district','notice-section','provision-notice-shared',
     'provision-form','provision-submit','provision-status','facility-readiness',
     'facility-readiness-detail','admin-role-chip','provision-email','provision-name',
     'provision-language'
@@ -130,7 +130,7 @@ test('admin provisioning UI blocks facility-based invitations when verified faci
   assert.match(app.elements.get('provision-status').textContent, /No verified facility is available/i);
 });
 
-test('admin provisioning UI submits a worker invitation only with one verified facility and consent', async () => {
+test('admin provisioning UI submits a worker invitation only with one verified facility and notice attestation', async () => {
   const facilityId = '11111111-1111-4111-8111-111111111111';
   const app = harness({
     facilities: [{
