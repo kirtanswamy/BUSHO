@@ -36,7 +36,7 @@ function workerInput(overrides = {}) {
     preferredLanguage: 'hi',
     role: 'worker',
     facilityIds: [FACILITY.id],
-    consentConfirmed: true,
+    privacyNoticeSharedConfirmed: true,
     idempotencyKey: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
     ...overrides
   };
@@ -83,14 +83,15 @@ function makeHarness({ failAt = null, facilities = [FACILITY], district = { lgd_
   return { repository, authAdmin, calls, operations };
 }
 
-test('validates worker provisioning input and requires explicit consent', () => {
+test('validates worker provisioning input and requires a prior privacy-notice delivery attestation', () => {
   const result = validateProvisioningInput(workerInput());
   assert.equal(result.email, 'worker@example.org');
   assert.equal(result.role, 'worker');
   assert.equal(result.facilityIds.length, 1);
+  assert.equal(result.privacyNoticeVersion, '1.0');
   assert.throws(
-    () => validateProvisioningInput(workerInput({ consentConfirmed: false })),
-    error => error instanceof ProvisioningError && error.code === 'worker_consent_required'
+    () => validateProvisioningInput(workerInput({ privacyNoticeSharedConfirmed: false })),
+    error => error instanceof ProvisioningError && error.code === 'privacy_notice_not_shared'
   );
 });
 
@@ -158,7 +159,7 @@ test('platform administrator can provision a state administrator but other roles
   );
 });
 
-test('provisions worker with database role, facility assignment, consent timestamp and no role metadata', async () => {
+test('provisions worker with database role, facility assignment, notice attestation and no role metadata', async () => {
   const harness = makeHarness();
   const result = await provisionUser({
     ...harness,
@@ -180,7 +181,11 @@ test('provisions worker with database role, facility assignment, consent timesta
   const worker = harness.calls.find(call => call[0] === 'insertWorker')[1];
   assert.equal(worker.auth_user_id, result.userId);
   assert.equal(worker.facility_id, FACILITY.id);
-  assert.equal(worker.consent_at, '2026-11-07T12:00:00.000Z');
+  assert.equal(Object.hasOwn(worker, 'consent_at'), false);
+  const operation = harness.operations[0];
+  assert.equal(operation.request_payload.privacy_notice_version, '1.0');
+  assert.equal(operation.request_payload.privacy_notice_shared_confirmed, true);
+  assert.equal(operation.request_payload.privacy_notice_shared_attested_at, '2026-11-07T12:00:00.000Z');
   assert.ok(harness.calls.some(call => call[0] === 'insertFacilityAssignments'));
   assert.ok(harness.calls.some(call => call[0] === 'insertAuditLog'));
 });
@@ -389,7 +394,7 @@ test('provisions a storekeeper with facility assignment but no worker cadre reco
     ...harness,
     callerProfile: { id: 'state-1', role: 'state_admin', status: 'active' },
     callerScopes: [STATE_SCOPE],
-    input: workerInput({ email: 'storekeeper@example.org', displayName: 'Facility Storekeeper', role: 'storekeeper', consentConfirmed: false }),
+    input: workerInput({ email: 'storekeeper@example.org', displayName: 'Facility Storekeeper', role: 'storekeeper', privacyNoticeSharedConfirmed: false }),
     appOrigin: 'https://busho.de5.net',
     now: FIXED_NOW
   });
