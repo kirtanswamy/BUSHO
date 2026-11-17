@@ -36,7 +36,7 @@ test('provisioning controller never accepts a browser-selected caller role as au
 test('health worker invitations require one selected facility and privacy-notice delivery attestation', () => {
   const js = read('admin-portal.js');
   assert.match(js, /role === 'worker' && facilityIds\.length !== 1/);
-  assert.match(js, /role === 'worker' && !consent\.checked/);
+  assert.match(js, /role === 'worker' && !noticeShared\.checked/);
   assert.match(js, /facilityIds: \['worker','supervisor','storekeeper'\]\.includes\(role\) \? facilityIds : \[\]/);
   assert.match(js, /stateLgdCode: '22'/);
 });
