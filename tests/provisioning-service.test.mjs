@@ -88,7 +88,7 @@ test('validates worker provisioning input and requires a prior privacy-notice de
   assert.equal(result.email, 'worker@example.org');
   assert.equal(result.role, 'worker');
   assert.equal(result.facilityIds.length, 1);
-  assert.equal(result.privacyNoticeVersion, '1.0');
+  assert.equal(result.privacyNoticeVersion, '1.1');
   assert.throws(
     () => validateProvisioningInput(workerInput({ privacyNoticeSharedConfirmed: false })),
     error => error instanceof ProvisioningError && error.code === 'privacy_notice_not_shared'
@@ -183,7 +183,7 @@ test('provisions worker with database role, facility assignment, notice attestat
   assert.equal(worker.facility_id, FACILITY.id);
   assert.equal(Object.hasOwn(worker, 'consent_at'), false);
   const operation = harness.operations[0];
-  assert.equal(operation.request_payload.privacy_notice_version, '1.0');
+  assert.equal(operation.request_payload.privacy_notice_version, '1.1');
   assert.equal(operation.request_payload.privacy_notice_shared_confirmed, true);
   assert.equal(operation.request_payload.privacy_notice_shared_attested_at, '2026-11-07T12:00:00.000Z');
   assert.ok(harness.calls.some(call => call[0] === 'insertFacilityAssignments'));
