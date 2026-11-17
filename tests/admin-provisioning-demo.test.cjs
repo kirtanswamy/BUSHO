@@ -167,7 +167,7 @@ test('admin provisioning UI submits a worker invitation only with one verified f
     preferredLanguage: 'hi',
     role: 'worker',
     facilityIds: [facilityId],
-    consentConfirmed: true,
+    privacyNoticeSharedConfirmed: true,
     idempotencyKey: app.calls.provision[0].idempotencyKey
   });
   assert.match(app.calls.provision[0].idempotencyKey, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
@@ -206,7 +206,7 @@ test('admin provisioning UI exposes storekeeper only with a verified facility an
   await app.elements.get('provision-form').emit('submit');
   assert.equal(app.calls.provision.length, 1);
   assert.deepEqual(JSON.parse(JSON.stringify(app.calls.provision[0])), {
-    email: 'storekeeper.synthetic@example.test', displayName: 'Synthetic Storekeeper', preferredLanguage: 'hi', role: 'storekeeper', facilityIds: [facilityId], consentConfirmed: false,
+    email: 'storekeeper.synthetic@example.test', displayName: 'Synthetic Storekeeper', preferredLanguage: 'hi', role: 'storekeeper', facilityIds: [facilityId], privacyNoticeSharedConfirmed: false,
     idempotencyKey: app.calls.provision[0].idempotencyKey
   });
   assert.match(app.calls.provision[0].idempotencyKey, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
