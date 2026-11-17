@@ -275,7 +275,9 @@ test('rejects a duplicate in-progress provisioning operation without creating a 
       role: 'worker',
       preferredLanguage: 'hi',
       facilityIds: [FACILITY.id],
-      scope: null
+      scope: null,
+      privacyNoticeVersion: '1.1',
+      privacyNoticeSharedConfirmed: true
     }),
     status: 'in_progress',
     current_step: 'auth_user_created',
