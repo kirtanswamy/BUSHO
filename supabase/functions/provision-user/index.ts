@@ -2,7 +2,7 @@ import { withSupabase } from 'npm:@supabase/server';
 import { provisionUser } from '../_shared/provisioning-service.mjs';
 import { ProvisioningError } from '../_shared/provisioning-policy.mjs';
 
-const APP_ORIGIN = (Deno.env.get('BUSHO_APP_ORIGIN') || 'https://busho.de5.net').replace(/\/+$/, '');
+const APP_ORIGIN = 'https://busho.de5.net';
 const ALLOWED_ORIGINS = new Set([
   APP_ORIGIN,
   'https://busho.de5.net',
