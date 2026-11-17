@@ -152,7 +152,7 @@ India and Chhattisgarh have existing health-information and medicine-supply init
 
 **Live project boundary:** The connected Supabase project currently has no Auth users, profiles, facilities, workers, assignments, reports or audit records. The provisioning Edge Function is present in the development branch but is not deployed. No real workforce workflow has been demonstrated. Do not enter patient-identifiable information.
 
-**Voice privacy:** Voice input uses the browser's speech-recognition service, which may send audio to the browser vendor. BUSHO does not store audio recordings. Manual text entry remains available. Do not speak names, phone numbers, diagnoses, government IDs, or other identifying patient details.
+**Privacy and third-party services:** The web client uses direct HTTPS requests to Supabase Auth/REST/Edge Functions; it does not bundle the Supabase JavaScript SDK. Google Fonts is loaded remotely for typography. Optional browser-native speech recognition may send microphone audio to the browser's speech provider; BUSHO does not operate a transcription service or intentionally store raw audio. Manual text entry remains available. No analytics, advertising, session-replay or marketing SDK was identified in the audited source tree. This is a source-code audit, not proof about platform-level logs or future deployment changes. Do not speak or enter names, phone numbers, diagnoses, government IDs or other identifying patient details.
 
 ## Website portals
 
