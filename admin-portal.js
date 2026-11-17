@@ -9,7 +9,7 @@
   const districtSection = document.getElementById('district-section');
   const districtSelect = document.getElementById('provision-district');
   const consentSection = document.getElementById('consent-section');
-  const consent = document.getElementById('provision-consent');
+  const noticeShared = document.getElementById('provision-notice-shared');
   const form = document.getElementById('provision-form');
   const submit = document.getElementById('provision-submit');
   const status = document.getElementById('provision-status');
@@ -116,7 +116,7 @@
     facilitySection.classList.toggle('hidden', !facilityRole);
     districtSection.classList.toggle('hidden', !districtRole);
     consentSection.classList.toggle('hidden', role !== 'worker');
-    consent.required = role === 'worker';
+    noticeShared.required = role === 'worker';
 
     let selected = selectedFacilityIds();
     if (role === 'worker' && selected.length > 1) {
@@ -257,7 +257,7 @@
       if (['supervisor','storekeeper'].includes(role) && (facilityIds.length < 1 || facilityIds.length > 20)) return showStatus('Select between 1 and 20 facilities for this facility account.', 'error');
     }
     if (role === 'district_admin' && !districtSelect.value) return showStatus('Select the district for this administrator.', 'error');
-    if (role === 'worker' && !consent.checked) return showStatus('Confirm that you have shared the current BUSHO Privacy Notice with the invitee before sending an invitation.', 'error');
+    if (role === 'worker' && !noticeShared.checked) return showStatus('Confirm that you have shared the current BUSHO Privacy Notice with the invitee before sending an invitation.', 'error');
 
     const input = {
       email: document.getElementById('provision-email').value,
@@ -265,7 +265,7 @@
       preferredLanguage: document.getElementById('provision-language').value,
       role,
       facilityIds: ['worker','supervisor','storekeeper'].includes(role) ? facilityIds : [],
-      privacyNoticeSharedConfirmed: role === 'worker' && consent.checked,
+      privacyNoticeSharedConfirmed: role === 'worker' && noticeShared.checked,
       idempotencyKey: provisioningRequestKey || (provisioningRequestKey = createProvisioningRequestKey())
     };
     if (role === 'district_admin') {
