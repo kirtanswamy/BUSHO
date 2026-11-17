@@ -8,7 +8,7 @@
   const facilityHelp = document.getElementById('facility-help');
   const districtSection = document.getElementById('district-section');
   const districtSelect = document.getElementById('provision-district');
-  const consentSection = document.getElementById('consent-section');
+  const noticeSection = document.getElementById('notice-section');
   const noticeShared = document.getElementById('provision-notice-shared');
   const form = document.getElementById('provision-form');
   const submit = document.getElementById('provision-submit');
@@ -115,7 +115,7 @@
     const stateRole = role === 'state_admin';
     facilitySection.classList.toggle('hidden', !facilityRole);
     districtSection.classList.toggle('hidden', !districtRole);
-    consentSection.classList.toggle('hidden', role !== 'worker');
+    noticeSection.classList.toggle('hidden', role !== 'worker');
     noticeShared.required = role === 'worker';
 
     let selected = selectedFacilityIds();
