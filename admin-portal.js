@@ -257,7 +257,7 @@
       if (['supervisor','storekeeper'].includes(role) && (facilityIds.length < 1 || facilityIds.length > 20)) return showStatus('Select between 1 and 20 facilities for this facility account.', 'error');
     }
     if (role === 'district_admin' && !districtSelect.value) return showStatus('Select the district for this administrator.', 'error');
-    if (role === 'worker' && !consent.checked) return showStatus('Confirm that the worker has been informed and consented before sending an invitation.', 'error');
+    if (role === 'worker' && !consent.checked) return showStatus('Confirm that you have shared the current BUSHO Privacy Notice with the invitee before sending an invitation.', 'error');
 
     const input = {
       email: document.getElementById('provision-email').value,
@@ -265,7 +265,7 @@
       preferredLanguage: document.getElementById('provision-language').value,
       role,
       facilityIds: ['worker','supervisor','storekeeper'].includes(role) ? facilityIds : [],
-      consentConfirmed: role === 'worker' && consent.checked,
+      privacyNoticeSharedConfirmed: role === 'worker' && consent.checked,
       idempotencyKey: provisioningRequestKey || (provisioningRequestKey = createProvisioningRequestKey())
     };
     if (role === 'district_admin') {
