@@ -57,7 +57,7 @@ function element(id, tagName = 'div') {
 function harness(directory = { facilities: [], districts: [] }) {
   const ids = [
     'provision-role','facility-section','facility-options','facility-help',
-    'district-section','provision-district','consent-section','provision-consent',
+    'district-section','provision-district','consent-section','provision-notice-shared',
     'provision-form','provision-submit','provision-status','facility-readiness',
     'facility-readiness-detail','admin-role-chip','provision-email','provision-name',
     'provision-language'
@@ -157,7 +157,7 @@ test('admin provisioning UI submits a worker invitation only with one verified f
   app.elements.get('provision-name').value = 'Synthetic Worker';
   app.elements.get('provision-email').value = 'worker.synthetic@example.test';
   app.elements.get('provision-language').value = 'hi';
-  app.elements.get('provision-consent').checked = true;
+  app.elements.get('provision-notice-shared').checked = true;
   await app.elements.get('provision-form').emit('submit');
 
   assert.equal(app.calls.provision.length, 1);
