@@ -57,7 +57,7 @@ function element(id, tagName = 'div') {
 function harness(directory = { facilities: [], districts: [] }) {
   const ids = [
     'provision-role','facility-section','facility-options','facility-help',
-    'district-section','provision-district','consent-section','provision-consent',
+    'district-section','provision-district','notice-section','provision-notice-shared',
     'provision-form','provision-submit','provision-status','facility-readiness',
     'facility-readiness-detail','admin-role-chip','provision-email','provision-name',
     'provision-language'
@@ -130,7 +130,7 @@ test('admin provisioning UI blocks facility-based invitations when verified faci
   assert.match(app.elements.get('provision-status').textContent, /No verified facility is available/i);
 });
 
-test('admin provisioning UI submits a worker invitation only with one verified facility and consent', async () => {
+test('admin provisioning UI submits a worker invitation only with one verified facility and notice attestation', async () => {
   const facilityId = '11111111-1111-4111-8111-111111111111';
   const app = harness({
     facilities: [{
@@ -157,7 +157,7 @@ test('admin provisioning UI submits a worker invitation only with one verified f
   app.elements.get('provision-name').value = 'Synthetic Worker';
   app.elements.get('provision-email').value = 'worker.synthetic@example.test';
   app.elements.get('provision-language').value = 'hi';
-  app.elements.get('provision-consent').checked = true;
+  app.elements.get('provision-notice-shared').checked = true;
   await app.elements.get('provision-form').emit('submit');
 
   assert.equal(app.calls.provision.length, 1);
@@ -167,7 +167,7 @@ test('admin provisioning UI submits a worker invitation only with one verified f
     preferredLanguage: 'hi',
     role: 'worker',
     facilityIds: [facilityId],
-    consentConfirmed: true,
+    privacyNoticeSharedConfirmed: true,
     idempotencyKey: app.calls.provision[0].idempotencyKey
   });
   assert.match(app.calls.provision[0].idempotencyKey, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
@@ -206,7 +206,7 @@ test('admin provisioning UI exposes storekeeper only with a verified facility an
   await app.elements.get('provision-form').emit('submit');
   assert.equal(app.calls.provision.length, 1);
   assert.deepEqual(JSON.parse(JSON.stringify(app.calls.provision[0])), {
-    email: 'storekeeper.synthetic@example.test', displayName: 'Synthetic Storekeeper', preferredLanguage: 'hi', role: 'storekeeper', facilityIds: [facilityId], consentConfirmed: false,
+    email: 'storekeeper.synthetic@example.test', displayName: 'Synthetic Storekeeper', preferredLanguage: 'hi', role: 'storekeeper', facilityIds: [facilityId], privacyNoticeSharedConfirmed: false,
     idempotencyKey: app.calls.provision[0].idempotencyKey
   });
   assert.match(app.calls.provision[0].idempotencyKey, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);

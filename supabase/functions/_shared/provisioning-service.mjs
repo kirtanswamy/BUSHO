@@ -43,7 +43,9 @@ export async function provisionUser({
     role: request.role,
     preferredLanguage: request.preferredLanguage,
     facilityIds: [...request.facilityIds].sort(),
-    scope: request.scope
+    scope: request.scope,
+    privacyNoticeVersion: request.privacyNoticeVersion,
+    privacyNoticeSharedConfirmed: request.privacyNoticeSharedConfirmed
   });
   const operation = await repository.createProvisioningOperation({
     requested_by: callerProfile.id,
@@ -56,7 +58,9 @@ export async function provisionUser({
       preferred_language: request.preferredLanguage,
       facility_ids: request.facilityIds,
       scope: request.scope,
-      consent_confirmed: request.consentConfirmed
+      privacy_notice_version: request.privacyNoticeVersion,
+      privacy_notice_shared_confirmed: request.privacyNoticeSharedConfirmed,
+      privacy_notice_shared_attested_at: request.privacyNoticeSharedConfirmed ? now().toISOString() : null
     },
     status: 'in_progress',
     current_step: 'accepted'
@@ -104,8 +108,7 @@ export async function provisionUser({
         display_name: request.displayName,
         preferred_language: request.preferredLanguage,
         role: 'worker',
-        is_active: true,
-        consent_at: now().toISOString()
+        is_active: true
       });
     }
 
@@ -165,7 +168,9 @@ export async function provisionUser({
         role: request.role,
         facility_ids: request.facilityIds,
         scope: request.scope,
-        invitation_method: 'email_invite'
+        invitation_method: 'email_invite',
+        privacy_notice_version: request.privacyNoticeVersion,
+        privacy_notice_shared_attested: request.privacyNoticeSharedConfirmed
       }
     });
 

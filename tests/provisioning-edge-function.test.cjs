@@ -23,9 +23,11 @@ test('provisioning Edge Function bounds and validates the request before reading
   assert.match(source, /JSON\.parse\(new TextDecoder\(\)\.decode\(bytes\)\)/);
 });
 
-test('provisioning Edge Function restricts browser origins and uses no-store responses', () => {
+test('provisioning Edge Function restricts browser origins, supports both production domains and uses no-store responses', () => {
   const source = read('supabase/functions/provision-user/index.ts');
   assert.match(source, /BUSHO_ALLOWED_ORIGINS/);
+  assert.match(source, /const APP_ORIGIN = 'https:\/\/busho\.de5\.net'/);
+  assert.match(source, /https:\/\/busho-chi\.vercel\.app/);
   assert.match(source, /Origin is not allowed/);
   assert.match(source, /Cache-Control', 'no-store'/);
   assert.match(source, /'Access-Control-Allow-Methods': 'POST, OPTIONS'/);
