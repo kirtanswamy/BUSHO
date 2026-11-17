@@ -15,9 +15,9 @@ test('administrator workspace loads Auth gate before the provisioning controller
   assert.match(html, /id="portal-logout"/);
 });
 
-test('administrator form supports role, facility, geographic scope and worker consent controls', () => {
+test('administrator form supports role, facility, geographic scope and worker notice-delivery attestation controls', () => {
   const html = read('admin.html');
-  for (const id of ['provision-name','provision-email','provision-role','provision-language','facility-options','provision-district','provision-consent','provision-submit']) {
+  for (const id of ['provision-name','provision-email','provision-role','provision-language','facility-options','provision-district','provision-notice-shared','provision-submit']) {
     assert.match(html, new RegExp('id="' + id + '"'));
   }
   assert.match(html, /data-portal-role="admin"/);
@@ -33,7 +33,7 @@ test('provisioning controller never accepts a browser-selected caller role as au
   assert.doesNotMatch(js, /localStorage|sessionStorage/);
 });
 
-test('health worker invitations require one selected facility and explicit consent', () => {
+test('health worker invitations require one selected facility and privacy-notice delivery attestation', () => {
   const js = read('admin-portal.js');
   assert.match(js, /role === 'worker' && facilityIds\.length !== 1/);
   assert.match(js, /role === 'worker' && !consent\.checked/);
