@@ -33,6 +33,8 @@
     })[char]);
   }
 
+  function countWord(count, singular, plural = singular + 's') { return String(count) + ' ' + (count === 1 ? singular : plural); }
+
   function statusLabel(status) {
     return LABELS[status] || 'Unknown status';
   }
@@ -140,15 +142,13 @@
 
       const badge = doc.querySelector('.demo-badge');
       if (badge) {
-        badge.textContent = 'LIVE DATA · ACCESS SCOPED';
-        badge.classList.remove('demo-badge');
-        badge.classList.add('live-data-badge');
+        badge.textContent = 'SYNTHETIC PILOT DATA · FACILITY-SCOPED';
       }
-      doc.querySelectorAll('.demo-sidebar-label').forEach(node => node.textContent = 'LIVE · DATABASE CONTROLLED');
+      doc.querySelectorAll('.demo-sidebar-label').forEach(node => node.textContent = 'READ-ONLY SCOPE GUARD ACTIVE');
       doc.querySelectorAll('.demo-data-disclaimer').forEach(node => node.remove());
       doc.querySelectorAll('.profile-trigger-copy strong').forEach(node => node.textContent = profile.display_name || 'Supervisor workspace');
       doc.querySelectorAll('.profile-dropdown-head strong').forEach(node => node.textContent = profile.display_name || 'Supervisor workspace');
-      doc.querySelectorAll('.profile-trigger-copy small').forEach(node => node.textContent = summary.facilities + ' assigned facilities in report data');
+      doc.querySelectorAll('.profile-trigger-copy small').forEach(node => node.textContent = countWord(summary.facilities, 'assigned facility') + ' in report data');
       onState({ reports, summary, selected, busy, error });
     }
 
@@ -161,7 +161,7 @@
         facilityCounts.set(name, (facilityCounts.get(name) || 0) + 1);
       }
       return `
-        <div class="module-heading"><div><p class="section-kicker">SUPERVISOR OPERATIONS</p><h2>Operational overview</h2><p>Live reports visible within your approved facility scope.</p></div><span class="scope-label">${escapeHtml(role.replaceAll('_',' '))} · RLS-scoped</span></div>
+        <div class="module-heading"><div><p class="section-kicker">SUPERVISOR OPERATIONS</p><h2>Operational overview</h2><p>Audited records visible within your approved facility scope.</p></div><span class="scope-label">${escapeHtml(role.replaceAll('_',' '))} · facility-scoped</span></div>
         <div class="supervisor-kpi-grid">
           ${kpi('Reports in scope', summary.total, 'Records visible to this account')}
           ${kpi('Awaiting review', summary.awaitingReview, 'Submitted, resubmitted or escalated')}
@@ -173,13 +173,13 @@
             ${queue.length ? queue.map(report => `<button class="priority-row" data-open-report="${escapeHtml(report.id)}"><span class="priority-icon priority-amber">!</span><span><strong>${escapeHtml(report.facilities?.name || 'Assigned facility')} · ${escapeHtml(report.workers?.display_name || 'Health worker')}</strong><small>${escapeHtml(statusLabel(report.status))} · ${escapeHtml(formatDate(report.submitted_at || report.created_at))}</small></span><b>Review →</b></button>`).join('') : '<p class="empty-state">No reports are currently awaiting review in the records visible to this account.</p>'}
           </article>
           <article class="module-card"><div class="module-card-head"><div><p class="card-overline">FACILITY ACTIVITY</p><h3>Reports by facility</h3></div></div>
-            ${facilityCounts.size ? Array.from(facilityCounts.entries()).map(([name,count]) => `<div class="facility-progress"><div class="facility-progress-head"><strong>${escapeHtml(name)}</strong><span>${count} reports</span></div><div class="progress-track"><i style="width:${Math.min(100, summary.total ? count / summary.total * 100 : 0)}%"></i></div></div>`).join('') : '<p class="empty-state">No facility reports are available yet.</p>'}
+            ${facilityCounts.size ? Array.from(facilityCounts.entries()).map(([name,count]) => `<div class="facility-progress"><div class="facility-progress-head"><strong>${escapeHtml(name)}</strong><span>${countWord(count, 'report')}</span></div><div class="progress-track"><i style="width:${Math.min(100, summary.total ? count / summary.total * 100 : 0)}%"></i></div></div>`).join('') : '<p class="empty-state">No facility reports are available yet.</p>'}
           </article>
           <article class="module-card"><div class="module-card-head"><div><p class="card-overline">RECENT RECORDS</p><h3>Latest submissions</h3></div><button class="text-action" data-open-inbox>View all →</button></div>
-            ${recent.length ? recent.map(report => `<div class="simple-row"><span>${escapeHtml(report.facilities?.name || 'Facility')}</span><span>${escapeHtml(formatDate(report.created_at))}</span><span><b class="status-pill">${escapeHtml(statusLabel(report.status))}</b></span></div>`).join('') : '<p class="empty-state">No reports have been submitted in this scope.</p>'}
+            ${recent.length ? recent.map(report => `<div class="simple-row"><span>${escapeHtml(report.facilities?.name || 'Facility')}</span><span>${escapeHtml(formatDate(report.created_at))}</span><span><b class="status-pill" data-status="${escapeHtml(report.status)}">${escapeHtml(statusLabel(report.status))}</b></span></div>`).join('') : '<p class="empty-state">No reports have been submitted in this scope.</p>'}
           </article>
         </div>
-        <p class="muted-copy">Counts are calculated from records returned by the authenticated, row-level-security-scoped query. They are not statewide totals.</p>`;
+        <p class="muted-copy">Counts are calculated from records returned by the authenticated, authorised facility-scoped query. They are not statewide totals.</p>`;
     }
 
     function kpi(label, value, note) {
@@ -203,7 +203,7 @@
           ${error ? `<p class="portal-login-error" role="alert">${escapeHtml(error)}</p>` : ''}
           <div class="simple-table">
             <div class="simple-row simple-header"><span>REPORT / FACILITY</span><span>WORKER</span><span>STATUS</span><span>SUBMITTED</span></div>
-            ${rows.length ? rows.map(report => `<button type="button" class="simple-row report-inbox-row" data-open-report="${escapeHtml(report.id)}"><span><strong>${escapeHtml(report.facilities?.name || 'Assigned facility')}</strong><small>${escapeHtml((report.report_items || []).map(item => item.display_label).slice(0,2).join(', ') || 'Field report')}</small></span><span>${escapeHtml(report.workers?.display_name || 'Health worker')}</span><span><b class="status-pill">${escapeHtml(statusLabel(report.status))}</b></span><span>${escapeHtml(formatDate(report.submitted_at || report.created_at))}</span></button>`).join('') : '<p class="empty-state">No records match this filter. New submissions will appear here after refresh.</p>'}
+            ${rows.length ? rows.map(report => `<button type="button" class="simple-row report-inbox-row" data-open-report="${escapeHtml(report.id)}"><span><strong>${escapeHtml(report.facilities?.name || 'Assigned facility')}</strong><small>${escapeHtml((report.report_items || []).map(item => item.display_label).slice(0,2).join(', ') || 'Field report')}</small></span><span>${escapeHtml(report.workers?.display_name || 'Health worker')}</span><span><b class="status-pill" data-status="${escapeHtml(report.status)}">${escapeHtml(statusLabel(report.status))}</b></span><span>${escapeHtml(formatDate(report.submitted_at || report.created_at))}</span></button>`).join('') : '<p class="empty-state">No records match this filter. New submissions will appear here after refresh.</p>'}
           </div>
         </article>
         ${selected ? renderDetail(selected) : '<article class="module-card report-detail-placeholder"><h3>Select a report to review</h3><p>Open a report to inspect its original field note, structured observations and audit history before deciding.</p></article>'}`;
@@ -215,15 +215,15 @@
       const actions = role === 'supervisor' ? reviewActions(report.status) : [];
       return `
         <article class="module-card report-detail" id="supervisor-report-detail">
-          <div class="module-card-head"><div><p class="card-overline">REPORT DETAIL</p><h3>${escapeHtml(report.facilities?.name || 'Assigned facility')}</h3><p>Reference: <code>${escapeHtml(report.id)}</code></p></div><b class="status-pill">${escapeHtml(statusLabel(report.status))}</b></div>
+          <div class="module-card-head"><div><p class="card-overline">REPORT DETAIL</p><h3>${escapeHtml(report.facilities?.name || 'Assigned facility')}</h3><p>Reference: <code>${escapeHtml(report.id)}</code></p></div><b class="status-pill" data-status="${escapeHtml(report.status)}">${escapeHtml(statusLabel(report.status))}</b></div>
           <div class="report-meta-grid"><div><small>Health worker</small><strong>${escapeHtml(report.workers?.display_name || 'Health worker')}</strong></div><div><small>Reporting date</small><strong>${escapeHtml(report.reporting_date || '—')}</strong></div><div><small>Submitted</small><strong>${escapeHtml(formatDate(report.submitted_at || report.created_at))}</strong></div><div><small>Language</small><strong>${escapeHtml(report.language_code || '—')}</strong></div></div>
           <section class="report-source"><h4>Original field report</h4><p>${escapeHtml(report.original_text || 'No original narrative was attached.')}</p></section>
           <section><h4>Structured observations</h4>
-            ${items.length ? items.map(item => { const detail=itemDescription(item); return `<div class="report-observation"><div><strong>${escapeHtml(detail.label)}</strong><small>${escapeHtml(detail.type)} · ${escapeHtml(detail.status || 'Human review required')}</small>${detail.sourcePhrase ? `<p>Source phrase: ${escapeHtml(detail.sourcePhrase)}</p>` : ''}</div><b>${escapeHtml(detail.quantity)}</b></div>`; }).join('') : '<p class="empty-state">No structured observations were attached to this report.</p>'}
+            ${items.length ? items.map(item => { const detail=itemDescription(item); return `<div class="report-observation"><div><strong>${escapeHtml(detail.label)}</strong><small>${escapeHtml(detail.type)} · ${escapeHtml(detail.status || 'Human review required')}</small>${detail.sourcePhrase ? `<p></p>` : ''}</div><b>${escapeHtml(detail.quantity)}</b></div>`; }).join('') : '<p class="empty-state">No structured observations were attached to this report.</p>'}
           </section>
           ${report.review_note ? `<section class="review-note"><h4>Latest supervisor note</h4><p>${escapeHtml(report.review_note)}</p></section>` : ''}
           <section><h4>Audit timeline</h4>
-            ${events.length ? `<ol class="report-timeline">${events.map(event => `<li><strong>${escapeHtml(event.action.replaceAll('_',' '))}</strong><small>${escapeHtml(formatDate(event.created_at))} · ${escapeHtml(event.actor_role || 'system')}</small>${event.note ? `<p>${escapeHtml(event.note)}</p>` : ''}</li>`).join('')}</ol>` : '<p class="empty-state">No workflow events are available for this report.</p>'}
+            ${events.length ? `<ol class="report-timeline">${events.map(event => `<li><strong> ${escapeHtml(event.status_from && event.status_to ? statusLabel(event.status_from)+' → '+statusLabel(event.status_to) : String(event.action || 'Workflow update').replaceAll('_',' '))}</strong><small>${escapeHtml(event.actor_role || 'system')} · ${escapeHtml(report.facilities?.name || 'Facility')} · ${escapeHtml(formatDate(event.created_at))}</small>${event.note ? `<p>${escapeHtml(event.note)}</p>` : ''}</li>`).join('')}</ol>` : '<p class="empty-state">No workflow events are available for this report.</p>'}
           </section>
           ${actions.length ? `
             <form class="supervisor-review-form" data-review-form>
@@ -243,7 +243,7 @@
       const events = reports.flatMap(report => (report.report_events || []).map(event => ({...event, report})))
         .sort((a,b) => new Date(b.created_at)-new Date(a.created_at)).slice(0,60);
       return `<div class="module-heading"><div><p class="section-kicker">AUDIT TRAIL</p><h2>Activity log</h2><p>Workflow events recorded by the database for reports visible in your scope.</p></div><button class="btn btn-quiet" data-refresh>Refresh</button></div>
-        <article class="module-card">${events.length ? events.map(event => `<div class="simple-row"><span>${escapeHtml(formatDate(event.created_at))}</span><span><strong>${escapeHtml(event.action.replaceAll('_',' '))}</strong><small>${escapeHtml(event.report.facilities?.name || 'Facility')} · ${escapeHtml(event.report.workers?.display_name || 'Worker')}</small></span><span>${escapeHtml(event.status_to || 'Recorded')}</span></div>`).join('') : '<p class="empty-state">No workflow events are available in the current report scope.</p>'}</article>`;
+        <article class="module-card">${events.length ? events.map(event => `<div class="simple-row"><span>${escapeHtml(formatDate(event.created_at))}</span><span><strong> ${escapeHtml(event.status_from && event.status_to ? statusLabel(event.status_from)+' → '+statusLabel(event.status_to) : String(event.action || 'Workflow update').replaceAll('_',' '))}</strong><small>${escapeHtml(event.actor_role || 'Authorised user')} · ${escapeHtml(event.report.facilities?.name || 'Facility')} · ${escapeHtml(event.report.workers?.display_name || 'Worker')}</small></span><span>${escapeHtml(event.status_to ? statusLabel(event.status_to) : 'Recorded')}</span></div>`).join('') : '<p class="empty-state">No workflow events are available in the current report scope.</p>'}</article>`;
     }
 
     function renderFacilities() {
@@ -258,7 +258,7 @@
         if (report.worker_id) group.workers.add(report.worker_id);
       }
       return `<div class="module-heading"><div><p class="section-kicker">COVERAGE</p><h2>Facilities in report activity</h2><p>Only facilities represented in reports returned by your assigned scope are listed.</p></div></div>
-        <article class="module-card">${groups.size ? Array.from(groups.values()).map(f => `<div class="simple-row"><span><strong>${escapeHtml(f.name)}</strong><small>${escapeHtml(f.district)}</small></span><span>${f.total} reports</span><span>${f.workers.size} workers represented</span><span>${f.pending} awaiting review</span></div>`).join('') : '<p class="empty-state">No facility activity is available yet. Facility registry access is not inferred from the geography directory.</p>'}</article>`;
+        <article class="module-card">${groups.size ? Array.from(groups.values()).map(f => `<div class="simple-row"><span><strong>${escapeHtml(f.name)}</strong><small>${escapeHtml(f.district)}</small></span><span>${countWord(f.total, 'report')}</span><span>${countWord(f.workers.size, 'worker')} represented</span><span>${f.pending} awaiting review</span></div>`).join('') : '<p class="empty-state">No facility activity is available yet. Facility registry access is not inferred from the geography directory.</p>'}</article>`;
     }
 
     function renderWorkers() {
@@ -273,7 +273,7 @@
         if (!group.last || new Date(date) > new Date(group.last)) group.last = date;
       }
       return `<div class="module-heading"><div><p class="section-kicker">TEAM ACTIVITY</p><h2>Workers represented in reports</h2><p>This is report activity, not an HR roster or attendance record.</p></div></div>
-        <article class="module-card">${groups.size ? Array.from(groups.values()).map(w => `<div class="simple-row"><span><strong>${escapeHtml(w.name)}</strong><small>${escapeHtml(w.facility)}</small></span><span>${w.reports} reports</span><span>Latest: ${escapeHtml(formatDate(w.last))}</span></div>`).join('') : '<p class="empty-state">No worker activity is available yet.</p>'}</article>`;
+        <article class="module-card">${groups.size ? Array.from(groups.values()).map(w => `<div class="simple-row"><span><strong>${escapeHtml(w.name)}</strong><small>${escapeHtml(w.facility)}</small></span><span>${countWord(w.reports, 'report')}</span><span>Latest: ${escapeHtml(formatDate(w.last))}</span></div>`).join('') : '<p class="empty-state">No worker activity is available yet.</p>'}</article>`;
     }
 
     function renderUnavailable(title, message) {

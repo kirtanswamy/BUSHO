@@ -270,7 +270,7 @@
       const session = await getValidSession();
       const rows = await restRequest(
         'workers?auth_user_id=eq.' + encodeURIComponent(session.user.id) +
-        '&is_active=eq.true&select=id,auth_user_id,facility_id,display_name,preferred_language,role,is_active,facilities(name,district,block_lgd_code)'
+        '&is_active=eq.true&select=id,auth_user_id,facility_id,display_name,preferred_language,role,is_active,facilities(name,district,block_lgd_code,facility_type)'
       );
       return Array.isArray(rows) ? (rows[0] || null) : null;
     }

@@ -83,13 +83,13 @@
     node.innerHTML = cases.map(row => {
       const events = Array.isArray(row.stockout_case_events) ? [...row.stockout_case_events].sort((a,b) => new Date(a.created_at)-new Date(b.created_at)) : [];
       const timeline = events.length ? '<ol class="stockout-timeline">' + events.map(event =>
-        '<li><strong>' + esc((event.action || 'update').replaceAll('_',' ')) + '</strong><small>' +
+        '<li><strong>' + esc(event.status_from && event.status_to ? (labels[event.status_from] || event.status_from) + ' → ' + (labels[event.status_to] || event.status_to) : ({worker_submitted_to_phc:'Submitted to PHC',phc_acknowledged:'Acknowledged by PHC',phc_review_started:'PHC review started',phc_clarification_requested:'Clarification requested',phc_accepted_for_action:'Accepted for PHC action',phc_marked_unavailable:'PHC marked unavailable',official_indent_reference_recorded:'Official indent reference recorded',upstream_supply_receipt_recorded:'Upstream supply received at PHC',phc_handover_recorded:'PHC-to-SHC handover recorded',shc_collection_recorded:'SHC collection recorded',shc_partial_receipt_recorded:'Partial SHC receipt recorded',shc_discrepancy_recorded:'SHC discrepancy recorded',shc_receipt_completed:'SHC receipt completed',case_closed:'Case closed'}[event.action] || 'Workflow update')) + '</strong><small>' + esc(event.actor_role || 'Authorised user') + ' · ' +
         esc(date(event.created_at)) + '</small>' + (event.note ? '<p>' + esc(event.note) + '</p>' : '') +
         (event.external_reference ? '<small>Reference: ' + esc(event.external_reference) + '</small>' : '') + '</li>'
       ).join('') + '</ol>' : '<p class="muted-copy">No event history is available.</p>';
       return '<article class="stockout-case-card"><div class="stockout-case-head"><div><small>REQUEST · ' +
         esc(String(row.id).slice(0,8).toUpperCase()) + '</small><h4>' + esc(row.medicine_name) +
-        '</h4><p>'+esc(row.medicine_strength_form||'Strength/form not recorded')+'</p></div><span class="stockout-status">' + esc(labels[row.status] || row.status) +
+        '</h4><p>'+esc(row.medicine_strength_form||'Strength/form not recorded')+'</p></div><span class="stockout-status" data-status="' + esc(row.status) + '">' + esc(labels[row.status] || row.status) +
         '</span></div><div class="stockout-case-facts"><span>Observed: <b>' + esc(row.reported_quantity) + ' ' + esc(row.quantity_unit) +
         '</b></span><span>Requested: <b>' + esc(row.requested_quantity) + ' ' + esc(row.quantity_unit) +
         '</b></span><span>SHC received: <b>' + esc(row.shc_received_quantity || 0) + ' ' + esc(row.quantity_unit) +
@@ -97,7 +97,7 @@
         (row.phc_review_note ? '<p class="stockout-review-note"><strong>PHC note:</strong> ' + esc(row.phc_review_note) + '</p>' : '') +
         (row.phc_handover_quantity !== null && row.phc_handover_quantity !== undefined ?
           '<p class="stockout-review-note">PHC handover recorded: <strong>' + esc(row.phc_handover_quantity) + ' ' + esc(row.quantity_unit) + '</strong></p>' : '') +
-        caseActionForm(row) + '<details class="stockout-history"><summary>View activity history (' + events.length + ')</summary>' + timeline + '</details></article>';
+        caseActionForm(row) + '<details class="stockout-history"><summary>View activity history (' + events.length + (events.length === 1 ? ' event' : ' events') + ')</summary>' + timeline + '</details></article>';
     }).join('');
   }
   async function refresh() {
@@ -109,6 +109,7 @@
       if (token !== generation || !active) return;
       context = nextContext;
       cases = Array.isArray(nextCases) ? nextCases : [];
+      root.document.dispatchEvent(new CustomEvent('busho:worker-facility-context',{detail:{facility:nextContext.worker?.facilities||{},parent:nextContext.phc||{},worker:nextContext.worker||{},link:nextContext.link||null}}));
       renderContext();
       renderCases();
     } catch (error) {

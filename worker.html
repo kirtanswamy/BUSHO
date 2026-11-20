@@ -9,8 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles-v2.css?v=21" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-v2.css?v=21">
+    <link rel="stylesheet" href="civic-design-system.css?v=1">
     <script src="i18n.js?v=2"></script>
   </head>
   <body class="worker-portal-body">
@@ -72,7 +73,7 @@
         </section>
         <div id="portal-app" class="portal-app hidden" aria-hidden="true"><aside class="portal-sidebar worker-sidebar" aria-label="Health Worker navigation">
   <div class="sidebar-brand sidebar-role-label"><strong>BUSHO</strong><small>HEALTH WORKER</small></div>
-  <p class="sidebar-label">WORKSPACE</p>
+  <p class="sidebar-label">OPERATIONAL WORKFLOW</p>
   <button class="sidebar-link active" data-portal-view="overview"><span>▦</span> Overview</button>
   <button class="sidebar-link" data-portal-view="new-report"><span>＋</span> New Report</button>
   <button class="sidebar-link" data-portal-view="my-reports"><span>▤</span> My Reports</button>
@@ -96,7 +97,7 @@
               </div>
               <div class="demo-status" aria-live="polite">
                 <span class="status-dot" aria-hidden="true"></span>
-                <span>Awaiting live account data</span>
+                <span>Waiting for facility-scoped account data</span>
               </div>
             </div>
 
@@ -109,9 +110,9 @@
             <section class="portal-module active" data-module="overview">
               <div class="module-heading"><div><p class="section-kicker">YOUR FIELD WORKSPACE</p><h2>Your reporting workspace</h2><p>Your approved facility activity will appear here once records are synced.</p></div><button class="btn btn-primary" data-go-view="new-report">＋ Create new report</button></div>
               <div class="worker-overview-metrics">
-                <article class="overview-stat"><span>Reports submitted</span><strong>—</strong><small>Awaiting live report sync</small></article>
-                <article class="overview-stat"><span>Awaiting confirmation</span><strong>—</strong><small>Awaiting live report sync</small></article>
-                <article class="overview-stat"><span>Correction requested</span><strong>—</strong><small>Awaiting live report sync</small></article>
+                <article class="overview-stat"><span>Reports submitted</span><strong>—</strong><small>Waiting for account report records</small></article>
+                <article class="overview-stat"><span>Awaiting confirmation</span><strong>—</strong><small>Waiting for account report records</small></article>
+                <article class="overview-stat"><span>Correction requested</span><strong>—</strong><small>Waiting for account report records</small></article>
               </div>
               <article class="module-card"><div class="module-card-head"><div><h3>Recent reports</h3><p>Your latest submitted field updates</p></div><button class="text-action" data-go-view="my-reports">View all reports →</button></div>
                 <div class="simple-table"><div class="simple-row simple-header"><span>REPORT</span><span>SUBMITTED</span><span>STATUS</span></div>
@@ -185,15 +186,14 @@
                   <span class="progress-num">2</span>
                   <span class="progress-label" data-i18n="worker.step2">Check</span>
                 </div>
-                <div class="progress-connector"></div>
-              </div>
+                </div>
 
               <div class="worker-grid">
                 <!-- Report Input Card -->
                 <article class="card report-card" aria-labelledby="report-title">
                   <header class="card-head">
                     <div>
-                      <p class="card-overline" data-i18n="worker.step1">Step 1 of 3: Report</p>
+                      <p class="card-overline" data-i18n="worker.step1">Step 1 of 2: Report</p>
                       <h3 id="report-title" data-i18n="worker.sendUpdate">Send a field update</h3>
                     </div>
                   </header>
@@ -217,7 +217,7 @@
                 <article class="card extraction-card" aria-labelledby="extraction-title">
                   <header class="card-head">
                     <div>
-                      <p class="card-overline" data-i18n="worker.step2">Step 2 of 3: Check</p>
+                      <p class="card-overline" data-i18n="worker.step2">Step 2 of 2: Review</p>
                       <h3 id="extraction-title" data-i18n="worker.draftTitle">What BUSHO heard</h3>
                     </div>
                     <span class="draft-chip" id="draft-chip" data-i18n="worker.draftAwaiting">Awaiting extraction</span>
@@ -461,5 +461,6 @@
     <script src="worker-history.js?v=2"></script>
     <script src="worker-stockouts.js?v=4"></script>
     <script src="worker-portal.js?v=1"></script>
-  </body>
+  <script src="civic-shell.js?v=1"></script>
+</body>
 </html>

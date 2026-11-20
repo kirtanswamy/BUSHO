@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="assets/busho-github-banner.jpg" alt="BUSHO — Bottom-Up Smart Health Orchestrator: a human-reviewed workflow from frontline reports to supervisor review" width="100%" />
+<img src="assets/busho-github-banner.jpg" alt="BUSHO — assistive SHC-to-PHC medicine stockout coordination, exception tracking and evidence" width="100%" />
 
 <br />
 
@@ -17,44 +17,44 @@
 
 ## About BUSHO
 
-**BUSHO (Bottom-Up Smart Health Orchestrator)** is a browser-based public-health workflow prototype that explores how frontline health-worker reports can be structured, verified, and surfaced to supervisors—without automating clinical decisions or procurement.
+**BUSHO (Bottom-Up Smart Health Orchestrator)** is an assistive **SHC-to-PHC medicine stockout coordination, exception-tracking and evidence layer**. This Chhattisgarh reference implementation uses hypertension/NCD essential medicines as its reference use case.
 
-It focuses on one hand-off: **community → frontline worker → facility / supervisor**.
+BUSHO coexists with official paper registers, DPDMIS/DVDMS, CGMSC and clinical systems. It does not replace them, create an authoritative stock balance, make clinical decisions, submit official indents or exercise procurement authority. See the [Civic Design System and Workflow Freeze v1.0](docs/civic-design-system.md).
 
 <table>
   <tr>
     <td width="25%" valign="top">
 
-### ◉ Capture
+### ◉ Observe
 
-Report needs via text or voice in local languages.
-
-</td>
-    <td width="25%" valign="top">
-
-### ◈ Extract
-
-Convert unstructured reports into structured, editable draft fields.
+An SHC CHO/ANM records a dated physical low-stock or stockout observation.
 
 </td>
     <td width="25%" valign="top">
 
-### ◎ Organize
+### ◈ Review
 
-Keep the original report visible and put human verification first.
+The verified parent PHC reviewer accepts for PHC action, requests clarification or marks unable to fulfil.
 
 </td>
     <td width="25%" valign="top">
 
-### ↗ Act
+### ◎ Fulfil
 
-Highlight sample stock risks and prepare supervisor-reviewed drafts.
+PHC stock available: record PHC-to-SHC handover. PHC stock unavailable: an authorised PHC user submits the consolidated indent in the official portal and manually records its reference; upstream receipt is recorded at PHC.
+
+</td>
+    <td width="25%" valign="top">
+
+### ↗ Confirm
+
+The SHC worker confirms physical receipt or discrepancy. Closure follows the required receipt evidence.
 
 </td>
   </tr>
 </table>
 
- > **Prototype boundary:** BUSHO uses mock rule-based extraction and synthetic demonstration content. Worker reports, report items, review decisions and audit events are designed to persist through authenticated Supabase workflows; browser-local storage is limited to per-user draft recovery. The connected project currently has no operational users, facilities, assignments or reports, so a real multi-user workflow has not yet been demonstrated. BUSHO is not a live health system, does not diagnose, does not place medicine orders, and does not connect to government inventory systems.
+ > **Prototype boundary:** The connected BUSHO-Demo project contains synthetic test profiles, facilities and workflow records only. This does not establish a live government deployment or an operational health-service pilot. Do not enter real patient-identifiable or sensitive health information. Quantities are dated physical observations and receipt evidence, not an official stock balance. BUSHO does not diagnose, place medicine orders, automatically submit DPDMIS indents or connect to government inventory APIs.
 
 ## The gap
 

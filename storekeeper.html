@@ -5,8 +5,9 @@
 <title>BUSHO | Storekeeper Workspace</title>
 <meta name="description" content="Facility-scoped medicine supply coordination, dispatch and receipt tracking.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles-v2.css?v=21">
+<link rel="stylesheet" href="civic-design-system.css?v=1">
 <style>
 .storekeeper-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px;padding:12px 28px;border-bottom:1px solid var(--line);background:#fff}
 .storekeeper-brand{font-weight:800;letter-spacing:.08em;color:var(--teal-dark);text-decoration:none}
@@ -62,10 +63,10 @@
 <div class="storekeeper-layout" id="storekeeper-layout">
 <aside class="storekeeper-sidebar" id="storekeeper-sidebar" aria-label="Storekeeper navigation">
   <div class="sidebar-brand"><strong>BUSHO</strong><small>STOREKEEPER</small></div>
-  <p class="sidebar-label">SUPPLY OPERATIONS</p>
+  <p class="sidebar-label">OPERATIONAL WORKFLOW</p>
   <button class="sidebar-link active" data-portal-view="overview"><span>▦</span> Overview</button>
   <button class="sidebar-link" data-portal-view="requests"><span>▤</span> Replenishment queue</button>
-  <button class="sidebar-link" data-portal-view="stockouts"><span>⇄</span> SHC stockout handovers</button>
+  <button class="sidebar-link" data-portal-view="stockouts"><span>⇄</span> SHC Stockout Handovers</button>
   <button class="sidebar-link" data-portal-view="inventory"><span>▥</span> Inventory evidence</button>
   <p class="sidebar-label">ACCOUNT</p>
   <button class="sidebar-link" data-portal-view="account"><span>○</span> Account & guidance</button>
@@ -73,7 +74,7 @@
 </aside>
 <main class="storekeeper-main">
   <section class="portal-module active" data-module="overview">
-    <div class="module-heading"><div><p class="section-kicker">FACILITY SUPPLY OPERATIONS</p><h1>Storekeeper workspace</h1><p>Receive approved replenishment handoffs, record external supply actions and reconcile receipt evidence.</p></div><div><strong id="storekeeper-name">Storekeeper</strong> <button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button></div></div>
+    <div class="module-heading"><div><p class="section-kicker">FACILITY SUPPLY OPERATIONS</p><h2>Operational overview</h2><p>Receive approved replenishment handoffs, record external supply actions and reconcile receipt evidence.</p></div><div><strong id="storekeeper-name">Storekeeper</strong> <button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button></div></div>
     <div id="storekeeper-summary" class="storekeeper-summary" aria-live="polite"></div>
     <article class="module-card"><div class="module-card-head"><div><h2>Your role in the supply chain</h2><p>What happens after a supervisor verifies a field report.</p></div></div>
       <ol class="storekeeper-guide">
@@ -100,7 +101,7 @@
   </section>
   <section class="portal-module" data-module="account">
     <div class="module-heading"><div><p class="section-kicker">ACCOUNT & GUIDANCE</p><h2>Storekeeper responsibilities</h2></div></div>
-    <article class="module-card"><h3>What you can do</h3><ul><li>View replenishment requests released to your assigned facility.</li><li>Record actual allocation and dispatch references.</li><li>Record cumulative physical receipt quantities and goods receipt references.</li><li>Review SHC-to-PHC stockout handover cases assigned to your PHC.</li><li>Review dated inventory observations and receipt movements.</li></ul><h3>What BUSHO does not do</h3><ul><li>It does not create official government indents or purchase orders.</li><li>It does not allocate, transport or dispatch medicine stock.</li><li>It does not certify a live stock balance from incomplete receipt data.</li></ul></article>
+    <article class="module-card"><h3>What you can do</h3><ul><li>View replenishment requests released to your assigned facility.</li><li>Record actual allocation and dispatch references.</li><li>Record cumulative physical receipt quantities and goods receipt references.</li><li>Review SHC-to-PHC stockout handover cases assigned to your PHC.</li><li>Review dated inventory observations and receipt movements.</li></ul><h3>What BUSHO does not do</h3><ul><li>It does not create official government indents or purchase orders.</li><li>It does not allocate, transport or dispatch medicine stock.</li><li>It does not certify an authoritative stock balance from incomplete receipt data.</li></ul></article>
     <p class="muted-copy">If a verified report does not have a corresponding replenishment request, ask the supervisor to create and advance a supply recommendation. Report review and stock fulfilment are separate workflows.</p>
   </section>
   <p class="muted-copy">BUSHO records external references supplied by authorised staff. It does not place orders or connect to DPDMIS automatically. Stock movements shown here are receipt records, not independently verified physical stock balances.</p>
@@ -111,4 +112,5 @@
 <script src="portal-auth-policy.js?v=1"></script><script src="role-auth.js?v=10"></script>
 <script src="storekeeper-navigation.js?v=1"></script>
 <script src="storekeeper-portal.js?v=3"></script><script src="storekeeper-inventory-reconciliation.js?v=1"></script><script src="storekeeper-stockouts.js?v=3"></script>
+<script src="civic-shell.js?v=1"></script>
 </body></html>

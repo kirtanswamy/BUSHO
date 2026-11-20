@@ -16,7 +16,7 @@
     dispatched:'Dispatched · awaiting receipt',
     partially_received:'Partially received',
     received:'Fully received'
-  })[status] || String(status || 'Unknown').replaceAll('_',' ');
+  })[status] || String(status || 'Unknown').replaceAll('_',' ').replace(/\b\w/g, c => c.toUpperCase());
   let client = null;
   let rows = [];
   let busy = false;
@@ -69,7 +69,7 @@
       const canReceive = !refreshRequired && ['dispatched','partially_received'].includes(row.status);
       const remaining = Math.max(0, Number(row.requested_quantity || 0) - Number(row.received_quantity || 0));
       return '<article class="module-card storekeeper-request" data-request="' + esc(row.id) + '">' +
-        '<div class="module-card-head"><div><p class="card-overline">' + esc(row.facilities?.name || 'Assigned facility') + '</p><h3>' + esc(item.name || row.note || 'Replenishment request') + '</h3><p>' + esc(row.requested_quantity) + ' ' + esc(row.unit || item.unit || '') + ' requested · ' + esc(row.on_hand_quantity ?? '—') + ' reported on hand</p></div><span class="status-pill">' + esc(label(row.status)) + '</span></div>' +
+        '<div class="module-card-head"><div><p class="card-overline">' + esc(row.facilities?.name || 'Assigned facility') + '</p><h3>' + esc(item.name || row.note || 'Replenishment request') + '</h3><p>' + esc(row.requested_quantity) + ' ' + esc(row.unit || item.unit || '') + ' requested · ' + esc(row.on_hand_quantity ?? '—') + ' reported on hand</p></div><span class="status-pill" data-status="' + esc(row.status) + '">' + esc(label(row.status)) + '</span></div>' +
         '<dl class="storekeeper-facts"><div><dt>DPDMIS reference</dt><dd>' + esc(row.dpdmis_reference || 'Not recorded') + '</dd></div><div><dt>Allocation reference</dt><dd>' + esc(row.allocation_reference || 'Not recorded') + '</dd></div><div><dt>Dispatch / challan</dt><dd>' + esc(row.dispatch_reference || 'Not recorded') + '</dd></div><div><dt>Latest goods receipt reference</dt><dd>' + esc(row.receipt_reference || 'Not recorded') + '</dd></div><div><dt>Received to date</dt><dd>' + esc(row.received_quantity || 0) + ' / ' + esc(row.requested_quantity) + ' ' + esc(row.unit || '') + '</dd></div><div><dt>Outstanding quantity</dt><dd>' + esc(remaining) + ' ' + esc(row.unit || '') + '</dd></div><div><dt>Source report</dt><dd>' + esc(row.source_report_id || 'Not linked') + '</dd></div><div><dt>Data classification</dt><dd>' + esc(row.data_mode || 'Unspecified') + '</dd></div></dl>' +
         (canAllocate ? '<form class="storekeeper-action" data-action="allocate"><label>Allocation reference<input name="reference" required maxlength="120" placeholder="Enter external allocation reference"></label><button class="btn btn-primary" type="submit">Record allocation</button></form>' : '') +
         (canDispatch ? '<form class="storekeeper-action" data-action="dispatch"><label>Dispatch / challan reference<input name="reference" required maxlength="120" placeholder="Enter external challan reference"></label><button class="btn btn-primary" type="submit">Record dispatch</button></form>' : '') +
