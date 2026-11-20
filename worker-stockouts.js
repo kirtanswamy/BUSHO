@@ -89,7 +89,7 @@
       ).join('') + '</ol>' : '<p class="muted-copy">No event history is available.</p>';
       return '<article class="stockout-case-card"><div class="stockout-case-head"><div><small>REQUEST · ' +
         esc(String(row.id).slice(0,8).toUpperCase()) + '</small><h4>' + esc(row.medicine_name) +
-        '</h4><p>'+esc(row.medicine_strength_form||'Strength/form not recorded')+'</p></div><span class="stockout-status">' + esc(labels[row.status] || row.status) +
+        '</h4><p>'+esc(row.medicine_strength_form||'Strength/form not recorded')+'</p></div><span class="stockout-status" data-status="' + esc(row.status) + '">' + esc(labels[row.status] || row.status) +
         '</span></div><div class="stockout-case-facts"><span>Observed: <b>' + esc(row.reported_quantity) + ' ' + esc(row.quantity_unit) +
         '</b></span><span>Requested: <b>' + esc(row.requested_quantity) + ' ' + esc(row.quantity_unit) +
         '</b></span><span>SHC received: <b>' + esc(row.shc_received_quantity || 0) + ' ' + esc(row.quantity_unit) +
