@@ -21,7 +21,8 @@ test('primary pages retain skip links and visible keyboard focus styles', () => 
   const landing = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   const landingCss = fs.readFileSync(path.join(root, 'landing-v3.css'), 'utf8');
   const portalCss = fs.readFileSync(path.join(root, 'styles-v2.css'), 'utf8');
-  assert.match(landing, /class="lp-skip"[^>]*href="#main-content"/);
+  assert.match(fs.readFileSync(path.join(root, 'civic-shell.js'), 'utf8'), /Skip to main content/);
+  assert.match(landing, /<main id="main-content"/);
   assert.match(landingCss, /:focus-visible\s*\{/);
   assert.match(portalCss, /:focus-visible\s*\{/);
   assert.match(portalCss, /\.skip-link:focus/);
