@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles-v2.css?v=21">
+<link rel="stylesheet" href="civic-design-system.css?v=1">
 <style>
 .storekeeper-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px;padding:12px 28px;border-bottom:1px solid var(--line);background:#fff}
 .storekeeper-brand{font-weight:800;letter-spacing:.08em;color:var(--teal-dark);text-decoration:none}
@@ -62,10 +63,10 @@
 <div class="storekeeper-layout" id="storekeeper-layout">
 <aside class="storekeeper-sidebar" id="storekeeper-sidebar" aria-label="Storekeeper navigation">
   <div class="sidebar-brand"><strong>BUSHO</strong><small>STOREKEEPER</small></div>
-  <p class="sidebar-label">SUPPLY OPERATIONS</p>
+  <p class="sidebar-label">OPERATIONAL WORKFLOW</p>
   <button class="sidebar-link active" data-portal-view="overview"><span>▦</span> Overview</button>
   <button class="sidebar-link" data-portal-view="requests"><span>▤</span> Replenishment queue</button>
-  <button class="sidebar-link" data-portal-view="stockouts"><span>⇄</span> SHC stockout handovers</button>
+  <button class="sidebar-link" data-portal-view="stockouts"><span>⇄</span> SHC Stockout Handovers</button>
   <button class="sidebar-link" data-portal-view="inventory"><span>▥</span> Inventory evidence</button>
   <p class="sidebar-label">ACCOUNT</p>
   <button class="sidebar-link" data-portal-view="account"><span>○</span> Account & guidance</button>
@@ -111,4 +112,5 @@
 <script src="portal-auth-policy.js?v=1"></script><script src="role-auth.js?v=10"></script>
 <script src="storekeeper-navigation.js?v=1"></script>
 <script src="storekeeper-portal.js?v=3"></script><script src="storekeeper-inventory-reconciliation.js?v=1"></script><script src="storekeeper-stockouts.js?v=3"></script>
+<script src="civic-shell.js?v=1"></script>
 </body></html>
