@@ -4,6 +4,8 @@
   const root=document.documentElement,body=document.body;
   const role=body.querySelector('[data-portal-role]')?.dataset.portalRole||'public';
   const labels={worker:'SHC Health Worker',supervisor:'PHC Reviewer',storekeeper:'PHC Stock Custodian'};
+  const readPref=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
+  const writePref=(key,value)=>{try{localStorage.setItem(key,value);}catch{}};
   let lastAuthProfile=null,lastFacilityContext=null;
   document.addEventListener('busho:authenticated',e=>{lastAuthProfile=e.detail?.profile||null;});
   document.addEventListener('busho:worker-facility-context',e=>{lastFacilityContext=e.detail||null;});
@@ -16,11 +18,11 @@
     let lang=body.querySelector('#lang-select');
     if(!lang){lang=document.createElement('select');lang.id='lang-select';lang.setAttribute('aria-label','Language preference');[['en','EN'],['hi','हिन्दी'],['ta','தமிழ்'],['te','తెలుగు'],['bn','বাংলা'],['mr','मराठी']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;lang.append(option);});lang.value=window.BUSHO_I18N?.getCurrentLanguage?.()||'en';lang.addEventListener('change',()=>window.BUSHO_I18N?.setLanguage?.(lang.value));}
     const wrap=document.createElement('label');wrap.className='civic-language-wrap';wrap.setAttribute('aria-label','Language preference');wrap.append(lang);bar.querySelector('.civic-utility-tools').insertBefore(wrap,bar.querySelector('.civic-env-pill'));
-    const stored=localStorage.getItem('busho-civic-scale')||'1';root.style.setProperty('--civic-scale',stored);
-    const contrast=localStorage.getItem('busho-civic-contrast')==='high';if(contrast)root.dataset.contrast='high';
+    const stored=readPref('busho-civic-scale','1');root.style.setProperty('--civic-scale',stored);
+    const contrast=readPref('busho-civic-contrast','normal')==='high';if(contrast)root.dataset.contrast='high';
     const toggle=bar.querySelector('[data-contrast-toggle]');toggle.setAttribute('aria-pressed',String(contrast));
-    bar.querySelectorAll('[data-font]').forEach(btn=>btn.addEventListener('click',()=>{const current=parseFloat(localStorage.getItem('busho-civic-scale')||'1');const next=btn.dataset.font==='up'?1.15:btn.dataset.font==='down'?.9:1;localStorage.setItem('busho-civic-scale',String(next));root.style.setProperty('--civic-scale',String(next));}));
-    toggle.addEventListener('click',()=>{const high=root.dataset.contrast!=='high';if(high)root.dataset.contrast='high';else delete root.dataset.contrast;localStorage.setItem('busho-civic-contrast',high?'high':'normal');toggle.setAttribute('aria-pressed',String(high));});
+    bar.querySelectorAll('[data-font]').forEach(btn=>btn.addEventListener('click',()=>{const current=parseFloat(readPref('busho-civic-scale','1'));const next=btn.dataset.font==='up'?1.15:btn.dataset.font==='down'?.9:1;writePref('busho-civic-scale',String(next));root.style.setProperty('--civic-scale',String(next));}));
+    toggle.addEventListener('click',()=>{const high=root.dataset.contrast!=='high';if(high)root.dataset.contrast='high';else delete root.dataset.contrast;writePref('busho-civic-contrast',high?'high':'normal');toggle.setAttribute('aria-pressed',String(high));});
   }
   function offline(){
     const banner=document.createElement('div');banner.className='civic-offline-banner';banner.setAttribute('role','status');banner.setAttribute('aria-live','polite');banner.textContent='You are offline. Use the official paper register and follow the authorised manual handoff process. Reconcile the record in BUSHO when connectivity returns.';const target=body.querySelector('main')||body.querySelector('header');if(target)target.before(banner);
