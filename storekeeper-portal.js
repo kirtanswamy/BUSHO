@@ -16,7 +16,7 @@
     dispatched:'Dispatched · awaiting receipt',
     partially_received:'Partially received',
     received:'Fully received'
-  })[status] || String(status || 'Unknown').replaceAll('_',' ');
+  })[status] || String(status || 'Unknown').replaceAll('_',' ').replace(/\b\w/g, c => c.toUpperCase());
   let client = null;
   let rows = [];
   let busy = false;
