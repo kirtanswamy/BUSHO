@@ -9,9 +9,10 @@
     if(body.querySelector('.civic-utility-bar'))return;
     const bar=document.createElement('div');bar.className='civic-utility-bar';bar.innerHTML='<div class="civic-utility-left"><a href="#main-content">Skip to main content</a><span class="civic-utility-note">Chhattisgarh reference build · SHC–PHC coordination layer</span></div><div class="civic-utility-tools"><button type="button" data-font="down" aria-label="Decrease text size">A−</button><button type="button" data-font="normal" aria-label="Default text size">A</button><button type="button" data-font="up" aria-label="Increase text size">A+</button><button type="button" data-contrast-toggle aria-pressed="false">High contrast</button><span class="civic-env-pill">SYNTHETIC PILOT</span></div>';
     body.insertBefore(bar,body.firstChild);
-    const stripe=document.createElement('div');stripe.className='civic-accent-stripe';bar.after(stripe);
-    const lang=body.querySelector('#lang-select');
-    if(lang){const wrap=document.createElement('label');wrap.className='civic-language-wrap';wrap.setAttribute('aria-label','Language preference');wrap.append(lang);bar.querySelector('.civic-utility-tools').insertBefore(wrap,bar.querySelector('.civic-env-pill'));}
+    const stripe=document.createElement('div');stripe.className='civic-accent-stripe';const header=bar.nextElementSibling;if(header)header.after(stripe);else bar.after(stripe);
+    let lang=body.querySelector('#lang-select');
+    if(!lang){lang=document.createElement('select');lang.id='lang-select';lang.setAttribute('aria-label','Language preference');[['en','EN'],['hi','हिन्दी'],['ta','தமிழ்'],['te','తెలుగు'],['bn','বাংলা'],['mr','मराठी']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;lang.append(option);});lang.value=window.BUSHO_I18N?.getCurrentLanguage?.()||'en';lang.addEventListener('change',()=>window.BUSHO_I18N?.setLanguage?.(lang.value));}
+    const wrap=document.createElement('label');wrap.className='civic-language-wrap';wrap.setAttribute('aria-label','Language preference');wrap.append(lang);bar.querySelector('.civic-utility-tools').insertBefore(wrap,bar.querySelector('.civic-env-pill'));
     const stored=localStorage.getItem('busho-civic-scale')||'1';root.style.setProperty('--civic-scale',stored);
     const contrast=localStorage.getItem('busho-civic-contrast')==='high';if(contrast)root.dataset.contrast='high';
     const toggle=bar.querySelector('[data-contrast-toggle]');toggle.setAttribute('aria-pressed',String(contrast));
