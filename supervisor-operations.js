@@ -142,9 +142,7 @@
 
       const badge = doc.querySelector('.demo-badge');
       if (badge) {
-        badge.textContent = 'LIVE DATA · ACCESS SCOPED';
-        badge.classList.remove('demo-badge');
-        badge.classList.add('live-data-badge');
+        badge.textContent = 'SYNTHETIC PILOT DATA · FACILITY-SCOPED';
       }
       doc.querySelectorAll('.demo-sidebar-label').forEach(node => node.textContent = 'READ-ONLY SCOPE GUARD ACTIVE');
       doc.querySelectorAll('.demo-data-disclaimer').forEach(node => node.remove());
