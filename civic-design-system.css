@@ -243,3 +243,5 @@ input[type=search],#supervisor-report-search,.report-search-input{width:100%;min
 [data-contrast=high] .civic-hero h1,[data-contrast=high] .civic-section h2,[data-contrast=high] .civic-section h3,[data-contrast=high] .civic-role-grid h3,[data-contrast=high] .civic-case-preview strong{color:#000!important}
 [data-contrast=high] .civic-final-cta,[data-contrast=high] .civic-site-footer{background:#000!important;color:#fff!important;border:2px solid #fff!important}
 [data-contrast=high] .civic-final-cta h2,[data-contrast=high] .civic-final-cta p,[data-contrast=high] .civic-site-footer h2,[data-contrast=high] .civic-site-footer h3,[data-contrast=high] .civic-site-footer p,[data-contrast=high] .civic-site-footer a{color:#fff!important}
+
+[data-state=danger],[data-state=rejected]{background:var(--civic-danger-bg)!important;border-color:var(--civic-danger-border)!important;color:var(--civic-danger)!important}[data-state=neutral]{background:var(--civic-neutral-bg)!important;border-color:var(--civic-neutral-border)!important;color:var(--civic-neutral)!important}
