@@ -17,6 +17,8 @@ for (const viewport of viewports) {
     for (const path of ['/', '/signin.html', '/worker.html', '/supervisor.html', '/storekeeper.html']) {
       await page.goto(path, { waitUntil: 'domcontentloaded' });
       await expect(page.locator('.civic-utility-bar')).toBeVisible();
+      const civicCssLoaded = await page.evaluate(() => [...document.styleSheets].some(sheet => sheet.href && sheet.href.includes('civic-design-system.css')));
+      expect(civicCssLoaded, path + ' civic design stylesheet must load').toBeTruthy();
       await expect(page.locator('[data-font="up"]')).toBeVisible();
       const dimensions = await page.evaluate(() => ({
         width: document.documentElement.clientWidth,
