@@ -225,7 +225,7 @@
           </section>
           ${report.review_note ? `<section class="review-note"><h4>Latest supervisor note</h4><p>${escapeHtml(report.review_note)}</p></section>` : ''}
           <section><h4>Audit timeline</h4>
-            ${events.length ? `<ol class="report-timeline">${events.map(event => `<li><strong> ${escapeHtml(event.status_from && event.status_to ? statusLabel(event.status_from)+' → '+statusLabel(event.status_to) : String(event.action || 'Workflow update').replaceAll('_',' '))}</strong><small>${escapeHtml(event.actor_role || 'system')} · ${escapeHtml(event.report.facilities?.name || 'Facility')} · ${escapeHtml(formatDate(event.created_at))}</small>${event.note ? `<p>${escapeHtml(event.note)}</p>` : ''}</li>`).join('')}</ol>` : '<p class="empty-state">No workflow events are available for this report.</p>'}
+            ${events.length ? `<ol class="report-timeline">${events.map(event => `<li><strong> ${escapeHtml(event.status_from && event.status_to ? statusLabel(event.status_from)+' → '+statusLabel(event.status_to) : String(event.action || 'Workflow update').replaceAll('_',' '))}</strong><small>${escapeHtml(event.actor_role || 'system')} · ${escapeHtml(report.facilities?.name || 'Facility')} · ${escapeHtml(formatDate(event.created_at))}</small>${event.note ? `<p>${escapeHtml(event.note)}</p>` : ''}</li>`).join('')}</ol>` : '<p class="empty-state">No workflow events are available for this report.</p>'}
           </section>
           ${actions.length ? `
             <form class="supervisor-review-form" data-review-form>
