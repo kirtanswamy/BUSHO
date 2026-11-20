@@ -72,9 +72,53 @@ test('A+ and high-contrast preferences work and persist for the page', async ({ 
   await expect(page.locator('html')).toHaveCSS('font-size', '18.4px');
 });
 
-test('synthetic case preview can complete its illustrative receipt step', async ({ page }) => {
+test('hero case preview switches between both frozen fulfilment branches', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Confirm sample receipt' }).click();
-  await expect(page.locator('.civic-case-preview .civic-status')).toHaveText('Illustrative sample · complete');
-  await expect(page.locator('#case-preview-next')).toBeDisabled();
+  const branchOne = page.getByRole('tab', { name: /Branch 1: PHC Stock Available/ });
+  const branchTwo = page.getByRole('tab', { name: /Branch 2: PHC Unavailable/ });
+  await expect(branchOne).toHaveAttribute('aria-selected', 'true');
+  await branchTwo.click();
+  await expect(branchTwo).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.civic-case-step')).toHaveCount(6);
+  await expect(page.locator('.civic-case-step').nth(2).locator('strong')).toContainText('PHC unavailable');
+  await branchOne.click();
+  await expect(page.locator('.civic-case-step')).toHaveCount(4);
+});
+
+test('all five pages share the civic footer and language labels', async ({ page }) => {
+  for (const path of ['/', '/signin.html', '/worker.html', '/supervisor.html', '/storekeeper.html']) {
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.civic-utility-bar .civic-env-pill')).toContainText('SYNTHETIC PILOT');
+    await expect(page.locator('.civic-site-footer h2')).toHaveText('BUSHO · Workflow Freeze v1.0');
+    await expect(page.locator('.civic-site-footer')).toContainText('Last updated: 20 November 2026');
+    await expect(page.locator('.civic-site-footer a[aria-label="GitHub (opens in a new tab)"]')).toHaveAttribute('rel', 'noopener noreferrer');
+    await expect(page.locator('#lang-select option[value="en"]')).toHaveText('English');
+  }
+});
+
+test('Storekeeper header retains its brand lockup and account action on every view', async ({ page }) => {
+  await page.goto('/storekeeper.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.civic-storekeeper-header .brand-name')).toHaveText('BUSHO');
+  await expect(page.locator('.civic-storekeeper-header .brand-subtitle')).toHaveText('Frontline SHC–PHC Medicine Stockout & Replenishment Layer');
+  await expect(page.locator('.civic-storekeeper-account .profile-avatar')).toHaveText('SK');
+  await expect(page.locator('.civic-storekeeper-account #portal-logout')).toHaveText('Sign out');
+  await page.locator('#portal-app').evaluate(el => el.classList.remove('hidden'));
+  for (const view of ['overview', 'stockouts', 'requests', 'inventory', 'account']) {
+    await page.locator('[data-portal-view="' + view + '"]').click();
+    await expect(page.locator('.civic-storekeeper-account #portal-logout')).toBeVisible();
+  }
+});
+
+test('Supervisor preferences controls sync with the civic accessibility strip', async ({ page }) => {
+  await page.goto('/supervisor.html', { waitUntil: 'domcontentloaded' });
+  await page.locator('#portal-app').evaluate(el => el.classList.remove('hidden'));
+  await page.locator('[data-portal-view="settings"]').click();
+  await page.locator('[data-scale="1.15"]').click();
+  await expect(page.locator('html')).toHaveCSS('font-size', '18.4px');
+  await page.locator('[data-pref-contrast]').check();
+  await expect(page.locator('[data-contrast-toggle]')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('[data-density="compact"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-density', 'compact');
+  await page.locator('[data-pref-language]').selectOption('hi');
+  await expect(page.locator('#lang-select')).toHaveValue('hi');
 });

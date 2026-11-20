@@ -34,3 +34,9 @@
 [data-state=warning].civic-status-pill{background:var(--civic-warning-bg);border-color:var(--civic-warning-border);color:var(--civic-warning)}
 [data-state=danger].civic-status-pill{background:var(--civic-danger-bg);border-color:var(--civic-danger-border);color:var(--civic-danger)}
 @media(max-width:767px){.stockout-field-grid{grid-template-columns:1fr!important}}
+
+.portal-sidebar .civic-sidebar-status{display:grid;gap:7px;margin-top:auto;padding:14px 10px 0;border-top:1px solid rgba(255,255,255,.16);color:var(--civic-on-dark);font-size:.72rem}
+[data-state=success].civic-status-pill{background:var(--civic-success-bg);border-color:var(--civic-success-border);color:var(--civic-success)}
+[data-state=info].civic-status-pill{background:var(--civic-info-bg);border-color:var(--civic-info-border);color:var(--civic-info)}
+[data-state=warning].civic-status-pill{background:var(--civic-warning-bg);border-color:var(--civic-warning-border);color:var(--civic-warning)}
+[data-state=danger].civic-status-pill{background:var(--civic-danger-bg);border-color:var(--civic-danger-border);color:var(--civic-danger)}
