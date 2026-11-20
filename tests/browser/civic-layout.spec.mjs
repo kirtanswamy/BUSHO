@@ -47,11 +47,11 @@ test('desktop role rails are sticky and mobile navigation opens as a drawer', as
       await menu.click();
       if (portal.role === 'storekeeper') {
         await expect(page.locator('#storekeeper-layout')).toHaveClass(/sidebar-open/);
-        await menu.click();
+        await page.keyboard.press('Escape');
         await expect(page.locator('#storekeeper-layout')).not.toHaveClass(/sidebar-open/);
       } else {
         await expect(page.locator('#portal-app')).toHaveClass(/sidebar-open/);
-        await menu.click();
+        await page.keyboard.press('Escape');
         await expect(page.locator('#portal-app')).not.toHaveClass(/sidebar-open/);
       }
     }
