@@ -47,12 +47,18 @@
 <script src="i18n.js?v=2"></script>
 </head>
 <body data-portal-role="storekeeper">
-<header class="storekeeper-topbar">
-  <a class="storekeeper-brand" href="index.html">BUSHO <span style="font-weight:500;letter-spacing:0">/ Storekeeper</span></a>
+<header class="storekeeper-topbar civic-storekeeper-header" role="banner">
+  <a class="brand-lockup" href="index.html" aria-label="BUSHO home">
+    <span class="civic-crest" aria-hidden="true"><svg viewBox="0 0 40 40" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 3 35 12v16L20 37 5 28V12Z"/><path d="M20 9v22M9 15h22M9 25h22"/><circle cx="20" cy="20" r="4" fill="var(--civic-teal)"/></svg></span>
+    <span><strong class="brand-name">BUSHO</strong><small class="brand-subtitle">Frontline SHC–PHC Medicine Stockout & Replenishment Layer</small></span>
+  </a>
   <div class="storekeeper-topbar-right">
     <button class="btn btn-quiet storekeeper-mobile-menu" id="storekeeper-menu-toggle" type="button" aria-controls="storekeeper-sidebar" aria-expanded="false">☰ Menu</button>
-    <nav aria-label="Policies and contact" class="storekeeper-policy-links"><a href="privacy.html">Privacy</a> <a href="terms.html">Terms</a> <a href="accessibility.html">Accessibility</a> <a href="mailto:kirtankswamy@gmail.com">Contact</a></nav>
-    <span class="demo-badge">Facility supply workspace</span>
+    <div class="civic-storekeeper-account">
+      <span class="profile-avatar" aria-hidden="true">SK</span>
+      <span><strong class="account-name" id="storekeeper-account-name">Demo Storekeeper</strong><small class="account-facility" id="storekeeper-account-facility">Assigned PHC</small></span>
+      <button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button>
+    </div>
   </div>
 </header>
 <section id="portal-login" class="storekeeper-login">
@@ -74,7 +80,7 @@
 </aside>
 <main class="storekeeper-main">
   <section class="portal-module active" data-module="overview">
-    <div class="module-heading"><div><p class="section-kicker">FACILITY SUPPLY OPERATIONS</p><h2>Operational overview</h2><p>Receive approved replenishment handoffs, record external supply actions and reconcile receipt evidence.</p></div><div><strong id="storekeeper-name">Storekeeper</strong> <button class="btn btn-quiet" id="portal-logout" type="button">Sign out</button></div></div>
+    <div class="module-heading"><div><p class="section-kicker">FACILITY SUPPLY OPERATIONS</p><h2>Operational overview</h2><p>Receive approved replenishment handoffs, record external supply actions and reconcile receipt evidence.</p></div></div>
     <div id="storekeeper-summary" class="storekeeper-summary" aria-live="polite"></div>
     <article class="module-card"><div class="module-card-head"><div><h2>Your role in the supply chain</h2><p>What happens after a supervisor verifies a field report.</p></div></div>
       <ol class="storekeeper-guide">
