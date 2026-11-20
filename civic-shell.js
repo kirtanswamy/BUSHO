@@ -46,7 +46,7 @@
     if(role==='storekeeper'){
       const layout=app.querySelector('#storekeeper-layout'),side=app.querySelector('.storekeeper-sidebar');
       if(!layout||!side)return;
-      const context=document.createElement('div');context.className='civic-sidebar-context';context.innerHTML='<small>ROLE WORKSPACE</small><strong>PHC Stock Custodian</strong><span id="civic-facility-context">Assigned PHC · Facility-scoped access</span>';side.prepend(context);
+      const context=document.createElement('div');context.className='civic-sidebar-context';context.innerHTML='<small>ROLE WORKSPACE</small><strong>PHC Stock Custodian</strong><span id="civic-facility-context">Assigned PHC · Facility-scoped access</span>';side.prepend(context);if(!layout.querySelector('.civic-mobile-backdrop')){const backdrop=document.createElement('button');backdrop.type='button';backdrop.className='civic-mobile-backdrop';backdrop.setAttribute('aria-label','Close navigation');backdrop.addEventListener('click',()=>layout.classList.remove('sidebar-open'));layout.append(backdrop);}
       const buttons=[...side.querySelectorAll('[data-portal-view]')];const stock=buttons.find(b=>b.dataset.portalView==='stockouts');if(stock)side.insertBefore(stock,buttons.find(b=>b.dataset.portalView==='requests')||null);
       const mobile=body.querySelector('#storekeeper-menu-toggle');if(mobile)mobile.classList.add('sidebar-toggle-mobile');
       side.querySelectorAll('[data-portal-view]').forEach(b=>b.addEventListener('click',()=>layout.classList.remove('sidebar-open')));
@@ -70,6 +70,7 @@
       }
     }
     const main=app.querySelector('#demo,.storekeeper-main');if(main&&!main.querySelector('.civic-page-intro')){const intro=document.createElement('header');intro.className='civic-page-intro';intro.innerHTML='<span class="civic-breadcrumb">BUSHO / '+(labels[role]||'Workspace')+'</span><h1>'+(role==='worker'?'SHC Health Worker Workspace':role==='supervisor'?'PHC Review Workspace':'PHC Stock Custodian Workspace')+'</h1><p>'+(role==='worker'?'Record dated physical observations and track action by your verified parent PHC.':role==='supervisor'?'Review SHC exceptions and record a clear PHC decision within your assigned facility scope.':'Record PHC availability, external indent references, upstream receipt and SHC handover evidence.')+'</p>';const container=main.querySelector('.container')||main;container.prepend(intro);}
+    if(main&&!main.querySelector('.civic-print-header')){const print=document.createElement('div');print.className='civic-print-header';print.innerHTML='<strong>BUSHO · SHC–PHC coordination</strong><br><small>Workflow Freeze v1.0 · Synthetic pilot record · Not an official register</small>';main.prepend(print);}
   }
   function enrich(){
     const workerFacility=body.querySelector('[data-module="facility"] .module-card');
