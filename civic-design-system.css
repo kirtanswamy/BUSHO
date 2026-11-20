@@ -1,7 +1,7 @@
 /* BUSHO Civic Design System — Workflow Freeze v1.0
    Light-first, field-readable tokens. No workflow or data semantics live in this file. */
 :root{
-  --civic-white:var(--civic-white);--civic-black:var(--civic-black)000;--civic-high-focus:var(--civic-high-focus);--civic-on-dark:var(--civic-on-dark);--civic-on-dark-muted:var(--civic-on-dark-muted);--civic-on-dark-soft:var(--civic-on-dark-soft);--civic-utility-link:var(--civic-utility-link);--civic-active-bg:var(--civic-active-bg);--civic-active-border:var(--civic-active-border);--civic-active-dot:var(--civic-active-dot);--civic-footer-muted:var(--civic-footer-muted);--civic-contrast-accent:var(--civic-contrast-accent);--civic-print-border:var(--civic-print-border)777;--civic-canvas:#F4F7FA;--civic-surface:var(--civic-white);--civic-well:#EEF3F8;
+  --civic-white:#FFFFFF;--civic-black:#000000;--civic-high-focus:#FFFF00;--civic-on-dark:#E5EDF5;--civic-on-dark-muted:#B7C9D9;--civic-on-dark-soft:#E2EAF2;--civic-utility-link:#B6D3E6;--civic-active-bg:#123D61;--civic-active-border:#3C6B8F;--civic-active-dot:#8DE1D4;--civic-footer-muted:#CBD8E5;--civic-contrast-accent:#B7E6DE;--civic-print-border:#777777;--civic-canvas:#F4F7FA;--civic-surface:var(--civic-white);--civic-well:#EEF3F8;
   --civic-border:#D4DFEA;--civic-border-strong:#B8C8D9;
   --civic-navy:#0B3D6B;--civic-navy-hover:#082D4F;--civic-utility:#072440;
   --civic-teal:#0F766E;--civic-teal-soft:#E6F4F1;--civic-amber:#C25E00;--civic-amber-strong:#D97706;--civic-amber-soft:#FFF7ED;
