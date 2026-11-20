@@ -90,7 +90,12 @@ test('all five pages share the civic footer and language labels', async ({ page 
     await page.goto(path, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.civic-utility-bar .civic-env-pill')).toContainText('SYNTHETIC PILOT');
     await expect(page.locator('.civic-site-footer h2')).toHaveText('BUSHO · Workflow Freeze v1.0');
+    await expect(page.locator('.civic-site-footer > section')).toHaveCount(3);
     await expect(page.locator('.civic-site-footer')).toContainText('Last updated: 20 November 2026');
+    const brand = page.locator('.brand-name, .lp-brand-copy strong').first();
+    await expect(brand).toHaveText('BUSHO');
+    const subtitle = page.locator('.brand-subtitle, .lp-brand-copy small').first();
+    await expect(subtitle).toHaveText('Frontline SHC–PHC Medicine Stockout & Replenishment Layer');
     await expect(page.locator('.civic-site-footer a[aria-label="GitHub (opens in a new tab)"]')).toHaveAttribute('rel', 'noopener noreferrer');
     await expect(page.locator('#lang-select option[value="en"]')).toHaveText('English');
   }
@@ -121,4 +126,18 @@ test('Supervisor preferences controls sync with the civic accessibility strip', 
   await expect(page.locator('html')).toHaveAttribute('data-density', 'compact');
   await page.locator('[data-pref-language]').selectOption('hi');
   await expect(page.locator('#lang-select')).toHaveValue('hi');
+});
+
+
+test('workspace A4 print view hides navigation chrome and keeps the active record printable', async ({ page }) => {
+  await page.goto('/worker.html', { waitUntil: 'domcontentloaded' });
+  await page.locator('#portal-app').evaluate(el => el.classList.remove('hidden'));
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.locator('.civic-utility-bar')).toBeHidden();
+  await expect(page.locator('.portal-sidebar')).toBeHidden();
+  await expect(page.locator('.civic-print-header')).toBeVisible();
+  const printCss = await page.locator('html').evaluate(el => [...document.styleSheets].some(sheet => {
+    try { return [...sheet.cssRules].some(rule => rule.cssText.includes('A4')); } catch { return false; }
+  }));
+  expect(printCss, 'A4 print stylesheet should be loaded').toBeTruthy();
 });
