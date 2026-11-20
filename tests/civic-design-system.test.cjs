@@ -16,7 +16,8 @@ test('shared civic shell parses and is wired to every required public and role p
     assert.match(html, /civic-shell\.js/);
   }
   assert.match(read('index.html'), /civic-landing\.css/);
-  assert.match(read('index.html'), /class="lp-skip" href="#main-content"/);
+  assert.match(read('civic-shell.js'), /Skip to main content/);
+  assert.match(read('index.html'), /<main id="main-content"/);
 });
 
 test('civic design tokens cover the requested institutional palette and responsive/print modes', () => {
