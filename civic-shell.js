@@ -33,7 +33,7 @@
     body.append(footer);
   }
   function crest(){
-    return '<span class="civic-crest" aria-hidden="true"><svg viewBox="0 0 40 40" width="27" height="27" fill="none" stroke="white" stroke-width="1.8"><path d="M20 3 35 12v16L20 37 5 28V12L20 3Z"/><path d="M20 9v22M9 15h22M9 25h22"/><circle cx="20" cy="20" r="4" fill="#0F766E" stroke="white"/></svg></span>';
+    return '<span class="civic-crest" aria-hidden="true"><svg viewBox="0 0 40 40" width="27" height="27" fill="none" stroke="white" stroke-width="1.8"><path d="M20 3 35 12v16L20 37 5 28V12L20 3Z"/><path d="M20 9v22M9 15h22M9 25h22"/><circle cx="20" cy="20" r="4" fill="var(--civic-teal)" stroke="white"/></svg></span>';
   }
   function commonBrand(){
     const header=body.querySelector('.topbar,.storekeeper-topbar,.lp-header');
@@ -52,7 +52,7 @@
       side.querySelectorAll('[data-portal-view]').forEach(b=>b.addEventListener('click',()=>layout.classList.remove('sidebar-open')));
       document.addEventListener('keydown',e=>{if(e.key==='Escape')layout.classList.remove('sidebar-open');});
       const top=body.querySelector('.storekeeper-topbar');if(top){const title=document.createElement('a');title.className='brand-lockup brand-home';title.href='index.html';title.setAttribute('aria-label','BUSHO home');title.innerHTML=crest()+'<span><strong class="brand-name">BUSHO</strong><small class="brand-subtitle">Frontline SHC–PHC coordination</small></span>';const old=top.querySelector('.storekeeper-brand');if(old)old.replaceWith(title);}
-      const storeHead=body.querySelector('.storekeeper-main .module-heading');if(storeHead){const signout=storeHead.querySelector('#portal-logout');const name=storeHead.querySelector('#storekeeper-name');const actions=document.createElement('div');actions.className='civic-account-actions';if(name)actions.append(name);if(signout)actions.append(signout);const old=storeHead.querySelector('#storekeeper-name')?.parentElement;if(old)old.replaceWith(document.createDocumentFragment());const topRight=top?.querySelector('.storekeeper-topbar-right');if(topRight){actions.classList.add('civic-topbar-account');topRight.append(actions);}}
+      const storeHead=body.querySelector('.storekeeper-main .module-heading');if(storeHead){const signout=storeHead.querySelector('#portal-logout');const name=storeHead.querySelector('#storekeeper-name');const old=name?.parentElement;const actions=document.createElement('div');actions.className='civic-account-actions';if(name)actions.append(name);if(signout)actions.append(signout);if(old)old.remove();const topRight=top?.querySelector('.storekeeper-topbar-right');if(topRight){actions.classList.add('civic-topbar-account');topRight.append(actions);}}
       body.querySelectorAll('.storekeeper-guide li').forEach((li,i)=>{const spans=li.querySelector('span');if(!spans)return;});
     }else{
       const side=app.querySelector('.portal-sidebar'),demo=app.querySelector('#demo');if(!side||!demo)return;
@@ -92,6 +92,7 @@
     ];const span=li.querySelector('span');if(span)span.textContent=copy[i]||span.textContent;});
     const newReport=body.querySelector('[data-module="new-report"]');if(newReport){newReport.querySelectorAll('.step-number,.step-index,.step-kicker').forEach(n=>{if(n.textContent.trim()==='01')n.remove();});newReport.querySelectorAll('p').forEach(n=>{if(/run the demo/i.test(n.textContent))n.remove();});}
     document.querySelectorAll('.demo-sidebar-label').forEach(n=>n.textContent='READ-ONLY SCOPE GUARD ACTIVE');
+    document.querySelectorAll('.demo-badge').forEach(n=>n.textContent='SYNTHETIC PILOT DATA · FACILITY-SCOPED');
     document.querySelectorAll('.demo-status').forEach(n=>{n.innerHTML='<span class="status-pill" data-state="synthetic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+icon('info')+'</svg> Synthetic pilot data · facility-scoped</span>';});
   }
   function previewInteraction(){const host=document.getElementById('case-preview-progress'),button=document.getElementById('case-preview-next');if(!host||!button)return;const steps=[...host.querySelectorAll('.civic-case-step')];let active=steps.findIndex(s=>s.classList.contains('is-current'));button.addEventListener('click',()=>{steps.forEach((s,i)=>{s.classList.toggle('is-done',i<=active);s.classList.toggle('is-current',i===active+1);const mark=s.querySelector('span');if(mark)mark.textContent=i<=active?'✓':String(i+1);});active=Math.min(active+1,steps.length-1);button.disabled=active===steps.length-1;button.textContent=button.disabled?'Sample complete':'Next stage';});}
