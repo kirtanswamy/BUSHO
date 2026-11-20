@@ -125,7 +125,7 @@
 
     function renderOverview(summary) {
       return `
-        <div class="module-heading"><div><p class="section-kicker">YOUR FIELD WORKSPACE</p><h2>Your reporting activity</h2><p>Current status of reports linked to your authorised worker account.</p></div><button class="btn btn-primary" data-go-view="new-report">＋ Create new report</button></div>
+        <div class="module-heading"><div><p class="section-kicker">YOUR FIELD WORKSPACE</p><h2>At a glance</h2><p>Current status of reports linked to your authorised worker account.</p></div><button class="btn btn-primary" data-go-view="new-report">＋ Create new report</button></div>
         <div class="worker-overview-metrics">
           <article class="overview-stat"><span>Reports saved</span><strong>${summary.total}</strong><small>Your account's report history</small></article>
           <article class="overview-stat"><span>Awaiting supervisor</span><strong>${summary.awaiting}</strong><small>Submitted or escalated</small></article>
