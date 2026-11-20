@@ -7,7 +7,7 @@ const rootMatch = system.match(/:root\s*\{([^}]*)\}/);
 if (!rootMatch) throw new Error('Missing :root design token block.');
 
 const defined = new Set([...rootMatch[1].matchAll(/--(civic-[a-z0-9-]+)\s*:/g)].map(match => '--' + match[1]));
-const used = new Set([...system, ...landing].join('').matchAll(/var\((--civic-[a-z0-9-]+)/g).map(match => match[1]));
+const used = new Set(Array.from((system + '\n' + landing).matchAll(/var\((--civic-[a-z0-9-]+)/g), match => match[1]));
 const missing = [...used].filter(token => !defined.has(token));
 if (missing.length) throw new Error('Undefined civic tokens: ' + missing.join(', '));
 
