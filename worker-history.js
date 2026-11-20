@@ -114,11 +114,9 @@
 
       const badge = doc.querySelector('.demo-badge');
       if (badge) {
-        badge.textContent = 'ACCOUNT-SCOPED · LIVE DATA';
-        badge.classList.remove('demo-badge');
-        badge.classList.add('live-data-badge');
+        badge.textContent = 'SYNTHETIC PILOT DATA · FACILITY-SCOPED';
       }
-      doc.querySelectorAll('.demo-sidebar-label').forEach(node => node.textContent = 'ACCOUNT-SCOPED · DATABASE');
+      doc.querySelectorAll('.demo-sidebar-label').forEach(node => node.textContent = 'READ-ONLY SCOPE GUARD ACTIVE');
       doc.querySelectorAll('.profile-trigger-copy strong,.profile-dropdown-head strong').forEach(node => {
         node.textContent = profile.display_name || worker?.display_name || 'Health worker';
       });
@@ -127,13 +125,13 @@
 
     function renderOverview(summary) {
       return `
-        <div class="module-heading"><div><p class="section-kicker">YOUR FIELD WORKSPACE</p><h2>Your reporting activity</h2><p>Live status from reports linked to your authenticated worker account.</p></div><button class="btn btn-primary" data-go-view="new-report">＋ Create new report</button></div>
+        <div class="module-heading"><div><p class="section-kicker">YOUR FIELD WORKSPACE</p><h2>Your reporting activity</h2><p>Current status of reports linked to your authorised worker account.</p></div><button class="btn btn-primary" data-go-view="new-report">＋ Create new report</button></div>
         <div class="worker-overview-metrics">
           <article class="overview-stat"><span>Reports saved</span><strong>${summary.total}</strong><small>Your account's report history</small></article>
           <article class="overview-stat"><span>Awaiting supervisor</span><strong>${summary.awaiting}</strong><small>Submitted or escalated</small></article>
           <article class="overview-stat"><span>Returned for correction</span><strong>${summary.returned}</strong><small>Action required</small></article>
         </div>
-        <article class="module-card"><div class="module-card-head"><div><h3>Recent reports</h3><p>Server-backed records, not browser demo activity</p></div><button class="text-action" data-go-view="my-reports">View all reports →</button></div>
+        <article class="module-card"><div class="module-card-head"><div><h3>Recent reports</h3><p>Audited operational records, linked to your account</p></div><button class="text-action" data-go-view="my-reports">View all reports →</button></div>
           ${reports.length ? reports.slice(0,4).map(report => `<div class="simple-row"><span><strong>${escapeHtml(report.facilities?.name || 'Assigned facility')}</strong><small>${escapeHtml((report.report_items || []).map(item => item.display_label).slice(0,2).join(', ') || 'Field report')}</small></span><span>${escapeHtml(formatDate(report.submitted_at || report.created_at))}</span><span><b class="status-pill">${escapeHtml(statusLabel(report.status))}</b></span></div>`).join('') : '<p class="empty-state">No reports are linked to this account yet. Start with a new field report when ready.</p>'}
         </article>`;
     }
@@ -151,7 +149,7 @@
             </div>
           </div>
           <label class="visually-hidden" for="worker-report-search">Search your reports</label>
-          <input id="worker-report-search" type="search" placeholder="Search report ID, facility or observation…" value="${escapeHtml(query)}">
+          <input id="worker-report-search" type="search" placeholder="Search report ID, facility, or medicine…" value="${escapeHtml(query)}">
           ${error ? `<p class="portal-login-error" role="alert">${escapeHtml(error)}</p>` : ''}
           <div class="simple-table">
             <div class="simple-row simple-header"><span>REPORT / FACILITY</span><span>DATE</span><span>STATUS</span></div>
@@ -170,11 +168,11 @@
           <div class="module-card-head"><div><p class="card-overline">REPORT DETAIL</p><h3>${escapeHtml(report.facilities?.name || 'Assigned facility')}</h3><p>Reference: <code>${escapeHtml(report.id)}</code></p></div><b class="status-pill">${escapeHtml(statusLabel(report.status))}</b></div>
           <section class="report-source"><h4>Original field report</h4><p>${escapeHtml(report.original_text || 'No original narrative was attached.')}</p></section>
           <section><h4>Structured observations</h4>
-            ${items.length ? items.map(item => { const detail=itemView(item); return `<div class="report-observation"><div><strong>${escapeHtml(detail.label)}</strong><small>${escapeHtml(detail.type)} · ${escapeHtml(detail.status)}</small>${detail.source ? `<p>Source phrase: ${escapeHtml(detail.source)}</p>` : ''}</div><b>${escapeHtml(detail.quantity)}</b></div>`; }).join('') : '<p class="empty-state">No structured observations were attached.</p>'}
+            ${items.length ? items.map(item => { const detail=itemView(item); return `<div class="report-observation"><div><strong>${escapeHtml(detail.label)}</strong><small>${escapeHtml(detail.type)} · ${escapeHtml(detail.status)}</small></div><b>${escapeHtml(detail.quantity)}</b></div>`; }).join('') : '<p class="empty-state">No structured observations were attached.</p>'}
           </section>
           ${report.review_note ? `<section class="review-note"><h4>Supervisor feedback</h4><p>${escapeHtml(report.review_note)}</p></section>` : ''}
           <section><h4>Report timeline</h4>
-            ${events.length ? `<ol class="report-timeline">${events.map(event => `<li><strong>${escapeHtml(String(event.action || 'event').replaceAll('_',' '))}</strong><small>${escapeHtml(formatDate(event.created_at))} · ${escapeHtml(event.actor_role || 'system')}</small>${event.note ? `<p>${escapeHtml(event.note)}</p>` : ''}</li>`).join('')}</ol>` : '<p class="empty-state">No workflow events are available yet.</p>'}
+            ${events.length ? `<ol class="report-timeline">${events.map(event => `<li><strong>${escapeHtml(event.status_from && event.status_to ? statusLabel(event.status_from)+' → '+statusLabel(event.status_to) : String(event.action || 'Workflow update').replaceAll('_',' '))}</strong><small>${escapeHtml(event.actor_role || 'system')} · ${escapeHtml(formatDate(event.created_at))}</small>${event.note ? `<p>${escapeHtml(event.note)}</p>` : ''}</li>`).join('')}</ol>` : '<p class="empty-state">No workflow events are available yet.</p>'}
           </section>
           ${canResume ? `<button type="button" class="btn btn-primary" data-resume-worker-report="${escapeHtml(report.id)}">${report.status==='draft'?'Continue saved draft':'Review corrections and resubmit'}</button>` : ''}
         </article>`;
