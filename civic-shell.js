@@ -19,7 +19,7 @@
     const stored=localStorage.getItem('busho-civic-scale')||'1';root.style.setProperty('--civic-scale',stored);
     const contrast=localStorage.getItem('busho-civic-contrast')==='high';if(contrast)root.dataset.contrast='high';
     const toggle=bar.querySelector('[data-contrast-toggle]');toggle.setAttribute('aria-pressed',String(contrast));
-    bar.querySelectorAll('[data-font]').forEach(btn=>btn.addEventListener('click',()=>{const current=parseFloat(localStorage.getItem('busho-civic-scale')||'1');const next=btn.dataset.font==='up'?Math.min(1.15,Math.round((current+.05)*100)/100):btn.dataset.font==='down'?Math.max(.9,Math.round((current-.05)*100)/100):1;localStorage.setItem('busho-civic-scale',String(next));root.style.setProperty('--civic-scale',String(next));}));
+    bar.querySelectorAll('[data-font]').forEach(btn=>btn.addEventListener('click',()=>{const current=parseFloat(localStorage.getItem('busho-civic-scale')||'1');const next=btn.dataset.font==='up'?1.15:btn.dataset.font==='down'?.9:1;localStorage.setItem('busho-civic-scale',String(next));root.style.setProperty('--civic-scale',String(next));}));
     toggle.addEventListener('click',()=>{const high=root.dataset.contrast!=='high';if(high)root.dataset.contrast='high';else delete root.dataset.contrast;localStorage.setItem('busho-civic-contrast',high?'high':'normal');toggle.setAttribute('aria-pressed',String(high));});
   }
   function offline(){
@@ -48,11 +48,11 @@
       if(!layout||!side)return;
       const context=document.createElement('div');context.className='civic-sidebar-context';context.innerHTML='<small>ROLE WORKSPACE</small><strong>PHC Stock Custodian</strong><span id="civic-facility-context">Assigned PHC · Facility-scoped access</span>';side.prepend(context);
       const buttons=[...side.querySelectorAll('[data-portal-view]')];const stock=buttons.find(b=>b.dataset.portalView==='stockouts');if(stock)side.insertBefore(stock,buttons.find(b=>b.dataset.portalView==='requests')||null);
-      const mobile=body.querySelector('#storekeeper-menu-toggle');if(mobile){mobile.classList.add('sidebar-toggle-mobile');mobile.addEventListener('click',()=>layout.classList.toggle('sidebar-open'));}
+      const mobile=body.querySelector('#storekeeper-menu-toggle');if(mobile)mobile.classList.add('sidebar-toggle-mobile');
       side.querySelectorAll('[data-portal-view]').forEach(b=>b.addEventListener('click',()=>layout.classList.remove('sidebar-open')));
       document.addEventListener('keydown',e=>{if(e.key==='Escape')layout.classList.remove('sidebar-open');});
       const top=body.querySelector('.storekeeper-topbar');if(top){const title=document.createElement('a');title.className='brand-lockup brand-home';title.href='index.html';title.setAttribute('aria-label','BUSHO home');title.innerHTML=crest()+'<span><strong class="brand-name">BUSHO</strong><small class="brand-subtitle">Frontline SHC–PHC coordination</small></span>';const old=top.querySelector('.storekeeper-brand');if(old)old.replaceWith(title);}
-      const storeHead=body.querySelector('.storekeeper-main .module-heading');if(storeHead){const signout=storeHead.querySelector('#portal-logout');const name=storeHead.querySelector('#storekeeper-name');const actions=document.createElement('div');actions.className='civic-account-actions';if(name)actions.append(name);if(signout)actions.append(signout);const old=storeHead.querySelector('#storekeeper-name')?.parentElement;if(old)old.replaceWith(actions);}
+      const storeHead=body.querySelector('.storekeeper-main .module-heading');if(storeHead){const signout=storeHead.querySelector('#portal-logout');const name=storeHead.querySelector('#storekeeper-name');const actions=document.createElement('div');actions.className='civic-account-actions';if(name)actions.append(name);if(signout)actions.append(signout);const old=storeHead.querySelector('#storekeeper-name')?.parentElement;if(old)old.replaceWith(document.createDocumentFragment());const topRight=top?.querySelector('.storekeeper-topbar-right');if(topRight){actions.classList.add('civic-topbar-account');topRight.append(actions);}}
       body.querySelectorAll('.storekeeper-guide li').forEach((li,i)=>{const spans=li.querySelector('span');if(!spans)return;});
     }else{
       const side=app.querySelector('.portal-sidebar'),demo=app.querySelector('#demo');if(!side||!demo)return;
