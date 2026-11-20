@@ -97,7 +97,7 @@
         (row.phc_review_note ? '<p class="stockout-review-note"><strong>PHC note:</strong> ' + esc(row.phc_review_note) + '</p>' : '') +
         (row.phc_handover_quantity !== null && row.phc_handover_quantity !== undefined ?
           '<p class="stockout-review-note">PHC handover recorded: <strong>' + esc(row.phc_handover_quantity) + ' ' + esc(row.quantity_unit) + '</strong></p>' : '') +
-        caseActionForm(row) + '<details class="stockout-history"><summary>View activity history (' + events.length + ')</summary>' + timeline + '</details></article>';
+        caseActionForm(row) + '<details class="stockout-history"><summary>View activity history (' + events.length + (events.length === 1 ? ' event' : ' events') + ')</summary>' + timeline + '</details></article>';
     }).join('');
   }
   async function refresh() {
