@@ -250,3 +250,5 @@ input[type=search],#supervisor-report-search,.report-search-input{width:100%;min
 
 .civic-topbar-account{display:flex;align-items:center;gap:10px;color:var(--civic-navy);font-size:.8rem;font-weight:700}.civic-topbar-account #portal-logout{min-height:40px;padding:7px 12px;border:1px solid var(--civic-border-strong);border-radius:6px;background:var(--civic-white);color:var(--civic-navy)}
 .civic-mobile-backdrop{border:0;padding:0;cursor:pointer}
+
+.signin-disclosure{max-width:820px;margin:24px auto 0;padding:14px 18px;border:1px solid var(--civic-warning-border);border-left:3px solid var(--civic-amber);border-radius:6px;background:var(--civic-amber-soft);color:var(--civic-warning);font-size:.84rem;line-height:1.6}
