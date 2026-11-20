@@ -8,7 +8,6 @@ export default defineConfig({
 
   use: {
     ...devices['Desktop Chrome'],
-    channel: 'chrome',
     baseURL: 'http://127.0.0.1:3000',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure'
