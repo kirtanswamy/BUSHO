@@ -109,6 +109,7 @@
       if (token !== generation || !active) return;
       context = nextContext;
       cases = Array.isArray(nextCases) ? nextCases : [];
+      root.document.dispatchEvent(new CustomEvent('busho:worker-facility-context',{detail:{facility:nextContext.worker?.facilities||{},parent:nextContext.phc||{},worker:nextContext.worker||{},link:nextContext.link||null}}));
       renderContext();
       renderCases();
     } catch (error) {
