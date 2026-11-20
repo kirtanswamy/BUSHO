@@ -40,3 +40,14 @@
 [data-state=info].civic-status-pill{background:var(--civic-info-bg);border-color:var(--civic-info-border);color:var(--civic-info)}
 [data-state=warning].civic-status-pill{background:var(--civic-warning-bg);border-color:var(--civic-warning-border);color:var(--civic-warning)}
 [data-state=danger].civic-status-pill{background:var(--civic-danger-bg);border-color:var(--civic-danger-border);color:var(--civic-danger)}
+
+@media(max-width:430px){
+ .civic-utility-bar{padding:4px 8px!important;gap:4px!important;min-width:0}
+ .civic-utility-tools{width:100%;min-width:0;display:flex;flex-wrap:wrap;justify-content:flex-start!important;gap:6px!important}
+ .civic-utility-tools select#lang-select{width:82px;min-width:82px}
+ .civic-utility-tools [data-contrast-toggle]{min-width:82px}
+ .civic-env-pill{margin-left:auto;padding:3px 6px;font-size:.56rem}
+ .lp-header{max-width:calc(100vw - 20px);box-sizing:border-box}
+ .lp-header-inner{min-width:0;box-sizing:border-box}
+ .civic-hero,.civic-section,.civic-case-preview{min-width:0;max-width:100%;box-sizing:border-box}
+}
