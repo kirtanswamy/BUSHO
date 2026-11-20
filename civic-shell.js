@@ -39,7 +39,7 @@
     const header=body.querySelector('.topbar,.storekeeper-topbar,.lp-header');
     if(!header)return;
     const brand=header.querySelector('.brand-lockup,.storekeeper-brand,.lp-brand');
-    if(brand&&!brand.querySelector('.civic-crest')){brand.insertAdjacentHTML('afterbegin',crest());const small=brand.querySelector('.brand-subtitle,.lp-brand-copy small');if(small)small.textContent='Frontline SHC–PHC Medicine Stockout & Replenishment Layer';}
+    if(brand&&!brand.querySelector('.civic-crest')){const mark=brand.querySelector('.brand-mark,.lp-brand-mark');if(mark)mark.outerHTML=crest();else brand.insertAdjacentHTML('afterbegin',crest());const small=brand.querySelector('.brand-subtitle,.lp-brand-copy small');if(small)small.textContent='Frontline SHC–PHC Medicine Stockout & Replenishment Layer';}
   }
   function navEnhance(){
     const app=body.querySelector('#portal-app');if(!app)return;
