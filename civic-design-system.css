@@ -53,11 +53,13 @@ code,.reference-id,.lgd-code,.timestamp{font-variant-numeric:tabular-nums}
 .brand-mark span,.lp-brand-mark i{display:none}
 .brand-mark::before,.lp-brand-mark::before{content:"";width:20px;height:20px;border:2px solid #fff;transform:rotate(45deg);border-radius:3px}
 .brand-mark::after,.lp-brand-mark::after{content:"";position:absolute;width:8px;height:8px;border:2px solid #fff;background:var(--civic-teal);border-radius:2px}
-.topbar::after,.storekeeper-topbar::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:3px;background:linear-gradient(90deg,var(--civic-navy) 0 58%,var(--civic-teal) 58% 82%,var(--civic-amber-strong) 82%)}
+
 .demo-badge,.demo-status,.demo-sidebar-label{background:var(--civic-warning-bg)!important;color:var(--civic-warning)!important;border:1px solid var(--civic-warning-border)!important;border-radius:5px!important;font-family:"Noto Sans",sans-serif!important;font-size:.68rem!important;font-weight:750!important;letter-spacing:.035em}
 .demo-badge::before{content:"";width:7px;height:7px;margin-right:7px;display:inline-block;border-radius:50%;background:var(--civic-amber)}
 .app-shell{min-height:100vh}
-.portal-app{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;display:block!important;background:var(--civic-canvas)}
+.portal-app{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;background:var(--civic-canvas)}
+#portal-app.hidden{display:none!important}
+#portal-app:not(.hidden){display:block!important}
 .civic-workspace-grid{display:grid;grid-template-columns:var(--civic-sidebar) minmax(0,1fr);align-items:stretch;min-height:calc(100vh - 111px)}
 .portal-sidebar,.storekeeper-sidebar{position:sticky!important;top:0!important;align-self:start;display:flex!important;flex-direction:column;gap:5px;width:var(--civic-sidebar);height:100vh!important;min-height:100vh!important;overflow-y:auto;padding:22px 16px 18px!important;background:var(--civic-utility)!important;color:#fff!important;border-right:1px solid rgba(255,255,255,.08)}
 .sidebar-brand,.storekeeper-sidebar .sidebar-brand{display:none!important}
@@ -233,3 +235,11 @@ input[type=search],#supervisor-report-search,.report-search-input{width:100%;min
 [data-contrast=high] .portal-sidebar,[data-contrast=high] .storekeeper-sidebar,[data-contrast=high] .civic-utility-bar,[data-contrast=high] .footer{background:#000!important;color:#fff!important;border:2px solid #fff!important}
 [data-contrast=high] :focus-visible{outline:3px solid #FFFF00!important;outline-offset:3px}
 [data-contrast=high] .status-pill,[data-contrast=high] .status-chip,[data-contrast=high] .stockout-status{background:#fff!important;color:#000!important;border:2px solid #000!important}
+
+.civic-scope-bar{display:flex!important;flex-wrap:wrap;gap:12px 24px!important;align-items:center}.civic-scope-bar>span{display:flex;gap:8px;align-items:baseline}.civic-scope-bar b{font-size:.67rem;color:var(--civic-muted);letter-spacing:.06em}.civic-scope-bar strong{font-size:.85rem;color:var(--civic-navy)}
+.civic-facility-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0}.civic-facility-details>div{min-width:0;padding:12px;border:1px solid var(--civic-border);border-radius:6px;background:var(--civic-well)}.civic-facility-details dt{font-size:.7rem;font-weight:800;color:var(--civic-muted)}.civic-facility-details dd{margin:4px 0 0;color:var(--civic-navy);font-size:.9rem;font-weight:700;overflow-wrap:anywhere}.civic-account-actions{display:flex;align-items:center;gap:10px}
+#worker-report-search{min-width:280px;flex:1 1 360px;width:100%}.progress-indicator{display:flex;align-items:center;gap:10px;max-width:680px;margin:0 auto 20px}.progress-step{display:flex;align-items:center;gap:8px;white-space:nowrap}.progress-connector{height:2px;flex:1;min-width:28px;background:var(--civic-border-strong)}.progress-num{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--civic-well);border:1px solid var(--civic-border-strong);font-weight:800}.progress-step.active .progress-num{background:var(--civic-navy);color:#fff;border-color:var(--civic-navy)}
+[data-contrast=high] .civic-hero,[data-contrast=high] .civic-case-preview,[data-contrast=high] .civic-guarantees article,[data-contrast=high] .civic-section,[data-contrast=high] .civic-role-grid article,[data-contrast=high] .civic-branch,[data-contrast=high] .civic-boundary-table,[data-contrast=high] .civic-governance-cards article{background:#fff!important;color:#000!important;border:2px solid #000!important}
+[data-contrast=high] .civic-hero h1,[data-contrast=high] .civic-section h2,[data-contrast=high] .civic-section h3,[data-contrast=high] .civic-role-grid h3,[data-contrast=high] .civic-case-preview strong{color:#000!important}
+[data-contrast=high] .civic-final-cta,[data-contrast=high] .civic-site-footer{background:#000!important;color:#fff!important;border:2px solid #fff!important}
+[data-contrast=high] .civic-final-cta h2,[data-contrast=high] .civic-final-cta p,[data-contrast=high] .civic-site-footer h2,[data-contrast=high] .civic-site-footer h3,[data-contrast=high] .civic-site-footer p,[data-contrast=high] .civic-site-footer a{color:#fff!important}
