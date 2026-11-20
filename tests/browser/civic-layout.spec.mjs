@@ -36,14 +36,22 @@ test('desktop role rails are sticky and mobile navigation opens as a drawer', as
     await expect(rail).toBeVisible();
     expect(await rail.evaluate(el => getComputedStyle(el).position)).toBe('sticky');
 
-    await page.setViewportSize({ width: 375, height: 812 });
     const menu = page.locator(portal.role === 'storekeeper' ? '#storekeeper-menu-toggle' : '.sidebar-toggle-mobile');
-    await expect(menu).toBeVisible();
-    await menu.click();
-    if (portal.role === 'storekeeper') {
-      await expect(page.locator('#storekeeper-layout')).toHaveClass(/sidebar-open/);
-    } else {
-      await expect(page.locator('#portal-app')).toHaveClass(/sidebar-open/);
+    for (const width of [768, 375]) {
+      await page.setViewportSize({ width, height: width === 768 ? 1024 : 812 });
+      const dimensions = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth }));
+      expect(dimensions.scrollWidth, portal.path + ' workspace horizontal overflow at ' + width).toBeLessThanOrEqual(dimensions.width + 1);
+      await expect(menu).toBeVisible();
+      await menu.click();
+      if (portal.role === 'storekeeper') {
+        await expect(page.locator('#storekeeper-layout')).toHaveClass(/sidebar-open/);
+        await menu.click();
+        await expect(page.locator('#storekeeper-layout')).not.toHaveClass(/sidebar-open/);
+      } else {
+        await expect(page.locator('#portal-app')).toHaveClass(/sidebar-open/);
+        await menu.click();
+        await expect(page.locator('#portal-app')).not.toHaveClass(/sidebar-open/);
+      }
     }
   }
 });
