@@ -12,7 +12,7 @@ test('shared civic shell parses and is wired to every required public and role p
   assert.doesNotThrow(() => new vm.Script(read('civic-shell.js')));
   for (const file of ['index.html','signin.html','worker.html','supervisor.html','storekeeper.html']) {
     const html = read(file);
-    assert.match(html, /civic-design-system\.css/);
+    assert.match(html, /<link rel="stylesheet" href="civic-design-system\.css\?v=1">/);
     assert.match(html, /civic-shell\.js/);
   }
   assert.match(read('index.html'), /civic-landing\.css/);
