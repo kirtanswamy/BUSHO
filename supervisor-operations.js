@@ -178,7 +178,7 @@
             ${facilityCounts.size ? Array.from(facilityCounts.entries()).map(([name,count]) => `<div class="facility-progress"><div class="facility-progress-head"><strong>${escapeHtml(name)}</strong><span>${countWord(count, 'report')}</span></div><div class="progress-track"><i style="width:${Math.min(100, summary.total ? count / summary.total * 100 : 0)}%"></i></div></div>`).join('') : '<p class="empty-state">No facility reports are available yet.</p>'}
           </article>
           <article class="module-card"><div class="module-card-head"><div><p class="card-overline">RECENT RECORDS</p><h3>Latest submissions</h3></div><button class="text-action" data-open-inbox>View all →</button></div>
-            ${recent.length ? recent.map(report => `<div class="simple-row"><span>${escapeHtml(report.facilities?.name || 'Facility')}</span><span>${escapeHtml(formatDate(report.created_at))}</span><span><b class="status-pill">${escapeHtml(statusLabel(report.status))}</b></span></div>`).join('') : '<p class="empty-state">No reports have been submitted in this scope.</p>'}
+            ${recent.length ? recent.map(report => `<div class="simple-row"><span>${escapeHtml(report.facilities?.name || 'Facility')}</span><span>${escapeHtml(formatDate(report.created_at))}</span><span><b class="status-pill" data-status="${escapeHtml(report.status)}">${escapeHtml(statusLabel(report.status))}</b></span></div>`).join('') : '<p class="empty-state">No reports have been submitted in this scope.</p>'}
           </article>
         </div>
         <p class="muted-copy">Counts are calculated from records returned by the authenticated, authorised facility-scoped query. They are not statewide totals.</p>`;
@@ -205,7 +205,7 @@
           ${error ? `<p class="portal-login-error" role="alert">${escapeHtml(error)}</p>` : ''}
           <div class="simple-table">
             <div class="simple-row simple-header"><span>REPORT / FACILITY</span><span>WORKER</span><span>STATUS</span><span>SUBMITTED</span></div>
-            ${rows.length ? rows.map(report => `<button type="button" class="simple-row report-inbox-row" data-open-report="${escapeHtml(report.id)}"><span><strong>${escapeHtml(report.facilities?.name || 'Assigned facility')}</strong><small>${escapeHtml((report.report_items || []).map(item => item.display_label).slice(0,2).join(', ') || 'Field report')}</small></span><span>${escapeHtml(report.workers?.display_name || 'Health worker')}</span><span><b class="status-pill">${escapeHtml(statusLabel(report.status))}</b></span><span>${escapeHtml(formatDate(report.submitted_at || report.created_at))}</span></button>`).join('') : '<p class="empty-state">No records match this filter. New submissions will appear here after refresh.</p>'}
+            ${rows.length ? rows.map(report => `<button type="button" class="simple-row report-inbox-row" data-open-report="${escapeHtml(report.id)}"><span><strong>${escapeHtml(report.facilities?.name || 'Assigned facility')}</strong><small>${escapeHtml((report.report_items || []).map(item => item.display_label).slice(0,2).join(', ') || 'Field report')}</small></span><span>${escapeHtml(report.workers?.display_name || 'Health worker')}</span><span><b class="status-pill" data-status="${escapeHtml(report.status)}">${escapeHtml(statusLabel(report.status))}</b></span><span>${escapeHtml(formatDate(report.submitted_at || report.created_at))}</span></button>`).join('') : '<p class="empty-state">No records match this filter. New submissions will appear here after refresh.</p>'}
           </div>
         </article>
         ${selected ? renderDetail(selected) : '<article class="module-card report-detail-placeholder"><h3>Select a report to review</h3><p>Open a report to inspect its original field note, structured observations and audit history before deciding.</p></article>'}`;
@@ -217,7 +217,7 @@
       const actions = role === 'supervisor' ? reviewActions(report.status) : [];
       return `
         <article class="module-card report-detail" id="supervisor-report-detail">
-          <div class="module-card-head"><div><p class="card-overline">REPORT DETAIL</p><h3>${escapeHtml(report.facilities?.name || 'Assigned facility')}</h3><p>Reference: <code>${escapeHtml(report.id)}</code></p></div><b class="status-pill">${escapeHtml(statusLabel(report.status))}</b></div>
+          <div class="module-card-head"><div><p class="card-overline">REPORT DETAIL</p><h3>${escapeHtml(report.facilities?.name || 'Assigned facility')}</h3><p>Reference: <code>${escapeHtml(report.id)}</code></p></div><b class="status-pill" data-status="${escapeHtml(report.status)}">${escapeHtml(statusLabel(report.status))}</b></div>
           <div class="report-meta-grid"><div><small>Health worker</small><strong>${escapeHtml(report.workers?.display_name || 'Health worker')}</strong></div><div><small>Reporting date</small><strong>${escapeHtml(report.reporting_date || '—')}</strong></div><div><small>Submitted</small><strong>${escapeHtml(formatDate(report.submitted_at || report.created_at))}</strong></div><div><small>Language</small><strong>${escapeHtml(report.language_code || '—')}</strong></div></div>
           <section class="report-source"><h4>Original field report</h4><p>${escapeHtml(report.original_text || 'No original narrative was attached.')}</p></section>
           <section><h4>Structured observations</h4>
