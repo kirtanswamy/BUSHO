@@ -29,9 +29,15 @@
     fav.type='image/svg+xml';fav.href='/favicon.svg';
     $('.portal-login-card .busho-login-brand').forEach(node=>node.remove());
     const signinHeader=$('.signin-page .topbar');
-    if(signinHeader&&!$('.brand-lockup',signinHeader)){
-      const a=document.createElement('a');a.className='brand-lockup busho-brand-lockup';a.href='/';
-      a.innerHTML='<span class="busho-brand-mark">'+logoSvg(38)+'</span><span><strong class="brand-name">BUSHO</strong><small class="brand-subtitle">'+tagline+'</small></span>';signinHeader.prepend(a);
+    if(signinHeader){
+      let a=$('.brand-lockup',signinHeader);
+      if(!a){a=document.createElement('a');a.className='brand-lockup busho-brand-lockup';a.href='/';signinHeader.prepend(a);}
+      let marks=$('.busho-brand-mark,.brand-mark,.lp-brand-mark,.civic-crest',a);
+      if(!marks.length)a.insertAdjacentHTML('afterbegin','<span class="busho-brand-mark">'+logoSvg(38)+'</span>');
+      else {const keep=marks.find(n=>n.classList.contains('busho-brand-mark'))||marks[0];marks.forEach(n=>{if(n!==keep)n.remove()});if(!keep.classList.contains('busho-brand-mark'))keep.outerHTML='<span class="busho-brand-mark">'+logoSvg(38)+'</span>';}
+      $('.busho-brand-mark,.brand-mark,.lp-brand-mark,.civic-crest',signinHeader).forEach(n=>{if(!a.contains(n))n.remove()});
+      if(!$('.brand-name',a))a.insertAdjacentHTML('beforeend','<span><strong class="brand-name">BUSHO</strong><small class="brand-subtitle">'+tagline+'</small></span>');
+      a.classList.add('busho-brand-lockup');
     }
   }
   function toast(message,kind='info'){
