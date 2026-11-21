@@ -108,6 +108,7 @@ test('Storekeeper auth chrome is hidden until authentication and persists across
   await expect(page.locator('.civic-storekeeper-header .profile-menu-wrap')).toBeHidden();
   await expect(page.locator('.civic-storekeeper-header #portal-logout')).toBeHidden();
   await expect(page.locator('.civic-all-workspaces')).toBeVisible();
+  await page.waitForTimeout(150);
   await page.evaluate(() => document.dispatchEvent(new CustomEvent('busho:authenticated', {detail:{profile:{role:'storekeeper',display_name:'Demo Storekeeper'}}})));
   await expect(page.locator('.civic-storekeeper-header .profile-menu-wrap')).toBeVisible();
   await expect(page.locator('.civic-storekeeper-header .profile-avatar')).toHaveText('SK');

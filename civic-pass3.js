@@ -13,7 +13,7 @@
   const read=(k,d)=>{try{return localStorage.getItem(k)||d}catch{return d}};
   function authState(auth,profile){
     body.dataset.authState=auth?'authenticated':'unauthenticated';
-    const header=$('.topbar,.storekeeper-topbar');
+    const header=role==='storekeeper'?$('.storekeeper-topbar'):$('.topbar');
     if(!header)return;
     const wrap=$('.profile-menu-wrap',header),all=$('.civic-all-workspaces',header);
     if(wrap)wrap.hidden=!auth;
