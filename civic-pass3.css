@@ -1,0 +1,57 @@
+/* Pass 3 shared shell and login gate */
+:root{--civic-primary:#0B3D6B;--civic-primary-hover:#082D4F}
+.lp-button-primary,.btn-primary,.portal-login-form button[type=submit],.storekeeper-login button[type=submit]{background:var(--civic-primary)!important;border-color:var(--civic-primary)!important;color:#fff!important}
+.lp-button-primary:hover,.btn-primary:hover,.portal-login-form button[type=submit]:hover{background:var(--civic-primary-hover)!important;border-color:var(--civic-primary-hover)!important}
+.civic-all-workspaces{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 12px;border:1px solid var(--civic-border-strong);border-radius:6px;color:var(--civic-navy);font-weight:700;font-size:.82rem;text-decoration:none;white-space:nowrap}
+.civic-all-workspaces:hover{background:var(--civic-soft)}
+.civic-all-workspaces[hidden],.profile-menu-wrap[hidden]{display:none!important}
+.profile-menu-wrap:not([hidden]){display:block}
+.profile-trigger .profile-avatar,.civic-avatar-square{width:38px!important;height:38px!important;min-width:38px!important;border-radius:9px!important;background:#E8F1FB!important;color:#0B3D6B!important;border:1px solid #C7D9EE!important;display:grid;place-items:center;font-weight:800}
+.profile-trigger-copy{display:grid;gap:2px;text-align:left;min-width:0}
+.profile-trigger-copy strong{font-size:.82rem;color:var(--civic-navy)}
+.profile-trigger-copy small{font-size:.7rem;color:var(--civic-muted)}
+.storekeeper-topbar .profile-menu-wrap{position:relative}
+.storekeeper-topbar .profile-dropdown{position:absolute;right:0;top:calc(100% + 10px);z-index:500;min-width:230px}
+.storekeeper-topbar .profile-trigger{display:flex;align-items:center;gap:10px;padding:6px 10px;border:1px solid var(--civic-border);border-radius:9px;background:#fff}
+.storekeeper-topbar .profile-dropdown[hidden]{display:none!important}
+.portal-login-section,.storekeeper-login{box-sizing:border-box;min-height:calc(100vh - 180px);display:grid;place-items:center;padding:40px 18px;margin:0 auto;background:#F4F7FA}
+.portal-login-card{box-sizing:border-box;width:min(100%,480px);padding:clamp(24px,4vw,36px);border:1px solid var(--civic-border);border-radius:10px;background:#fff;box-shadow:0 10px 30px rgba(11,61,107,.08)}
+.portal-login-card h1,.storekeeper-login h1{margin:6px 0 10px;color:var(--civic-navy);font-size:clamp(1.5rem,3vw,2rem)}
+.portal-login-card>p:not(.section-kicker),.login-scope-note{color:var(--civic-muted);line-height:1.6}
+.portal-login-form{display:grid;gap:9px;margin-top:22px}
+.portal-login-form label{font-size:.85rem;font-weight:700;color:var(--civic-ink)}
+.portal-login-form input{width:100%;min-height:46px;box-sizing:border-box;padding:10px 12px;border:1px solid #94A3B8;border-radius:6px;background:#fff;color:#0F172A;font:inherit}
+.portal-login-form input:focus-visible,.storekeeper-login input:focus-visible{outline:3px solid #F59E0B;outline-offset:2px}
+.portal-login-form button[type=submit]{width:100%;min-height:48px;border-radius:6px;font-weight:800}
+.portal-login-error:empty{display:none}
+.storekeeper-login.portal-login-section{width:100%;max-width:none;margin:0;border:0;border-radius:0;box-shadow:none;padding:40px 18px;background:#F4F7FA}
+.storekeeper-login .portal-login-card{width:min(100%,480px)}
+.storekeeper-login .portal-login-form input{width:100%;min-height:46px;box-sizing:border-box;padding:10px 12px;border:1px solid #94A3B8;border-radius:6px;margin:0 0 12px;font:inherit}
+.storekeeper-login label{margin-bottom:5px}
+.storekeeper-login button[type=submit]{min-height:48px}
+.civic-workspace-grid,.storekeeper-layout{align-items:stretch!important;min-height:calc(100vh - 190px)}
+.portal-sidebar,.storekeeper-sidebar{align-self:stretch!important;height:auto!important;min-height:100%!important}
+.storekeeper-sidebar{position:sticky!important;top:0!important;min-height:calc(100vh - 190px)!important}
+.storekeeper-layout{display:grid!important;grid-template-columns:var(--civic-sidebar) minmax(0,1fr)!important}
+.storekeeper-main{min-height:100%;background:#F4F7FA}
+.civic-sidebar-status{display:grid!important;gap:8px!important;margin-top:auto!important;padding:14px 10px 0!important;border-top:1px solid rgba(255,255,255,.16)!important}
+.civic-sidebar-status .civic-status-pill{display:inline-flex;align-items:center;width:max-content;max-width:100%;padding:6px 9px;border:1px solid rgba(255,255,255,.16);border-radius:6px;background:rgba(255,255,255,.08);color:#E2E8F0;font-size:.68rem;font-weight:700}
+.civic-connectivity{font-size:.72rem;color:#86EFAC}
+.civic-connectivity::before{content:"●";margin-right:7px;color:#22C55E}
+.civic-connectivity.is-offline{color:#FCD34D}
+.civic-connectivity.is-offline::before{color:#F59E0B}
+.empty-state,.civic-empty-state{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;gap:10px!important;padding:40px 24px!important}
+.empty-state svg,.civic-empty-state svg{width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;flex-shrink:0!important;color:#64748B!important}
+.empty-state-title{display:block!important;font-size:1rem!important;font-weight:600!important;color:#0F172A!important;margin:0!important}
+.empty-state-text{display:block!important;font-size:.9375rem!important;color:#475569!important;max-width:48ch!important;margin:0!important}
+.civic-page-intro{min-width:0}
+.civic-page-intro h1{overflow-wrap:anywhere}
+.civic-facility-strip{min-width:0}
+.civic-facility-strip strong{overflow-wrap:anywhere}
+@media(max-width:960px){.storekeeper-mobile-menu{display:inline-flex!important}.storekeeper-layout{display:block!important}.storekeeper-sidebar{position:fixed!important;top:0!important;left:0!important;height:100dvh!important;min-height:100dvh!important;z-index:450;transform:translateX(-105%);transition:transform .2s ease}.storekeeper-layout.sidebar-open .storekeeper-sidebar{transform:translateX(0)}}
+@media(max-width:600px){.topbar-right,.storekeeper-topbar-right{gap:7px;flex-wrap:wrap}.civic-all-workspaces{font-size:.72rem;padding:6px 8px}.storekeeper-topbar .brand-subtitle{max-width:165px;font-size:.62rem}.profile-trigger-copy{display:none}.portal-login-section,.storekeeper-login{padding:26px 14px;min-height:calc(100vh - 150px)}}
+@media print{.civic-utility-bar,.topbar,.storekeeper-topbar,.portal-sidebar,.storekeeper-sidebar,.sidebar-toggle-mobile,.storekeeper-mobile-menu,.civic-all-workspaces,.civic-site-footer,.footer,.civic-offline-banner{display:none!important}.portal-login-section,.storekeeper-login{display:none!important}}
+
+#portal-login .demo-credentials,#portal-login .portal-back-link{display:none!important}
+
+body[data-auth-state="unauthenticated"] .profile-menu-wrap,body[data-auth-state="unauthenticated"] #portal-logout{display:none!important}

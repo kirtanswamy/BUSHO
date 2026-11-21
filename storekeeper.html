@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BUSHO | Storekeeper Workspace</title>
+<meta name="description" content="Facility-scoped medicine supply coordination, dispatch and receipt tracking.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles-v2.css?v=21">
+<link rel="stylesheet" href="civic-design-system.css?v=1">
+<link rel="stylesheet" href="civic-pass2.css?v=1">
+<link rel="stylesheet" href="civic-pass3.css?v=1">
+<style>
+.storekeeper-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px;padding:12px 28px;border-bottom:1px solid var(--line);background:#fff}
+.storekeeper-brand{font-weight:800;letter-spacing:.08em;color:var(--teal-dark);text-decoration:none}
+.storekeeper-topbar-right{display:flex;align-items:center;gap:12px}
+.storekeeper-layout{display:grid;grid-template-columns:238px minmax(0,1fr);min-height:calc(100vh - 68px)}
+.storekeeper-sidebar{position:sticky;top:0;display:flex;flex-direction:column;gap:5px;height:calc(100vh - 68px);min-height:520px;padding:24px 16px 18px;background:#17243a;color:#edf3ff}
+.storekeeper-sidebar .sidebar-label{margin:16px 10px 6px;color:#93a5c1;font:700 9px var(--font-mono);letter-spacing:.12em}
+.storekeeper-sidebar .sidebar-link{width:100%;min-height:43px;display:flex;align-items:center;gap:12px;padding:9px 11px;border:0;border-radius:8px;color:#c5d0e1;background:transparent;text-align:left;font-size:12px;font-weight:550;cursor:pointer}
+.storekeeper-sidebar .sidebar-link>span{width:18px;color:#9eb8ec;text-align:center;font-size:16px}
+.storekeeper-sidebar .sidebar-link:hover{color:#fff;background:rgba(255,255,255,.07)}
+.storekeeper-sidebar .sidebar-link.active{color:#fff;background:#2d4264;box-shadow:inset 3px 0 #83a8f5}
+.storekeeper-sidebar .sidebar-bottom{display:grid;gap:8px;margin-top:auto;padding:16px 10px 0;border-top:1px solid rgba(255,255,255,.12);color:#aab9d1;font:9px var(--font-mono)}
+.storekeeper-main{min-width:0;width:100%;max-width:1500px;margin:0 auto;padding:30px clamp(18px,3vw,44px) 60px}
+.storekeeper-main .portal-module{display:none}.storekeeper-main .portal-module.active{display:block}
+.storekeeper-main .module-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:22px}
+.storekeeper-main h1{font-size:clamp(25px,2.3vw,34px);line-height:1.2;margin:0 0 8px}
+.storekeeper-main h2{font-size:19px;line-height:1.3}.storekeeper-main h3{font-size:16px;line-height:1.35}
+.storekeeper-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:24px 0}
+.storekeeper-request{margin:16px 0}
+.storekeeper-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.storekeeper-facts div{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px}
+.storekeeper-facts dt{font-size:11px;color:var(--muted)}.storekeeper-facts dd{margin:4px 0 0;font-size:12px;font-weight:700;overflow-wrap:anywhere}
+.storekeeper-action{display:flex;align-items:end;gap:12px;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--line)}
+.storekeeper-action label{display:grid;gap:5px;flex:1;min-width:210px;font-size:12px;font-weight:700}
+.storekeeper-action input,.storekeeper-action select{width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:white;font:inherit}
+.storekeeper-action small{width:100%;color:var(--muted)}
+.storekeeper-history{padding:12px 0;color:var(--muted)}.storekeeper-history summary{cursor:pointer;font-weight:700;color:var(--ink)}
+.storekeeper-notice{padding:12px 16px;border-radius:10px;background:#e9f5ef;color:#176444}
+.storekeeper-login{box-sizing:border-box;width:min(100% - 32px,460px);margin:8vh auto;padding:30px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.storekeeper-login input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin:6px 0 14px}
+.storekeeper-login label{display:block;font-size:13px;font-weight:700}.storekeeper-login button[type=submit]{width:100%}
+.storekeeper-mobile-menu{display:none}
+@media(max-width:900px){.storekeeper-layout{grid-template-columns:205px minmax(0,1fr)}.storekeeper-summary,.storekeeper-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.storekeeper-layout{display:block}.storekeeper-mobile-menu{display:inline-flex}.storekeeper-sidebar{position:fixed;z-index:400;left:0;top:68px;width:250px;height:calc(100vh - 68px);min-height:0;transform:translateX(-105%);transition:transform .2s ease;box-shadow:15px 0 40px rgba(0,0,0,.18)}.storekeeper-layout.sidebar-open .storekeeper-sidebar{transform:translateX(0)}.storekeeper-main{padding:22px 14px 44px}.storekeeper-main .module-heading{display:block}.storekeeper-summary,.storekeeper-facts{grid-template-columns:1fr}.storekeeper-action{align-items:stretch}.storekeeper-action button{width:100%}.storekeeper-topbar{padding:10px 14px}.storekeeper-topbar-right{gap:7px}}
+@media(prefers-reduced-motion:reduce){.storekeeper-sidebar{transition:none}}
+</style>
+<script src="i18n.js?v=2"></script>
+</head>
+<body data-portal-role="storekeeper" data-auth-state="unauthenticated">
+<header class="topbar storekeeper-topbar civic-storekeeper-header" role="banner">
+  <a class="brand-lockup brand-home" href="/" aria-label="BUSHO home"><span class="civic-crest" aria-hidden="true"><svg viewBox="0 0 40 40" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 3 35 12v16L20 37 5 28V12Z"/><path d="M20 9v22M9 15h22M9 25h22"/><circle cx="20" cy="20" r="4" fill="var(--civic-teal)"/></svg></span><span><strong class="brand-name">BUSHO</strong><small class="brand-subtitle">Frontline SHC–PHC Medicine Stockout & Replenishment Layer</small></span></a>
+  <div class="topbar-spacer"></div><div class="topbar-right storekeeper-topbar-right"><button class="btn btn-quiet storekeeper-mobile-menu" id="storekeeper-menu-toggle" type="button" aria-controls="storekeeper-sidebar" aria-expanded="false">☰ Menu</button><a class="civic-all-workspaces" href="/signin">← All workspaces</a>
+  <div class="profile-menu-wrap" hidden><button class="profile-trigger" id="profile-trigger" type="button" aria-haspopup="true" aria-controls="profile-dropdown" aria-expanded="false" aria-label="Open profile menu"><span class="profile-avatar" id="storekeeper-avatar" aria-hidden="true">SK</span><span class="profile-trigger-copy"><strong id="storekeeper-name">Demo Storekeeper</strong><small id="storekeeper-account-facility">Assigned PHC</small></span><span class="profile-chevron" aria-hidden="true">⌄</span></button><div class="profile-dropdown" id="profile-dropdown" hidden><div class="profile-dropdown-head"><strong id="storekeeper-account-name">Demo Storekeeper</strong><span id="storekeeper-dropdown-facility">Assigned PHC</span></div><button type="button" data-profile-action="guidance">Account & guidance</button><button type="button" class="profile-signout" id="portal-logout" data-profile-action="signout">Sign out</button></div></div></div></header>
+<section id="portal-login" class="portal-login-section storekeeper-login" aria-labelledby="demo-title"><div class="portal-login-card"><p class="section-kicker">SECURE ACCESS · PHC STOCK CUSTODIAN</p><h1 id="demo-title">PHC Stock Custodian</h1><p class="login-scope-note">Sign in with your provisioned BUSHO account. Access is limited to your administrator-approved PHC facility scope.</p><form id="portal-login-form" class="portal-login-form"><label for="portal-username">Email</label><input id="portal-username" name="username" type="email" autocomplete="username" required placeholder="your registered email"><label for="portal-password">Password</label><input id="portal-password" name="password" type="password" autocomplete="current-password" required><p id="portal-login-error" class="portal-login-error" role="alert" aria-live="polite"></p><button class="btn btn-primary" type="submit">Sign in securely</button></form></div></section>
+<section id="portal-app" class="hidden" aria-hidden="true">
+<div class="storekeeper-layout" id="storekeeper-layout">
+<aside class="storekeeper-sidebar" id="storekeeper-sidebar" aria-label="Storekeeper navigation">
+  <div class="sidebar-brand"><strong>BUSHO</strong><small>STOREKEEPER</small></div>
+  <p class="sidebar-label">OPERATIONAL WORKFLOW</p>
+  <button class="sidebar-link active" data-portal-view="overview"><span>▦</span> Overview</button>
+  <button class="sidebar-link" data-portal-view="requests"><span>▤</span> Replenishment queue</button>
+  <button class="sidebar-link" data-portal-view="stockouts"><span>⇄</span> SHC Stockout Handovers</button>
+  <button class="sidebar-link" data-portal-view="inventory"><span>▥</span> Inventory evidence</button>
+  <p class="sidebar-label">ACCOUNT</p>
+  <button class="sidebar-link" data-portal-view="account"><span>○</span> Account & guidance</button>
+  <div class="sidebar-bottom"><span>FACILITY-SCOPED ACCESS</span><span id="storekeeper-sidebar-name">Signed-in storekeeper</span></div>
+</aside>
+<main class="storekeeper-main">
+  <section class="portal-module active" data-module="overview">
+    <div class="module-heading"><div><p class="section-kicker">FACILITY SUPPLY OPERATIONS</p><h2>Operational overview</h2><p>Receive approved replenishment handoffs, record external supply actions and reconcile receipt evidence.</p></div></div>
+    <div id="storekeeper-summary" class="storekeeper-summary" aria-live="polite"></div>
+    <article class="module-card"><div class="module-card-head"><div><h2>Your role in the supply chain</h2><p>What happens after a supervisor verifies a field report.</p></div></div>
+      <ol class="storekeeper-guide">
+        <li><strong>1. Check PHC Stock Availability</strong><span>Check official PHC registers/DPDMIS records and physically verify usable stock for an accepted SHC stockout request. This dated observation is evidence, not an authoritative stock balance.</span></li>
+        <li><strong>2. Branch 1 — PHC Stock Available (Handover)</strong><span>Record the official PHC-to-SHC issue in the prescribed register/system, then log the handover quantity, actor, timestamp, and optional reference in BUSHO for SHC collection.</span></li>
+        <li><strong>3. Branch 2 — PHC Stock Unavailable (External Indent)</strong><span>Mark PHC unable to fulfil. Once the authorised PHC user submits the consolidated facility indent in DPDMIS/government portal, manually record the external reference and track upstream receipt at PHC before onward SHC handover.</span></li>
+        <li><strong>4. Close After SHC Physical Receipt</strong><span>The SHC worker physically counts and confirms receipt (or records any shortage/discrepancy). Cases close only after last-mile SHC receipt evidence is recorded.</span></li>
+      </ol>
+      <p class="muted-copy">BUSHO tracks coordination handovers and external references only; official paper registers and DPDMIS/CGMSC remain the authoritative systems of record.</p>
+      <button class="btn btn-primary" data-go-view="stockouts" type="button">Open SHC stockout handovers →</button> <button class="btn btn-secondary" data-go-view="requests" type="button">View replenishment queue</button>
+    </article>
+  </section>
+  <section class="portal-module" data-module="requests">
+    <div class="module-heading"><div><p class="section-kicker">SUPERVISOR-APPROVED HANDOFFS</p><h2>Replenishment queue</h2><p>Requests submitted into the authorised external supply process and assigned to your facility scope.</p></div><button class="btn btn-quiet" id="storekeeper-refresh" type="button">Refresh queue</button></div>
+    <div id="storekeeper-message" aria-live="polite"></div><div id="storekeeper-requests" aria-live="polite"><p class="empty-state">Sign in to load requests.</p></div>
+  </section>
+  <section class="portal-module" data-module="stockouts">
+    <div class="module-heading"><div><p class="section-kicker">SHC → PHC LAST-MILE FULFILMENT</p><h2>SHC stockout handovers</h2><p>Record PHC availability, external indent references, upstream receipt and handover to the SHC.</p></div><button class="btn btn-quiet" id="phc-stockout-storekeeper-refresh" type="button">Refresh cases</button></div>
+    <div id="phc-stockout-storekeeper-message" aria-live="polite"></div><div id="phc-stockout-storekeeper-list" aria-live="polite"><p class="empty-state">Sign in to load PHC stockout cases.</p></div>
+  </section>
+  <section class="portal-module" data-module="inventory">
+    <div class="module-heading"><div><p class="section-kicker">RECONCILIATION</p><h2>Inventory evidence</h2><p>Facility-scoped observations and inbound receipt ledger, shown separately.</p></div><button class="btn btn-quiet" id="inventory-reconciliation-refresh" type="button">Refresh inventory</button></div>
+    <div id="inventory-reconciliation-message" aria-live="polite"></div><div id="inventory-reconciliation-list"><p class="empty-state">Sign in to load inventory evidence.</p></div>
+  </section>
+  <section class="portal-module" data-module="account">
+    <div class="module-heading"><div><p class="section-kicker">ACCOUNT & GUIDANCE</p><h2>Storekeeper responsibilities</h2></div></div>
+    <article class="module-card"><h3>What you can do</h3><ul><li>View replenishment requests released to your assigned facility.</li><li>Record actual allocation and dispatch references.</li><li>Record cumulative physical receipt quantities and goods receipt references.</li><li>Review SHC-to-PHC stockout handover cases assigned to your PHC.</li><li>Review dated inventory observations and receipt movements.</li></ul><h3>What BUSHO does not do</h3><ul><li>It does not create official government indents or purchase orders.</li><li>It does not allocate, transport or dispatch medicine stock.</li><li>It does not certify an authoritative stock balance from incomplete receipt data.</li></ul></article>
+    <p class="muted-copy">If a verified report does not have a corresponding replenishment request, ask the supervisor to create and advance a supply recommendation. Report review and stock fulfilment are separate workflows.</p>
+  </section>
+  <p class="muted-copy">BUSHO records external references supplied by authorised staff. It does not place orders or connect to DPDMIS automatically. Stock movements shown here are receipt records, not independently verified physical stock balances.</p>
+</main>
+</div>
+</section>
+<script src="supabase-config.js?v=1"></script><script src="supabase-client.js?v=18"></script>
+<script src="portal-auth-policy.js?v=1"></script><script src="role-auth.js?v=10"></script>
+<script src="storekeeper-navigation.js?v=1"></script>
+<script src="storekeeper-portal.js?v=3"></script><script src="storekeeper-inventory-reconciliation.js?v=1"></script><script src="storekeeper-stockouts.js?v=3"></script>
+<script src="civic-shell.js?v=1"></script>
+<script defer src="civic-pass2.js?v=1"></script>
+<script defer src="civic-pass3.js?v=1"></script>
+</body></html>

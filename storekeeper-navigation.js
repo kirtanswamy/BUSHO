@@ -1,0 +1,8 @@
+(() => {
+  const root=document.getElementById('storekeeper-layout');if(!root)return;
+  const buttons=[...root.querySelectorAll('[data-portal-view]')],modules=[...root.querySelectorAll('[data-module]')],valid=new Set(buttons.map(b=>b.dataset.portalView));
+  function activate(view,focus=true){if(!valid.has(view))return;buttons.forEach(b=>{const a=b.dataset.portalView===view;b.classList.toggle('active',a);if(a)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});modules.forEach(m=>{const a=m.dataset.module===view;m.classList.toggle('active',a);m.hidden=!a;});const h=root.querySelector('[data-module="'+view+'"] h1,[data-module="'+view+'"] h2');if(h&&focus){h.setAttribute('tabindex','-1');h.focus();}root.classList.remove('sidebar-open');document.getElementById('storekeeper-menu-toggle')?.setAttribute('aria-expanded','false');}
+  buttons.forEach(b=>b.addEventListener('click',()=>activate(b.dataset.portalView)));root.querySelectorAll('[data-go-view]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.goView)));
+  activate('overview',false);
+  document.addEventListener('busho:authenticated',e=>{const p=e.detail?.profile;if(p?.role!=='storekeeper')return;const name=p.display_name||'Storekeeper';const n=document.getElementById('storekeeper-name'),s=document.getElementById('storekeeper-sidebar-name');if(n)n.textContent=name;if(s)s.textContent=name;});
+})();
