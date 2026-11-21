@@ -16,9 +16,9 @@
   function brand(){
     const links=$$('.brand-lockup,.lp-brand,.storekeeper-brand');
     links.forEach(a=>{
-      const mark=$('.brand-mark,.lp-brand-mark,.civic-crest',a);
-      if(mark)mark.outerHTML='<span class="busho-brand-mark">'+logoSvg(38)+'</span>';
-      else a.insertAdjacentHTML('afterbegin','<span class="busho-brand-mark">'+logoSvg(38)+'</span>');
+      const canonical=$('.busho-brand-mark',a);
+      if(canonical){$('.civic-crest,.brand-mark,.lp-brand-mark',a).forEach(n=>n.remove());}
+      else {const mark=$('.brand-mark,.lp-brand-mark,.civic-crest',a);if(mark)mark.outerHTML='<span class="busho-brand-mark">'+logoSvg(38)+'</span>';else a.insertAdjacentHTML('afterbegin','<span class="busho-brand-mark">'+logoSvg(38)+'</span>');}
       const title=$('.brand-name,.lp-brand-copy strong',a);if(title)title.textContent='BUSHO';
       const sub=$('.brand-subtitle,.lp-brand-copy small',a);
       if(sub)sub.textContent=tagline;
