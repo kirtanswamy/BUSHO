@@ -17,7 +17,7 @@
     const links=$$('.brand-lockup,.lp-brand,.storekeeper-brand');
     links.forEach(a=>{
       const canonical=$('.busho-brand-mark',a);
-      if(canonical){$('.civic-crest,.brand-mark,.lp-brand-mark',a).forEach(n=>n.remove());}
+      if(canonical){$$('.civic-crest,.brand-mark,.lp-brand-mark',a).forEach(n=>n.remove());}
       else {const mark=$('.brand-mark,.lp-brand-mark,.civic-crest',a);if(mark)mark.outerHTML='<span class="busho-brand-mark">'+logoSvg(38)+'</span>';else a.insertAdjacentHTML('afterbegin','<span class="busho-brand-mark">'+logoSvg(38)+'</span>');}
       const title=$('.brand-name,.lp-brand-copy strong',a);if(title)title.textContent='BUSHO';
       const sub=$('.brand-subtitle,.lp-brand-copy small',a);
@@ -211,7 +211,7 @@
       const section=document.createElement('section');section.id='busho-field-showcase';section.className='busho-field-showcase civic-section';
       section.innerHTML='<div class="civic-section-heading"><p class="civic-eyebrow">BUILT FOR AYUSHMAN AROGYA MANDIR & LINKED PHC WORKFLOWS</p><h2>Designed around the realities of frontline medicine continuity.</h2><p>Reference illustrations show the two facility contexts in the frozen SHC-to-PHC workflow. They are not photographs of named government facilities.</p></div><div class="busho-field-grid"><article class="busho-field-card"><div class="busho-field-art">'+branchSvg('aam')+'<img data-image-slot="/assets/aam-shc-field.jpg" alt="Ayushman Arogya Mandir SHC field context" loading="lazy"></div><div><span>01 · FRONTLINE FACILITY</span><h3>Ayushman Arogya Mandir (SHC-AAM) Frontline</h3><p>CHO / ANM physical box check, stockout exception capture, and final last-mile receipt confirmation.</p></div></article><article class="busho-field-card"><div class="busho-field-art">'+branchSvg('phc')+'<img data-image-slot="/assets/phc-store-workflow.jpg" alt="Linked primary health centre dispensary and store context" loading="lazy"></div><div><span>02 · LINKED FACILITY HUB</span><h3>Linked Primary Health Centre (PHC) Hub</h3><p>MOIC operational review, Pharmacist PHC-to-SHC handover, or official DPDMIS consolidated indent reference logging.</p></div></article></div>';
       const guarantees=$('.civic-guarantees');if(guarantees)guarantees.after(section);else $('main')?.prepend(section);
-      $('img[data-image-slot]',section).forEach(img=>{img.addEventListener('load',()=>img.classList.add('is-loaded'));const path=img.dataset.imageSlot;fetch(path,{method:'HEAD'}).then(response=>{if(response.ok)img.src=path;}).catch(()=>{});});
+      $$('img[data-image-slot]',section).forEach(img=>{img.addEventListener('load',()=>img.classList.add('is-loaded'));const path=img.dataset.imageSlot;fetch(path,{method:'HEAD'}).then(response=>{if(response.ok)img.src=path;}).catch(()=>{});});
     }
     if(!$('#busho-back-top')){const b=document.createElement('button');b.id='busho-back-top';b.type='button';b.textContent='Back to top ↑';b.setAttribute('aria-label','Back to top');b.addEventListener('click',()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));body.append(b);window.addEventListener('scroll',()=>b.classList.toggle('is-visible',window.scrollY>560),{passive:true});}
   }
@@ -287,8 +287,8 @@
       const settings=$('[data-module="settings"]',main);if(settings){const h=$('.module-heading h2',settings);if(h)h.textContent='Settings';}
       const overview=$('[data-module="overview"],[data-module="overview-content"]',main);
       if(overview)$$('*',overview).forEach(n=>{if(n.children.length===0&&/supervisor\s*[·-]\s*facility-scoped/i.test(n.textContent))n.remove();});
-      const stock=$('[data-module="stockout-review"]',main);if(stock)$('.supervisor-kpi',stock).forEach((n,i)=>n.dataset.kpiAccent=['info','warning','success'][i%3]);
-      ['stockout-review','supply-handoff'].forEach(view=>{const section=$('[data-module="'+view+'"]',main);if(section)$('button,a',section).filter(n=>/^refresh(\\s|$)/i.test(n.textContent.trim())).forEach(n=>{n.classList.add('btn','btn-secondary','busho-refresh');});});
+      const stock=$('[data-module="stockout-review"]',main);if(stock)$$('.supervisor-kpi',stock).forEach((n,i)=>n.dataset.kpiAccent=['info','warning','success'][i%3]);
+      ['stockout-review','supply-handoff'].forEach(view=>{const section=$('[data-module="'+view+'"]',main);if(section)$$('button,a',section).filter(n=>/^refresh(\s|$)/i.test(n.textContent.trim())).forEach(n=>{n.classList.add('btn','btn-secondary','busho-refresh');});});
       const activity=$('[data-module="activity"]',main);
       if(activity){
         const normalize=()=>{
@@ -329,7 +329,7 @@
     const key=activeView();
     const names={worker:{overview:'Operational Overview',stockouts:'Medicine Stockout','new-report':'New Report','my-reports':'My Reports',pending:'Pending Confirmation',facility:'My Facility',profile:'My Profile'},supervisor:{overview:'Operational Overview',reports:'Reports Inbox','stockout-review':'SHC Stockouts',facilities:'Facilities',workers:'Health Workers','supply-handoff':'Supply handoff',activity:'Activity Log',settings:'Settings'},storekeeper:{overview:'Operational Overview',stockouts:'SHC Stockout Handovers',requests:'Replenishment queue',inventory:'Inventory evidence',account:'Account & guidance'}};
     const h=$('.civic-page-intro h1');if(h&&names[role]?.[key])h.textContent=names[role][key];
-    $('.portal-module.active .module-heading h2,.portal-module.active .module-heading h1').forEach(n=>n.classList.add('busho-secondary-heading-hidden'));
+    $$('.portal-module.active .module-heading h2,.portal-module.active .module-heading h1').forEach(n=>n.classList.add('busho-secondary-heading-hidden'));
   }
   function events(){
     document.addEventListener('busho:authenticated',e=>{
@@ -357,12 +357,12 @@
     },true);
     ['busho:report-saved','busho:stockout-saved','busho:report-submitted','busho:stockout-submitted'].forEach(name=>document.addEventListener(name,()=>toast('Record saved or submitted. Check its displayed status and evidence.','success')));
     const liveSeen=new WeakMap();
-    const watchLive=()=>$('[aria-live]').forEach(node=>{
+    const watchLive=()=>$$('[aria-live]').forEach(node=>{
       if(liveSeen.has(node))return;liveSeen.set(node,node.textContent.trim());
       new MutationObserver(()=>{
         const textNow=node.textContent.trim();if(!textNow||textNow===liveSeen.get(node))return;
         liveSeen.set(node,textNow);
-        if(/\\b(saved|submitted|successfully recorded|receipt recorded|handover recorded)\\b/i.test(textNow))toast('Update recorded. Review the displayed status and evidence.','success');
+        if(/\b(saved|submitted|successfully recorded|receipt recorded|handover recorded)\b/i.test(textNow))toast('Update recorded. Review the displayed status and evidence.','success');
       }).observe(node,{childList:true,subtree:true,characterData:true});
     });
     watchLive();window.addEventListener('load',watchLive,{once:true});
@@ -373,7 +373,7 @@
       if(e.altKey&&e.key.toLowerCase()==='s'){e.preventDefault();gotoView(role==='supervisor'?'stockout-review':'stockouts');}
       if(e.altKey&&e.key.toLowerCase()==='p'){e.preventDefault();window.print();}
       if(e.key==='Escape'){closeSop();}
-      const drawer=$('#busho-sop-drawer.is-open');if(e.key==='Tab'&&drawer){const nodes=$('button,a,input,select,textarea,[tabindex]:not([tabindex="-1"])',drawer).filter(n=>!n.disabled);if(nodes.length){const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}}
+      const drawer=$('#busho-sop-drawer.is-open');if(e.key==='Tab'&&drawer){const nodes=$$('button,a,input,select,textarea,[tabindex]:not([tabindex="-1"])',drawer).filter(n=>!n.disabled);if(nodes.length){const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}}
     });
   }
   function init(){
