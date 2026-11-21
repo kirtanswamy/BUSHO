@@ -88,7 +88,7 @@
       const result = await client.listMyReplenishments();
       rows = Array.isArray(result) ? result : [];
       const assignedFacility = rows.find(row => row.facilities?.name)?.facilities;
-      if (assignedFacility?.name) document.dispatchEvent(new CustomEvent('busho:storekeeper-facility-context',{detail:{facilityName:assignedFacility.name,district:assignedFacility.district||''}}));
+      if (assignedFacility?.name && typeof CustomEvent === 'function') document.dispatchEvent(new CustomEvent('busho:storekeeper-facility-context',{detail:{facilityName:assignedFacility.name,district:assignedFacility.district||''}}));
       refreshRequired = false;
     } catch (cause) {
       error = cause?.message || 'Unable to load replenishment requests.';
