@@ -173,6 +173,7 @@ test('signed-out workspace headers never expose account chrome', async ({ page }
 
 test('workspace pages boot without browser console or uncaught page errors', async ({ page }) => {
   const errors=[];
+  await page.addInitScript(() => { window.__bushoUnhandledRejections=[]; window.addEventListener('unhandledrejection', event => window.__bushoUnhandledRejections.push(String(event.reason))); });
   page.on('console',msg=>{if(msg.type()==='error'){const at=msg.location();errors.push(`${at.url}:${at.lineNumber}:${at.columnNumber} ${msg.text()}`)}});
   page.on('pageerror',err=>errors.push(err.stack||err.message));
   for(const path of ['/','/signin','/worker','/supervisor','/storekeeper']){
@@ -181,6 +182,7 @@ test('workspace pages boot without browser console or uncaught page errors', asy
     else await expect(page.locator('main')).toBeVisible();
   }
   expect(errors).toEqual([]);
+  expect(await page.evaluate(() => window.__bushoUnhandledRejections)).toEqual([]);
 });
 
 test('worker tab headings and facility strip follow the active view', async ({ page }) => {

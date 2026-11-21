@@ -280,6 +280,7 @@ for (const portal of portals) {
   test(
     `${portal.role}: BUSHO client initializes and exposes required methods`,
     async ({ page }) => {
+      await page.addInitScript(() => { window.__bushoUnhandledRejections=[]; window.addEventListener('unhandledrejection', event => window.__bushoUnhandledRejections.push(String(event.reason))); });
       const externalRequests =
         trackExternalSupabaseRequests(page);
 
@@ -429,6 +430,7 @@ await expect(
 
       expect(externalRequests).toEqual([]);
       expect(runtimeErrors).toEqual([]);
+      expect(await page.evaluate(() => window.__bushoUnhandledRejections)).toEqual([]);
     }
   );
 }
