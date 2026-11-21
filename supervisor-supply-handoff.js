@@ -6,7 +6,7 @@
   const message = document.getElementById('supply-handoff-message');
   const refresh = document.getElementById('supply-handoff-refresh');
   const recommendation = document.getElementById('supply-recommendation');
-  let client = null, activeRole = null, activeUserId = null, rows = [], reports = [], inventory = [], busy = false, loadedOnce = false, error = '', notice = '', refreshRequired = false;
+  let client = null, activeRole = null, activeUserId = null, rows = [], reports = [], inventory = [], busy = false, error = '', notice = '', refreshRequired = false;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const draftStorageKey = () => 'busho:replenishment-draft:v1:' + String(activeUserId || 'unknown');
   function readDraft(){
@@ -131,7 +131,6 @@
       if (!refreshRequired) { rows = []; reports = []; inventory = []; }
     } finally {
       busy = false;
-      loadedOnce = true;
       render();
     }
   }
@@ -196,8 +195,8 @@
 
   recommendation?.addEventListener('submit',e=>{const f=e.target.closest('#supply-recommendation-form');if(!f)return;e.preventDefault();recommend(f);});
   list?.addEventListener('submit',e=>{const f=e.target.closest('form.handoff-action');if(!f)return;e.preventDefault();act(f);});
-  refresh?.addEventListener('click',()=>{loadedOnce=false;load();});
-  document.querySelector('[data-portal-view="supply-handoff"]')?.addEventListener('click',()=>{if(!loadedOnce)load();});
-  document.addEventListener('busho:authenticated',e=>{const p=e.detail?.profile;if(!p?.id||!['supervisor','district_admin','state_admin'].includes(p.role))return;try{activeUserId=p.id;activeRole=p.role;loadedOnce=false;client=window.BUSHO_SUPABASE_CLIENT.createClient(window.BUSHO_SUPABASE_CONFIG);render();}catch(err){error=err.message||'Secure handoff unavailable.';render();}});
-  document.addEventListener('busho:unauthenticated',()=>{client=null;activeRole=null;activeUserId=null;rows=[];reports=[];inventory=[];busy=false;loadedOnce=false;error='';notice='';refreshRequired=false;render();});
+  refresh?.addEventListener('click',load);
+  document.querySelector('[data-portal-view="supply-handoff"]')?.addEventListener('click',load);
+  document.addEventListener('busho:authenticated',e=>{const p=e.detail?.profile;if(!p?.id||!['supervisor','district_admin','state_admin'].includes(p.role))return;try{activeUserId=p.id;activeRole=p.role;client=window.BUSHO_SUPABASE_CLIENT.createClient(window.BUSHO_SUPABASE_CONFIG);load();}catch(err){error=err.message||'Secure handoff unavailable.';render();}});
+  document.addEventListener('busho:unauthenticated',()=>{client=null;activeRole=null;activeUserId=null;rows=[];reports=[];inventory=[];busy=false;error='';notice='';refreshRequired=false;render();});
 })();
