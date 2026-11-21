@@ -144,8 +144,7 @@
     if(role==='supervisor'){$('.demo-header',$('#demo')||document)?.remove();}
     updateContext();decorateEmpty();
     const app=$('#portal-app')||document;
-    const observer=new MutationObserver(records=>{for(const r of records){if(r.type==='childList')r.addedNodes.forEach(n=>{if(n.nodeType===1)decorateEmpty(n)});}updateContext();});
-    observer.observe(app,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden']});
+    if(role!=='supervisor'){const observer=new MutationObserver(records=>{for(const r of records){if(r.type==='childList')r.addedNodes.forEach(n=>{if(n.nodeType===1)decorateEmpty(n)});}updateContext();});observer.observe(app,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden']});}
     $$('[data-portal-view]').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(updateContext)));
     document.addEventListener('busho:authenticated',e=>{authState(true,e.detail?.profile||{});updateContext();});
     document.addEventListener('busho:unauthenticated',()=>authState(false));
