@@ -47,6 +47,8 @@
     window.setTimeout(()=>{item.classList.add('is-leaving');window.setTimeout(()=>item.remove(),220)},3600);
   }
   function activeView(){
+    const nav=$('[data-portal-view][aria-current="page"]')||$('.sidebar-link.active[data-portal-view]');
+    if(nav?.dataset.portalView)return nav.dataset.portalView;
     const m=$('[data-module].active');return m?.dataset.module||'overview';
   }
   function gotoView(view){
