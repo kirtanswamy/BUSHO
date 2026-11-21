@@ -292,7 +292,7 @@ for (const role of ['storekeeper', 'supervisor']) {
     ]);
 
     harness.authenticate();
-    if (role === 'supervisor') harness.openView();
+    if (role === 'supervisor') await harness.openView();
     await new Promise(resolve => setImmediate(resolve));
     await harness.submit();
 
@@ -316,6 +316,7 @@ for (const role of ['storekeeper', 'supervisor']) {
     ]);
 
     harness.authenticate();
+    if (role === 'supervisor') await harness.openView();
     await new Promise(resolve => setImmediate(resolve));
     await harness.submit();
 
