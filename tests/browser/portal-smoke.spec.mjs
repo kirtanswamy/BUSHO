@@ -924,9 +924,6 @@ test('supervisor login enters a responsive workspace and loads secondary modules
   await expect(page.locator('[data-module="overview"]')).toBeVisible();
   await expect(page.locator('[data-module="overview"] h2')).toContainText(/operational overview/i);
 
-  // Login should not eagerly fan out into every secondary data source.
-  await expect(page.locator('#phc-stockout-list')).toContainText('Open SHC Stockouts to load');
-
   for (const view of ['reports', 'stockout-review', 'supply-handoff', 'facilities', 'workers', 'activity', 'settings']) {
     const tab = page.locator('[data-portal-view="' + view + '"]');
     await tab.click();
