@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 const pages = [
-  { path: '/worker.html', role: 'worker' },
-  { path: '/supervisor.html', role: 'supervisor' },
-  { path: '/storekeeper.html', role: 'storekeeper' }
+  { path: '/worker', role: 'worker' },
+  { path: '/supervisor', role: 'supervisor' },
+  { path: '/storekeeper', role: 'storekeeper' }
 ];
 const viewports = [
   { name: 'desktop 1440px', width: 1440, height: 900 },
@@ -14,7 +14,7 @@ const viewports = [
 for (const viewport of viewports) {
   test('landing and role entry remain within the viewport at ' + viewport.name, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    for (const path of ['/', '/signin.html', '/worker.html', '/supervisor.html', '/storekeeper.html']) {
+    for (const path of ['/', '/signin', '/worker', '/supervisor', '/storekeeper']) {
       await page.goto(path, { waitUntil: 'domcontentloaded' });
       await expect(page.locator('.civic-utility-bar')).toBeVisible();
       const civicCssLoaded = await page.evaluate(() => [...document.styleSheets].some(sheet => sheet.href && sheet.href.includes('civic-design-system.css')));
@@ -86,7 +86,7 @@ test('hero case preview switches between both frozen fulfilment branches', async
 });
 
 test('all five pages share the civic footer and language labels', async ({ page }) => {
-  for (const path of ['/', '/signin.html', '/worker.html', '/supervisor.html', '/storekeeper.html']) {
+  for (const path of ['/', '/signin', '/worker', '/supervisor', '/storekeeper']) {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.civic-utility-bar .civic-env-pill')).toContainText('SYNTHETIC PILOT');
     await expect(page.locator('.civic-site-footer h2')).toHaveText('BUSHO · Workflow Freeze v1.0');
@@ -101,21 +101,26 @@ test('all five pages share the civic footer and language labels', async ({ page 
   }
 });
 
-test('Storekeeper header retains its brand lockup and account action on every view', async ({ page }) => {
-  await page.goto('/storekeeper.html', { waitUntil: 'domcontentloaded' });
+test('Storekeeper auth chrome is hidden until authentication and persists across views', async ({ page }) => {
+  await page.goto('/storekeeper', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('.civic-storekeeper-header .brand-name')).toHaveText('BUSHO');
   await expect(page.locator('.civic-storekeeper-header .brand-subtitle')).toHaveText('Frontline SHC–PHC Medicine Stockout & Replenishment Layer');
-  await expect(page.locator('.civic-storekeeper-account .profile-avatar')).toHaveText('SK');
-  await expect(page.locator('.civic-storekeeper-account #portal-logout')).toHaveText('Sign out');
+  await expect(page.locator('.civic-storekeeper-header .profile-menu-wrap')).toBeHidden();
+  await expect(page.locator('.civic-storekeeper-header #portal-logout')).toBeHidden();
+  await expect(page.locator('.civic-all-workspaces')).toBeVisible();
+  await page.evaluate(() => document.dispatchEvent(new CustomEvent('busho:authenticated', {detail:{profile:{role:'storekeeper',display_name:'Demo Storekeeper'}}})));
+  await expect(page.locator('.civic-storekeeper-header .profile-menu-wrap')).toBeVisible();
+  await expect(page.locator('.civic-storekeeper-header .profile-avatar')).toHaveText('SK');
+  await expect(page.locator('.civic-storekeeper-header #portal-logout')).toHaveText('Sign out');
   await page.locator('#portal-app').evaluate(el => el.classList.remove('hidden'));
   for (const view of ['overview', 'stockouts', 'requests', 'inventory', 'account']) {
     await page.locator('[data-portal-view="' + view + '"]').click();
-    await expect(page.locator('.civic-storekeeper-account #portal-logout')).toBeVisible();
+    await expect(page.locator('.civic-storekeeper-header #portal-logout')).toBeVisible();
   }
 });
 
 test('Supervisor preferences controls sync with the civic accessibility strip', async ({ page }) => {
-  await page.goto('/supervisor.html', { waitUntil: 'domcontentloaded' });
+  await page.goto('/supervisor', { waitUntil: 'domcontentloaded' });
   await page.locator('#portal-app').evaluate(el => el.classList.remove('hidden'));
   await page.locator('[data-portal-view="settings"]').click();
   await page.locator('[data-scale="1.15"]').click();
@@ -130,7 +135,7 @@ test('Supervisor preferences controls sync with the civic accessibility strip', 
 
 
 test('workspace A4 print view hides navigation chrome and keeps the active record printable', async ({ page }) => {
-  await page.goto('/worker.html', { waitUntil: 'domcontentloaded' });
+  await page.goto('/worker', { waitUntil: 'domcontentloaded' });
   await page.locator('#portal-app').evaluate(el => el.classList.remove('hidden'));
   await page.emulateMedia({ media: 'print' });
   await expect(page.locator('.civic-utility-bar')).toBeHidden();
@@ -140,4 +145,59 @@ test('workspace A4 print view hides navigation chrome and keeps the active recor
     try { return [...sheet.cssRules].some(rule => rule.cssText.includes('A4')); } catch { return false; }
   }));
   expect(printCss, 'A4 print stylesheet should be loaded').toBeTruthy();
+});
+
+
+test('clean routes serve pages and legacy HTML bookmarks redirect permanently', async ({ page }) => {
+  for (const [clean,legacy] of [['/','/index.html'],['/signin','/signin.html'],['/worker','/worker.html'],['/supervisor','/supervisor.html'],['/storekeeper','/storekeeper.html']]) {
+    const response = await page.goto(clean, { waitUntil: 'domcontentloaded' });
+    expect(response?.status()).toBe(200);
+    expect(new URL(page.url()).pathname).toBe(clean);
+    const legacyResponse = await page.goto(legacy, { waitUntil: 'domcontentloaded' });
+    expect(legacyResponse?.status()).toBe(200);
+    expect(new URL(page.url()).pathname).toBe(clean);
+  }
+});
+
+test('signed-out workspace headers never expose account chrome', async ({ page }) => {
+  for (const path of ['/worker','/supervisor','/storekeeper']) {
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.profile-menu-wrap')).toBeHidden();
+    await expect(page.locator('#portal-logout')).toBeHidden();
+    await expect(page.locator('.civic-all-workspaces')).toBeVisible();
+  }
+});
+
+test('workspace pages boot without browser console or uncaught page errors', async ({ page }) => {
+  const errors=[];
+  page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text())});
+  page.on('pageerror',err=>errors.push(err.message));
+  for(const path of ['/','/signin','/worker','/supervisor','/storekeeper']){
+    await page.goto(path,{waitUntil:'networkidle'});
+    await expect(page.locator('main')).toBeVisible();
+  }
+  expect(errors).toEqual([]);
+});
+
+test('worker tab headings and facility strip follow the active view', async ({ page }) => {
+  await page.goto('/worker',{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>document.dispatchEvent(new CustomEvent('busho:authenticated',{detail:{profile:{role:'worker',display_name:'Synthetic Worker'}}})));
+  await page.locator('#portal-app').evaluate(el=>el.classList.remove('hidden'));
+  const expected=[['overview','Operational Overview'],['stockouts','Medicine Stockout'],['new-report','New Report'],['my-reports','My Reports'],['pending','Pending Confirmation'],['facility','My Facility'],['profile','My Profile']];
+  for(const [view,title] of expected){
+    await page.locator('[data-portal-view="'+view+'"]').click();
+    await expect(page.locator('.civic-page-intro h1')).toHaveText(title);
+    await expect(page.locator('.civic-breadcrumb')).toContainText(title);
+    await expect(page.locator('.civic-facility-strip')).toHaveCount(1);
+  }
+  const svg=page.locator('.empty-state svg').first();
+  if(await svg.count())await expect(svg).toHaveCSS('width','36px');
+});
+
+test('rendered page text contains no literal backslash-n artifacts', async ({ page }) => {
+  for(const path of ['/','/signin','/worker','/supervisor','/storekeeper']){
+    await page.goto(path,{waitUntil:'domcontentloaded'});
+    const stray=await page.evaluate(()=>{const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;while((node=walker.nextNode()))if(node.nodeValue.includes(String.fromCharCode(92)+'n'))return node.nodeValue;return null;});
+    expect(stray,path+' should not render escaped newline text').toBeNull();
+  }
 });

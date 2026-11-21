@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const root=document.documentElement,body=document.body;
-  const role=body.querySelector('[data-portal-role]')?.dataset.portalRole||'public';
+  const role=body.dataset.portalRole||body.querySelector('[data-portal-role]')?.dataset.portalRole||'public';
   const labels={worker:'SHC Health Worker',supervisor:'PHC Reviewer',storekeeper:'PHC Stock Custodian'};
   const readPref=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
   const writePref=(key,value)=>{try{localStorage.setItem(key,value);}catch{}};
@@ -31,7 +31,7 @@
   function footer(){
     if(role==='worker'||role==='supervisor')return;
     if(body.querySelector('.civic-site-footer'))return;
-    const footer=document.createElement('footer');footer.className='civic-site-footer';footer.innerHTML='<section><h2>BUSHO · Workflow Freeze v1.0</h2><p>Assistive SHC-to-PHC medicine stockout coordination, exception tracking and evidence. This Chhattisgarh reference implementation is a prototype, not an official government portal.</p></section><section><h3>System boundary</h3><p>Official paper registers, DPDMIS/DVDMS, CGMSC and procurement authority remain authoritative. BUSHO does not create official stock balances or place orders.</p></section><section><h3>Policies & support</h3><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="accessibility.html">Accessibility</a><a href="mailto:kirtankswamy@gmail.com">Contact</a><a href="https://github.com/kirtanswamy/BUSHO" rel="noopener noreferrer">GitHub</a></section><div class="civic-footer-meta">Synthetic pilot environment · Do not enter patient names, phone numbers, ABHA IDs or diagnoses. Hack for Social Cause · VBYLD 2027.</div>';
+    const footer=document.createElement('footer');footer.className='civic-site-footer';footer.innerHTML='<section><h2>BUSHO · Workflow Freeze v1.0</h2><p>Assistive SHC-to-PHC medicine stockout coordination, exception tracking and evidence. This Chhattisgarh reference implementation is a prototype, not an official government portal.</p></section><section><h3>System boundary</h3><p>Official paper registers, DPDMIS/DVDMS, CGMSC and procurement authority remain authoritative. BUSHO does not create official stock balances or place orders.</p></section><section><h3>Policies & support</h3><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/accessibility">Accessibility</a><a href="mailto:kirtankswamy@gmail.com">Contact</a><a href="https://github.com/kirtanswamy/BUSHO" rel="noopener noreferrer">GitHub</a></section><div class="civic-footer-meta">Synthetic pilot environment · Do not enter patient names, phone numbers, ABHA IDs or diagnoses. Hack for Social Cause · VBYLD 2027.</div>';
     body.append(footer);
   }
   function crest(){
@@ -53,7 +53,7 @@
       const mobile=body.querySelector('#storekeeper-menu-toggle');if(mobile){mobile.classList.add('sidebar-toggle-mobile');mobile.addEventListener('click',()=>{const open=!layout.classList.contains('sidebar-open');layout.classList.toggle('sidebar-open',open);mobile.setAttribute('aria-expanded',String(open));});}
       side.querySelectorAll('[data-portal-view]').forEach(b=>b.addEventListener('click',()=>layout.classList.remove('sidebar-open')));
       document.addEventListener('keydown',e=>{if(e.key==='Escape')layout.classList.remove('sidebar-open');});
-      const top=body.querySelector('.storekeeper-topbar');if(top){const title=document.createElement('a');title.className='brand-lockup brand-home';title.href='index.html';title.setAttribute('aria-label','BUSHO home');title.innerHTML=crest()+'<span><strong class="brand-name">BUSHO</strong><small class="brand-subtitle">Frontline SHC–PHC coordination</small></span>';const old=top.querySelector('.storekeeper-brand');if(old)old.replaceWith(title);}
+      const top=body.querySelector('.storekeeper-topbar');if(top){const title=document.createElement('a');title.className='brand-lockup brand-home';title.href='/';title.setAttribute('aria-label','BUSHO home');title.innerHTML=crest()+'<span><strong class="brand-name">BUSHO</strong><small class="brand-subtitle">Frontline SHC–PHC coordination</small></span>';const old=top.querySelector('.storekeeper-brand');if(old)old.replaceWith(title);}
       const storeHead=body.querySelector('.storekeeper-main .module-heading');if(storeHead){const signout=storeHead.querySelector('#portal-logout');const name=storeHead.querySelector('#storekeeper-name');const old=name?.parentElement;const actions=document.createElement('div');actions.className='civic-account-actions';if(name)actions.append(name);if(signout)actions.append(signout);if(old)old.remove();const topRight=top?.querySelector('.storekeeper-topbar-right');if(topRight){actions.classList.add('civic-topbar-account');topRight.append(actions);}}
       body.querySelectorAll('.storekeeper-guide li').forEach((li,i)=>{const spans=li.querySelector('span');if(!spans)return;});
     }else{

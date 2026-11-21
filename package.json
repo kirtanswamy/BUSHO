@@ -19,7 +19,7 @@
     "check": "node --test && npm run lint && node --check scripts/local-supabase-auth-smoke.mjs && node scripts/smoke.mjs",
     "local:e2e": "node scripts/local-supabase-auth-smoke.mjs",
     "test:browser": "playwright test",
-    "lint": "node scripts/lint-civic-css.mjs && node --check civic-shell.js && node --check civic-pass2.js && node --check worker-stockouts.js && node --check supervisor-operations.js && node --check supervisor-stockouts.js && node --check storekeeper-portal.js && node --check storekeeper-stockouts.js && node --check worker-history.js"
+    "lint": "node scripts/lint-civic-css.mjs && node --check civic-shell.js && node --check civic-pass2.js && node --check civic-pass3.js && node --check worker-stockouts.js && node --check supervisor-operations.js && node --check supervisor-stockouts.js && node --check storekeeper-portal.js && node --check storekeeper-stockouts.js && node --check worker-history.js"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",

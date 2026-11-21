@@ -25,7 +25,7 @@
         role: profile.role,
         profile
       });
-      controller.start();
+      controller.start().then(() => { const row=controller?.getState?.().reports?.find(item => item.facilities?.name); if(row?.facilities?.name) document.dispatchEvent(new CustomEvent('busho:supervisor-facility-context',{detail:{facilityName:row.facilities.name}})); }).catch(() => {});
     } catch (cause) {
       const inbox = document.querySelector('[data-module="reports"]');
       if (inbox) inbox.innerHTML = '<p class="portal-login-error">' + window.BUSHO_SUPERVISOR_OPERATIONS.escapeHtml(cause.message) + '</p>';

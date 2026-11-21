@@ -7,10 +7,10 @@ import { readFile } from 'node:fs/promises';
 // ------------------------------------------------------------
 
 const portals = [
-  { path: '/worker.html', role: 'worker' },
-  { path: '/supervisor.html', role: 'supervisor' },
-  { path: '/storekeeper.html', role: 'storekeeper' },
-  { path: '/admin.html', role: 'admin' }
+  { path: '/worker', role: 'worker' },
+  { path: '/supervisor', role: 'supervisor' },
+  { path: '/storekeeper', role: 'storekeeper' },
+  { path: '/admin', role: 'admin' }
 ];
 
 const LOCAL_API_URL = 'http://127.0.0.1:54321';
@@ -357,12 +357,12 @@ for (const portal of portals) {
 // ------------------------------------------------------------
 
 test('sign-in selection page loads', async ({ page }) => {
-  await page.goto('/signin.html');
+  await page.goto('/signin');
 
   await expect(page.locator('main')).toBeVisible();
 
   await expect(
-    page.getByText(/sign in to the workspace/i)
+    page.getByRole('heading', { name: 'Choose your workspace' })
   ).toBeVisible();
 });
 
@@ -372,17 +372,17 @@ test('sign-in selection page loads', async ({ page }) => {
 
 const successfulLogins = [
   {
-    path: '/worker.html',
+    path: '/worker',
     label: 'worker-a',
     role: 'worker'
   },
   {
-    path: '/supervisor.html',
+    path: '/supervisor',
     label: 'supervisor-a',
     role: 'supervisor'
   },
   {
-    path: '/storekeeper.html',
+    path: '/storekeeper',
     label: 'storekeeper-b',
     role: 'storekeeper'
   }
@@ -414,6 +414,15 @@ await expect(
 await expect(
   page.locator('#portal-login-error')
 ).toBeEmpty();
+      await expect(page.locator('.profile-menu-wrap')).toBeVisible();
+      await expect(page.locator('.civic-all-workspaces')).toBeHidden();
+      await expect(page.locator('#profile-trigger')).toBeVisible();
+      if (scenario.role === 'storekeeper') {
+        await expect(page.locator('#profile-trigger .profile-avatar')).toHaveText('SK');
+        await page.locator('#profile-trigger').click();
+        await expect(page.locator('#profile-dropdown')).toBeVisible();
+        await expect(page.locator('#portal-logout')).toBeVisible();
+      }
 
       expect(externalRequests).toEqual([]);
     }
@@ -426,32 +435,32 @@ await expect(
 
 const rejectedLogins = [
   {
-    path: '/supervisor.html',
+    path: '/supervisor',
     label: 'worker-a',
     message: /authorised operations role/i
   },
   {
-    path: '/storekeeper.html',
+    path: '/storekeeper',
     label: 'worker-a',
     message: /authorised operations role/i
   },
   {
-    path: '/worker.html',
+    path: '/worker',
     label: 'supervisor-a',
     message: /health worker role/i
   },
   {
-    path: '/storekeeper.html',
+    path: '/storekeeper',
     label: 'supervisor-a',
     message: /authorised operations role/i
   },
   {
-    path: '/worker.html',
+    path: '/worker',
     label: 'storekeeper-b',
     message: /health worker role/i
   },
   {
-    path: '/supervisor.html',
+    path: '/supervisor',
     label: 'storekeeper-b',
     message: /authorised operations role/i
   }
@@ -512,7 +521,7 @@ test(
 
     await login(
       page,
-      '/storekeeper.html',
+      '/storekeeper',
       'storekeeper-a'
     );
 
@@ -571,7 +580,7 @@ test('worker and supervisor complete a correction and verification cycle', async
   const externalRequests = trackExternalSupabaseRequests(page);
 
   // 1. Worker submits a new synthetic report through the actual UI.
-  await login(page, '/worker.html', 'worker-a');
+  await login(page, '/worker', 'worker-a');
   await expect(page.locator('#portal-app')).toBeVisible();
 
   // The worker may land on the dashboard after authentication.
@@ -625,7 +634,7 @@ test('worker and supervisor complete a correction and verification cycle', async
   });
 
   // 2. Supervisor opens the submitted report.
-  await login(page, '/supervisor.html', 'supervisor-a');
+  await login(page, '/supervisor', 'supervisor-a');
   await expect(page.locator('#portal-app')).toBeVisible();
 
   await page.locator('[data-portal-view="reports"]').click();
@@ -678,7 +687,7 @@ test('worker and supervisor complete a correction and verification cycle', async
   });
 
   // 5. Worker opens the same report from report history.
-  await login(page, '/worker.html', 'worker-a');
+  await login(page, '/worker', 'worker-a');
   await expect(page.locator('#portal-app')).toBeVisible();
 
   await page.locator('[data-portal-view="my-reports"]').click();
@@ -739,7 +748,7 @@ test('worker and supervisor complete a correction and verification cycle', async
   });
 
   // 7. Supervisor verifies the resubmitted report.
-  await login(page, '/supervisor.html', 'supervisor-a');
+  await login(page, '/supervisor', 'supervisor-a');
   await expect(page.locator('#portal-app')).toBeVisible();
 
   await page.locator('[data-portal-view="reports"]').click();
@@ -826,7 +835,7 @@ test('worker identity and facility views use the authenticated profile and activ
     }
   }]);
 
-  await login(page, '/worker.html', 'worker-a');
+  await login(page, '/worker', 'worker-a');
   await expect(page.locator('#portal-app')).toBeVisible();
 
   await expect(page.locator('#profile-trigger .profile-trigger-copy strong'))
@@ -856,7 +865,7 @@ test('worker with no active assignment sees an explicit unavailable state and no
   const externalRequests = trackExternalSupabaseRequests(page);
   await mockAuthenticatedWorkerPresentation(page, []);
 
-  await login(page, '/worker.html', 'worker-a');
+  await login(page, '/worker', 'worker-a');
   await expect(page.locator('#portal-app')).toBeVisible();
 
   await page.locator('[data-portal-view="profile"]').click();
@@ -874,7 +883,7 @@ test('worker with no active assignment sees an explicit unavailable state and no
 });
 
 test('worker navigation exposes stable accessible relationships and focuses the selected heading', async ({ page }) => {
-  await login(page, '/worker.html', 'worker-a');
+  await login(page, '/worker', 'worker-a');
   await expect(page.locator('#portal-app')).toBeVisible();
 
   const nav = page.locator('[data-portal-view="profile"]');

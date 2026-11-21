@@ -188,7 +188,7 @@ test(
     // 1. Worker submits a report through the actual portal UI.
     // --------------------------------------------------------
 
-    await login(page, '/worker.html', 'worker-a');
+    await login(page, '/worker', 'worker-a');
 
     await page.locator('[data-portal-view="new-report"]').click();
     await page.locator('[data-sample="routine"]').click();
@@ -228,7 +228,7 @@ test(
     //    Verify both the rendered inbox and authenticated client result.
     // --------------------------------------------------------
 
-    await login(page, '/supervisor.html', 'supervisor-b');
+    await login(page, '/supervisor', 'supervisor-b');
     await page.locator('[data-portal-view="reports"]').click();
 
     const crossFacilityReportRow = page.locator(
@@ -251,7 +251,7 @@ test(
     // 3. Facility A supervisor verifies the report.
     // --------------------------------------------------------
 
-    await login(page, '/supervisor.html', 'supervisor-a');
+    await login(page, '/supervisor', 'supervisor-a');
 
     await page.locator('[data-portal-view="reports"]').click();
 
@@ -420,7 +420,7 @@ test(
     // --------------------------------------------------------
 
     await signOutThroughProfileMenu(page);
-    await login(page, '/storekeeper.html', 'storekeeper-b');
+    await login(page, '/storekeeper', 'storekeeper-b');
 
     await expect(page.locator(`[data-request="${requestId}"]`)).toHaveCount(0);
 
@@ -455,7 +455,7 @@ test(
     await expect(page.locator(`[data-request="${requestId}"]`)).toHaveCount(0);
 
     await signOutThroughProfileMenu(page);
-    await login(page, '/storekeeper.html', 'storekeeper-e2e');
+    await login(page, '/storekeeper', 'storekeeper-e2e');
 
     // --------------------------------------------------------
     // 6. Facility A storekeeper allocates and dispatches.

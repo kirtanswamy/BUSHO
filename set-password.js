@@ -46,8 +46,8 @@
         return;
       }
       show('Password saved. Opening your authorised BUSHO workspace…', 'success');
-      const destination = profile.role === 'worker' ? 'worker.html' :
-        ['platform_admin','state_admin','district_admin'].includes(profile.role) ? 'admin.html' : 'supervisor.html';
+      const destination = profile.role === 'worker' ? '/worker' :
+        ['platform_admin','state_admin','district_admin'].includes(profile.role) ? '/admin' : '/supervisor';
       window.location.assign(destination);
     } catch (error) {
       show(error.message || 'Password could not be saved. Please try again.', 'error');

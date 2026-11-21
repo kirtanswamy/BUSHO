@@ -26,7 +26,7 @@ async function signOutStorekeeper(page){await page.locator('#portal-logout').cli
 test('SHC worker, PHC reviewer and storekeeper complete direct issue, discrepancy, cumulative receipt and closure',async({page})=>{
  test.setTimeout(180000);
  const hosted=trackHostedRequests(page),stamp=Date.now(),medicine='BUSHO synthetic E2E medicine '+stamp;
- await login(page,'/worker.html','stockout-worker');
+ await login(page,'/worker','stockout-worker');
  await page.locator('[data-portal-view="stockouts"]').click();
  const create=page.locator('#stockout-create-form');
  await expect(create).toBeVisible();
@@ -43,7 +43,7 @@ test('SHC worker, PHC reviewer and storekeeper complete direct issue, discrepanc
  const workerCard=page.locator('.stockout-case-card').filter({hasText:medicine});
  await expect(workerCard).toContainText(/sent to PHC|submitted to PHC/i,{timeout:20000});
  await signOutProfile(page);
- await login(page,'/supervisor.html','stockout-supervisor');
+ await login(page,'/supervisor','stockout-supervisor');
  await page.locator('[data-portal-view="stockout-review"]').click();
  let supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  await expect(supervisorCard).toBeVisible({timeout:20000});
@@ -55,7 +55,7 @@ test('SHC worker, PHC reviewer and storekeeper complete direct issue, discrepanc
   supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  }
  await signOutProfile(page);
- await login(page,'/storekeeper.html','stockout-storekeeper');
+ await login(page,'/storekeeper','stockout-storekeeper');
  const storeCard=page.locator('.phc-storekeeper-stockout-card').filter({hasText:medicine});
  await expect(storeCard).toBeVisible({timeout:20000});
  const availability=storeCard.locator('form[data-action="availability"]');
@@ -70,10 +70,10 @@ test('SHC worker, PHC reviewer and storekeeper complete direct issue, discrepanc
  await handover.locator('button[type="submit"]').click();
  await expect(storeCard).toContainText(/PHC handover recorded/i,{timeout:20000});
  await signOutStorekeeper(page);
- await login(page,'/storekeeper.html','stockout-storekeeper-other');
+ await login(page,'/storekeeper','stockout-storekeeper-other');
  await expect(page.locator('.phc-storekeeper-stockout-card').filter({hasText:medicine})).toHaveCount(0);
  await signOutStorekeeper(page);
- await login(page,'/worker.html','stockout-worker');
+ await login(page,'/worker','stockout-worker');
  await page.locator('[data-portal-view="stockouts"]').click();
  const receiving=page.locator('.stockout-case-card').filter({hasText:medicine});
  const collection=receiving.locator('form[data-case-form="collect"]');
@@ -94,7 +94,7 @@ test('SHC worker, PHC reviewer and storekeeper complete direct issue, discrepanc
  await expect(receiving).toContainText(/received at SHC/i,{timeout:20000});
  await expect(receiving).toContainText('10 tablets');
  await signOutProfile(page);
- await login(page,'/supervisor.html','stockout-supervisor');
+ await login(page,'/supervisor','stockout-supervisor');
  await page.locator('[data-portal-view="stockout-review"]').click();
  supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  const closure=supervisorCard.locator('form.phc-stockout-review-form');
@@ -109,7 +109,7 @@ test('SHC worker, PHC reviewer and storekeeper complete direct issue, discrepanc
 test('SHC worker, PHC supervisor and storekeeper complete the no-stock, official-indent and upstream-receipt branch',async({page})=>{
  test.setTimeout(180000);
  const hosted=trackHostedRequests(page),stamp=Date.now(),medicine='BUSHO synthetic upstream E2E medicine '+stamp;
- await login(page,'/worker.html','stockout-worker');
+ await login(page,'/worker','stockout-worker');
  await page.locator('[data-portal-view="stockouts"]').click();
  const create=page.locator('#stockout-create-form');
  await expect(create).toBeVisible();
@@ -125,7 +125,7 @@ test('SHC worker, PHC supervisor and storekeeper complete the no-stock, official
  const workerCard=page.locator('.stockout-case-card').filter({hasText:medicine});
  await expect(workerCard).toContainText(/sent to PHC|submitted to PHC/i,{timeout:20000});
  await signOutProfile(page);
- await login(page,'/supervisor.html','stockout-supervisor');
+ await login(page,'/supervisor','stockout-supervisor');
  await page.locator('[data-portal-view="stockout-review"]').click();
  let supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  await expect(supervisorCard).toBeVisible({timeout:20000});
@@ -137,7 +137,7 @@ test('SHC worker, PHC supervisor and storekeeper complete the no-stock, official
   supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  }
  await signOutProfile(page);
- await login(page,'/storekeeper.html','stockout-storekeeper');
+ await login(page,'/storekeeper','stockout-storekeeper');
  let storeCard=page.locator('.phc-storekeeper-stockout-card').filter({hasText:medicine});
  await expect(storeCard).toBeVisible({timeout:20000});
  const availability=storeCard.locator('form[data-action="availability"]');
@@ -146,7 +146,7 @@ test('SHC worker, PHC supervisor and storekeeper complete the no-stock, official
  await availability.locator('button[type="submit"]').click();
  await expect(storeCard.locator('form[data-action="availability"]')).toHaveCount(0,{timeout:20000});
  await signOutStorekeeper(page);
- await login(page,'/supervisor.html','stockout-supervisor');
+ await login(page,'/supervisor','stockout-supervisor');
  await page.locator('[data-portal-view="stockout-review"]').click();
  supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  const nonFulfil=supervisorCard.locator('form.phc-stockout-review-form');
@@ -155,7 +155,7 @@ test('SHC worker, PHC supervisor and storekeeper complete the no-stock, official
  await nonFulfil.locator('button[type="submit"]').click();
  await expect(supervisorCard).toContainText(/PHC cannot fulfil/i,{timeout:20000});
  await signOutProfile(page);
- await login(page,'/storekeeper.html','stockout-storekeeper');
+ await login(page,'/storekeeper','stockout-storekeeper');
  storeCard=page.locator('.phc-storekeeper-stockout-card').filter({hasText:medicine});
  const indent=storeCard.locator('form[data-action="indent"]');
  await expect(indent).toBeVisible({timeout:20000});
@@ -177,7 +177,7 @@ test('SHC worker, PHC supervisor and storekeeper complete the no-stock, official
  await handover.locator('button[type="submit"]').click();
  await expect(storeCard).toContainText(/PHC handover recorded/i,{timeout:20000});
  await signOutStorekeeper(page);
- await login(page,'/worker.html','stockout-worker');
+ await login(page,'/worker','stockout-worker');
  await page.locator('[data-portal-view="stockouts"]').click();
  const receiving=page.locator('.stockout-case-card').filter({hasText:medicine});
  const collection=receiving.locator('form[data-case-form="collect"]');
@@ -191,7 +191,7 @@ test('SHC worker, PHC supervisor and storekeeper complete the no-stock, official
  await receipt.locator('button[type="submit"]').click();
  await expect(receiving).toContainText(/received at SHC/i,{timeout:20000});
  await signOutProfile(page);
- await login(page,'/supervisor.html','stockout-supervisor');
+ await login(page,'/supervisor','stockout-supervisor');
  await page.locator('[data-portal-view="stockout-review"]').click();
  supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  const closure=supervisorCard.locator('form.phc-stockout-review-form');
@@ -206,7 +206,7 @@ test('SHC worker, PHC supervisor and storekeeper complete the no-stock, official
 test('SHC worker records zero physical receipt, then a follow-up receipt; PHC supervisor closes the case',async({page})=>{
  test.setTimeout(180000);
  const hosted=trackHostedRequests(page),stamp=Date.now(),medicine='BUSHO synthetic zero-receipt E2E medicine '+stamp;
- await login(page,'/worker.html','stockout-worker');
+ await login(page,'/worker','stockout-worker');
  await page.locator('[data-portal-view="stockouts"]').click();
  const create=page.locator('#stockout-create-form');
  await expect(create).toBeVisible();
@@ -222,7 +222,7 @@ test('SHC worker records zero physical receipt, then a follow-up receipt; PHC su
  const workerCard=page.locator('.stockout-case-card').filter({hasText:medicine});
  await expect(workerCard).toContainText(/sent to PHC|submitted to PHC/i,{timeout:20000});
  await signOutProfile(page);
- await login(page,'/supervisor.html','stockout-supervisor');
+ await login(page,'/supervisor','stockout-supervisor');
  await page.locator('[data-portal-view="stockout-review"]').click();
  let supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  await expect(supervisorCard).toBeVisible({timeout:20000});
@@ -234,7 +234,7 @@ test('SHC worker records zero physical receipt, then a follow-up receipt; PHC su
   supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  }
  await signOutProfile(page);
- await login(page,'/storekeeper.html','stockout-storekeeper');
+ await login(page,'/storekeeper','stockout-storekeeper');
  const storeCard=page.locator('.phc-storekeeper-stockout-card').filter({hasText:medicine});
  await expect(storeCard).toBeVisible({timeout:20000});
  const availability=storeCard.locator('form[data-action="availability"]');
@@ -249,7 +249,7 @@ test('SHC worker records zero physical receipt, then a follow-up receipt; PHC su
  await handover.locator('button[type="submit"]').click();
  await expect(storeCard).toContainText(/PHC handover recorded/i,{timeout:20000});
  await signOutStorekeeper(page);
- await login(page,'/worker.html','stockout-worker');
+ await login(page,'/worker','stockout-worker');
  await page.locator('[data-portal-view="stockouts"]').click();
  const receiving=page.locator('.stockout-case-card').filter({hasText:medicine});
  const collection=receiving.locator('form[data-case-form="collect"]');
@@ -271,7 +271,7 @@ test('SHC worker records zero physical receipt, then a follow-up receipt; PHC su
  await expect(receiving).toContainText(/received at SHC/i,{timeout:20000});
  await expect(receiving).toContainText('8 tablets');
  await signOutProfile(page);
- await login(page,'/supervisor.html','stockout-supervisor');
+ await login(page,'/supervisor','stockout-supervisor');
  await page.locator('[data-portal-view="stockout-review"]').click();
  supervisorCard=page.locator('.stockout-supervisor-case').filter({hasText:medicine});
  const closure=supervisorCard.locator('form.phc-stockout-review-form');

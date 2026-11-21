@@ -365,7 +365,7 @@
       doc.addEventListener('click', handleClick);
       doc.addEventListener('submit', handleSubmit);
       doc.addEventListener('input', handleInput);
-      load();
+      return load();
     }
 
     function stop() {
