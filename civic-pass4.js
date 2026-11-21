@@ -379,7 +379,7 @@
       accountPanel();accountEvents();helpButton();printHeader();workspaceFixes();
     }
     events();
-    window.addEventListener('load',()=>{brand();workspaceFixes();syncHeaderText();},{once:true});
+    window.addEventListener('load',()=>{brand();densityTopControl();workspaceFixes();syncHeaderText();},{once:true});
     const auth=body.dataset.authState==='authenticated';
     if(auth){profile=window.BUSHO_AUTH_PROFILE||profile;accountPanel();syncAccount();}
   }
