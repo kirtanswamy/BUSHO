@@ -34,7 +34,7 @@
   }
   function headerGate(){
     if(!['worker','supervisor','storekeeper'].includes(role))return;
-    const header=$('.topbar,.storekeeper-topbar');
+    const header=role==='storekeeper'?$('.storekeeper-topbar'):$('.topbar');
     if(!header)return;
     if(!$('.civic-all-workspaces',header)){
       const a=document.createElement('a');a.className='civic-all-workspaces';a.href='/signin';a.textContent='← All workspaces';
