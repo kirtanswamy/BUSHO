@@ -1,7 +1,7 @@
 (() => {
   const page=document.querySelector('[data-portal-role="supervisor"]');
   if(!page)return;
-  let client=null,active=false,busy=false,rows=[],generation=0;
+  let client=null,active=false,busy=false,loaded=false,rows=[],generation=0;
   const $=s=>page.querySelector(s);
   const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const labels={submitted_to_phc:'New · awaiting acknowledgement',acknowledged_by_phc:'Acknowledged by PHC',under_phc_review:'Under PHC review',clarification_requested:'Clarification requested',resubmitted:'Resubmitted by SHC',accepted_for_phc_action:'Accepted for PHC action',phc_cannot_fulfil:'PHC cannot fulfil',official_indent_submitted:'External indent reference recorded',upstream_supply_received_at_phc:'Upstream supply received at PHC',phc_handover_recorded:'PHC handover recorded',collected_by_shc:'Collected by SHC',partially_received_at_shc:'Partially received at SHC',received_at_shc:'Received at SHC',discrepancy_recorded:'Discrepancy recorded',no_receipt_recorded:'No SHC receipt recorded',closed:'Closed'};
@@ -33,10 +33,13 @@
     }).join('');
   }
   async function refresh(){
+    if(!client||!active||busy)return;
+    busy=true;
     const token=++generation,list=$('#phc-stockout-list');
     if(list)list.innerHTML='<div class="empty-state">Loading PHC stockout requests…</div>';
-    try{const result=await client.listPHCStockoutCases();if(token!==generation||!active)return;rows=Array.isArray(result)?result:[];render();}
-    catch(e){if(token!==generation||!active)return;if(list)list.innerHTML='<div class="empty-state stockout-warning">'+esc(e.message||'Could not load PHC requests.')+'</div>';}
+    try{const result=await client.listPHCStockoutCases();if(token!==generation||!active)return;rows=Array.isArray(result)?result:[];loaded=true;render();}
+    catch(e){if(token!==generation||!active)return;loaded=false;if(list)list.innerHTML='<div class="empty-state stockout-warning">'+esc(e.message||'Could not load PHC requests.')+'</div>';}
+    finally{busy=false;}
   }
   page.addEventListener('submit',event=>{
     const form=event.target.closest('.phc-stockout-review-form');if(!form)return;
@@ -48,14 +51,15 @@
     busy=true;button.disabled=true;if(feedback)feedback.textContent='Saving PHC review…';
     client.reviewPHCStockoutCase({id:form.dataset.caseId,status,note}).then(async()=>{await refresh();}).catch(e=>{if(feedback)feedback.textContent=e.message||'Review could not be saved.';}).finally(()=>{busy=false;button.disabled=false;});
   });
-  $('#phc-stockout-refresh')?.addEventListener('click',()=>{if(client)refresh();});
+  $('#phc-stockout-refresh')?.addEventListener('click',()=>{if(client){loaded=false;refresh();}});
+  page.querySelector('[data-portal-view="stockout-review"]')?.addEventListener('click',()=>{if(client&&!loaded)refresh();});
   document.addEventListener('busho:authenticated',async event=>{
     if(event.detail?.profile?.role!=='supervisor')return;
-    active=true;
+    active=true;loaded=false;
     const factory=window.BUSHO_SUPABASE_CLIENT,config=window.BUSHO_SUPABASE_CONFIG;
     if(!factory||!config)return;
-    try{client=factory.createClient(config);await refresh();}
+    try{client=factory.createClient(config);}
     catch(e){const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state stockout-warning">'+esc(e.message)+'</div>';}
   });
-  document.addEventListener('busho:unauthenticated',()=>{active=false;generation++;client=null;rows=[];const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state">Sign in to view PHC stockout requests.</div>';});
+  document.addEventListener('busho:unauthenticated',()=>{active=false;loaded=false;busy=false;generation++;client=null;rows=[];const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state">Sign in to view PHC stockout requests.</div>';});
 })();
