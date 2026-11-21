@@ -69,7 +69,7 @@
       const crumbText='BUSHO / '+names[role]+' / '+title;
       if(crumb&&crumb.textContent!==crumbText)crumb.textContent=crumbText;
     }
-    const strips=$('.civic-facility-strip,.civic-scope-bar',main);
+    const strips=$$('.civic-facility-strip,.civic-scope-bar',main);
     if(strips.length>1)strips.slice(1).forEach(n=>n.remove());
     const facilityStrip=$('.civic-facility-strip',main);
     if(intro&&facilityStrip&&intro.nextElementSibling!==facilityStrip)intro.after(facilityStrip);
