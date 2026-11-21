@@ -153,6 +153,13 @@
       const label=role==='worker'?[facility,district].filter(Boolean).join(' · '):parent;
       if(label){const small=$('.profile-trigger-copy small');if(small&&body.dataset.authState==='authenticated')small.textContent=label;}
     });
+    document.addEventListener('busho:storekeeper-facility-context',e=>{
+      const label=[e.detail?.facilityName,e.detail?.district].filter(Boolean).join(' · ');if(!label)return;
+      ['#storekeeper-account-facility','#storekeeper-dropdown-facility'].forEach(sel=>{const n=$(sel);if(n)n.textContent=label;});
+      const small=$('.profile-trigger-copy small');if(small)small.textContent=label;
+      const side=$('.civic-sidebar-context span');if(side)side.textContent=label;
+      const strong=$('span:first-child strong',$('.civic-facility-strip')||document);if(strong)strong.textContent=label;
+    });
     document.addEventListener('busho:supervisor-facility-context',e=>{
       const label=e.detail?.facilityName;if(!label)return;
       const small=$('.profile-trigger-copy small');if(small)small.textContent=label;
