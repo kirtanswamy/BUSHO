@@ -60,14 +60,14 @@
     const f=p?.facility||p?.assigned_facility||{};
     return {
       name:p?.facility_name||p?.assigned_facility_name||f.name||facility.name||'Not assigned',
-      lgd:p?.facility_lgd_code||p?.lgd_code||p?.lgdCode||f.lgd_code||f.lgd||facility.lgd||'Not assigned',
-      parent:p?.parent_phc_name||p?.parent_facility_name||p?.parent_phc?.name||p?.parent?.name||facility.parent||'Not assigned'
+      lgd:p?.facility_lgd_code||p?.block_lgd_code||p?.lgd_code||p?.lgdCode||f.lgd_code||f.block_lgd_code||f.lgd||facility.lgd||'Not assigned',
+      parent:p?.parent_phc_name||p?.parent_facility_name||p?.parent_phc?.name||p?.parent?.name||facility.parent||(role==='storekeeper'?'Not applicable — PHC workspace':'Not assigned')
     };
   }
   function updateFacility(d){
     const f=d?.facility||d||{},p=d?.parent||{};
     if(f.name)facility.name=f.name;
-    if(f.lgd_code||f.lgd||f.lgdCode)facility.lgd=f.lgd_code||f.lgd||f.lgdCode;
+    if(f.lgd_code||f.block_lgd_code||f.lgd||f.lgdCode)facility.lgd=f.lgd_code||f.block_lgd_code||f.lgd||f.lgdCode;
     if(p.name||d?.parent_phc_name)facility.parent=p.name||d.parent_phc_name;
     if(profile){const from=facilityFrom(profile);if(from.name!=='Not assigned')facility.name=from.name;if(from.lgd!=='Not assigned')facility.lgd=from.lgd;if(from.parent!=='Not assigned')facility.parent=from.parent;}
     syncAccount();
