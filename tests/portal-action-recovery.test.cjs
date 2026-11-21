@@ -183,7 +183,7 @@ function makeHarness(role, listResponses, transitionError = null) {
 
   function openView() {
     const handler = listeners.get('view:click');
-    if (handler) handler();
+    if (handler) return handler();
   }
 
   function makeForm(action = config.action) {
@@ -250,7 +250,7 @@ for (const role of ['storekeeper', 'supervisor']) {
     );
 
     harness.authenticate();
-    if (role === 'supervisor') harness.openView();
+    if (role === 'supervisor') await harness.openView();
     await new Promise(resolve => setImmediate(resolve));
 
     assert.match(
