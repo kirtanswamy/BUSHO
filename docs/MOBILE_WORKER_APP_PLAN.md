@@ -1,6 +1,6 @@
 # BUSHO Worker Mobile App — Product & Engineering Plan
 
-**Status:** Planning baseline  
+**Status:** Planning baseline; M0 static repository/backend audit completed on 2026-11-21. See [`MOBILE_WORKER_APP_M0_AUDIT.md`](MOBILE_WORKER_APP_M0_AUDIT.md) for verified integration findings.  
 **Repository:** `kirtanswamy/BUSHO`  
 **Development branch:** `expo-go`  
 **Base:** `feature/chhattisgarh-operational-workflow`  
