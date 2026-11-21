@@ -1,7 +1,7 @@
 (() => {
   const page=document.querySelector('[data-portal-role="supervisor"]');
   if(!page)return;
-  let client=null,active=false,busy=false,rows=[],generation=0;
+  let client=null,active=false,busy=false,loading=false,loaded=false,rows=[],generation=0;
   const $=s=>page.querySelector(s);
   const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const labels={submitted_to_phc:'New · awaiting acknowledgement',acknowledged_by_phc:'Acknowledged by PHC',under_phc_review:'Under PHC review',clarification_requested:'Clarification requested',resubmitted:'Resubmitted by SHC',accepted_for_phc_action:'Accepted for PHC action',phc_cannot_fulfil:'PHC cannot fulfil',official_indent_submitted:'External indent reference recorded',upstream_supply_received_at_phc:'Upstream supply received at PHC',phc_handover_recorded:'PHC handover recorded',collected_by_shc:'Collected by SHC',partially_received_at_shc:'Partially received at SHC',received_at_shc:'Received at SHC',discrepancy_recorded:'Discrepancy recorded',no_receipt_recorded:'No SHC receipt recorded',closed:'Closed'};
@@ -32,11 +32,14 @@
       return '<article class="stockout-supervisor-case"><header><div><small>SHC REQUEST · '+esc(String(row.id).slice(0,8).toUpperCase())+'</small><h3>'+esc(row.medicine_name)+'</h3><p>'+esc(row.medicine_strength_form||'Strength/form not recorded')+'</p><p>'+esc(row.shc_facility_id)+' → This PHC</p></div><span class="stockout-status" data-status="'+esc(row.status)+'">'+esc(labels[row.status]||row.status)+'</span></header><div class="stockout-supervisor-facts"><span>Observed: <b>'+esc(row.reported_quantity)+' '+esc(row.quantity_unit)+'</b></span><span>Requested: <b>'+esc(row.requested_quantity)+' '+esc(row.quantity_unit)+'</b></span><span>Observation: '+esc(row.observation_source||'—')+'</span><span>Observed at: '+esc(date(row.observed_at))+'</span></div>'+(row.medicine_source_reference?'<p class="stockout-review-note">Source reference: '+esc(row.medicine_source_reference)+'</p>':'')+(row.worker_note?'<p class="stockout-review-note"><strong>SHC note:</strong> '+esc(row.worker_note)+'</p>':'')+(row.phc_available_quantity!==null&&row.phc_available_quantity!==undefined?'<p class="stockout-review-note">PHC physical availability observed by storekeeper: <strong>'+esc(row.phc_available_quantity)+' '+esc(row.quantity_unit)+'</strong> · '+esc(date(row.phc_available_observed_at))+' (observation only)</p>':'<p class="stockout-review-note">PHC physical availability has not yet been recorded by the storekeeper.</p>')+action+'<details class="stockout-history"><summary>Activity history ('+events.length+(events.length===1?' event':' events')+')</summary><ol class="stockout-timeline">'+events.map(e=>'<li><strong>'+esc(e.status_from&&e.status_to?(labels[e.status_from]||e.status_from)+' → '+(labels[e.status_to]||e.status_to):({phc_availability_observed:'PHC availability observed',official_indent_reference_recorded:'Official indent reference recorded',upstream_supply_receipt_recorded:'Upstream supply received at PHC',phc_handover_recorded:'PHC-to-SHC handover recorded',shc_collection_recorded:'SHC collection recorded',shc_partial_receipt_recorded:'Partial SHC receipt recorded',shc_discrepancy_recorded:'SHC discrepancy recorded',shc_receipt_completed:'SHC receipt completed',case_closed:'Case closed'}[e.action]||'Workflow update'))+'</strong><small>'+esc(e.actor_role||'Authorised user')+' · '+esc(date(e.created_at))+'</small>'+(e.note?'<p>'+esc(e.note)+'</p>':'')+(e.external_reference?'<small>Reference: '+esc(e.external_reference)+'</small>':'')+'</li>').join('')+'</ol></details></article>';
     }).join('');
   }
-  async function refresh(){
+  async function refresh(force=false){
+    if(!client||!active||loading||(loaded&&!force))return;
+    loading=true;
     const token=++generation,list=$('#phc-stockout-list');
     if(list)list.innerHTML='<div class="empty-state">Loading PHC stockout requests…</div>';
     try{const result=await client.listPHCStockoutCases();if(token!==generation||!active)return;rows=Array.isArray(result)?result:[];render();}
     catch(e){if(token!==generation||!active)return;if(list)list.innerHTML='<div class="empty-state stockout-warning">'+esc(e.message||'Could not load PHC requests.')+'</div>';}
+    finally{loading=false;loaded=true;}
   }
   page.addEventListener('submit',event=>{
     const form=event.target.closest('.phc-stockout-review-form');if(!form)return;
@@ -48,14 +51,15 @@
     busy=true;button.disabled=true;if(feedback)feedback.textContent='Saving PHC review…';
     client.reviewPHCStockoutCase({id:form.dataset.caseId,status,note}).then(async()=>{await refresh();}).catch(e=>{if(feedback)feedback.textContent=e.message||'Review could not be saved.';}).finally(()=>{busy=false;button.disabled=false;});
   });
-  $('#phc-stockout-refresh')?.addEventListener('click',()=>{if(client)refresh();});
-  document.addEventListener('busho:authenticated',async event=>{
+  $('#phc-stockout-refresh')?.addEventListener('click',()=>{if(client)refresh(true);});
+  page.querySelector('[data-portal-view="stockout-review"]')?.addEventListener('click',()=>refresh());
+  document.addEventListener('busho:authenticated',event=>{
     if(event.detail?.profile?.role!=='supervisor')return;
-    active=true;
+    active=true;loaded=false;loading=false;
     const factory=window.BUSHO_SUPABASE_CLIENT,config=window.BUSHO_SUPABASE_CONFIG;
     if(!factory||!config)return;
-    try{client=factory.createClient(config);await refresh();}
+    try{client=window.BUSHO_AUTH_CLIENT||factory.createClient(config);const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state">Open SHC Stockouts to load facility-scoped requests.</div>';}
     catch(e){const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state stockout-warning">'+esc(e.message)+'</div>';}
   });
-  document.addEventListener('busho:unauthenticated',()=>{active=false;generation++;client=null;rows=[];const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state">Sign in to view PHC stockout requests.</div>';});
+  document.addEventListener('busho:unauthenticated',()=>{active=false;loaded=false;loading=false;generation++;client=null;rows=[];const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state">Sign in to view PHC stockout requests.</div>';});
 })();

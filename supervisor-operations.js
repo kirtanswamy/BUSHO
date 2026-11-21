@@ -361,11 +361,11 @@
       try { next?.setSelectionRange(start, start); } catch {}
     }
 
-    function start() {
+    function start(options) {
       doc.addEventListener('click', handleClick);
       doc.addEventListener('submit', handleSubmit);
       doc.addEventListener('input', handleInput);
-      load();
+      return options && options.deferLoad ? Promise.resolve() : load();
     }
 
     function stop() {

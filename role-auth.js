@@ -28,6 +28,7 @@
   let authClient = null;
   try {
     if (clientFactory && config) authClient = clientFactory.createClient(config);
+    if (authClient) window.BUSHO_AUTH_CLIENT = authClient;
   } catch (cause) {
     showError(cause.message || 'Secure sign-in is not configured for this environment.');
   }

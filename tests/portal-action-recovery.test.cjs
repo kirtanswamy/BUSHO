@@ -96,9 +96,12 @@ function makeHarness(role, listResponses, transitionError = null) {
   }
 
   const page = {};
+  const viewButton = { addEventListener(name, callback) { listeners.set('view:' + name, callback); } };
   const document = {
     querySelector(selector) {
-      return selector === '[data-portal-role="' + role + '"]' ? page : null;
+      if (selector === '[data-portal-role="' + role + '"]') return page;
+      if (role === 'supervisor' && selector === '[data-portal-view="supply-handoff"]') return viewButton;
+      return null;
     },
     getElementById(id) {
       return elements.get(id) || null;
@@ -178,6 +181,11 @@ function makeHarness(role, listResponses, transitionError = null) {
     });
   }
 
+  function openView() {
+    const handler = listeners.get('view:click');
+    if (handler) return handler();
+  }
+
   function makeForm(action = config.action) {
     const card = {
       dataset: { [config.rowAttribute]: 'request-1' }
@@ -223,6 +231,7 @@ function makeHarness(role, listResponses, transitionError = null) {
     client,
     elements,
     authenticate,
+    openView,
     makeForm,
     submit,
     refresh,
@@ -241,6 +250,7 @@ for (const role of ['storekeeper', 'supervisor']) {
     );
 
     harness.authenticate();
+    if (role === 'supervisor') await harness.openView();
     await new Promise(resolve => setImmediate(resolve));
 
     assert.match(
@@ -282,6 +292,7 @@ for (const role of ['storekeeper', 'supervisor']) {
     ]);
 
     harness.authenticate();
+    if (role === 'supervisor') harness.openView();
     await new Promise(resolve => setImmediate(resolve));
     await harness.submit();
 

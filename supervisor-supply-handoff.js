@@ -6,7 +6,7 @@
   const message = document.getElementById('supply-handoff-message');
   const refresh = document.getElementById('supply-handoff-refresh');
   const recommendation = document.getElementById('supply-recommendation');
-  let client = null, activeRole = null, activeUserId = null, rows = [], reports = [], inventory = [], busy = false, error = '', notice = '', refreshRequired = false;
+  let client = null, activeRole = null, activeUserId = null, rows = [], reports = [], inventory = [], busy = false, loadedOnce = false, error = '', notice = '', refreshRequired = false;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const draftStorageKey = () => 'busho:replenishment-draft:v1:' + String(activeUserId || 'unknown');
   function readDraft(){
@@ -111,8 +111,8 @@
       return '<article class="module-card storekeeper-request" data-handoff-id="'+esc(r.id)+'" data-recommendation-note="'+esc(r.note||'')+'"><div class="module-card-head"><div><p class="card-overline">'+esc(r.facilities?.name||'Assigned facility')+'</p><h3>'+esc(item.name||r.note||'Replenishment request')+'</h3><p>'+esc(r.requested_quantity)+' '+esc(r.unit||item.unit||'')+' requested · '+esc(r.on_hand_quantity??'—')+' reported on hand</p></div><span class="status-pill">'+esc(status(r.status))+'</span></div><dl class="storekeeper-facts"><div><dt>Source report</dt><dd>'+esc(r.source_report_id||'—')+'</dd></div><div><dt>Created</dt><dd>'+esc(date(r.created_at))+'</dd></div><div><dt>Supervisor decision</dt><dd>'+esc(r.reviewed_at_user?date(r.reviewed_at_user):'Not approved')+'</dd></div><div><dt>DPDMIS reference</dt><dd>'+esc(r.dpdmis_reference||'Not recorded')+'</dd></div><div><dt>Allocation reference</dt><dd>'+esc(r.allocation_reference||'Not recorded')+'</dd></div><div><dt>Dispatch reference</dt><dd>'+esc(r.dispatch_reference||'Not recorded')+'</dd></div><div><dt>Receipt progress</dt><dd>'+esc(r.received_quantity||0)+' / '+esc(r.requested_quantity)+' '+esc(r.unit||'')+'</dd></div><div><dt>Last update</dt><dd>'+esc(date(r.updated_at||r.created_at))+'</dd></div></dl>'+(canApprove?'<form class="handoff-action" data-action="approve"><label>Approval note (optional)<input name="note" maxlength="500" placeholder="Operational context"></label><button class="btn btn-primary" type="submit">Approve recommendation</button></form>':'')+(canSubmit?'<form class="handoff-action" data-action="submit"><label>External DPDMIS submission reference<input name="reference" required maxlength="120" placeholder="Enter reference after external submission"></label><button class="btn btn-primary" type="submit">Record submission reference</button></form>':'')+'<p class="muted-copy">Storekeeper handoff: '+(r.status==='submitted_to_dpdmis'?'Request is available to an assigned storekeeper.':(['allocated','dispatched','partially_received','received'].includes(r.status)?'Storekeeper has recorded progress.':'Not yet handed off.'))+'</p></article>';
     }).join('');
   }
-  async function load() {
-    if (!client || busy) return;
+  async function load(force = false) {
+    if (!client || busy || (loadedOnce && !force)) return;
     busy = true;
     error = '';
     notice = '';
@@ -131,6 +131,7 @@
       if (!refreshRequired) { rows = []; reports = []; inventory = []; }
     } finally {
       busy = false;
+      loadedOnce = true;
       render();
     }
   }
@@ -195,8 +196,8 @@
 
   recommendation?.addEventListener('submit',e=>{const f=e.target.closest('#supply-recommendation-form');if(!f)return;e.preventDefault();recommend(f);});
   list?.addEventListener('submit',e=>{const f=e.target.closest('form.handoff-action');if(!f)return;e.preventDefault();act(f);});
-  refresh?.addEventListener('click',load);
-  document.querySelector('[data-portal-view="supply-handoff"]')?.addEventListener('click',load);
-  document.addEventListener('busho:authenticated',e=>{const p=e.detail?.profile;if(!p?.id||!['supervisor','district_admin','state_admin'].includes(p.role))return;try{activeUserId=p.id;activeRole=p.role;client=window.BUSHO_SUPABASE_CLIENT.createClient(window.BUSHO_SUPABASE_CONFIG);load();}catch(err){error=err.message||'Secure handoff unavailable.';render();}});
-  document.addEventListener('busho:unauthenticated',()=>{client=null;activeRole=null;activeUserId=null;rows=[];reports=[];inventory=[];busy=false;error='';notice='';refreshRequired=false;render();});
+  refresh?.addEventListener('click',()=>load(true));
+  document.querySelector('[data-portal-view="supply-handoff"]')?.addEventListener('click',()=>load());
+  document.addEventListener('busho:authenticated',e=>{const p=e.detail?.profile;if(!p?.id||!['supervisor','district_admin','state_admin'].includes(p.role))return;try{activeUserId=p.id;activeRole=p.role;loadedOnce=false;client=window.BUSHO_AUTH_CLIENT||window.BUSHO_SUPABASE_CLIENT.createClient(window.BUSHO_SUPABASE_CONFIG);notice='Open Supply handoff to load the current facility-scoped queue.';render();}catch(err){error=err.message||'Secure handoff unavailable.';render();}});
+  document.addEventListener('busho:unauthenticated',()=>{client=null;activeRole=null;activeUserId=null;rows=[];reports=[];inventory=[];busy=false;loadedOnce=false;error='';notice='';refreshRequired=false;render();});
 })();

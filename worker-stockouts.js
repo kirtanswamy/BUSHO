@@ -109,6 +109,7 @@
       if (token !== generation || !active) return;
       context = nextContext;
       cases = Array.isArray(nextCases) ? nextCases : [];
+      root.document.dispatchEvent(new CustomEvent('busho:worker-stockout-count',{detail:{activeCount:cases.filter(row=>!['closed','cancelled','received_at_shc'].includes(row.status)).length}}));
       root.document.dispatchEvent(new CustomEvent('busho:worker-facility-context',{detail:{facility:nextContext.worker?.facilities||{},parent:nextContext.phc||{},worker:nextContext.worker||{},link:nextContext.link||null}}));
       renderContext();
       renderCases();
@@ -195,6 +196,7 @@
   });
   document.addEventListener('busho:unauthenticated', () => {
     active = false; generation++; client = null; context = null; cases = []; profile = null;
+    root.document.dispatchEvent(new CustomEvent('busho:worker-stockout-count',{detail:{activeCount:0}}));
     const list=$('#stockout-case-list'); if(list) list.innerHTML='<div class="empty-state">Sign in to view stockout requests.</div>';
   });
 })(typeof window !== 'undefined' ? window : null);
