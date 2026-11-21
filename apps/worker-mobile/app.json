@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "BUSHO Worker",
+    "slug": "busho-worker",
+    "scheme": "busho-worker",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": {"typedRoutes": true},
+    "ios": {"supportsTablet": false, "bundleIdentifier": "in.busho.worker"},
+    "android": {"package": "in.busho.worker", "adaptiveIcon": {"backgroundColor": "#F5F8FC"}}
+  }
+}

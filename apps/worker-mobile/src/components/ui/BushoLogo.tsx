@@ -1,0 +1,17 @@
+import React from 'react';
+import Svg, { Circle, Path, Rect } from 'react-native-svg';
+
+type BushoLogoProps = { size?: number; accessibilityLabel?: string };
+
+export function BushoLogo({ size = 40, accessibilityLabel = 'BUSHO civic health shield' }: BushoLogoProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 40 40" accessible accessibilityRole="image" accessibilityLabel={accessibilityLabel}>
+      <Rect x="2" y="2" width="36" height="36" rx="9" fill="#0B3D6B" />
+      <Path d="M20 5.5L31.5 9.8V19.8C31.5 26.8 26.6 32.2 20 34.5C13.4 32.2 8.5 26.8 8.5 19.8V9.8L20 5.5Z" fill="none" stroke="#FFFFFF" strokeOpacity={0.24} strokeWidth={1.3} />
+      <Rect x="17.75" y="10.5" width="4.5" height="13" rx="1.25" fill="#FFFFFF" />
+      <Rect x="13.5" y="14.75" width="13" height="4.5" rx="1.25" fill="#FFFFFF" />
+      <Circle cx="20" cy="17" r="1.6" fill="#F59E0B" />
+      <Path d="M14 28.2L20 24.5L26 28.2" fill="none" stroke="#2DD4BF" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
