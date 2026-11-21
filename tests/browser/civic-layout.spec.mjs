@@ -115,8 +115,10 @@ test('Storekeeper auth chrome is hidden until authentication and persists across
   await page.locator('#portal-app').evaluate(el => el.classList.remove('hidden'));
   for (const view of ['overview', 'stockouts', 'requests', 'inventory', 'account']) {
     await page.locator('[data-portal-view="' + view + '"]').click();
-    await expect(page.locator('.civic-storekeeper-header #portal-logout')).toBeVisible();
+    await expect(page.locator('.civic-storekeeper-header #profile-trigger')).toBeVisible();
   }
+  await page.locator('.civic-storekeeper-header #profile-trigger').click();
+  await expect(page.locator('.civic-storekeeper-header #portal-logout')).toBeVisible();
 });
 
 test('Supervisor preferences controls sync with the civic accessibility strip', async ({ page }) => {
