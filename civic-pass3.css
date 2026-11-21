@@ -51,3 +51,5 @@
 @media(max-width:960px){.storekeeper-layout{display:block!important}.storekeeper-sidebar{position:fixed!important;top:0!important;left:0!important;height:100dvh!important;min-height:100dvh!important;z-index:450;transform:translateX(-105%);transition:transform .2s ease}.storekeeper-layout.sidebar-open .storekeeper-sidebar{transform:translateX(0)}}
 @media(max-width:600px){.topbar-right,.storekeeper-topbar-right{gap:7px;flex-wrap:wrap}.civic-all-workspaces{font-size:.72rem;padding:6px 8px}.storekeeper-topbar .brand-subtitle{max-width:165px;font-size:.62rem}.profile-trigger-copy{display:none}.portal-login-section,.storekeeper-login{padding:26px 14px;min-height:calc(100vh - 150px)}}
 @media print{.civic-utility-bar,.topbar,.storekeeper-topbar,.portal-sidebar,.storekeeper-sidebar,.sidebar-toggle-mobile,.storekeeper-mobile-menu,.civic-all-workspaces,.civic-site-footer,.footer,.civic-offline-banner{display:none!important}.portal-login-section,.storekeeper-login{display:none!important}}
+
+#portal-login .demo-credentials,#portal-login .portal-back-link{display:none!important}

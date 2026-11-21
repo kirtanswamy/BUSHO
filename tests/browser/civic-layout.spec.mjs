@@ -203,3 +203,17 @@ test('rendered page text contains no literal backslash-n artifacts', async ({ pa
     expect(stray,path+' should not render escaped newline text').toBeNull();
   }
 });
+
+
+test('Supervisor tabs keep the page title and assigned-facility context in sync', async ({ page }) => {
+  await page.goto('/supervisor',{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>document.dispatchEvent(new CustomEvent('busho:authenticated',{detail:{profile:{role:'supervisor',display_name:'Synthetic Reviewer'}}})));
+  await page.locator('#portal-app').evaluate(el=>el.classList.remove('hidden'));
+  const expected=[['overview','Operational Overview'],['stockout-review','SHC Stockouts'],['reports','Reports Inbox'],['facilities','Facilities'],['workers','Health Workers'],['supply-handoff','Supply handoff'],['activity','Activity Log'],['settings','Settings']];
+  for(const [view,title] of expected){
+    await page.locator('[data-portal-view="'+view+'"]').click();
+    await expect(page.locator('.civic-page-intro h1')).toHaveText(title);
+    await expect(page.locator('.civic-breadcrumb')).toContainText(title);
+    await expect(page.locator('.civic-facility-strip')).toHaveCount(1);
+  }
+});
