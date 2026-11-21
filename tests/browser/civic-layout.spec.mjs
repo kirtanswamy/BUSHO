@@ -112,14 +112,21 @@ test('Storekeeper auth chrome is hidden until authentication and persists across
   await page.evaluate(() => document.dispatchEvent(new CustomEvent('busho:authenticated', {detail:{profile:{role:'storekeeper',display_name:'Demo Storekeeper'}}})));
   await expect(page.locator('.civic-storekeeper-header .profile-menu-wrap')).toBeVisible();
   await expect(page.locator('.civic-storekeeper-header .profile-avatar')).toHaveText('SK');
-  await expect(page.locator('.civic-storekeeper-header #portal-logout')).toHaveText('Sign out');
+  await expect(page.locator('.civic-storekeeper-header #portal-logout')).toBeHidden();
   await page.locator('#portal-app').evaluate(el => el.classList.remove('hidden'));
   for (const view of ['overview', 'stockouts', 'requests', 'inventory', 'account']) {
     await page.locator('[data-portal-view="' + view + '"]').click();
     await expect(page.locator('.civic-storekeeper-header #profile-trigger')).toBeVisible();
   }
   await page.locator('.civic-storekeeper-header #profile-trigger').click();
-  await expect(page.locator('.civic-storekeeper-header #portal-logout')).toBeVisible();
+  await expect(page.locator('.civic-storekeeper-header .busho-signout-request')).toBeVisible();
+  await expect(page.getByText('Switch Workspace Role')).toHaveCount(0);
+  await expect(page.locator('.civic-storekeeper-header .busho-signout-request')).toHaveCount(1);
+  await page.locator('.civic-storekeeper-header .busho-signout-request').click();
+  await expect(page.locator('#busho-signout-overlay')).toBeVisible();
+  await expect(page.locator('.busho-signout-dialog')).toBeInViewport();
+  await page.locator('[data-busho-cancel-signout]').click();
+  await expect(page.locator('#busho-signout-overlay')).toBeHidden();
 });
 
 test('Supervisor preferences controls sync with the civic accessibility strip', async ({ page }) => {
@@ -220,4 +227,11 @@ test('Supervisor tabs keep the page title and assigned-facility context in sync'
     await expect(page.locator('.civic-breadcrumb')).toContainText(title);
     await expect(page.locator('.civic-facility-strip')).toHaveCount(1);
   }
+});
+
+test('sign-in page renders exactly one canonical BUSHO brand mark', async ({ page }) => {
+  await page.goto('/signin', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.signin-page .topbar .brand-lockup .busho-brand-mark svg')).toHaveCount(1);
+  await expect(page.locator('.signin-page .topbar .brand-lockup .brand-name')).toHaveText('BUSHO');
+  await expect(page.locator('.signin-page .portal-login-card .busho-login-brand')).toHaveCount(0);
 });
