@@ -65,8 +65,9 @@
     const intro=$('.civic-page-intro',main);
     if(intro){
       const h=$('h1',intro),crumb=$('.civic-breadcrumb',intro);
-      if(h)h.textContent=title;
-      if(crumb)crumb.textContent='BUSHO / '+names[role]+' / '+title;
+      if(h&&h.textContent!==title)h.textContent=title;
+      const crumbText='BUSHO / '+names[role]+' / '+title;
+      if(crumb&&crumb.textContent!==crumbText)crumb.textContent=crumbText;
     }
     const strips=$$('.civic-facility-strip,.civic-scope-bar',main);
     if(strips.length>1)strips.slice(1).forEach(n=>n.remove());
@@ -76,17 +77,17 @@
     if(strip){
       const first=$('span:first-child b',strip),second=$('span:nth-child(2) b',strip);
       if(role==='worker'){
-        if(first)first.textContent='ACTIVE FACILITY';
-        if(second)second.textContent='VERIFIED PARENT PHC';
+        if(first&&first.textContent!=='ACTIVE FACILITY')first.textContent='ACTIVE FACILITY';
+        if(second&&second.textContent!=='VERIFIED PARENT PHC')second.textContent='VERIFIED PARENT PHC';
         const facility=$('#civic-shc-name'),district=$('#civic-shc-district'),lgd=$('#civic-shc-lgd');
         const value=[facility?.textContent,district?.textContent,lgd?.textContent].filter(x=>x&&!/loading|not recorded|^—$/i.test(x));
         const strong=$('span:first-child strong',strip);
-        if(strong&&value.length)strong.textContent=value.join(' · ');
+        if(strong&&value.length&&strong.textContent!==value.join(' · '))strong.textContent=value.join(' · ');
         const parent=$('#civic-parent-phc'),parentStrong=$('span:nth-child(2) strong',strip);
-        if(parent&&parentStrong&&parent.textContent.trim()&&!/pending|not recorded/i.test(parent.textContent))parentStrong.textContent=parent.textContent.trim();
+        if(parent&&parentStrong&&parent.textContent.trim()&&!/pending|not recorded/i.test(parent.textContent)&&parentStrong.textContent!==parent.textContent.trim())parentStrong.textContent=parent.textContent.trim();
       }else{
-        if(first)first.textContent='ASSIGNED PHC';
-        if(second)second.textContent='ACCESS SCOPE';
+        if(first&&first.textContent!=='ASSIGNED PHC')first.textContent='ASSIGNED PHC';
+        if(second&&second.textContent!=='ACCESS SCOPE')second.textContent='ACCESS SCOPE';
       }
     }
   }
