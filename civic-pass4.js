@@ -8,7 +8,7 @@
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const label={worker:'SHC Health Worker',supervisor:'PHC Reviewer',storekeeper:'PHC Stock Custodian'};
   const tagline='Frontline SHC–PHC Medicine Stockout & Replenishment Layer';
-  let profile=null,facility={name:'',lgd:'',parent:''},confirmingSignOut=false,menuReturnFocus=null;
+  let profile=null,facility={name:'',lgd:'',parent:''},confirmingSignOut=false,menuReturnFocus=null,sopReturnFocus=null;
   const read=(k,d)=>{try{return localStorage.getItem(k)||d}catch{return d}};
   const write=(k,v)=>{try{localStorage.setItem(k,v)}catch{}};
   const logoSvg=(size=38)=>'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="'+size+'" height="'+size+'" aria-hidden="true" focusable="false"><rect x="2" y="2" width="36" height="36" rx="9" fill="#0B3D6B"/><path d="M20 5.5L31.5 9.8V19.8C31.5 26.8 26.6 32.2 20 34.5C13.4 32.2 8.5 26.8 8.5 19.8V9.8L20 5.5Z" fill="none" stroke="rgba(255,255,255,0.24)" stroke-width="1.3"/><rect x="17.75" y="10.5" width="4.5" height="13" rx="1.25" fill="#FFFFFF"/><rect x="13.5" y="14.75" width="13" height="4.5" rx="1.25" fill="#FFFFFF"/><circle cx="20" cy="17" r="1.6" fill="#F59E0B"/><path d="M14 28.2L20 24.5L26 28.2" fill="none" stroke="#2DD4BF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -221,9 +221,9 @@
       drawer=document.createElement('div');drawer.id='busho-sop-drawer';drawer.className='busho-drawer-backdrop';drawer.innerHTML='<aside class="busho-sop-drawer" role="dialog" aria-modal="true" aria-labelledby="busho-sop-title"><header><div><span>FIELD REFERENCE · WORKFLOW FREEZE V1.0</span><h2 id="busho-sop-title">Quick SOP & Field Guide</h2></div><button type="button" data-sop-close aria-label="Close quick guide">×</button></header><div class="busho-sop-content"><section><h3>1-minute workflow summary</h3><div class="busho-sop-branches"><article><b>BRANCH 1 · PHC HAS STOCK</b><ol><li>PHC custodian checks official record and physical stock.</li><li>Record dated PHC-to-SHC handover evidence.</li><li>SHC worker physically collects and confirms receipt or discrepancy.</li><li>Close only after required receipt evidence.</li></ol></article><article><b>BRANCH 2 · PHC OUT OF STOCK</b><ol><li>PHC records an unavailable observation.</li><li>Authorised PHC user submits the consolidated indent in DPDMIS and records its external reference.</li><li>Record upstream receipt at PHC, then PHC-to-SHC handover.</li><li>SHC worker confirms physical receipt or discrepancy.</li></ol></article></div></section><section><h3>What BUSHO does vs. what remains official</h3><p><strong>BUSHO:</strong> facility-scoped exception coordination, dated observations, handover evidence and external reference tracking.</p><p><strong>Official:</strong> paper registers, DPDMIS/DVDMS, CGMSC, procurement authority and clinical decisions remain authoritative. BUSHO is not an inventory ledger or ordering portal.</p></section><section><h3>Offline / low-connectivity checklist</h3><ul><li>Use the prescribed paper register when connectivity is unavailable.</li><li>Record date, time, facility, medicine, quantity and external reference in the official register.</li><li>Do not enter patient names, phone numbers, ABHA IDs or diagnoses.</li><li>Reconcile the coordination evidence in BUSHO when connectivity returns; do not backdate or invent events.</li></ul></section><section><h3>Keyboard shortcuts</h3><dl><div><dt>Alt + H</dt><dd>Home / Overview</dd></div><div><dt>Alt + S</dt><dd>Stockout view</dd></div><div><dt>Alt + P</dt><dd>Print current view (A4)</dd></div><div><dt>Esc</dt><dd>Close drawer or modal</dd></div></dl></section></div></aside>';
       body.append(drawer);drawer.addEventListener('click',e=>{if(e.target===drawer)closeSop();});drawer.querySelector('[data-sop-close]').addEventListener('click',closeSop);
     }
-    drawer.classList.add('is-open');drawer.querySelector('[data-sop-close]').focus();body.classList.add('busho-drawer-open');
+    sopReturnFocus=document.activeElement;drawer.classList.add('is-open');drawer.querySelector('[data-sop-close]').focus();body.classList.add('busho-drawer-open');
   }
-  function closeSop(){const d=$('#busho-sop-drawer');if(d){d.classList.remove('is-open');body.classList.remove('busho-drawer-open');$('.profile-trigger')?.focus();}}
+  function closeSop(){const d=$('#busho-sop-drawer');if(d){d.classList.remove('is-open');body.classList.remove('busho-drawer-open');if(sopReturnFocus?.isConnected)sopReturnFocus.focus();sopReturnFocus=null;}}
   function helpButton(){
     if(role==='public')return;
     const right=$('.topbar-right,.storekeeper-topbar-right');if(!right||$('#busho-help-button'))return;
@@ -283,7 +283,8 @@
       const settings=$('[data-module="settings"]',main);if(settings){const h=$('.module-heading h2',settings);if(h)h.textContent='Settings';}
       const overview=$('[data-module="overview"],[data-module="overview-content"]',main);
       if(overview)$$('*',overview).forEach(n=>{if(n.children.length===0&&/supervisor\s*[·-]\s*facility-scoped/i.test(n.textContent))n.remove();});
-      const stock=$('[data-module="stockout-review"]',main);if(stock)$$('.supervisor-kpi',stock).forEach((n,i)=>n.dataset.kpiAccent=['info','warning','success'][i%3]);
+      const stock=$('[data-module="stockout-review"]',main);if(stock)$('.supervisor-kpi',stock).forEach((n,i)=>n.dataset.kpiAccent=['info','warning','success'][i%3]);
+      ['stockout-review','supply-handoff'].forEach(view=>{const section=$('[data-module="'+view+'"]',main);if(section)$('button,a',section).filter(n=>/^refresh(\\s|$)/i.test(n.textContent.trim())).forEach(n=>{n.classList.add('btn','btn-secondary','busho-refresh');});});
       const activity=$('[data-module="activity"]',main);
       if(activity){
         const normalize=()=>{
@@ -367,6 +368,7 @@
       if(e.altKey&&e.key.toLowerCase()==='s'){e.preventDefault();gotoView(role==='supervisor'?'stockout-review':'stockouts');}
       if(e.altKey&&e.key.toLowerCase()==='p'){e.preventDefault();window.print();}
       if(e.key==='Escape'){closeSop();}
+      const drawer=$('#busho-sop-drawer.is-open');if(e.key==='Tab'&&drawer){const nodes=$('button,a,input,select,textarea,[tabindex]:not([tabindex="-1"])',drawer).filter(n=>!n.disabled);if(nodes.length){const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}}
     });
   }
   function init(){
