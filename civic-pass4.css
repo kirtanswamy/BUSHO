@@ -145,3 +145,24 @@
   .busho-print-watermark{display:block!important}
   a{color:#111!important;text-decoration:none!important}
 }
+
+
+/* Pass 4 page-specific alignment and focus refinements */
+.progress-indicator{display:flex;align-items:center;gap:0;width:min(100%,560px);margin:0 auto 24px;padding:12px 18px;border:1px solid #d8e2e9;border-radius:12px;background:#f8fafb}
+.progress-indicator .progress-step{display:flex;align-items:center;gap:9px;flex:0 0 auto;min-width:0}
+.progress-indicator .progress-num{display:grid;place-items:center;width:30px;height:30px;border:1px solid #9eb2c0;border-radius:50%;background:#fff;color:#38556a;font-size:12px;font-weight:800}
+.progress-indicator .progress-step.active .progress-num{border-color:#0b3d6b;background:#0b3d6b;color:#fff}
+.progress-indicator .progress-label{font-size:11px;font-weight:800;color:#304d62}
+.progress-indicator .progress-connector{height:2px;flex:1;min-width:32px;margin:0 14px;background:#c7d5df}
+.storekeeper-main .module-heading{align-items:center}
+.storekeeper-main .module-heading .btn{flex:0 0 auto}
+.civic-sidebar-context{margin:10px 10px 14px!important;padding:12px!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:10px!important;background:rgba(255,255,255,.06)!important}
+.civic-sidebar-context small{display:block!important;color:#b9cad8!important;font-size:9px!important;letter-spacing:.1em!important}
+.civic-sidebar-context strong{display:block!important;margin:5px 0!important;color:#fff!important;font-size:12px!important}
+.civic-sidebar-context span{display:block!important;color:#d2deea!important;font-size:10px!important;line-height:1.5!important}
+.civic-facility-strip{display:flex;gap:16px;flex-wrap:wrap;padding:12px 16px;margin:0 0 20px;border:1px solid #d5e0e7;border-left:3px solid #0f766e;border-radius:10px;background:#f5f9fb}
+.civic-facility-strip>span{display:grid;gap:3px;min-width:0}
+.civic-facility-strip b{font-size:9px;letter-spacing:.08em;color:#607589}
+.civic-facility-strip strong{font-size:11px;color:#183d58;overflow-wrap:anywhere}
+@media(max-width:600px){.progress-indicator{padding:10px 12px}.progress-indicator .progress-connector{min-width:20px;margin:0 8px}.progress-indicator .progress-label{font-size:10px}.civic-facility-strip{display:grid;grid-template-columns:1fr 1fr;gap:10px}}
+@media print{.progress-indicator{border:1px solid #888;background:#fff!important}}
