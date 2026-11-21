@@ -27,12 +27,7 @@
     });
     const fav=$('link[rel~="icon"]')||(()=>{const n=document.createElement('link');n.rel='icon';document.head.append(n);return n})();
     fav.type='image/svg+xml';fav.href='/favicon.svg';
-    $$('.portal-login-card').forEach(card=>{
-      if($('.busho-login-brand',card))return;
-      const node=document.createElement('div');node.className='busho-login-brand';
-      node.innerHTML='<span>'+logoSvg(42)+'</span><span><strong>BUSHO</strong><small>'+tagline+'</small></span>';
-      card.prepend(node);
-    });
+    $('.portal-login-card .busho-login-brand').forEach(node=>node.remove());
     const signinHeader=$('.signin-page .topbar');
     if(signinHeader&&!$('.brand-lockup',signinHeader)){
       const a=document.createElement('a');a.className='brand-lockup busho-brand-lockup';a.href='/';
@@ -91,10 +86,9 @@
     trigger.setAttribute('aria-controls','profile-dropdown');trigger.setAttribute('aria-haspopup','dialog');
     trigger.innerHTML='<span class="profile-avatar busho-avatar">'+initials()+'</span><span class="profile-trigger-copy"><strong></strong><small></small></span><span class="profile-chevron" aria-hidden="true">⌄</span>';
     panel.classList.add('busho-account-panel');panel.setAttribute('aria-label','Operational account hub');
-    const legacyLogout=$('#portal-logout');
-    panel.innerHTML='<div class="busho-account-identity"><div class="busho-account-identity-top"><span class="busho-account-avatar">'+initials()+'</span><div><strong data-busho-name></strong><span class="busho-role-pill">'+label[role]+'</span></div></div><dl><div><dt>Cadre</dt><dd data-busho-cadre></dd></div><div><dt>Verified facility</dt><dd data-busho-facility></dd></div><div><dt>LGD code</dt><dd data-busho-lgd></dd></div><div><dt>Parent PHC</dt><dd data-busho-parent></dd></div></dl><span class="busho-sync-badge" data-busho-connection></span></div><div class="busho-account-actions"><button type="button" data-busho-action="facility"><span>⌖</span><span><strong>My Facility & Scope</strong><small>Verified facility and parent link</small></span></button><button type="button" data-busho-action="profile"><span>◎</span><span><strong>Account & Authority Boundary</strong><small>Role, cadre and permitted actions</small></span></button><div class="busho-display-controls"><strong>Quick Display Controls</strong><div><button type="button" data-busho-contrast aria-pressed="false">High contrast</button><button type="button" data-busho-density aria-pressed="false">Compact density</button></div></div><button type="button" data-busho-action="print"><span>▤</span><span><strong>Print Current View (A4)</strong><small>Register-ready print layout</small></span></button><button type="button" data-busho-action="sop"><span>?</span><span><strong>Field SOP & Quick Guide</strong><small>Two-branch workflow and offline steps</small></span></button><a href="/signin" class="busho-account-action-link"><span>⇄</span><span><strong>Switch Workspace Role</strong><small>Return to role selection</small></span></a></div><div class="busho-account-footer"><button type="button" class="busho-signout-request" data-busho-action="signout">Sign out</button><div class="busho-signout-confirm" hidden role="alertdialog" aria-labelledby="busho-signout-title" aria-describedby="busho-signout-copy"><span class="busho-warning-icon" aria-hidden="true">!</span><strong id="busho-signout-title">Are you sure you want to sign out?</strong><p id="busho-signout-copy">Any unsaved draft or unsubmitted observation will not be saved.</p><div><button type="button" data-busho-cancel-signout>Cancel</button><button type="button" data-busho-confirm-signout>Yes, sign out</button></div></div></div>'
-    const signout=legacyLogout||document.createElement('button');signout.type='button';signout.id='portal-logout';signout.dataset.profileAction='signout';signout.textContent='Sign out';signout.className='profile-signout';
-    panel.querySelector('.busho-account-footer').append(signout);;
+    $('[data-profile-action="signout"],#portal-logout').forEach(node=>node.remove());
+    panel.innerHTML='<div class="busho-account-identity"><div class="busho-account-identity-top"><span class="busho-account-avatar">'+initials()+'</span><div><strong data-busho-name></strong><span class="busho-role-pill">'+label[role]+'</span></div></div><dl><div><dt>Cadre</dt><dd data-busho-cadre></dd></div><div><dt>Verified facility</dt><dd data-busho-facility></dd></div><div><dt>LGD code</dt><dd data-busho-lgd></dd></div><div><dt>Parent PHC</dt><dd data-busho-parent></dd></div></dl><span class="busho-sync-badge" data-busho-connection></span></div><div class="busho-account-actions"><button type="button" data-busho-action="facility"><span>⌖</span><span><strong>My Facility & Scope</strong><small>Verified facility and parent link</small></span></button><button type="button" data-busho-action="profile"><span>◎</span><span><strong>Account & Authority Boundary</strong><small>Role, cadre and permitted actions</small></span></button><div class="busho-display-controls"><strong>Quick Display Controls</strong><div><button type="button" data-busho-contrast aria-pressed="false">High contrast</button><button type="button" data-busho-density aria-pressed="false">Compact density</button></div></div><button type="button" data-busho-action="print"><span>▤</span><span><strong>Print Current View (A4)</strong><small>Register-ready print layout</small></span></button><button type="button" data-busho-action="sop"><span>?</span><span><strong>Field SOP & Quick Guide</strong><small>Two-branch workflow and offline steps</small></span></button></div><div class="busho-account-footer"><button type="button" class="busho-signout-request" data-busho-action="signout">Sign out</button><button type="button" id="portal-logout" data-profile-action="signout" hidden aria-hidden="true" tabindex="-1">Confirm sign out</button></div>'
+    ensureSignoutDialog();
     const name=profile?.display_name|| (role==='worker'?'Health Worker':role==='storekeeper'?'PHC Stock Custodian':'PHC Reviewer');
     const tName=$('.profile-trigger-copy strong',trigger),tFacility=$('.profile-trigger-copy small',trigger);
     if(tName)tName.textContent=name;if(tFacility)tFacility.textContent=facility.name||'Facility not assigned';
@@ -123,14 +117,29 @@
     const a=$('#storekeeper-account-facility');if(a)a.textContent=facility.name;
     const d=$('#storekeeper-dropdown-facility');if(d)d.textContent=facility.name;
   }
+  function ensureSignoutDialog(){
+    let dialog=$('#busho-signout-overlay');if(dialog)return dialog;
+    dialog=document.createElement('div');dialog.id='busho-signout-overlay';dialog.className='busho-signout-backdrop';dialog.hidden=true;
+    dialog.innerHTML='<section class="busho-signout-dialog" role="alertdialog" aria-modal="true" aria-labelledby="busho-signout-title" aria-describedby="busho-signout-copy" tabindex="-1"><span class="busho-warning-icon" aria-hidden="true">!</span><h2 id="busho-signout-title">Are you sure you want to sign out?</h2><p id="busho-signout-copy">Any unsaved draft or unsubmitted observation will not be saved.</p><div class="busho-signout-dialog-actions"><button type="button" class="busho-signout-cancel" data-busho-cancel-signout>Cancel</button><button type="button" class="busho-signout-confirm-button" data-busho-confirm-signout>Yes, sign out</button></div></section>';
+    body.append(dialog);return dialog;
+  }
   function accountEvents(){
     const wrap=$('.profile-menu-wrap'),trigger=$('#profile-trigger'),panel=$('#profile-dropdown');
     if(!wrap||!trigger||!panel)return;
+    const dialog=ensureSignoutDialog();
     const close=()=>{panel.hidden=true;trigger.setAttribute('aria-expanded','false');};
     const open=()=>{panel.hidden=false;trigger.setAttribute('aria-expanded','true');};
     trigger.addEventListener('click',e=>{e.stopImmediatePropagation();if(panel.hidden)open();else close();},true);
-    document.addEventListener('click',e=>{if(!wrap.contains(e.target))close()});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!panel.hidden){close();trigger.focus();}const confirm=$('.busho-signout-confirm',panel);if(confirm&&!confirm.hidden)cancelSignOut();}});
+    document.addEventListener('click',e=>{if(!wrap.contains(e.target))close();});
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape'&&!dialog.hidden){e.preventDefault();cancelSignOut();}
+      else if(e.key==='Escape'&&!panel.hidden){close();trigger.focus();}
+      if(e.key==='Tab'&&!dialog.hidden){
+        const nodes=$$('button:not([disabled])',dialog),first=nodes[0],last=nodes[nodes.length-1];
+        if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+        else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+      }
+    });
     panel.addEventListener('click',e=>{
       const action=e.target.closest('[data-busho-action]');if(!action)return;
       const kind=action.dataset.bushoAction;
@@ -143,6 +152,9 @@
     panel.addEventListener('click',e=>{
       if(e.target.closest('[data-busho-contrast]')){const high=root.dataset.contrast!=='high';setContrast(high);toast(high?'High contrast enabled':'High contrast disabled','success');}
       if(e.target.closest('[data-busho-density]')){const compact=root.dataset.density!=='compact';setDensity(compact);toast(compact?'Compact density enabled':'Comfortable density enabled','success');}
+    });
+    dialog.addEventListener('click',e=>{
+      if(e.target===dialog)return;
       if(e.target.closest('[data-busho-cancel-signout]'))cancelSignOut();
       if(e.target.closest('[data-busho-confirm-signout]')){
         const original=$('#portal-logout',panel);
@@ -155,10 +167,18 @@
       if(!target||confirmingSignOut)return;
       e.preventDefault();e.stopImmediatePropagation();showSignOut();
     },true);
-    function showSignOut(){const c=$('.busho-signout-confirm',panel);if(!c)return;c.hidden=false;panel.querySelector('.busho-signout-request').hidden=true;panel.querySelector('[data-busho-cancel-signout]').focus();}
-    function cancelSignOut(){const c=$('.busho-signout-confirm',panel);if(!c||c.hidden)return;c.hidden=true;panel.querySelector('.busho-signout-request').hidden=false;panel.querySelector('.busho-signout-request').focus();}
+    function showSignOut(){
+      close();dialog.hidden=false;body.classList.add('busho-signout-open');
+      dialog.querySelector('.busho-signout-dialog').focus();
+      dialog.querySelector('[data-busho-cancel-signout]').focus();
+    }
+    function cancelSignOut(){
+      if(dialog.hidden)return;
+      dialog.hidden=true;body.classList.remove('busho-signout-open');confirmingSignOut=false;
+      open();panel.querySelector('.busho-signout-request')?.focus();
+    }
     window.__bushoCancelSignOut=cancelSignOut;
-    function handleSignoutState(){if(body.dataset.authState==='unauthenticated'){close();confirmingSignOut=false;}}
+    function handleSignoutState(){if(body.dataset.authState==='unauthenticated'){close();dialog.hidden=true;body.classList.remove('busho-signout-open');confirmingSignOut=false;}}
     document.addEventListener('busho:unauthenticated',handleSignoutState);
     window.addEventListener('online',syncAccount);window.addEventListener('offline',syncAccount);
     document.addEventListener('busho:authenticated',e=>{profile=e.detail?.profile||null;facility=facilityFrom(profile);accountPanel();syncAccount();});
