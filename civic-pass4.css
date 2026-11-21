@@ -170,3 +170,21 @@
 :root[data-density="compact"] .module-card,:root[data-density="compact"] .storekeeper-request{padding:12px!important}
 :root[data-density="compact"] .storekeeper-main .portal-module,:root[data-density="compact"] .portal-module{gap:10px}
 :root[data-density="compact"] .civic-facility-strip{padding:8px 12px;margin-bottom:12px}
+
+
+/* Pass 4.1: centered, accessible sign-out confirmation */
+.busho-signout-backdrop{position:fixed;inset:0;z-index:30000;display:grid;place-items:center;padding:20px;background:rgba(7,24,39,.62);backdrop-filter:blur(3px)}
+.busho-signout-backdrop[hidden]{display:none!important}
+.busho-signout-dialog{width:min(100%,440px);padding:28px;border:1px solid #e5b5b1;border-top:5px solid #b42318;border-radius:16px;background:#fff;color:#1b2e40;box-shadow:0 24px 80px rgba(0,0,0,.3);outline:none}
+.busho-signout-dialog .busho-warning-icon{width:38px;height:38px;font-size:20px}
+.busho-signout-dialog h2{margin:16px 0 8px;color:#172d40;font-size:21px;line-height:1.3}
+.busho-signout-dialog p{margin:0;color:#526579;font-size:14px;line-height:1.65}
+.busho-signout-dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+.busho-signout-dialog-actions button{min-height:42px;padding:10px 17px;border-radius:9px;font-size:13px;font-weight:800;cursor:pointer}
+.busho-signout-cancel{border:1px solid #aebdca;background:#fff;color:#263f53}
+.busho-signout-confirm-button{border:1px solid #b42318;background:#b42318;color:#fff}
+.busho-signout-dialog-actions button:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+body.busho-signout-open{overflow:hidden}
+@media(max-width:480px){.busho-signout-backdrop{padding:16px}.busho-signout-dialog{padding:22px}.busho-signout-dialog h2{font-size:19px}.busho-signout-dialog-actions{flex-direction:column-reverse}.busho-signout-dialog-actions button{width:100%}}
+/* The profile hub has one visible sign-out action; the hidden legacy hook is retained for auth compatibility. */
+.busho-account-panel #portal-logout[hidden]{display:none!important}
