@@ -166,3 +166,7 @@
 .civic-facility-strip strong{font-size:11px;color:#183d58;overflow-wrap:anywhere}
 @media(max-width:600px){.progress-indicator{padding:10px 12px}.progress-indicator .progress-connector{min-width:20px;margin:0 8px}.progress-indicator .progress-label{font-size:10px}.civic-facility-strip{display:grid;grid-template-columns:1fr 1fr;gap:10px}}
 @media print{.progress-indicator{border:1px solid #888;background:#fff!important}}
+
+:root[data-density="compact"] .module-card,:root[data-density="compact"] .storekeeper-request{padding:12px!important}
+:root[data-density="compact"] .storekeeper-main .portal-module,:root[data-density="compact"] .portal-module{gap:10px}
+:root[data-density="compact"] .civic-facility-strip{padding:8px 12px;margin-bottom:12px}
