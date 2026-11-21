@@ -170,6 +170,7 @@
     if(on)root.dataset.density='compact';else delete root.dataset.density;
     write('busho-civic-density',on?'compact':'comfortable');
     const menu=$('[data-busho-density]');if(menu)menu.setAttribute('aria-pressed',String(on));
+    const top=$('[data-density-toggle]');if(top)top.setAttribute('aria-pressed',String(on));
   }
   function densityTopControl(){
     const tools=$('.civic-utility-tools');if(!tools||$('[data-density-toggle]',tools))return;
@@ -349,6 +350,16 @@
       toast('Submission started. Confirm the resulting status before leaving this view.','info');
     },true);
     ['busho:report-saved','busho:stockout-saved','busho:report-submitted','busho:stockout-submitted'].forEach(name=>document.addEventListener(name,()=>toast('Record saved or submitted. Check its displayed status and evidence.','success')));
+    const liveSeen=new WeakMap();
+    const watchLive=()=>$('[aria-live]').forEach(node=>{
+      if(liveSeen.has(node))return;liveSeen.set(node,node.textContent.trim());
+      new MutationObserver(()=>{
+        const textNow=node.textContent.trim();if(!textNow||textNow===liveSeen.get(node))return;
+        liveSeen.set(node,textNow);
+        if(/\\b(saved|submitted|successfully recorded|receipt recorded|handover recorded)\\b/i.test(textNow))toast('Update recorded. Review the displayed status and evidence.','success');
+      }).observe(node,{childList:true,subtree:true,characterData:true});
+    });
+    watchLive();window.addEventListener('load',watchLive,{once:true});
     window.addEventListener('online',()=>{toast('Connection restored. Reconcile any paper-register activity before updating BUSHO.','success');syncAccount();});
     window.addEventListener('offline',()=>{toast('Offline mode: use the official paper register and reconcile when connectivity returns.','warning');syncAccount();});
     document.addEventListener('keydown',e=>{
