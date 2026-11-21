@@ -88,6 +88,8 @@ function localRefs(html) {
 function auditHtml(name, html) {
   console.log(`\n[${name}]`);
   check(!html.includes(String.fromCharCode(92) + 'n'), 'no literal backslash-n text in page source');
+  const navigationRefs = [...html.matchAll(/(?:href|action)=[\"']([^\"']+)[\"']/gi)].map(match => match[1]);
+  check(!navigationRefs.some(value => /\.html(?:[?#]|$)/i.test(value)), 'navigation and form actions use extensionless routes');
   check(/<html[^>]*\slang="[a-z]{2}/i.test(html), 'html element has a lang attribute');
   check(/<title>[^<]{3,}<\/title>/i.test(html), 'page has a title');
   check(/<meta[^>]+name="viewport"/i.test(html), 'viewport meta present');
@@ -186,6 +188,7 @@ try {
     if (r.status === 200 && ref.endsWith('.js')) {
       try { new vm.Script(r.body, { filename: ref }); ok(`${ref} parses as valid JavaScript`); }
       catch (e) { bad(`${ref} has a syntax error: ${e.message}`); }
+      check(!/(?:window\.)?location(?:\.href)?\s*=\s*['"][^'"]*\.html/i.test(r.body), 'JavaScript redirects use extensionless routes');
     }
     if (r.status === 200 && ref.endsWith('.html')) { pages.push(r.body); auditHtml(ref, r.body); }
   }
