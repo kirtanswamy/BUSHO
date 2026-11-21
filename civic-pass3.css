@@ -31,7 +31,7 @@
 .storekeeper-login button[type=submit]{min-height:48px}
 .civic-workspace-grid,.storekeeper-layout{align-items:stretch!important;min-height:calc(100vh - 190px)}
 .portal-sidebar,.storekeeper-sidebar{align-self:stretch!important;height:auto!important;min-height:100%!important}
-.storekeeper-sidebar{position:sticky!important;top:0!important}
+.storekeeper-sidebar{position:sticky!important;top:0!important;min-height:calc(100vh - 190px)!important}
 .storekeeper-layout{display:grid!important;grid-template-columns:var(--civic-sidebar) minmax(0,1fr)!important}
 .storekeeper-main{min-height:100%;background:#F4F7FA}
 .civic-sidebar-status{display:grid!important;gap:8px!important;margin-top:auto!important;padding:14px 10px 0!important;border-top:1px solid rgba(255,255,255,.16)!important}

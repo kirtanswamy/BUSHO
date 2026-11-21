@@ -58,7 +58,7 @@
     if(!['worker','supervisor','storekeeper'].includes(role))return;
     const main=$('#demo')||$('.storekeeper-main')||$('main');
     if(!main)return;
-    const active=$('.portal-module.active',main);
+    const active=$('[data-module].active',main);
     let key=active?.dataset.module;
     if(role==='supervisor'&&key==='overview-content')key='overview';
     const title=views[role]?.[key]||views[role]?.overview||'Workspace';

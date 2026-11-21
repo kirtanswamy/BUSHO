@@ -172,8 +172,8 @@ test('signed-out workspace headers never expose account chrome', async ({ page }
 
 test('workspace pages boot without browser console or uncaught page errors', async ({ page }) => {
   const errors=[];
-  page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text())});
-  page.on('pageerror',err=>errors.push(err.message));
+  page.on('console',msg=>{if(msg.type()==='error'){const at=msg.location();errors.push(`${at.url}:${at.lineNumber}:${at.columnNumber} ${msg.text()}`)}});
+  page.on('pageerror',err=>errors.push(err.stack||err.message));
   for(const path of ['/','/signin','/worker','/supervisor','/storekeeper']){
     await page.goto(path,{waitUntil:'domcontentloaded'});
     if(path==='/storekeeper')await expect(page.locator('#portal-login')).toBeVisible();
