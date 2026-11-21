@@ -909,3 +909,34 @@ test('worker navigation exposes stable accessible relationships and focuses the 
   await expect(nav).not.toHaveAttribute('aria-current', 'page');
   await expect(page.locator('[data-module="facility"] h2')).toBeFocused();
 });
+
+
+test('supervisor login enters a responsive workspace and loads secondary modules on demand', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__bushoErrors = [];
+    window.__bushoUnhandled = [];
+    window.addEventListener('error', event => window.__bushoErrors.push(event.message || 'window error'));
+    window.addEventListener('unhandledrejection', event => window.__bushoUnhandled.push(String(event.reason)));
+  });
+
+  await login(page, '/supervisor', 'supervisor-a');
+  await expect(page.locator('#portal-app')).toBeVisible();
+  await expect(page.locator('[data-module="overview"]')).toBeVisible();
+  await expect(page.locator('[data-module="overview"] h2')).toContainText(/operational overview/i);
+
+  // Login should not eagerly fan out into every secondary data source.
+  await expect.poll(async () => page.locator('#phc-stockout-list').innerText()).not.toContain('Loading PHC stockout requests');
+
+  for (const view of ['reports', 'stockout-review', 'supply-handoff', 'facilities', 'workers', 'activity', 'settings']) {
+    const tab = page.locator('[data-portal-view="' + view + '"]');
+    await tab.click();
+    await expect(tab).toHaveAttribute('aria-current', 'page');
+    await expect(page.locator('[data-module].active')).toHaveCount(1);
+    await expect(page.locator('[data-module].active')).toBeVisible();
+  }
+
+  await expect.poll(async () => page.evaluate(() => ({
+    errors: window.__bushoErrors,
+    unhandled: window.__bushoUnhandled
+  }))).toEqual({ errors: [], unhandled: [] });
+});
