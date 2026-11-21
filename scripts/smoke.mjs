@@ -39,7 +39,7 @@ function rawGet(path) {
     const req = http.request({ host: '127.0.0.1', port, path, method: 'GET' }, res => {
       let body = '';
       res.on('data', c => (body += c));
-      res.on('end', () => resolve({ status: res.statusCode, type: res.headers['content-type'] || '', body }));
+      res.on('end', () => resolve({ status: res.statusCode, type: res.headers['content-type'] || '', location: res.headers.location || '', body }));
     });
     req.on('error', reject);
     req.setTimeout(4000, () => req.destroy(new Error('timeout')));
