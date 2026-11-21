@@ -82,7 +82,7 @@
     return ['district_admin','state_admin'].includes(profile?.role)?'DS':'PR';
   }
   function connectionLabel(){
-    return navigator.onLine?'Online · Connection available':'Offline · Manual register mode';
+    return navigator.onLine?'Online · Sync status not verified':'Offline · Manual register mode';
   }
   function accountPanel(){
     const wrap=$('.profile-menu-wrap'),trigger=$('#profile-trigger'),panel=$('#profile-dropdown');
@@ -198,6 +198,7 @@
     ];
     let current=0,paused=false;
     const viewport=$('.busho-ticker-viewport'),track=$('#busho-ticker-track');
+    if(viewport){viewport.tabIndex=0;viewport.setAttribute('role','region');viewport.setAttribute('aria-label','Scrolling notices; focus here to pause the ticker');}
     const renderNotice=()=>{if(!track)return;track.innerHTML='<div class="busho-ticker-item"><b>['+esc(notices[current][0])+']</b> '+esc(notices[current][1])+'</div>';};
     if(track&&!track.dataset.ready){track.dataset.ready='1';renderNotice();}
     const controls=$('.busho-ticker-controls');
