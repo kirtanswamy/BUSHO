@@ -292,6 +292,7 @@ for (const role of ['storekeeper', 'supervisor']) {
     ]);
 
     harness.authenticate();
+    if (role === 'supervisor') harness.openView();
     await new Promise(resolve => setImmediate(resolve));
     await harness.submit();
 
