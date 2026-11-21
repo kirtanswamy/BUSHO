@@ -58,7 +58,7 @@
     active=true;loaded=false;
     const factory=window.BUSHO_SUPABASE_CLIENT,config=window.BUSHO_SUPABASE_CONFIG;
     if(!factory||!config)return;
-    try{client=factory.createClient(config);}
+    try{client=factory.createClient(config);const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state">Open SHC Stockouts to load facility-scoped requests.</div>';}
     catch(e){const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state stockout-warning">'+esc(e.message)+'</div>';}
   });
   document.addEventListener('busho:unauthenticated',()=>{active=false;loaded=false;busy=false;generation++;client=null;rows=[];const list=$('#phc-stockout-list');if(list)list.innerHTML='<div class="empty-state">Sign in to view PHC stockout requests.</div>';});
