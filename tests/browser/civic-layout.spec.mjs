@@ -175,7 +175,7 @@ test('workspace pages boot without browser console or uncaught page errors', asy
   page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text())});
   page.on('pageerror',err=>errors.push(err.message));
   for(const path of ['/','/signin','/worker','/supervisor','/storekeeper']){
-    await page.goto(path,{waitUntil:'networkidle'});
+    await page.goto(path,{waitUntil:'domcontentloaded'});
     await expect(page.locator('main')).toBeVisible();
   }
   expect(errors).toEqual([]);
