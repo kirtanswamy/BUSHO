@@ -171,6 +171,11 @@
     write('busho-civic-density',on?'compact':'comfortable');
     const menu=$('[data-busho-density]');if(menu)menu.setAttribute('aria-pressed',String(on));
   }
+  function densityTopControl(){
+    const tools=$('.civic-utility-tools');if(!tools||$('[data-density-toggle]',tools))return;
+    const b=document.createElement('button');b.type='button';b.dataset.densityToggle='';b.textContent='Compact';b.setAttribute('aria-pressed',String(root.dataset.density==='compact'));tools.insertBefore(b,tools.querySelector('.civic-env-pill'));
+    b.addEventListener('click',()=>{const compact=root.dataset.density!=='compact';setDensity(compact);toast(compact?'Compact density enabled':'Comfortable density enabled','success');});
+  }
   function syncPrefs(){
     setContrast(read('busho-civic-contrast','normal')==='high');
     setDensity(read('busho-civic-density','comfortable')==='compact');
@@ -354,11 +359,12 @@
     });
   }
   function init(){
-    brand();syncPrefs();landing();
+    brand();syncPrefs();densityTopControl();landing();
     if(['worker','supervisor','storekeeper'].includes(role)){
       accountPanel();accountEvents();helpButton();printHeader();workspaceFixes();
     }
     events();
+    window.addEventListener('load',()=>{brand();workspaceFixes();syncHeaderText();},{once:true});
     const auth=body.dataset.authState==='authenticated';
     if(auth){profile=window.BUSHO_AUTH_PROFILE||profile;accountPanel();syncAccount();}
   }
