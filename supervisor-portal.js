@@ -18,7 +18,7 @@
       return;
     }
     try {
-      const client = clientFactory.createClient(config);
+      const client = window.BUSHO_AUTH_CLIENT || clientFactory.createClient(config);
       controller = window.BUSHO_SUPERVISOR_OPERATIONS.createController({
         client,
         document,
