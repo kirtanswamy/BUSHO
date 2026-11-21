@@ -394,6 +394,9 @@ for (const scenario of successfulLogins) {
     async ({ page }) => {
       const externalRequests =
         trackExternalSupabaseRequests(page);
+      const runtimeErrors = [];
+      page.on('console', message => { if (message.type() === 'error') runtimeErrors.push(message.text()); });
+      page.on('pageerror', error => runtimeErrors.push(error.message));
 
       await login(
         page,
@@ -425,6 +428,7 @@ await expect(
       }
 
       expect(externalRequests).toEqual([]);
+      expect(runtimeErrors).toEqual([]);
     }
   );
 }
