@@ -6,7 +6,7 @@ function AppShell() {
   const { theme } = useTheme();
   return (
     <>
-      <StatusBar style="dark" backgroundColor={theme.colors.background} />
+      <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background }, animation: 'fade' }} />
     </>
   );
