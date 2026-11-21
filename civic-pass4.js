@@ -351,10 +351,10 @@
     }
     clean();
   }
-  function syncHeaderText(){
+  function syncHeaderText(viewOverride){
     if(role==='public')return;
     const intro=$('.civic-page-intro');
-    const key=activeView();
+    const key=viewOverride||activeView();
     const names={worker:{overview:'Operational Overview',stockouts:'Medicine Stockout','new-report':'New Report','my-reports':'My Reports',pending:'Pending Confirmation',facility:'My Facility',profile:'My Profile'},supervisor:{overview:'Operational Overview',reports:'Reports Inbox','stockout-review':'SHC Stockouts',facilities:'Facilities',workers:'Health Workers','supply-handoff':'Supply handoff',activity:'Activity Log',settings:'Settings'},storekeeper:{overview:'Operational Overview',stockouts:'SHC Stockout Handovers',requests:'Replenishment queue',inventory:'Inventory evidence',account:'Account & guidance'}};
     const h=$('.civic-page-intro h1');if(h&&names[role]?.[key])h.textContent=names[role][key];
     const crumb=$('.civic-breadcrumb');if(crumb&&names[role]?.[key])crumb.textContent='BUSHO / '+label[role]+' / '+names[role][key];
@@ -373,7 +373,7 @@
       const refresh=e.target instanceof Element?e.target.closest('button,a'):null;
       if(refresh&&/^refresh(\s|$)/i.test(refresh.textContent.trim()))toast('Refreshing the current facility-scoped view…','info');
       const view=e.target instanceof Element?e.target.closest('[data-portal-view],[data-go-view]'):null;
-      if(view)window.setTimeout(syncHeaderText,0);
+      if(view)window.setTimeout(()=>syncHeaderText(view.dataset.portalView||view.dataset.goView),0);
     });
     document.addEventListener('change',e=>{
       if(e.target.matches('#lang-select,[data-pref-language]'))toast('Language preference updated for this browser.','success');
