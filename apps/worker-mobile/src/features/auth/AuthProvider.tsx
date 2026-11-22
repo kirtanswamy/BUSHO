@@ -19,6 +19,7 @@ type AuthContextValue = {
   identity: WorkerIdentity | null;
   message: string | null;
   configured: boolean;
+  hasSession: boolean;
   signIn: (email: string, password: string) => Promise<string | null>;
   signOut: () => Promise<void>;
   retryVerification: () => void;
@@ -144,10 +145,11 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
     identity,
     message,
     configured: isSupabaseConfigured,
+    hasSession: Boolean(session),
     signIn,
     signOut,
     retryVerification,
-  }), [status, identity, message, signIn, signOut, retryVerification]);
+  }), [status, identity, message, session, signIn, signOut, retryVerification]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
