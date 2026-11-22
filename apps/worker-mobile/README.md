@@ -37,4 +37,19 @@ Use `npx expo install` for future Expo-managed dependencies and commit the gener
 
 ## M1.1 status
 
-Foundation only: Expo entry, light-first/high-contrast tokens, A-/A/A+ type scale, reusable primitives, canonical shield, and chunked SecureStore-backed Supabase client. Operational screens and workflow writes are intentionally out of scope.
+Foundation: Expo entry, light-first/high-contrast tokens, A-/A/A+ type scale, reusable primitives, canonical shield, and chunked SecureStore-backed Supabase client.
+
+## M1.2 status
+
+Authentication and worker identity gate implemented:
+
+- Password sign-in through Supabase Auth; no public sign-up.
+- Session restoration and refresh using the package's SecureStore adapter.
+- Access requires an active `profiles` row with role `worker`.
+- Requires exactly one active worker row linked by `auth_user_id`, with worker role.
+- Requires exactly one current active `user_facility_assignments` row for that worker's facility and role.
+- Requires the linked facility to be active and verified.
+- Access-denied and verification-unavailable states are distinct; sign-out is available.
+- Synthetic facilities display a persistent `Synthetic Pilot` marker on the authenticated screen.
+
+This milestone does not create or modify database schema, does not provision users, and does not yet expose stockout or field-update workflows. A missing verified SHC-to-PHC service link does not block sign-in; it will gate stockout workflow access separately.
