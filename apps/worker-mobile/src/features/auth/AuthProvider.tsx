@@ -86,6 +86,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
   }, []);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
     const currentGeneration = ++generation.current;
     if (!session) {
       setIdentity(null);
