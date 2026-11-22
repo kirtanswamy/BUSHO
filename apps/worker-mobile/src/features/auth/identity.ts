@@ -74,8 +74,8 @@ export async function loadWorkerIdentity(
 
   if (facilityError) throw facilityError;
   if (!facility) deny('Your assigned facility is unavailable or outside your approved access scope.');
-  if (!facility.is_active || facility.verification_status !== 'verified') {
-    deny('Your assigned facility is not active and verified. Contact your authorised administrator.');
+  if (!facility.is_active || facility.verification_status !== 'verified' || facility.facility_type !== 'aam_shc') {
+    deny('Your assigned facility must be an active, verified AAM-SHC. Contact your authorised administrator.');
   }
 
   return {
