@@ -320,7 +320,7 @@
       const activity=$('[data-module="activity"]',main);
       if(activity){
         const normalize=()=>{
-          $('.activity-status,.status-pill,.status-chip',activity).forEach(n=>{
+          $$('.activity-status,.status-pill,.status-chip',activity).forEach(n=>{
             const current=n.textContent.trim().replace(/^[✓◷○]\s*/,'');
             const raw=(n.dataset.status||current).toLowerCase();
             let state='neutral',text=current;
@@ -328,13 +328,12 @@
             else if(/verified/.test(raw)){state='success';text='Verified';}
             else if(/awaiting/.test(raw)){state='warning';text='Awaiting review';}
             else if(/draft/.test(raw)){state='neutral';text='Draft';}
-            const prefix=state==='success'?'✓ ':state==='warning'?'◷ ':'○ ';
-            const display=prefix+text;
+            const display=text;
             if(n.dataset.state!==state)n.dataset.state=state;
             if(!n.classList.contains('busho-semantic-pill'))n.classList.add('busho-semantic-pill');
             if(n.textContent!==display)n.textContent=display;
           });
-          $('*',activity).forEach(n=>{
+          $$('*',activity).forEach(n=>{
             if(n.children.length)return;
             const current=n.textContent.trim();
             const normalized=/^report created$/i.test(current)?'Report created':
@@ -342,7 +341,7 @@
               /^worker$/i.test(current)?'SHC Health Worker':current;
             if(current!==normalized)n.textContent=normalized;
           });
-          $('button,a',activity).filter(n=>/^refresh$/i.test(n.textContent.trim())).forEach(n=>{
+          $$('button,a',activity).filter(n=>/^refresh$/i.test(n.textContent.trim())).forEach(n=>{
             n.classList.add('btn','btn-secondary','busho-refresh');
           });
         };
@@ -435,7 +434,14 @@
       accountPanel();accountEvents();helpButton();printHeader();workspaceFixes();
     }
     events();
-    window.addEventListener('load',()=>{brand();densityTopControl();workspaceFixes();syncHeaderText();},{once:true});
+    window.addEventListener('load',()=>{
+      brand();densityTopControl();workspaceFixes();syncHeaderText();
+      const main=$('#demo,.storekeeper-main');
+      if(main&&!main.dataset.bushoHeaderObserver){
+        main.dataset.bushoHeaderObserver='attached';
+        new MutationObserver(()=>syncHeaderText()).observe(main,{subtree:true,attributes:true,attributeFilter:['class','hidden','aria-hidden']});
+      }
+    },{once:true});
     const auth=body.dataset.authState==='authenticated';
     if(auth){profile=window.BUSHO_AUTH_PROFILE||profile;accountPanel();syncAccount();}
   }
