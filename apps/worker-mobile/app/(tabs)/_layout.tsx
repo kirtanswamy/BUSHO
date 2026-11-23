@@ -5,21 +5,23 @@ import { Building2, ClipboardList, Home, RefreshCw } from 'lucide-react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 
 const items = [
-  { route: '/(tabs)', label: 'Home', Icon: Home },
-  { route: '/(tabs)/stockouts', label: 'Stockouts', Icon: ClipboardList },
-  { route: '/(tabs)/updates', label: 'Field updates', Icon: RefreshCw },
-  { route: '/(tabs)/facility', label: 'Facility', Icon: Building2 },
+  { route: '/(tabs)', path: '/', label: 'Home', Icon: Home },
+  { route: '/(tabs)/stockouts', path: '/stockouts', label: 'Stockouts', Icon: ClipboardList },
+  { route: '/(tabs)/updates', path: '/updates', label: 'Field updates', Icon: RefreshCw },
+  { route: '/(tabs)/facility', path: '/facility', label: 'Facility', Icon: Building2 },
 ] as const;
 
 function WorkerTabBar() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, typeScale } = useTheme();
+  // Expo Router omits route groups such as "(tabs)" from the public pathname.
+  const currentPath = pathname.replace('/(tabs)', '') || '/';
 
   return (
     <View style={[styles.bar, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border }]}>
-      {items.map(({ route, label, Icon }) => {
-        const active = route === '/(tabs)' ? pathname === '/(tabs)' || pathname === '/' : pathname === route;
+      {items.map(({ route, path: itemPath, label, Icon }) => {
+        const active = currentPath === itemPath || (itemPath !== '/' && currentPath.startsWith(itemPath + '/'));
         return (
           <Pressable
             key={route}
