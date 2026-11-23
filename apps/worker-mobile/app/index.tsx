@@ -1,3 +1,4 @@
+import { Redirect } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -20,6 +21,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 export default function WorkerEntryScreen() {
   const { theme, typeScale } = useTheme();
   const { status, identity, message, configured, hasSession, signIn, signOut, retryVerification } = useAuth();
+  if (status === 'ready' && identity) return <Redirect href="/(tabs)" />;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
