@@ -78,3 +78,15 @@ M1.3 does not yet connect operational stockout or receipt-evidence queries. Thos
 - Pull-to-refresh and explicit retry are available. No local case counts or fabricated events are generated.
 - Case creation and updates are intentionally not enabled: the demo database currently grants `SELECT` but not `INSERT` or `UPDATE` on `stockout_cases` to the authenticated role. Existing RLS policies alone do not grant table privileges. A reviewed database permission change or narrowly scoped server-side operation is required before enabling writes.
 - No database schema, grants, RLS policies, seed data, or production settings were changed by M1.4.
+
+
+## M1.5 status — worker stockout submission
+
+- Stockouts includes a guarded submission form for medicine name, strength/form, observed/requested quantities, fixed unit chips, observation source, local observation date, and a short non-patient note.
+- Submissions are sent directly to the existing `stockout_cases` table with the verified SHC, PHC, worker, and matching operational/synthetic data mode. The database transition guard and RLS policies remain authoritative.
+- The app does not use a medicine catalogue, infer medicine standards, collect patient information, or claim official procurement.
+- Only explicit submission to PHC is offered. Draft editing is not represented as complete in this milestone.
+- A worker-scoped local attempt marker is written before the network request. If the request is interrupted, the app queries the server using that exact case UUID and does not automatically retry or generate a second case.
+- The demo project's authenticated role has table-level `INSERT` and `UPDATE` on `stockout_cases`; RLS remains enabled and existing role/ownership policies and database transition/field-ownership triggers remain in force. No DELETE grant was added. This permission change was applied directly to BUSHO-Demo only; it was not applied to BUSHO production and is not yet represented by a checked-in migration.
+- No schema, columns, workflow triggers, RLS policies, or production settings were changed.
+- Before enabling writes in any other environment, review and promote the exact grants through a version-controlled migration.
