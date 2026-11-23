@@ -38,6 +38,7 @@ type StockoutCase = {
 type PendingAttempt = { id: string; createdAt: string };
 type ObservationSource = 'physical_count' | 'dispensing_box_check' | 'paper_register' | 'worker_report' | 'other';
 const PENDING_KEY = '@busho/worker-mobile/pending-stockout-create/v1';
+const pendingKeyFor = (workerId: string) => `${PENDING_KEY}/${workerId}`;
 const SOURCES: { value: ObservationSource; label: string }[] = [
   { value: 'physical_count', label: 'Physical count' },
   { value: 'dispensing_box_check', label: 'Dispensing box' },
@@ -166,7 +167,7 @@ export default function StockoutsScreen() {
         .eq('submitted_by_worker_id', identity.worker.id).maybeSingle();
       if (queryError) throw queryError;
       if (data) {
-        await AsyncStorage.removeItem(PENDING_KEY);
+        await AsyncStorage.removeItem(pendingKeyFor(identity.worker.id));
         setPending(null);
         setPendingMessage('Your submission was received. The case list has been refreshed.');
         await load(true);
@@ -219,7 +220,13 @@ export default function StockoutsScreen() {
     const attempt = { id, createdAt: new Date().toISOString() };
     setSaving(true); setFormError(null); setPendingMessage(null);
     try {
-      await AsyncStorage.setItem(PENDING_KEY, JSON.stringify(attempt));
+      try {
+        await AsyncStorage.setItem(pendingKeyFor(identity.worker.id), JSON.stringify(attempt));
+      } catch {
+        setFormError('This device could not securely prepare the submission check. Check device storage and try again. No case was sent.');
+        setSaving(false);
+        return;
+      }
       setPending(attempt);
       const { error: insertError } = await getSupabaseClient().from('stockout_cases').insert({
         id,
@@ -238,7 +245,7 @@ export default function StockoutsScreen() {
         data_mode: identity.facility.isSynthetic ? 'synthetic_demo' : 'operational',
       });
       if (insertError) {
-        await AsyncStorage.removeItem(PENDING_KEY);
+        await AsyncStorage.removeItem(pendingKeyFor(identity.worker.id));
         setPending(null);
         setFormError(insertError.message.includes('row-level security') || insertError.code === '42501'
           ? 'BUSHO did not authorise this submission. Your account or facility assignment may need administrator review.'
