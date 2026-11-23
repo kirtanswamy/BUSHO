@@ -65,13 +65,14 @@ export default function WorkerHomeScreen() {
           </View>
           <Text style={[styles.actionTitle, text(17)]}>Medicine stockouts</Text>
           <Text style={[styles.body, muted(13)]}>Review dated physical observations and follow cases through the verified SHC–PHC workflow.</Text>
-          <Text style={[styles.helper, muted(12)]}>View your recorded cases, observed quantities and current PHC coordination status.</Text>
+          <Text style={[styles.helper, muted(12)]}>Record a dated physical observation and follow its progress through the verified SHC–PHC workflow.</Text>
+          <Button label="Open stockouts" onPress={() => router.push('/(tabs)/stockouts' as never)} />
         </Card>
 
         <Card style={styles.actionCard}>
           <View style={styles.actionTop}>
             <View style={[styles.iconTile, { backgroundColor: theme.colors.surfaceSubtle }]}><ArrowRight size={20} color={theme.colors.textMuted} /></View>
-            <StatusPill label="Coming next" tone="neutral" />
+            <StatusPill label="Available" tone="success" />
           </View>
           <Text style={[styles.actionTitle, text(17)]}>Field updates</Text>
           <Text style={[styles.body, muted(13)]}>Follow case progress and submit supported receipt or handover evidence when requested.</Text>
