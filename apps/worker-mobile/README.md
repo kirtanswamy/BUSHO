@@ -67,3 +67,14 @@ Worker application shell added:
 - Synthetic Pilot remains visible for synthetic facility records.
 
 M1.3 does not yet connect operational stockout or receipt-evidence queries. Those require schema/workflow verification before implementation.
+
+
+## M1.4 read-only stockout integration
+
+- Stockouts tab reads cases from `stockout_cases` scoped to the signed-in worker and assigned SHC; database RLS remains authoritative.
+- The screen checks the current verified SHC-to-PHC service link and verifies the linked PHC record before displaying readiness.
+- Case cards show the recorded medicine, strength/form, observed/requested quantities, observation date, status, and synthetic-data marker.
+- Field Updates reads the immutable `stockout_case_events` timeline for the signed-in worker's cases.
+- Pull-to-refresh and explicit retry are available. No local case counts or fabricated events are generated.
+- Case creation and updates are intentionally not enabled: the demo database currently grants `SELECT` but not `INSERT` or `UPDATE` on `stockout_cases` to the authenticated role. Existing RLS policies alone do not grant table privileges. A reviewed database permission change or narrowly scoped server-side operation is required before enabling writes.
+- No database schema, grants, RLS policies, seed data, or production settings were changed by M1.4.
