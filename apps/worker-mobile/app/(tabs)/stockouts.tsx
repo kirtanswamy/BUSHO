@@ -103,7 +103,7 @@ function todayLocal() {
   return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
 }
 function dateAtLocalNoon(value: string) {
-  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
   const [year, month, day] = value.split('-').map(Number);
   const d = new Date(year, month - 1, day, 12, 0, 0);
   if (Number.isNaN(d.getTime())) return null;
