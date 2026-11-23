@@ -76,8 +76,7 @@ M1.3 does not yet connect operational stockout or receipt-evidence queries. Thos
 - Case cards show the recorded medicine, strength/form, observed/requested quantities, observation date, status, and synthetic-data marker.
 - Field Updates reads the immutable `stockout_case_events` timeline for the signed-in worker's cases.
 - Pull-to-refresh and explicit retry are available. No local case counts or fabricated events are generated.
-- Case creation and updates are intentionally not enabled: the demo database currently grants `SELECT` but not `INSERT` or `UPDATE` on `stockout_cases` to the authenticated role. Existing RLS policies alone do not grant table privileges. A reviewed database permission change or narrowly scoped server-side operation is required before enabling writes.
-- No database schema, grants, RLS policies, seed data, or production settings were changed by M1.4.
+- M1.4 was read-only. M1.5 adds the separately reviewed demo-only write permission and guarded worker submission described below.
 
 
 ## M1.5 status — worker stockout submission
