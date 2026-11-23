@@ -320,19 +320,38 @@
       const activity=$('[data-module="activity"]',main);
       if(activity){
         const normalize=()=>{
-          $$('.activity-status,.status-pill,.status-chip',activity).forEach(n=>{
-            const raw=(n.dataset.status||n.textContent).toLowerCase();
-            let state='neutral',text=n.textContent.trim();
+          $('.activity-status,.status-pill,.status-chip',activity).forEach(n=>{
+            const current=n.textContent.trim().replace(/^[✓◷○]\\s*/,'');
+            const raw=(n.dataset.status||current).toLowerCase();
+            let state='neutral',text=current;
             if(/closed/.test(raw)){state='success';text='Closed';}
             else if(/verified/.test(raw)){state='success';text='Verified';}
             else if(/awaiting/.test(raw)){state='warning';text='Awaiting review';}
             else if(/draft/.test(raw)){state='neutral';text='Draft';}
-            n.dataset.state=state;n.classList.add('busho-semantic-pill');n.textContent=(state==='success'?'✓ ':state==='warning'?'◷ ':'○ ')+text;
+            const prefix=state==='success'?'✓ ':state==='warning'?'◷ ':'○ ';
+            const display=prefix+text;
+            if(n.dataset.state!==state)n.dataset.state=state;
+            if(!n.classList.contains('busho-semantic-pill'))n.classList.add('busho-semantic-pill');
+            if(n.textContent!==display)n.textContent=display;
           });
-          $$('*',activity).forEach(n=>{if(n.children.length)return;const t=n.textContent.trim();if(/^report created$/i.test(t))n.textContent='Report created';else if(/^supervisor$/i.test(t))n.textContent='PHC Reviewer';else if(/^worker$/i.test(t))n.textContent='SHC Health Worker';});
-          $$('button,a',activity).filter(n=>/^refresh$/i.test(n.textContent.trim())).forEach(n=>n.classList.add('btn','btn-secondary','busho-refresh'));
-        };normalize();
-        new MutationObserver(()=>normalize()).observe(activity,{childList:true,subtree:true});
+          $('*',activity).forEach(n=>{
+            if(n.children.length)return;
+            const current=n.textContent.trim();
+            const normalized=/^report created$/i.test(current)?'Report created':
+              /^supervisor$/i.test(current)?'PHC Reviewer':
+              /^worker$/i.test(current)?'SHC Health Worker':current;
+            if(current!==normalized)n.textContent=normalized;
+          });
+          $('button,a',activity).filter(n=>/^refresh$/i.test(n.textContent.trim())).forEach(n=>{
+            n.classList.add('btn','btn-secondary','busho-refresh');
+          });
+        };
+        normalize();
+        // clean() can run after every view switch; attach only one observer per Activity Log.
+        if(activity.dataset.bushoActivityObserver!=='attached'){
+          activity.dataset.bushoActivityObserver='attached';
+          new MutationObserver(()=>normalize()).observe(activity,{childList:true,subtree:true});
+        }
       }
     }
     if(role==='worker'){
