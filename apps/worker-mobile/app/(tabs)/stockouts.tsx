@@ -35,8 +35,24 @@ type StockoutCase = {
   created_at: string;
   updated_at: string;
 };
-type PendingAttempt = { id: string; createdAt: string };
 type ObservationSource = 'physical_count' | 'dispensing_box_check' | 'paper_register' | 'worker_report' | 'other';
+type StockoutInsert = {
+  id: string;
+  shc_facility_id: string;
+  phc_facility_id: string;
+  submitted_by_worker_id: string;
+  medicine_name: string;
+  medicine_strength_form: string;
+  reported_quantity: number;
+  requested_quantity: number;
+  quantity_unit: string;
+  observation_source: ObservationSource;
+  observed_at: string;
+  worker_note: string | null;
+  status: 'submitted_to_phc';
+  data_mode: 'operational' | 'synthetic_demo';
+};
+type PendingAttempt = { id: string; createdAt: string; payload?: StockoutInsert };
 const PENDING_KEY = '@busho/worker-mobile/pending-stockout-create/v1';
 const pendingKeyFor = (workerId: string) => `${PENDING_KEY}/${workerId}`;
 const SOURCES: { value: ObservationSource; label: string }[] = [
@@ -87,9 +103,12 @@ function todayLocal() {
   return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
 }
 function dateAtLocalNoon(value: string) {
+  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return null;
   const [year, month, day] = value.split('-').map(Number);
   const d = new Date(year, month - 1, day, 12, 0, 0);
-  return Number.isNaN(d.getTime()) ? null : d;
+  if (Number.isNaN(d.getTime())) return null;
+  if (d.getFullYear() !== year || d.getMonth() !== month - 1 || d.getDate() !== day) return null;
+  return d;
 }
 
 export default function StockoutsScreen() {
@@ -171,13 +190,47 @@ export default function StockoutsScreen() {
         setPending(null);
         setPendingMessage('Your submission was received. The case list has been refreshed.');
         await load(true);
+      } else if (attempt.payload) {
+        setPendingMessage('No case is visible yet. You can safely retry the exact saved submission using the same case ID.');
       } else {
-        setPendingMessage('The case is not visible yet. Do not submit it again. Refresh the case list and verify before starting another submission.');
+        setPendingMessage('This is an older attempt without a saved submission payload. Do not create another case until an administrator confirms whether it was received.');
       }
     } catch {
       setPendingMessage('We could not verify the previous submission. Do not resend it yet; reconnect and check the case list again.');
     }
   }, [identity, load]);
+
+  const retryPending = useCallback(async (attempt: PendingAttempt) => {
+    if (!identity || !attempt.payload || saving) return;
+    setSaving(true);
+    setPendingMessage('Retrying the saved submission with its original case ID…');
+    try {
+      const { error: insertError } = await getSupabaseClient().from('stockout_cases').insert(attempt.payload);
+      if (insertError) {
+        if (insertError.code === '23505' || [408, 409, 500, 502, 503, 504].includes(insertError.status ?? 0)) {
+          await reconcilePending(attempt);
+          return;
+        }
+        await AsyncStorage.removeItem(pendingKeyFor(identity.worker.id));
+        setPending(null);
+        const message = insertError.code === '42501'
+          ? 'BUSHO did not authorise this submission. Your account or facility assignment may need administrator review.'
+          : 'BUSHO rejected the saved submission. Review your facility assignment and case details before creating a new case.';
+        setPendingMessage(null);
+        Alert.alert('Submission not accepted', message);
+        return;
+      }
+      await AsyncStorage.removeItem(pendingKeyFor(identity.worker.id));
+      setPending(null);
+      setPendingMessage('Your saved submission was accepted. The case list has been refreshed.');
+      await load(true);
+    } catch {
+      setPending(attempt);
+      setPendingMessage('The connection is still uncertain. Your original submission is saved on this device; verify it before trying again.');
+    } finally {
+      setSaving(false);
+    }
+  }, [identity, load, reconcilePending, saving]);
 
   useEffect(() => {
     void load();
@@ -217,7 +270,23 @@ export default function StockoutsScreen() {
     if (note.trim().length > 500) { setFormError('Keep the note within 500 characters.'); return; }
 
     const id = uuid();
-    const attempt = { id, createdAt: new Date().toISOString() };
+    const payload: StockoutInsert = {
+      id,
+      shc_facility_id: identity.facility.id,
+      phc_facility_id: serviceLink.phc_facility_id,
+      submitted_by_worker_id: identity.worker.id,
+      medicine_name: cleanMedicine,
+      medicine_strength_form: cleanStrength,
+      reported_quantity: observed,
+      requested_quantity: requested,
+      quantity_unit: unit.toLowerCase(),
+      observation_source: source,
+      observed_at: date.toISOString(),
+      worker_note: note.trim() || null,
+      status: 'submitted_to_phc',
+      data_mode: identity.facility.isSynthetic ? 'synthetic_demo' : 'operational',
+    };
+    const attempt: PendingAttempt = { id, createdAt: new Date().toISOString(), payload };
     setSaving(true); setFormError(null); setPendingMessage(null);
     try {
       try {
@@ -228,26 +297,18 @@ export default function StockoutsScreen() {
         return;
       }
       setPending(attempt);
-      const { error: insertError } = await getSupabaseClient().from('stockout_cases').insert({
-        id,
-        shc_facility_id: identity.facility.id,
-        phc_facility_id: serviceLink.phc_facility_id,
-        submitted_by_worker_id: identity.worker.id,
-        medicine_name: cleanMedicine,
-        medicine_strength_form: cleanStrength,
-        reported_quantity: observed,
-        requested_quantity: requested,
-        quantity_unit: unit.toLowerCase(),
-        observation_source: source,
-        observed_at: date.toISOString(),
-        worker_note: note.trim() || null,
-        status: 'submitted_to_phc',
-        data_mode: identity.facility.isSynthetic ? 'synthetic_demo' : 'operational',
-      });
+      const { error: insertError } = await getSupabaseClient().from('stockout_cases').insert(payload);
       if (insertError) {
+        const uncertain = insertError.code === '23505' || [408, 409, 500, 502, 503, 504].includes(insertError.status ?? 0);
+        if (uncertain) {
+          setPending(attempt);
+          setPendingMessage('BUSHO returned an uncertain response. Checking whether the case was saved…');
+          await reconcilePending(attempt);
+          return;
+        }
         await AsyncStorage.removeItem(pendingKeyFor(identity.worker.id));
         setPending(null);
-        setFormError(insertError.message.includes('row-level security') || insertError.code === '42501'
+        setFormError(insertError.code === '42501'
           ? 'BUSHO did not authorise this submission. Your account or facility assignment may need administrator review.'
           : 'BUSHO could not accept this case. Review the details and try again.');
         return;
@@ -306,8 +367,9 @@ export default function StockoutsScreen() {
         {pending ? <Card style={styles.pendingCard}>
           <View style={styles.pendingHeader}><AlertCircle size={20} color={theme.colors.warning} /><Text style={[styles.pendingTitle, text(14)]}>Submission needs verification</Text></View>
           <Text style={[styles.stateBody, muted(12)]}>{pendingMessage ?? 'A previous submission may have been interrupted.'}</Text>
-          <Button label="Verify previous submission" variant="secondary" onPress={() => void reconcilePending(pending)} />
-          <Text style={muted(11)}>Do not create another case until this attempt is reconciled.</Text>
+          <Button label="Verify previous submission" variant="secondary" onPress={() => void reconcilePending(pending)} disabled={saving} />
+          {pending.payload ? <Button label="Retry same submission" onPress={() => void retryPending(pending)} loading={saving} disabled={saving} /> : null}
+          <Text style={muted(11)}>The retry uses the original case ID and saved details. Do not create a separate case.</Text>
         </Card> : null}
 
         {coordinationReady && !pending ? <Button label="Record a stockout observation" onPress={() => { resetForm(); setFormOpen(true); }} style={styles.createButton} /> : null}
