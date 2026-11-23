@@ -75,7 +75,7 @@ export default function WorkerHomeScreen() {
           </View>
           <Text style={[styles.actionTitle, text(17)]}>Field updates</Text>
           <Text style={[styles.body, muted(13)]}>Follow case progress and submit supported receipt or handover evidence when requested.</Text>
-          <Button label="View field updates" variant="secondary" onPress={() => router.push('/(tabs)/updates')} />
+          <Button label="View field updates" variant="secondary" onPress={() => router.push('/(tabs)/updates' as never)} />
         </Card>
 
         <Text style={[styles.disclaimer, muted(11)]}>BUSHO supports coordination. It does not replace official registers, inventory systems or procurement authority.</Text>
