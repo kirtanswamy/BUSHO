@@ -235,3 +235,38 @@ test('sign-in page renders exactly one canonical BUSHO brand mark', async ({ pag
   await expect(page.locator('.signin-page .topbar .brand-lockup .brand-name')).toHaveText('BUSHO');
   await expect(page.locator('.signin-page .portal-login-card .busho-login-brand')).toHaveCount(0);
 });
+
+test('Supervisor Activity Log normalizer is idempotent for report_created events', async ({ page }) => {
+  await page.goto('/supervisor', { waitUntil: 'domcontentloaded' });
+  await page.locator('#portal-app').evaluate(el => el.classList.remove('hidden'));
+  await page.locator('[data-portal-view="activity"]').click();
+  const activity = page.locator('[data-module="activity"]');
+  await expect(activity).toBeVisible();
+
+  await activity.evaluate(root => {
+    const event = document.createElement('article');
+    event.dataset.eventType = 'report_created';
+    event.className = 'activity-event';
+    const status = document.createElement('span');
+    status.className = 'status-pill';
+    status.dataset.status = 'closed';
+    status.textContent = 'Closed';
+    const action = document.createElement('span');
+    action.textContent = 'report created';
+    event.append(status, action);
+    root.append(event);
+  });
+
+  const status = activity.locator('[data-event-type="report_created"] .status-pill');
+  await expect(status).toHaveText('✓ Closed');
+  await expect(activity.locator('[data-event-type="report_created"]')).toContainText('Report created');
+  await expect(activity).toHaveAttribute('data-busho-activity-observer', 'attached');
+
+  const followUpMutations = await activity.evaluate(root => new Promise(resolve => {
+    let count = 0;
+    const observer = new MutationObserver(records => { count += records.length; });
+    observer.observe(root, { childList: true, subtree: true, characterData: true });
+    window.setTimeout(() => { observer.disconnect(); resolve(count); }, 150);
+  }));
+  expect(followUpMutations, 'normalization must not continuously mutate the Activity Log').toBe(0);
+});
