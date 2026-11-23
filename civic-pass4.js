@@ -321,7 +321,7 @@
       if(activity){
         const normalize=()=>{
           $('.activity-status,.status-pill,.status-chip',activity).forEach(n=>{
-            const current=n.textContent.trim().replace(/^[✓◷○]\\s*/,'');
+            const current=n.textContent.trim().replace(/^[✓◷○]\s*/,'');
             const raw=(n.dataset.status||current).toLowerCase();
             let state='neutral',text=current;
             if(/closed/.test(raw)){state='success';text='Closed';}
