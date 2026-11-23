@@ -2,14 +2,13 @@
 
 <div align="center">
 
-<img src="assets/busho-github-banner.jpg" alt="BUSHO — Bottom-Up Smart Health Orchestrator: a human-reviewed workflow from frontline reports to supervisor review" width="100%" />
+<img src="assets/busho-github-banner.jpg" alt="BUSHO — assistive SHC-to-PHC medicine stockout coordination, exception tracking and evidence" width="100%" />
 
 <br />
 
 [![Live Demo](https://img.shields.io/badge/LIVE-busho.de5.net-00B981?style=for-the-badge&logo=vercel&logoColor=white)](https://busho.de5.net)
 [![Prototype](https://img.shields.io/badge/STATUS-prototype-7657D5?style=for-the-badge)](#what-exists-today)
-[![Tests](https://img.shields.io/badge/Tests-Passing-20A779?style=for-the-badge)](#run-locally)
-[![CI](https://img.shields.io/badge/CI-Passing-20A779?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/kirtanswamy/BUSHO/ci.yml?branch=feature/chhattisgarh-operational-workflow&style=for-the-badge&logo=githubactions&logoColor=white&label=Feature%20branch%20CI)](https://github.com/kirtanswamy/BUSHO/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-4C9A82.svg)](LICENSE)
 
 </div>
@@ -18,44 +17,44 @@
 
 ## About BUSHO
 
-**BUSHO (Bottom-Up Smart Health Orchestrator)** is a browser-based public-health workflow prototype that explores how frontline health-worker reports can be structured, verified, and surfaced to supervisors—without automating clinical decisions or procurement.
+**BUSHO (Bottom-Up Smart Health Orchestrator)** is an assistive **SHC-to-PHC medicine stockout coordination, exception-tracking and evidence layer**. This Chhattisgarh reference implementation uses hypertension/NCD essential medicines as its reference use case.
 
-It focuses on one hand-off: **community → frontline worker → facility / supervisor**.
+BUSHO coexists with official paper registers, DPDMIS/DVDMS, CGMSC and clinical systems. It does not replace them, create an authoritative stock balance, make clinical decisions, submit official indents or exercise procurement authority. See the [Civic Design System and Workflow Freeze v1.0](docs/civic-design-system.md).
 
 <table>
   <tr>
     <td width="25%" valign="top">
 
-### ◉ Capture
+### ◉ Observe
 
-Report needs via text or voice in local languages.
-
-</td>
-    <td width="25%" valign="top">
-
-### ◈ Extract
-
-Convert unstructured reports into structured, editable draft fields.
+An SHC CHO/ANM records a dated physical low-stock or stockout observation.
 
 </td>
     <td width="25%" valign="top">
 
-### ◎ Organize
+### ◈ Review
 
-Keep the original report visible and put human verification first.
+The verified parent PHC reviewer accepts for PHC action, requests clarification or marks unable to fulfil.
 
 </td>
     <td width="25%" valign="top">
 
-### ↗ Act
+### ◎ Fulfil
 
-Highlight sample stock risks and prepare supervisor-reviewed drafts.
+PHC stock available: record PHC-to-SHC handover. PHC stock unavailable: an authorised PHC user submits the consolidated indent in the official portal and manually records its reference; upstream receipt is recorded at PHC.
+
+</td>
+    <td width="25%" valign="top">
+
+### ↗ Confirm
+
+The SHC worker confirms physical receipt or discrepancy. Closure follows the required receipt evidence.
 
 </td>
   </tr>
 </table>
 
-> **Prototype boundary:** BUSHO uses synthetic sample data, mock rule-based extraction, and browser-local storage. It is not a live health system, does not diagnose, does not place medicine orders, and does not connect to government inventory systems.
+ > **Prototype boundary:** The connected BUSHO-Demo project contains synthetic test profiles, facilities and workflow records only. This does not establish a live government deployment or an operational health-service pilot. Do not enter real patient-identifiable or sensitive health information. Quantities are dated physical observations and receipt evidence, not an official stock balance. BUSHO does not diagnose, place medicine orders, automatically submit DPDMIS indents or connect to government inventory APIs.
 
 ## The gap
 
@@ -88,7 +87,7 @@ This is not a claim that India has no digital health or supply-chain systems. Pu
 - Human confirmation is required before a record is treated as verified.
 - Stock signals are operational prompts, not clinical recommendations.
 - Replenishment is a draft for review—not an automatic order.
-- The demo uses synthetic sample data and browser-local storage. Never enter real patient-identifiable or sensitive health information.
+- Synthetic content is for demonstration only. Authenticated worker drafts and reports use the development Supabase project; local storage is a per-user recovery checkpoint, not a shared operational source of truth. Never enter real patient-identifiable or sensitive health information.
 
 ## Why this workflow matters
 
@@ -136,68 +135,51 @@ India and Chhattisgarh have existing health-information and medicine-supply init
 
 </details>
 
-## What exists today
+## What exists in the development branch
 
-| In this prototype | Not implemented / not validated |
+| Implemented in code / database | Still pending or not validated |
 |---|---|
-| Worker and supervisor demo views | Production authentication or role-based access |
-| Mock, rule-based extraction | Production AI inference |
-| Editable records and human confirmation | Clinical diagnosis or triage |
-| Browser-native voice input (English, Hindi, Bengali, Tamil, Telugu and Marathi locale selection; Chrome verified) | BUSHO-operated transcription service |
-| Synthetic inventory attention logic | Live government / facility inventory feeds |
-| Replenishment draft workflow | Real orders or procurement |
-| English, Hindi, Tamil, Telugu, Bengali and Marathi interface | Field validation with health workers |
-| Browser-local persistence | Shared backend, database, or cross-device sync |
-| Automated prototype checks | Measured health outcomes or proven impact |
+| Chhattisgarh LGD directory snapshot (33 districts, 146 unique block codes) | Verified facility registry and real workforce assignments |
+| Supabase schema, role-scoped RLS policies, column grants and workflow transition guards | Live Auth users and operational records |
+| Worker report submission adapter, server-backed history and correction resumption | Real two-worker / two-supervisor, two-facility end-to-end validation |
+| Supervisor inbox, report detail, review decisions and append-only event timeline | Live supervisor workflow demonstration with provisioned accounts |
+| Administrator provisioning policy, invitation service code and gated admin workspace | Deployment and live verification of the `provision-user` Edge Function |
+| Facility registry staging, batch review, scoped verification and audit RPCs in the development migration | Live schema migration, deployed `facility-registry` Edge Function and a current official Chhattisgarh facility export |
+| Dated PMBJK reference snapshots kept separate from AAM / CGMSC | Live Kendra locations and external government API integrations |
+| Mock, rule-based extraction with human correction | Production AI inference or clinical validation |
+| Browser-native voice input and six interface languages | Native-speaker validation and a BUSHO-operated transcription service |
+| Automated Node and PostgreSQL 17 database-contract tests | Field validation, measured outcomes and security sign-off |
 
-**Voice privacy:** Voice input uses the browser's speech-recognition service, which may send audio to the browser vendor. BUSHO does not store audio recordings. Manual text entry remains available. Do not speak names, phone numbers, diagnoses, government IDs, or other identifying patient details.
+**Live project boundary (reviewed 17 November 2026):** The application configuration points to the Supabase project `BUSHO-Demo` (`qalfoqhtyrtenkuitvvt`, ap-south-1), not the separate Supabase project named `BUSHO`. The demo project currently has four active role profiles (worker, supervisor, platform administrator and storekeeper), two facility records flagged as synthetic, one worker record, one closed report and four audit records. These are development/demo records, not evidence of a live government workflow. The separate `BUSHO` project has a different and much smaller schema history and is not the project's configured backend. Do not enter patient-identifiable information or real clinical records.
+
+**Privacy and third-party services:** The web client uses direct HTTPS requests to Supabase Auth/REST/Edge Functions; it does not bundle the Supabase JavaScript SDK. Google Fonts is loaded remotely for typography. Optional browser-native speech recognition may send microphone audio to the browser's speech provider; BUSHO does not operate a transcription service or intentionally store raw audio. Manual text entry remains available. No analytics, advertising, session-replay or marketing SDK was identified in the audited source tree. This is a source-code audit, not proof about platform-level logs or future deployment changes. Do not speak or enter names, phone numbers, diagnoses, government IDs or other identifying patient details.
 
 ## Website portals
 
-BUSHO has one shared public landing page and two separate web portals:
+The development branch contains one public landing page and three separate role-gated workspaces:
 
-- `/` — common public landing page and role selection.
-- `/worker.html` — Health Worker Portal for field reporting, draft review, and confirmation.
-- `/supervisor.html` — Supervisor Portal for operational monitoring, inventory signals, and administrative review.
+- `/` — public product landing page.
+- `/worker.html` — authenticated health-worker reporting, server-backed history and correction workflow.
+- `/supervisor.html` — authenticated facility-scoped report inbox, human review and audit timeline.
+- `/admin.html` — administrator-only account invitations and facility / geographic assignment.
 
-The planned mobile app is initially for Health Workers only. The portal sign-ins currently use synthetic, client-side demo credentials and are **not production authentication**. Do not enter real patient or sensitive health data.
+Account roles and assignments are derived from the database, not browser-supplied metadata. New accounts are invited by an authorised administrator; users set their own password through the invitation link. The browser never receives the Supabase service-role / secret key.
 
-Demo credentials:
+**Release status:** The Storekeeper workflow and privacy/accessibility foundation are being reviewed in [PR #9](https://github.com/kirtanswamy/BUSHO/pull/9) and [PR #10](https://github.com/kirtanswamy/BUSHO/pull/10). These changes are not yet the production release. Do not treat a preview deployment as the production website.
 
-- Health Worker: `worker@busho.demo` / `worker123`
-- Supervisor: `supervisor@busho.demo` / `supervisor123`
+## Medicine catalogue validation
 
-## Run locally
+The development branch includes a source-transcription validator. It checks provenance, annexure/facility-level consistency, source-row uniqueness and page bounds while refusing unreviewed normalized units or formulation fields. It outputs a staging-only validation report; it does not import to live Supabase.
 
-**Requirements:** Node.js 18+ and a modern browser.
+Run: `node scripts/validate-medicine-catalogue.mjs data/medicine-catalogue/chhattisgarh-edl-2025-sample.json /tmp/edl-validation.json`.
 
-```bash
-git clone https://github.com/kirtanswamy/BUSHO.git
-cd BUSHO
-npm install
-npm start
-```
+## Medicine reference catalogue
 
-Open **http://127.0.0.1:4173**.
+The development branch adds a versioned, source-attributed medicine catalogue foundation. The first source is the Government of Chhattisgarh **Essential Drug List 2025**. The branch now contains verbatim source transcriptions of all **278 numbered EDL rows**: 172 PHC/PHC-AAM/UPHC entries and 106 SHC-AAM entries. All 10 annexure pages have been visually inspected and page-scoped text checks completed; one OCR spelling discrepancy was corrected to match the rendered PDF. This is source transcription reconciliation only—not pharmacist/CGMSC approval, normalized SKU mapping, a stock list, or permission to use the rows for prescribing or procurement. The original 24-row sample remains a clearly labelled starter sample. See the [medicine catalogue governance and audit status](docs/medicine-reference-catalogue.md), [278-row review queue](data/medicine-catalogue/chhattisgarh-edl-2025-review-queue.json), [source annotation register](data/medicine-catalogue/chhattisgarh-edl-2025-source-annotations.json), [authorised pharmacist review protocol](docs/edl-authorised-review-protocol.md), [278-row pharmacist review worksheet](data/medicine-catalogue/chhattisgarh-edl-2025-pharmacist-review-template.csv), the [172-row PHC-AAM/UPHC transcription](data/medicine-catalogue/chhattisgarh-edl-2025-phc-aam-source-transcription.json), the [106-row SHC-AAM transcription](data/medicine-catalogue/chhattisgarh-edl-2025-shc-aam-source-transcription.json), and the [source manifest](data/medicine-catalogue/chhattisgarh-edl-2025-source-manifest.json). The review decision validator must pass an authorised review batch before normalization is considered; live import remains separately disabled.
 
-Run automated checks:
+## Role and workflow blueprint
 
-```bash
-npm run check
-```
-
-## Project map
-
-| Path | Responsibility |
-|---|---|
-| `index.html` | Application shell and worker / supervisor views |
-| `styles-v2.css` | Responsive interface and design system |
-| `app-v2.js` | Demo workflow, mock extraction, validation, sample inventory and voice interaction |
-| `i18n.js` | Interface translations |
-| `server.mjs` | Lightweight local static server |
-| `tests/` and `scripts/` | Automated checks and smoke tests |
-| `ARCHITECTURE.md` | Data flow, boundaries and proposed evolution |
-| `IMPACT_AND_IMPLEMENTATION.md` | Risks, pilot logic and evaluation approach |
+The current application roles are deliberately separate from health-worker cadre/designation. Read the [role, responsibility and permission blueprint](docs/role-responsibility-permission-blueprint.md) before extending permissions or building additional operational workflows. It defines the evidence boundaries, role matrix, server-side permission rules, synthetic reference scenario and field-validation questions. It is a product/engineering baseline, not a government-approved SOP.
 
 ## Before a real pilot
 

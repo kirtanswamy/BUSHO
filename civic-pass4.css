@@ -1,0 +1,190 @@
+/* BUSHO Pass 4 — flagship civic portal layer */
+:root{--busho-navy:#0B3D6B;--busho-teal:#0F766E;--busho-teal-bright:#2DD4BF;--busho-saffron:#F59E0B;--busho-ink:#14283b;--busho-muted:#5c6f80;--busho-border:#d8e2e9;--busho-paper:#f6f9fb;--busho-danger:#B42318}
+.busho-brand-lockup{display:inline-flex!important;align-items:center;gap:11px;min-width:0;text-decoration:none}
+.busho-brand-mark{display:inline-flex;flex:0 0 38px;width:38px;height:38px}
+.busho-brand-mark svg{display:block;width:38px;height:38px}
+.busho-brand-lockup .brand-name,.busho-brand-lockup .lp-brand-copy strong{display:block;color:var(--busho-navy);font-weight:850;letter-spacing:.055em}
+.busho-brand-lockup .brand-subtitle,.busho-brand-lockup .lp-brand-copy small{display:block;max-width:520px;color:#52697c;font-size:10px;line-height:1.35;font-weight:600;letter-spacing:0}
+.busho-login-brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.busho-login-brand>span:first-child{display:flex}
+.busho-login-brand strong{display:block;color:var(--busho-navy);font-size:18px;letter-spacing:.06em}
+.busho-login-brand small{display:block;max-width:310px;color:var(--busho-muted);font-size:10px;line-height:1.4}
+.busho-account-wrap{position:relative}
+.busho-account-wrap .profile-trigger{min-height:48px;padding:5px 10px;border:1px solid var(--busho-border);border-radius:12px;background:#fff;display:flex;align-items:center;gap:10px;max-width:min(360px,42vw);text-align:left}
+.busho-account-wrap .profile-avatar,.busho-account-avatar{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:9px;background:var(--busho-navy);color:#fff;font-size:12px;font-weight:800;letter-spacing:.04em}
+.busho-account-wrap .profile-trigger-copy{display:grid;min-width:0;gap:2px}
+.busho-account-wrap .profile-trigger-copy strong{font-size:12px;color:var(--busho-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.busho-account-wrap .profile-trigger-copy small{font-size:10px;color:var(--busho-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.busho-account-wrap .profile-chevron{margin-left:auto;color:#52697c}
+.busho-account-panel[hidden]{display:none!important}
+.busho-account-panel{position:absolute;z-index:1200;right:0;top:calc(100% + 9px);width:min(410px,calc(100vw - 24px));max-height:min(78vh,720px);overflow:auto;background:#fff;border:1px solid #cbd8e2;border-radius:16px;box-shadow:0 18px 48px rgba(8,35,57,.2);padding:0;color:var(--busho-ink)}
+.busho-account-identity{padding:17px 18px 14px;background:#f2f7fa;border-bottom:1px solid var(--busho-border)}
+.busho-account-identity-top{display:flex;align-items:center;gap:12px}
+.busho-account-identity-top>div{display:grid;gap:5px;min-width:0}
+.busho-account-identity-top strong{font-size:14px;overflow-wrap:anywhere}
+.busho-role-pill{width:max-content;max-width:100%;padding:3px 8px;border-radius:999px;background:#dcebf4;color:#123f68;font-size:10px;font-weight:800}
+.busho-account-identity dl{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:16px 0 10px}
+.busho-account-identity dl div{min-width:0}
+.busho-account-identity dt{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#63778a;font-weight:800}
+.busho-account-identity dd{margin:3px 0 0;font-size:11px;font-weight:700;overflow-wrap:anywhere}
+.busho-sync-badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;background:#e4f4ee;color:#176548;font-size:10px;font-weight:800}
+.busho-account-actions{display:grid;gap:2px;padding:8px}
+.busho-account-actions>button,.busho-account-action-link{display:flex;align-items:center;gap:11px;width:100%;padding:10px;border:0;border-radius:9px;background:#fff;color:var(--busho-ink);text-align:left;text-decoration:none;cursor:pointer}
+.busho-account-actions>button:hover,.busho-account-action-link:hover{background:#f1f6f9}
+.busho-account-actions>button>span:first-child,.busho-account-action-link>span:first-child{display:grid;place-items:center;width:28px;height:28px;flex:0 0 28px;border-radius:8px;background:#eaf1f6;color:var(--busho-navy);font-weight:800}
+.busho-account-actions strong{display:block;font-size:11px}
+.busho-account-actions small{display:block;margin-top:2px;color:var(--busho-muted);font-size:9px}
+.busho-display-controls{padding:11px 10px;border-top:1px solid #e4ebf0;border-bottom:1px solid #e4ebf0}
+.busho-display-controls>strong{font-size:10px}
+.busho-display-controls>div{display:flex;gap:8px;margin-top:8px}
+.busho-display-controls button{padding:7px 9px;border:1px solid #aabac7;border-radius:8px;background:#fff;color:var(--busho-navy);font-size:10px;font-weight:700}
+.civic-utility-tools [data-density-toggle]{padding:5px 8px;border:1px solid #9fb3c1;border-radius:6px;background:#fff;color:#0b3d6b;font-size:10px;font-weight:800}
+.busho-display-controls button[aria-pressed=true]{background:#e4f3f0;border-color:#0f766e}
+.busho-account-footer{padding:10px;border-top:1px solid var(--busho-border)}
+.busho-signout-request{width:100%;padding:10px;border:1px solid #f1c8c5;border-radius:9px;background:#fff;color:#a12620;text-align:left;font-weight:800;cursor:pointer}
+.busho-signout-confirm{padding:14px;border:2px solid #b42318;border-radius:11px;background:#fff5f4;color:#641b16}
+.busho-signout-confirm[hidden]{display:none}
+.busho-warning-icon{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#b42318;color:white;font-weight:900}
+.busho-signout-confirm>strong{display:block;margin:9px 0 5px;font-size:13px}
+.busho-signout-confirm p{margin:0 0 12px;font-size:11px;line-height:1.5}
+.busho-signout-confirm>div{display:flex;gap:8px}
+.busho-signout-confirm button{flex:1;padding:9px 8px;border:1px solid #aebbc5;border-radius:8px;background:#fff;color:#243b4e;font-size:11px;font-weight:800}
+.busho-signout-confirm [data-busho-confirm-signout]{border-color:#b42318;background:#b42318;color:#fff}
+.busho-help-button{min-height:38px;padding:8px 11px;border:1px solid #b8c8d4;border-radius:9px;background:#fff;color:var(--busho-navy);font-size:11px;font-weight:800;white-space:nowrap}
+.busho-drawer-backdrop{position:fixed;inset:0;z-index:1600;display:none;justify-content:flex-end;background:rgba(8,28,45,.46)}
+.busho-drawer-backdrop.is-open{display:flex}
+.busho-sop-drawer{width:min(620px,100%);height:100%;overflow:auto;background:#fff;box-shadow:-20px 0 55px rgba(0,0,0,.2);padding:0 24px 28px;animation:busho-drawer-in .2s ease-out}
+.busho-sop-drawer>header{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:18px;padding:22px 0 16px;background:#fff;border-bottom:1px solid var(--busho-border)}
+.busho-sop-drawer>header span,.busho-dialog-head span{font-size:9px;font-weight:800;letter-spacing:.1em;color:var(--busho-teal)}
+.busho-sop-drawer h2{margin:5px 0 0;font-size:22px;color:var(--busho-navy)}
+.busho-sop-drawer>header button,.busho-dialog-head button{width:36px;height:36px;border:1px solid var(--busho-border);border-radius:9px;background:#fff;font-size:22px;color:var(--busho-ink)}
+.busho-sop-content>section{padding:18px 0;border-bottom:1px solid #e5edf2}
+.busho-sop-content h3{margin:0 0 12px;color:var(--busho-navy);font-size:15px}
+.busho-sop-content p,.busho-sop-content li{font-size:12px;line-height:1.65;color:#344e61}
+.busho-sop-content li{margin:5px 0}
+.busho-sop-branches{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.busho-sop-branches article{padding:13px;border:1px solid var(--busho-border);border-radius:11px;background:#f7fafc}
+.busho-sop-branches article:first-child{border-top:3px solid #0f766e}
+.busho-sop-branches article:last-child{border-top:3px solid #d18a13}
+.busho-sop-branches b{font-size:10px;color:var(--busho-navy)}
+.busho-sop-content dl{display:grid;gap:8px}
+.busho-sop-content dl div{display:flex;gap:16px}
+.busho-sop-content dt{width:75px;font-weight:800;color:var(--busho-navy);font-size:11px}
+.busho-sop-content dd{margin:0;font-size:11px}
+.busho-toast-region{position:fixed;right:18px;bottom:18px;z-index:2000;display:grid;gap:8px;width:min(380px,calc(100vw - 36px));pointer-events:none}
+.busho-toast{padding:12px 14px;border:1px solid #b8c9d5;border-left:4px solid var(--busho-navy);border-radius:10px;background:#fff;color:#17364e;box-shadow:0 10px 30px rgba(8,35,57,.16);font-size:12px;font-weight:650;line-height:1.45;animation:busho-toast-in .18s ease-out}
+.busho-toast-success{border-left-color:#16815d}.busho-toast-warning{border-left-color:#b7791f}.busho-toast-error{border-left-color:#b42318}
+.busho-toast.is-leaving{opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s}
+.busho-notice-bar{height:40px;display:flex;align-items:center;gap:12px;padding:0 clamp(16px,4vw,48px);background:#edf3f7;border-bottom:1px solid #d4e0e8;color:#17364e;overflow:hidden}
+.busho-notice-label{display:flex;align-items:center;gap:7px;flex:0 0 auto;padding:6px 10px;border-radius:999px;background:#0b3d6b;color:white;font-size:9px;letter-spacing:.07em}
+.busho-notice-label i{width:6px;height:6px;border-radius:50%;background:#f59e0b}
+.busho-ticker-viewport{flex:1;min-width:0;overflow:hidden}
+.busho-ticker-track{width:max-content;max-width:none;white-space:nowrap;animation:busho-marquee 28s linear infinite}
+.busho-ticker-track.is-paused,.busho-ticker-track.is-hover-paused,.busho-ticker-viewport:hover .busho-ticker-track,.busho-ticker-viewport:focus-within .busho-ticker-track{animation-play-state:paused}
+.busho-ticker-item{display:inline-block;padding-right:70px;font-size:11px}
+.busho-ticker-item b{color:#0b3d6b}
+.busho-ticker-controls{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+.busho-ticker-controls button{padding:5px 7px;border:1px solid #b6c6d2;border-radius:6px;background:#fff;color:#153c5a;font-size:9px;font-weight:800}
+.busho-ticker-controls button:hover{background:#e0ebf1}
+.busho-notice-dialog{width:min(720px,calc(100vw - 28px));max-height:85vh;overflow:auto;border:1px solid #cbd9e2;border-radius:16px;padding:0;box-shadow:0 24px 80px rgba(0,0,0,.28)}
+.busho-notice-dialog::backdrop{background:rgba(6,27,43,.55)}
+.busho-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 22px;background:#f2f7fa;border-bottom:1px solid var(--busho-border)}
+.busho-dialog-head h2{margin:5px 0 0;color:var(--busho-navy);font-size:20px}
+.busho-notice-list{padding:10px 22px}
+.busho-notice-list article{padding:12px 0;border-bottom:1px solid #e4ebf0}
+.busho-notice-list b{font-size:11px;color:var(--busho-navy)}
+.busho-notice-list p,.busho-dialog-note{margin:5px 0 0;font-size:12px;line-height:1.6;color:#40596c}
+.busho-dialog-note{padding:0 22px 20px}
+.busho-field-showcase{padding-top:46px;padding-bottom:52px}
+.busho-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.busho-field-card{overflow:hidden;border:1px solid #d6e1e8;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(17,48,70,.07)}
+.busho-field-art{position:relative;aspect-ratio:16/9;overflow:hidden;background:#edf4f7}
+.busho-field-art>svg{display:block;width:100%;height:100%}
+.busho-field-art>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .2s}
+.busho-field-art>img.is-loaded{opacity:1}
+.busho-field-card>div:last-child{padding:17px 19px 20px}
+.busho-field-card>div:last-child>span{font-size:9px;font-weight:850;letter-spacing:.1em;color:var(--busho-teal)}
+.busho-field-card h3{margin:8px 0;font-size:17px;line-height:1.35;color:var(--busho-navy)}
+.busho-field-card p{margin:0;color:#506779;font-size:12px;line-height:1.65}
+#busho-back-top{position:fixed;right:20px;bottom:20px;z-index:800;padding:10px 14px;border:1px solid #aebfcb;border-radius:999px;background:#0b3d6b;color:#fff;font-size:11px;font-weight:800;box-shadow:0 6px 18px rgba(5,35,58,.2);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s}
+#busho-back-top.is-visible{opacity:1;visibility:visible;transform:none}
+.busho-print-meta{display:none}
+.busho-print-brand{display:flex;align-items:center;gap:12px}
+.busho-print-brand strong{display:block;color:#0b3d6b;font-size:17px;letter-spacing:.06em}
+.busho-print-brand small{display:block;max-width:480px;font-size:9px;color:#52697c}
+.busho-print-details{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;margin-top:12px;padding:10px 0;border-top:1px solid #aab9c5;border-bottom:1px solid #aab9c5;font-size:9px}
+.busho-print-watermark{font-weight:900;letter-spacing:.08em;color:#7b4a12}
+.busho-secondary-heading-hidden{display:none!important}
+.busho-stockout-empty{text-align:center;padding:32px 18px!important;color:#6a7c8c}
+.busho-empty-icon{display:grid;place-items:center;width:52px;height:52px;margin:0 auto 12px;border-radius:14px;background:#eef3f6;color:#8193a2}
+.busho-empty-icon svg{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.busho-semantic-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:800}
+.busho-semantic-pill[data-state=success]{background:#e5f4ed;color:#146345}
+.busho-semantic-pill[data-state=warning]{background:#fff3d8;color:#80520d}
+.busho-semantic-pill[data-state=neutral]{background:#edf1f4;color:#405568}
+[data-kpi-accent=info]{border-left:3px solid #2873a8!important}[data-kpi-accent=warning]{border-left:3px solid #b7791f!important}[data-kpi-accent=success]{border-left:3px solid #16815d!important}
+.busho-refresh{display:inline-flex!important;align-items:center;gap:7px;border:1px solid #9eb2c0!important;background:#fff!important;color:#0b3d6b!important}
+.busho-refresh::before{content:"↻";font-size:16px;line-height:1}
+@keyframes busho-marquee{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+@keyframes busho-drawer-in{from{transform:translateX(24px);opacity:.7}to{transform:none;opacity:1}}
+@keyframes busho-toast-in{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+@media(max-width:900px){.busho-account-wrap .profile-trigger{max-width:230px}.busho-account-wrap .profile-trigger-copy small{max-width:120px}.busho-notice-bar{gap:7px;padding:0 10px}.busho-ticker-controls button{padding:5px 5px}.busho-field-grid{gap:14px}}
+@media(max-width:700px){.busho-brand-lockup .brand-subtitle,.busho-brand-lockup .lp-brand-copy small{max-width:210px;font-size:8px}.busho-account-wrap .profile-trigger{max-width:46px;padding:5px}.busho-account-wrap .profile-trigger-copy,.busho-account-wrap .profile-chevron{display:none}.busho-account-panel{right:-4px}.busho-help-button{font-size:0;width:38px;padding:7px}.busho-help-button::after{content:"?";font-size:16px}.busho-sop-drawer{padding:0 16px 24px}.busho-sop-branches,.busho-field-grid{grid-template-columns:1fr}.busho-notice-bar{height:auto;min-height:40px;flex-wrap:wrap;padding:7px 10px}.busho-notice-label{font-size:8px}.busho-ticker-viewport{order:3;flex-basis:100%;padding:4px 0}.busho-ticker-controls{margin-left:auto}.busho-ticker-controls button{font-size:8px}.busho-field-showcase{padding-top:32px;padding-bottom:36px}}
+@media(max-width:420px){.busho-brand-mark,.busho-brand-mark svg{width:32px;height:32px}.busho-brand-mark{flex-basis:32px}.busho-login-brand small{max-width:235px}.busho-account-identity dl{grid-template-columns:1fr 1fr}.busho-sop-drawer h2{font-size:19px}}
+@media(prefers-reduced-motion:reduce){.busho-ticker-track{animation:none!important;transform:none!important}.busho-sop-drawer,.busho-toast,#busho-back-top{animation:none!important;transition:none!important}}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff!important;color:#111!important;font-size:10pt!important}
+  .civic-utility-bar,.civic-accent-stripe,.topbar,.lp-header,.busho-notice-bar,.storekeeper-sidebar,.portal-sidebar,.sidebar-toggle-mobile,.civic-mobile-backdrop,.profile-menu-wrap,.busho-help-button,.busho-toast-region,#busho-back-top,button,a.btn,.btn,.text-action,.busho-drawer-backdrop,.busho-notice-dialog,.civic-site-footer{display:none!important}
+  .busho-print-meta{display:block!important;margin:0 0 12mm!important;padding-bottom:5mm!important;border-bottom:1px solid #777!important}
+  .portal-module:not(.active){display:none!important}
+  .portal-module.active{display:block!important}
+  .app-shell,.civic-workspace-grid,.civic-workspace-main,.storekeeper-layout,.storekeeper-main,#demo{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none!important}
+  .module-card,.supervisor-kpi,.storekeeper-request{break-inside:avoid;border:1px solid #aeb7bf!important;box-shadow:none!important}
+  .status-pill,.busho-semantic-pill{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .busho-print-watermark{display:block!important}
+  a{color:#111!important;text-decoration:none!important}
+}
+
+
+/* Pass 4 page-specific alignment and focus refinements */
+.progress-indicator{display:flex;align-items:center;gap:0;width:min(100%,560px);margin:0 auto 24px;padding:12px 18px;border:1px solid #d8e2e9;border-radius:12px;background:#f8fafb}
+.progress-indicator .progress-step{display:flex;align-items:center;gap:9px;flex:0 0 auto;min-width:0}
+.progress-indicator .progress-num{display:grid;place-items:center;width:30px;height:30px;border:1px solid #9eb2c0;border-radius:50%;background:#fff;color:#38556a;font-size:12px;font-weight:800}
+.progress-indicator .progress-step.active .progress-num{border-color:#0b3d6b;background:#0b3d6b;color:#fff}
+.progress-indicator .progress-label{font-size:11px;font-weight:800;color:#304d62}
+.progress-indicator .progress-connector{height:2px;flex:1;min-width:32px;margin:0 14px;background:#c7d5df}
+.storekeeper-main .module-heading{align-items:center}
+.storekeeper-main .module-heading .btn{flex:0 0 auto}
+.civic-sidebar-context{margin:10px 10px 14px!important;padding:12px!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:10px!important;background:rgba(255,255,255,.06)!important}
+.civic-sidebar-context small{display:block!important;color:#b9cad8!important;font-size:9px!important;letter-spacing:.1em!important}
+.civic-sidebar-context strong{display:block!important;margin:5px 0!important;color:#fff!important;font-size:12px!important}
+.civic-sidebar-context span{display:block!important;color:#d2deea!important;font-size:10px!important;line-height:1.5!important}
+.civic-facility-strip{display:flex;gap:16px;flex-wrap:wrap;padding:12px 16px;margin:0 0 20px;border:1px solid #d5e0e7;border-left:3px solid #0f766e;border-radius:10px;background:#f5f9fb}
+.civic-facility-strip>span{display:grid;gap:3px;min-width:0}
+.civic-facility-strip b{font-size:9px;letter-spacing:.08em;color:#607589}
+.civic-facility-strip strong{font-size:11px;color:#183d58;overflow-wrap:anywhere}
+@media(max-width:600px){.progress-indicator{padding:10px 12px}.progress-indicator .progress-connector{min-width:20px;margin:0 8px}.progress-indicator .progress-label{font-size:10px}.civic-facility-strip{display:grid;grid-template-columns:1fr 1fr;gap:10px}}
+@media print{.progress-indicator{border:1px solid #888;background:#fff!important}}
+
+:root[data-density="compact"] .module-card,:root[data-density="compact"] .storekeeper-request{padding:12px!important}
+:root[data-density="compact"] .storekeeper-main .portal-module,:root[data-density="compact"] .portal-module{gap:10px}
+:root[data-density="compact"] .civic-facility-strip{padding:8px 12px;margin-bottom:12px}
+
+
+/* Pass 4.1: centered, accessible sign-out confirmation */
+.busho-signout-backdrop{position:fixed;inset:0;z-index:30000;display:grid;place-items:center;padding:20px;background:rgba(7,24,39,.62);backdrop-filter:blur(3px)}
+.busho-signout-backdrop[hidden]{display:none!important}
+.busho-signout-dialog{width:min(100%,440px);padding:28px;border:1px solid #e5b5b1;border-top:5px solid #b42318;border-radius:16px;background:#fff;color:#1b2e40;box-shadow:0 24px 80px rgba(0,0,0,.3);outline:none}
+.busho-signout-dialog .busho-warning-icon{width:38px;height:38px;font-size:20px}
+.busho-signout-dialog h2{margin:16px 0 8px;color:#172d40;font-size:21px;line-height:1.3}
+.busho-signout-dialog p{margin:0;color:#526579;font-size:14px;line-height:1.65}
+.busho-signout-dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+.busho-signout-dialog-actions button{min-height:42px;padding:10px 17px;border-radius:9px;font-size:13px;font-weight:800;cursor:pointer}
+.busho-signout-cancel{border:1px solid #aebdca;background:#fff;color:#263f53}
+.busho-signout-confirm-button{border:1px solid #b42318;background:#b42318;color:#fff}
+.busho-signout-dialog-actions button:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+body.busho-signout-open{overflow:hidden}
+@media(max-width:480px){.busho-signout-backdrop{padding:16px}.busho-signout-dialog{padding:22px}.busho-signout-dialog h2{font-size:19px}.busho-signout-dialog-actions{flex-direction:column-reverse}.busho-signout-dialog-actions button{width:100%}}
+/* The profile hub has one visible sign-out action; the hidden legacy hook is retained for auth compatibility. */
+.busho-account-panel #portal-logout[hidden]{display:none!important}

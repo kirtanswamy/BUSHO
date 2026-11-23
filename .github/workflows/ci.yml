@@ -2,7 +2,6 @@ name: CI
 
 on:
   push:
-    branches: [main]
   pull_request:
 
 permissions:
@@ -24,3 +23,186 @@ jobs:
         run: npm ci
       - name: Check
         run: npm run check
+      - name: Syntax-check SHC-to-PHC browser acceptance test
+        run: node --check tests/browser/stockout-workflow.spec.mjs
+      - name: Syntax-check portal browser regression tests
+        run: node --check tests/browser/portal-smoke.spec.mjs
+
+  database-contract:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: busho_test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - name: Bootstrap Supabase-compatible legacy schema
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-bootstrap.sql
+      - name: Apply BUSHO legacy schema baseline
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261106180000_legacy_schema_baseline.sql
+      - name: Apply BUSHO operational security migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261106190000_busho_operational_security_foundation.sql
+      - name: Apply BUSHO supervisor report-item correction migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107051839_busho_supervisor_report_item_corrections.sql
+      - name: Apply BUSHO database query tuning migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107060000_busho_database_query_tuning.sql
+      - name: Apply BUSHO facility registry review migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107170000_facility_registry_review_workflow.sql
+      - name: Apply BUSHO role and report policy alignment migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107190000_busho_role_policy_alignment.sql
+      - name: Apply BUSHO medicine reference catalogue migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107200000_medicine_reference_catalogue.sql
+      - name: Apply BUSHO storekeeper separation migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107230000_busho_storekeeper_separation.sql
+      - name: Apply BUSHO inventory movement ledger migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261107233000_busho_inventory_movement_ledger.sql
+      - name: Apply BUSHO inventory snapshot source-role guard migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261108090000_busho_inventory_snapshot_source_role_guard.sql
+
+      - name: Apply BUSHO clarification return authorization migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261110114226_restrict_replenishment_clarification_returns.sql
+
+      - name: Apply BUSHO replenishment insert integrity migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111190000_replenishment_insert_integrity.sql
+
+      - name: Apply BUSHO replenishment guard deduplication migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111200000_replenishment_guard_deduplication.sql
+
+      - name: Apply BUSHO replenishment quantity guard migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111210000_replenishment_quantity_guard.sql
+
+      - name: Apply BUSHO replenishment submission idempotency migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111220000_replenishment_submission_idempotency.sql
+
+      - name: Grant supervisor replenishment submission key
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261111230000_grant_replenishment_submission_key.sql
+
+      - name: Apply durable provisioning operations migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261112120000_durable_provisioning_operations.sql
+
+      - name: Apply provisioning reconciliation payload migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261112130000_provisioning_reconciliation_payload.sql
+
+      - name: Apply BUSHO SHC-to-PHC stockout workflow migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114120000_busho_shc_phc_stockout_foundation.sql
+
+      - name: Apply BUSHO SHC-to-PHC role-boundary hardening migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114150000_busho_shc_phc_role_boundary_hardening.sql
+
+      - name: Apply BUSHO SHC-to-PHC closure and discrepancy migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114160000_busho_shc_phc_closure_discrepancy.sql
+
+      - name: Preserve action-specific stockout event evidence
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261115090000_busho_stockout_event_evidence.sql
+
+      - name: Enforce short-receipt discrepancy semantics
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114170000_busho_shc_phc_discrepancy_short_receipt_guard.sql
+
+      - name: Prevent overlapping verified SHC parent-PHC assignments
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261115100000_busho_shc_parent_phc_nonoverlap_guard.sql
+
+      - name: Apply BUSHO SHC-to-PHC zero-receipt outcome migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261115110000_busho_shc_phc_no_receipt_outcome.sql
+
+      - name: Apply BUSHO SHC parent-PHC facility read policy migration
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261114181000_busho_shc_parent_phc_facility_read_policy.sql
+
+      - name: Align SHC-PHC effective dates to India local time
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261115120000_busho_shc_phc_india_local_effective_date.sql
+
+      - name: Audit exposed-schema RLS, grants and SECURITY DEFINER helpers
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-security-audit.sql
+
+      - name: Verify worker, supervisor, admin and stock workflows under RLS
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-rls-contract.sql
+
+      - name: Verify SHC-to-PHC stockout workflow under RLS
+        env:
+          DATABASE_URL: postgres://postgres:busho_test_password@localhost:5432/postgres
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-stockout-workflow-contract.sql
+
+  civic-layout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify civic layouts at desktop, tablet and mobile widths
+        run: npx playwright test tests/browser/civic-layout.spec.mjs

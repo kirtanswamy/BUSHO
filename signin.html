@@ -7,17 +7,23 @@
   <meta name="description" content="Choose your BUSHO workspace.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles-v2.css?v=9">
+<link rel="stylesheet" href="civic-design-system.css?v=1">
+<link rel="stylesheet" href="civic-pass2.css?v=1">
+<link rel="stylesheet" href="civic-pass3.css?v=1">
+<script src="i18n.js?v=4"></script>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="civic-pass4.css?v=4">
+  <script defer src="civic-pass4.js?v=15"></script>
 </head>
 <body class="signin-page">
-  <a href="#main-content" class="skip-link">Skip to main content</a>
   <header class="topbar">
-    <a class="brand-lockup" href="index.html" aria-label="BUSHO home">
+    <a class="brand-lockup" href="/" aria-label="BUSHO home">
       <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
-      <div><div class="brand-name">BUSHO</div><div class="brand-subtitle">Bottom-Up Smart Health Orchestrator</div></div>
+      <div><div class="brand-name">BUSHO</div><div class="brand-subtitle">Frontline SHC–PHC Medicine Stockout & Replenishment Layer</div></div>
     </a>
-    <a class="nav-link" href="index.html">Back to website</a>
+    <a class="nav-link" href="/">Back to website</a>
   </header>
   <main id="main-content" class="signin-main">
     <div class="signin-heading">
@@ -31,17 +37,28 @@
         <p class="card-overline">FIELD REPORTING</p>
         <h2>Health Worker</h2>
         <p>Record field observations, review extracted information and confirm your reports.</p>
-        <a class="btn btn-primary" href="worker.html">Continue as Health Worker <span aria-hidden="true">→</span></a>
+        <a class="btn btn-primary" href="/worker">Continue as Health Worker <span aria-hidden="true">→</span></a>
       </article>
       <article class="signin-role-card supervisor-role">
         <div class="signin-role-icon">02</div>
         <p class="card-overline">OPERATIONS & OVERSIGHT</p>
         <h2>Supervisor</h2>
         <p>Review confirmed reports, monitor assigned facilities, inventory signals and approvals.</p>
-        <a class="btn btn-primary" href="supervisor.html">Continue as Supervisor <span aria-hidden="true">→</span></a>
+        <a class="btn btn-primary" href="/supervisor">Continue as Supervisor <span aria-hidden="true">→</span></a>
+      </article>
+      <article class="signin-role-card storekeeper-role">
+        <div class="signin-role-icon">03</div>
+        <p class="card-overline">FACILITY SUPPLY OPERATIONS</p>
+        <h2>Storekeeper</h2>
+        <p>Track assigned replenishment requests, record allocation and dispatch references, and reconcile goods receipts.</p>
+        <a class="btn btn-primary" href="/storekeeper">Continue as Storekeeper <span aria-hidden="true">→</span></a>
       </article>
     </div>
-    <p class="signin-disclosure">Prototype access uses synthetic demo credentials. This is not production authentication.</p>
+    <p class="signin-disclosure">This is a development-stage prototype. Accounts are created by an authorised BUSHO administrator; do not use real patient or sensitive health data.</p>
+
   </main>
+<script src="civic-shell.js?v=2"></script>
+<script defer src="civic-pass2.js?v=1"></script>
+<script defer src="civic-pass3.js?v=1"></script>
 </body>
 </html>

@@ -18,3 +18,11 @@ __pycache__/
 .agents/
 
 /*.py
+
+supabase/.branches/
+supabase/.temp/
+
+# Local browser-test credentials
+.local-e2e/
+test-results/
+playwright-report/

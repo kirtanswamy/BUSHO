@@ -24,11 +24,15 @@
   menu?.querySelectorAll('[data-profile-action]').forEach(button => button.addEventListener('click', () => {
     const action = button.dataset.profileAction;
     closeMenu();
-    if (action === 'signout') document.getElementById('portal-logout')?.click();
+    if (action === 'signout') return;
     else if (action === 'facility') document.querySelector(`[data-go-view="${role==='supervisor'?'facilities':'facility'}"]`)?.click();
     else if (action === 'profile') document.querySelector(`[data-go-view="profile"]`)?.click();
     else if (action === 'preferences') document.getElementById('lang-select')?.focus();
   }));
+
+  // The supervisor workspace uses the authenticated database event feed, never the
+  // browser-local synthetic cross-role demo bridge.
+  if (role === 'supervisor') return;
 
   // In-app notifications are browser-local and remain available while this browser
   // profile is offline. Cross-tab storage events keep the two demo roles in sync.
@@ -108,7 +112,7 @@
     if(total) total.textContent=String(30+rows.length);
     if(pending) pending.textContent=String(8+rows.filter(r=>r.status!=='Reviewed').length).padStart(2,'0');
   }
-  if(role==='worker' && extract) {
+  if(role==='worker' && extract && window.BUSHO_ENABLE_SYNTHETIC_REPORT_BRIDGE === true) {
     extract.addEventListener('click', () => {
       const text=input?.value.trim() || '';
       if(!text) return;
@@ -130,11 +134,10 @@
     });
   }
   if(role==='worker') {
-    const rows=read();
     const table=document.querySelector('[data-module="my-reports"] .simple-table');
-    if(table && rows.length) {
+    if(table) {
       const header=table.querySelector('.simple-header')?.outerHTML || '';
-      table.innerHTML=header+rows.slice().reverse().map(r=>`<div class="simple-row"><span>${safeDraft(r.title)}</span><span>${new Date(r.createdAt).toLocaleDateString()}</span><span><b class="status-pill ${r.status==='Confirmed'?'status-confirmed':'status-review'}">${safeDraft(r.status)}</b></span></div>`).join('');
+      table.innerHTML=header+'<div class="simple-row"><span colspan="3">Live report history will appear here when the account has synced reports.</span></div>';
     }
   }
   if(role==='supervisor') {
