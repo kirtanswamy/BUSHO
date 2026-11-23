@@ -392,7 +392,12 @@
       const refresh=e.target instanceof Element?e.target.closest('button,a'):null;
       if(refresh&&/^refresh(\s|$)/i.test(refresh.textContent.trim()))toast('Refreshing the current facility-scoped view…','info');
       const view=e.target instanceof Element?e.target.closest('[data-portal-view],[data-go-view]'):null;
-      if(view)window.setTimeout(()=>syncHeaderText(view.dataset.portalView||view.dataset.goView),0);
+      if(view){
+        const selectedView=view.dataset.portalView||view.dataset.goView;
+        window.setTimeout(()=>syncHeaderText(selectedView),0);
+        // Let the portal's own navigation and translated module heading finish first.
+        window.setTimeout(()=>syncHeaderText(selectedView),60);
+      }
     });
     document.addEventListener('change',e=>{
       if(e.target.matches('#lang-select,[data-pref-language]'))toast('Language preference updated for this browser.','success');
