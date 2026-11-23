@@ -53,3 +53,17 @@ Authentication and worker identity gate implemented:
 - Synthetic facilities display a persistent `Synthetic Pilot` marker on the authenticated screen.
 
 This milestone does not create or modify database schema, does not provision users, and does not yet expose stockout or field-update workflows. A missing verified SHC-to-PHC service link does not block sign-in; it will gate stockout workflow access separately.
+
+
+## M1.3 status
+
+Worker application shell added:
+
+- Four-tab navigation: Home, Stockouts, Field Updates, Facility & Profile.
+- Verified workers are routed into the authenticated shell.
+- Home identifies the assigned facility and access-verification state.
+- Stockouts and Field Updates currently show explicit not-yet-connected states; they do not fabricate cases, counts, stock levels, or submission success.
+- Facility & Profile shows the verified worker/facility identity and provides sign-out.
+- Synthetic Pilot remains visible for synthetic facility records.
+
+M1.3 does not yet connect operational stockout or receipt-evidence queries. Those require schema/workflow verification before implementation.
