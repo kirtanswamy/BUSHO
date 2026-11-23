@@ -181,7 +181,7 @@ export default function StockoutsScreen() {
 
   useEffect(() => {
     void load();
-    void AsyncStorage.getItem(PENDING_KEY).then((raw) => {
+    void AsyncStorage.getItem(pendingKeyFor(identity.worker.id)).then((raw) => {
       if (!raw) return;
       try {
         const attempt = JSON.parse(raw) as PendingAttempt;
@@ -252,7 +252,7 @@ export default function StockoutsScreen() {
           : 'BUSHO could not accept this case. Review the details and try again.');
         return;
       }
-      await AsyncStorage.removeItem(PENDING_KEY);
+      await AsyncStorage.removeItem(pendingKeyFor(identity.worker.id));
       setPending(null);
       setFormOpen(false); resetForm();
       Alert.alert('Submitted to PHC', 'Your dated observation has been sent to the verified PHC for review.');
