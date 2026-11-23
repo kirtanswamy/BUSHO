@@ -376,7 +376,7 @@
     const names={worker:{overview:'Operational Overview',stockouts:'Medicine Stockout','new-report':'New Report','my-reports':'My Reports',pending:'Pending Confirmation',facility:'My Facility',profile:'My Profile'},supervisor:{overview:'Operational Overview',reports:'Reports Inbox','stockout-review':'SHC Stockouts',facilities:'Facilities',workers:'Health Workers','supply-handoff':'Supply handoff',activity:'Activity Log',settings:'Settings'},storekeeper:{overview:'Operational Overview',stockouts:'SHC Stockout Handovers',requests:'Replenishment queue',inventory:'Inventory evidence',account:'Account & guidance'}};
     const h=$('.civic-page-intro h1');if(h&&names[role]?.[key])h.textContent=names[role][key];
     const crumb=$('.civic-breadcrumb');if(crumb&&names[role]?.[key])crumb.textContent='BUSHO / '+label[role]+' / '+names[role][key];
-    $$('.portal-module.active .module-heading h2,.portal-module.active .module-heading h1').forEach(n=>n.classList.add('busho-secondary-heading-hidden'));
+    $('.portal-module.active .module-heading h2,.portal-module.active .module-heading h1').forEach(n=>{if(!n.classList.contains('busho-secondary-heading-hidden'))n.classList.add('busho-secondary-heading-hidden');});
   }
   function events(){
     document.addEventListener('busho:authenticated',e=>{
