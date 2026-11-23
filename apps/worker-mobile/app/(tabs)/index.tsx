@@ -61,11 +61,11 @@ export default function WorkerHomeScreen() {
         <Card style={styles.actionCard}>
           <View style={styles.actionTop}>
             <View style={[styles.iconTile, { backgroundColor: theme.colors.warningSurface }]}><ClipboardList size={21} color={theme.colors.warning} /></View>
-            <StatusPill label="In development" tone="info" />
+            <StatusPill label="Case tracking" tone="success" />
           </View>
           <Text style={[styles.actionTitle, text(17)]}>Medicine stockouts</Text>
-          <Text style={[styles.body, muted(13)]}>Record a dated physical stockout observation and coordinate it through the verified SHC–PHC workflow.</Text>
-          <Text style={[styles.helper, muted(12)]}>Stockout reporting will be enabled after the existing service-link and workflow checks are connected.</Text>
+          <Text style={[styles.body, muted(13)]}>Review dated physical observations and follow cases through the verified SHC–PHC workflow.</Text>
+          <Text style={[styles.helper, muted(12)]}>View your recorded cases, observed quantities and current PHC coordination status.</Text>
         </Card>
 
         <Card style={styles.actionCard}>
