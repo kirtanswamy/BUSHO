@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { FieldInput } from '@/components/ui/FieldInput';
 import { StatusPill, StatusTone } from '@/components/ui/StatusPill';
-import { UnitChips, StockoutUnit } from '@/components/ui/UnitChips';
+import { UnitChips } from '@/components/ui/UnitChips';
+import type { StockoutUnit } from '@/components/ui/UnitChips';
 import { useAuth } from '@/features/auth';
 import { getSupabaseClient } from '@/lib/supabase/client';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -75,7 +76,7 @@ function formatDate(value: string) {
   return Number.isNaN(date.getTime()) ? 'Date unavailable' : date.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 }
 function isCurrentLink(link: ServiceLink) {
-  const today = new Date().toLocaleDateString('en-CA');
+  const today = todayLocal();
   return link.verification_status === 'verified'
     && (link.effective_from === null || link.effective_from <= today)
     && (link.effective_until === null || link.effective_until >= today);
@@ -200,7 +201,7 @@ export default function StockoutsScreen() {
     setNote(''); setFormError(null);
   };
 
-  const submitCase = async (status: 'draft' | 'submitted_to_phc') => {
+  const submitCase = async () => {
     if (!identity || !serviceLink || saving || pending) return;
     const cleanMedicine = medicine.trim();
     const cleanStrength = strength.trim();
@@ -233,7 +234,7 @@ export default function StockoutsScreen() {
         observation_source: source,
         observed_at: date.toISOString(),
         worker_note: note.trim() || null,
-        status,
+        status: 'submitted_to_phc',
         data_mode: identity.facility.isSynthetic ? 'synthetic_demo' : 'operational',
       });
       if (insertError) {
@@ -247,9 +248,7 @@ export default function StockoutsScreen() {
       await AsyncStorage.removeItem(PENDING_KEY);
       setPending(null);
       setFormOpen(false); resetForm();
-      Alert.alert(status === 'draft' ? 'Draft saved' : 'Submitted to PHC', status === 'draft'
-        ? 'Your draft is saved in BUSHO and can be reviewed in your case list.'
-        : 'Your dated observation has been sent to the verified PHC for review.');
+      Alert.alert('Submitted to PHC', 'Your dated observation has been sent to the verified PHC for review.');
       await load(true);
     } catch {
       setPending(attempt);
@@ -351,8 +350,7 @@ export default function StockoutsScreen() {
             <FieldInput label="Additional note (optional)" value={note} onChangeText={setNote} placeholder="Brief factual context; no patient information" multiline maxLength={500} style={styles.noteInput} />
             {formError ? <Text accessibilityLiveRegion="polite" style={[styles.formError, { color: theme.colors.danger }]}>{formError}</Text> : null}
             <View style={[styles.notice, { backgroundColor: theme.colors.warningSurface }]}><AlertCircle size={17} color={theme.colors.warning} /><Text style={[styles.noticeText, { color: theme.colors.warning, fontSize: 12 * typeScale }]}>Submitting sends this dated observation to the verified PHC. It does not represent an official procurement request.</Text></View>
-            <Button label="Submit to PHC" onPress={() => void submitCase('submitted_to_phc')} loading={saving} disabled={saving} />
-            <Button label="Save as draft" variant="secondary" onPress={() => void submitCase('draft')} loading={saving} disabled={saving} />
+            <Button label="Submit to PHC" onPress={() => void submitCase()} loading={saving} disabled={saving} />
             <Pressable accessibilityRole="button" disabled={saving} onPress={() => setFormOpen(false)} style={styles.cancel}><Text style={[styles.cancelText, { color: theme.colors.textMuted, fontSize: 14 * typeScale }]}>Cancel</Text></Pressable>
           </ScrollView>
         </SafeAreaView>
