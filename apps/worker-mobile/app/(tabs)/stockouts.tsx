@@ -207,7 +207,7 @@ export default function StockoutsScreen() {
     try {
       const { error: insertError } = await getSupabaseClient().from('stockout_cases').insert(attempt.payload);
       if (insertError) {
-        if (insertError.code === '23505' || [408, 409, 500, 502, 503, 504].includes(insertError.status ?? 0)) {
+        if (insertError.code === '23505') {
           await reconcilePending(attempt);
           return;
         }
@@ -234,7 +234,9 @@ export default function StockoutsScreen() {
 
   useEffect(() => {
     void load();
-    void AsyncStorage.getItem(pendingKeyFor(identity.worker.id)).then((raw) => {
+    const workerId = identity?.worker.id;
+    if (!workerId) return;
+    void AsyncStorage.getItem(pendingKeyFor(workerId)).then((raw) => {
       if (!raw) return;
       try {
         const attempt = JSON.parse(raw) as PendingAttempt;
@@ -247,7 +249,7 @@ export default function StockoutsScreen() {
         setPendingMessage('A previous submission marker could not be read. Refresh the case list before creating another case.');
       }
     });
-  }, [load, reconcilePending]);
+  }, [identity, load, reconcilePending]);
 
   const resetForm = () => {
     setMedicine(''); setStrength(''); setObservedQty('0'); setRequestedQty('1');
@@ -299,7 +301,7 @@ export default function StockoutsScreen() {
       setPending(attempt);
       const { error: insertError } = await getSupabaseClient().from('stockout_cases').insert(payload);
       if (insertError) {
-        const uncertain = insertError.code === '23505' || [408, 409, 500, 502, 503, 504].includes(insertError.status ?? 0);
+        const uncertain = insertError.code === '23505';
         if (uncertain) {
           setPending(attempt);
           setPendingMessage('BUSHO returned an uncertain response. Checking whether the case was saved…');
@@ -397,7 +399,7 @@ export default function StockoutsScreen() {
         <Text style={[styles.footerNote, muted(11)]}>Quantities are dated observations, not live stock balances.</Text>
       </ScrollView>
 
-      <Modal visible={formOpen} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => !saving && setFormOpen(false)}>
+      <Modal visible={formOpen} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => { if (!saving) setFormOpen(false); }}>
         <SafeAreaView style={[styles.modalSafe, { backgroundColor: theme.colors.background }]} edges={['top','bottom']}>
           <View style={[styles.modalHeader, { borderBottomColor: theme.colors.border }]}>
             <View style={styles.flex}><Text style={[styles.modalEyebrow, muted(10)]}>NEW CASE · SHC TO PHC</Text><Text style={[styles.modalTitle, text(21)]}>Stockout observation</Text></View>
