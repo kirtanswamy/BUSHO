@@ -258,7 +258,8 @@ test('Supervisor Activity Log normalizer is idempotent for report_created events
   });
 
   const status = activity.locator('[data-event-type="report_created"] .status-pill');
-  await expect(status).toHaveText('✓ Closed');
+  await expect(status).toHaveText('Closed');
+  await expect(status).toHaveAttribute('data-state', 'success');
   await expect(activity.locator('[data-event-type="report_created"]')).toContainText('Report created');
   await expect(activity).toHaveAttribute('data-busho-activity-observer', 'attached');
 
